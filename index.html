@@ -1,0 +1,2534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PwC Delivery Launchpad</title>
+  <link rel="icon" href="data:,">
+<style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange500: #FD5108;
+      --orange300: #FFAA72;
+      --orange100: #FFE8D4;
+      --black: #000000;
+      --white: #FFFFFF;
+      --grey100: #EEEFF1;
+      --grey200: #DFE3E6;
+      --grey300: #CBD1D6;
+      --grey400: #B5BCC4;
+      --grey500: #A1A8B3;
+      --success: #22C55E;
+      --successBg: #DCFCE7;
+      --warning: #EAB308;
+      --warningBg: #FEF3C7;
+      --bgColor: #EEEFF1;
+      --cardBg: #FFFFFF;
+      --textColor: #000000;
+      --secondaryText: #A1A8B3;
+      --borderColor: #DFE3E6;
+      --surfaceColor: #EEEFF1;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background-color: var(--bgColor);
+      color: var(--textColor);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* HEADER */
+    .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+  background: var(--cardBg);
+  border-bottom: 1px solid var(--borderColor);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+}
+    .header-left { display: flex; align-items: center; gap: 16px; }
+    .header-divider { width: 1px; height: 24px; background: var(--borderColor); }
+    .header-title { font-size: 16px; font-weight: 600; color: var(--textColor); }
+    .header-subtitle { font-size: 13px; color: var(--secondaryText); font-weight: 400; }
+    }
+
+/* ─── LANDING PAGE ─── */
+
+#landingPage.active ~ .header { display: none !important; }
+
+#lp-wrap {
+  height: 100vh;
+  background: ##F4F4F6;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* subtle dot grid */
+#lp-grid {
+  display: none;
+}
+
+/* ── TOP NAV BAR ── */
+#lp-nav {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 64px;
+}
+
+#lp-nav-brand {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111;
+  letter-spacing: -0.01em;
+}
+
+#lp-nav-badge {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #E8530E;
+  background: rgba(232,83,14,0.08);
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+
+/* ── HERO ── */
+#lp-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16px 64px 24px 64px;
+  position: relative;
+  z-index: 1;
+}
+
+#lp-contact {
+  position: absolute;
+  bottom: 12px;
+  left: 64px;
+  font-size: 11px;
+  color: #BBBBBB;
+  text-align: left;
+}
+#lp-contact a {
+  color: #AAAAAA;
+  text-decoration: none;
+}
+#lp-contact a:hover {
+  color: #E8530E;
+}
+
+#lp-title {
+  font-size: 56px;
+  font-weight: 600;
+  color: #111;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  font-family: Georgia, serif !important;
+  margin: 0 0 16px;
+}
+
+#lp-title em {
+  font-style: normal;
+  color: #E8530E;
+}
+
+#lp-sub {
+  font-size: 15px;
+  color: #888;
+  line-height: 1.7;
+  margin: 0 0 24px;
+  max-width: 520px;
+  text-align: center;
+}
+
+/* ── CTA ROW ── */
+#lp-cta-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: system-ui, sans-serif;
+  border-radius: 100px;
+  border: 1.5px solid #DCDCDC;
+  background: #fff;
+  color: #777;
+  cursor: pointer;
+  transition: all 150ms ease;
+  outline: none;
+  letter-spacing: -0.01em;
+}
+.lp-chip:hover { border-color: #E8530E; color: #E8530E; background: #FFF5F0; }
+.lp-chip-active {
+  border-color: #E8530E !important;
+  background: #E8530E !important;
+  color: #fff !important;
+  font-weight: 600;
+}
+.lp-chip-active .lp-chip-dot { background: rgba(255,255,255,0.6) !important; }
+.lp-chip-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #CCC;
+  flex-shrink: 0;
+  transition: background 150ms ease;
+}
+
+#lp-start-btn {
+  padding: 5px 24px;
+  font-size: 16px;
+  font-weight: 700;
+  background: #FFAA72;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-family: system-ui, sans-serif;
+  letter-spacing: -0.01em;
+  transition: background 150ms ease;
+  border-radius: 100px;
+  outline: none;
+}
+#lp-start-btn:hover { background: #333; }
+
+
+/* ══════════════════════════════════════
+   CONVEYOR CHAIN
+══════════════════════════════════════ */
+#lp-chain-wrap {
+  position: relative;
+  z-index: 1;
+  padding: 0 0 28px;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-bottom: 120px;
+}
+#lp-chain-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #BBBBBB;
+  padding: 0 64px 12px;
+}
+#lp-conveyor-outer {
+  position: relative;
+  overflow: hidden;
+  padding: 24px 0 8px;
+}
+#lp-conveyor-outer::before,
+#lp-conveyor-outer::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 120px;
+  z-index: 2;
+  pointer-events: none;
+}
+#lp-conveyor-outer::before {
+  left: 0;
+  background: linear-gradient(to right, ##F4F4F6, transparent);
+}
+#lp-conveyor-outer::after {
+  right: 0;
+  background: linear-gradient(to left, ##F4F4F6, transparent);
+}
+#lp-conveyor-track {
+  position: absolute;
+  top: 24px;
+  left: 0; right: 0;
+  height: 1px;
+  background: #E0E0E0;
+  z-index: 0;
+}
+#lp-conveyor {
+  display: flex;
+  gap: 0;
+  padding: 0 64px;
+  transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  z-index: 1;
+}
+.lp-cv-card {
+  flex: 0 0 200px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  transition: all 0.35s ease;
+  opacity: 0.3;
+  cursor: default;
+  position: relative;
+}
+.lp-cv-card.lp-cv-active {
+  opacity: 1;
+}
+/* Node dot on the line */
+.lp-cv-card::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #D0D0D0;
+  border: 2px solid #D0D0D0;
+  flex-shrink: 0;
+  transition: background 0.35s ease, border-color 0.35s ease, transform 0.35s ease;
+  margin-bottom: 10px;
+}
+.lp-cv-card.lp-cv-active::before {
+  background: #E8530E;
+  border-color: #E8530E;
+  transform: scale(1.4);
+}
+.lp-cv-id {
+  display: none;
+}
+.lp-cv-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #BBBBBB;
+  line-height: 1.3;
+  text-align: center;
+  padding: 0 8px;
+  transition: color 0.35s ease;
+}
+.lp-cv-card.lp-cv-active .lp-cv-name {
+  color: #111;
+}
+.lp-cv-artifact {
+  display: none;
+}
+.lp-cv-desc {
+  font-size: 11px;
+  color: #CCCCCC;
+  line-height: 1.5;
+  text-align: center;
+  padding: 4px 8px 0;
+  transition: color 0.35s ease;
+}
+.lp-cv-card.lp-cv-active .lp-cv-desc {
+  color: #888;
+}
+.lp-cv-gate-badge {
+  display: none;
+}
+
+.page { display: none; }
+    .page.active { display: block; animation: fadeIn 0.2s ease; }
+
+    /* LOADING */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.85);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .loading-overlay.visible { display: flex; }
+    .loading-spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--grey200);
+      border-top-color: var(--orange500);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { font-size: 14px; color: var(--secondaryText); }
+
+    /* ── FORM ── */
+
+    /* Typography system - applied globally */
+    *, *::before, *::after { font-family: system-ui, sans-serif; }
+    #lp-title, #lp-title em { font-family: Georgia, serif !important; }
+    h1 { font-size: 32px; font-weight: 600; line-height: 1.25; margin: 0; }
+    h2 { font-size: 24px; font-weight: 600; line-height: 1.3; margin: 0; }
+    h3 { font-size: 18px; font-weight: 600; line-height: 1.35; margin: 0; }
+    h4 { font-size: 16px; font-weight: 600; line-height: 1.4; margin: 0; }
+    p, body { font-size: 14px; font-weight: 400; line-height: 1.6; }
+
+    .form-container { max-width: 860px; margin: 0 auto; padding: 0 24px 60px; }
+    /* form intro row: title + start button */
+    .form-intro {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 150;
+  background: var(--bgColor);
+  padding: 16px 24px;
+  margin: 0 -24px 16px -24px;
+  border-bottom: 1px solid var(--borderColor);
+}
+    .form-intro-text h2 { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+    .form-intro-text p { font-size: 13px; color: var(--secondaryText); line-height: 1.5; }
+
+    /* nav pills */
+    .nav-pills { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 14px; }
+    .nav-pill {
+      padding: 4px 12px;
+      font-size: 11px; font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--borderColor);
+      background: var(--cardBg);
+      color: var(--secondaryText);
+      border-radius: 100px;
+      transition: all 140ms ease;
+    }
+    .nav-pill:hover { background: var(--orange100); border-color: var(--orange500); color: var(--orange500); }
+
+    /* sections */
+    .section { background: var(--cardBg); margin-bottom: 2px; border: 1px solid var(--borderColor); overflow: hidden; }
+    .section-header {
+      padding: 11px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; border-left: 3px solid var(--orange500);
+      transition: background-color 140ms ease; user-select: none;
+    }
+    .section-header:hover { background: var(--grey100); }
+    .section-header-left { display: flex; align-items: center; gap: 12px; }
+    .section-number {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--orange500);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .section-title { font-size: 14px; font-weight: 600; }
+    .section-subtitle { font-size: 11px; font-weight: 400; color: var(--secondaryText); margin-top: 1px; }
+    .chevron { font-size: 11px; color: var(--grey400); transition: transform 180ms ease; }
+    .section.open .chevron { transform: rotate(180deg); }
+    .section-body { display: none; padding: 14px 18px; border-top: 1px solid var(--borderColor); }
+    .section.open .section-body { display: block; animation: slideDown 160ms ease; }
+
+    /* fields */
+    .field-group { display: flex; flex-direction: column; gap: 12px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field-row.single { grid-template-columns: 1fr; }
+    .field-row.triple { grid-template-columns: 1fr 1fr 1fr; }
+    .field { display: flex; flex-direction: column; }
+    .field-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+    label.field-label { font-size: 11px; font-weight: 500; color: #666; text-transform: uppercase; letter-spacing: 0.05em; }
+    label.field-label .required { color: var(--orange500); margin-left: 2px; }
+    .field-hint { font-size: 11px; font-weight: 400; color: var(--secondaryText); margin: 2px 0 6px; line-height: 1.4; }
+
+    input[type="text"], input[type="date"], select, textarea {
+      width: 100%; padding: 7px 10px;
+      border: 1px solid var(--borderColor); border-radius: 3px;
+      font-size: 13px; font-weight: 400; font-family: system-ui, sans-serif;
+      color: var(--textColor); background: var(--white);
+      transition: border-color 140ms ease;
+      appearance: none; -webkit-appearance: none; box-sizing: border-box;
+    }
+    input::placeholder, textarea::placeholder { color: var(--grey400); }
+    input:focus, select:focus, textarea:focus {
+      outline: none; border-color: var(--orange500);
+      box-shadow: 0 0 0 2px rgba(253,81,8,0.07);
+    }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%23B5BCC4' d='M5 7L0 2h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center;
+      padding-right: 28px; cursor: pointer;
+    }
+    select:disabled { background: var(--grey100); color: var(--grey400); cursor: not-allowed; }
+    textarea { resize: vertical; min-height: 72px; }
+
+    .btn-toggle-input {
+      font-size: 11px; font-weight: 500; color: var(--orange500);
+      background: transparent; border: none; padding: 0; cursor: pointer; transition: opacity 140ms ease;
+    }
+    .btn-toggle-input:hover { opacity: 0.65; }
+
+    /* ── CHIPS (multi-select) ── */
+    .multi-select-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .check-item {
+      display: inline-flex; align-items: center;
+      padding: 4px 11px;
+      border: 1.5px solid var(--borderColor); border-radius: 100px;
+      cursor: pointer; transition: all 130ms ease;
+      font-size: 12px; font-weight: 500; font-family: system-ui, sans-serif;
+      background: var(--white); color: #555;
+      user-select: none; white-space: nowrap; line-height: 1.5;
+    }
+    .check-item:hover { border-color: var(--orange500); color: var(--orange500); background: var(--orange100); }
+    .check-item.selected { border-color: var(--orange500); background: var(--orange500); color: #fff; font-weight: 600; }
+    .check-item input[type="checkbox"] { display: none; }
+
+    /* cascade blocks */
+    .cascade-block {
+      display: none; margin-top: 8px; padding: 10px 12px;
+      background: var(--surfaceColor); border-left: 2px solid var(--orange500);
+      animation: slideDown 160ms ease;
+    }
+    .cascade-block.visible { display: block; }
+    .cascade-block.level-3 { border-left-color: var(--orange300); margin-left: 10px; margin-top: 6px; }
+    .cascade-block .field-group { gap: 8px; }
+    .section-divider { border: none; border-top: 1px solid var(--borderColor); margin: 12px 0; }
+
+    .form-footer {
+      position: sticky;
+      bottom: 0;
+      z-index: 150;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 24px;
+      background: var(--cardBg);
+      border-top: 1px solid var(--borderColor);
+    }
+    .footer-left { display: flex; align-items: center; gap: 8px; }
+    .footer-right { display: flex; align-items: center; gap: 8px; }
+   
+    /* ── START WORKFLOW BUTTON (top right of form, no footer bar) ── */
+    .btn-start-workflow {
+      flex-shrink: 0; padding: 8px 18px;
+      font-size: 13px; font-weight: 600; font-family: system-ui, sans-serif;
+      background: var(--orange500); color: #fff;
+      border: none; cursor: pointer; border-radius: 2px;
+      transition: background 140ms ease; white-space: nowrap;
+    }
+    .btn-start-workflow:hover { background: #d44000; }
+
+    /* shared btn */
+    .btn {
+      padding: 8px 18px; font-size: 13px; font-weight: 600;
+      font-family: system-ui, sans-serif;
+      cursor: pointer; transition: all 140ms ease; border: none; border-radius: 2px;
+    }
+    .btn-primary { background: var(--orange500); color: #fff; }
+    .btn-primary:hover { background: #d44000; }
+    .btn-secondary { background: transparent; color: var(--textColor); border: 1px solid var(--borderColor); }
+    .btn-secondary:hover { background: var(--grey100); }
+
+    /* workflow layout */
+    .workflow-container {
+  max-width: 1100px; margin: 0 auto; padding: 0;
+  display: grid; grid-template-columns: 230px 1fr; gap: 0; align-items: stretch;
+  height: 100%;
+}
+    .workflow-main {
+  min-width: 0;
+  overflow-y: auto;
+  height: 100%;
+}
+    .workflow-sidebar {
+  overflow-y: auto;
+  height: 100%;
+  background: var(--cardBg);
+  border-right: 1px solid var(--borderColor);
+  padding-top: 8px;
+}
+    .sidebar-header {
+      background: var(--orange500); padding: 10px 14px; color: #fff;
+      font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .sidebar-phase { border-bottom: 1px solid var(--borderColor); }
+    .sidebar-phase-label {
+      padding: 6px 14px; font-size: 11px; font-weight: 500; color: var(--secondaryText);
+      text-transform: uppercase; letter-spacing: 0.05em; background: var(--surfaceColor);
+    }
+    .sidebar-item {
+      padding: 7px 14px 7px 17px; font-size: 12px; font-weight: 400; color: var(--textColor);
+      cursor: pointer; display: flex; align-items: center; gap: 8px;
+      transition: all 120ms ease; border-left: 2px solid transparent;
+    }
+    .sidebar-item:hover { background: var(--orange100); color: var(--orange500); }
+    .sidebar-item.active { background: var(--orange100); color: var(--orange500); border-left-color: var(--orange500); font-weight: 600; }
+    .sidebar-item.completed { color: var(--success); }
+    .sidebar-item.locked { color: var(--grey400); cursor: default; pointer-events: none; }
+
+    .step-dot {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background-color: var(--grey200);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 8px; font-weight: 700; color: var(--grey500);
+      flex-shrink: 0;
+    }
+    .sidebar-item.active .step-dot { background-color: var(--orange500); color: var(--white); }
+    .sidebar-item.completed .step-dot { background-color: var(--success); color: var(--white); }
+
+    .workflow-header {
+  background: var(--bgColor);
+  border-bottom: 1px solid var(--borderColor);
+  padding: 14px 20px;
+  margin-bottom: 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 150;
+}
+    .workflow-header h2 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    .workflow-header p { font-size: 13px; color: var(--secondaryText); }
+    .progress-wrap { text-align: right; }
+    .form-progress-wrap { display: flex; align-items: center; gap: 12px; padding: 8px 24px 8px; }
+    .form-progress-label { font-size: 12px; color: var(--secondaryText); white-space: nowrap; }
+    .form-sticky-bar {
+      background: var(--bgColor);
+      border-bottom: 1px solid var(--borderColor);
+      padding-bottom: 6px;
+      flex-shrink: 0;
+    }
+    .progress-label { font-size: 12px; color: var(--secondaryText); margin-bottom: 4px; }
+    .progress-bar { width: 160px; height: 8px; background-color: var(--grey200); border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; background-color: var(--orange500); border-radius: 4px; transition: width 0.3s ease; }
+
+    .prompt-card {
+      background: var(--cardBg);
+      border: 1px solid var(--borderColor);
+      margin-bottom: 8px;
+      overflow: hidden;
+      border-left: 4px solid var(--grey200);
+      transition: border-color 200ms ease;
+    }
+    .prompt-card.active-card { border-left-color: var(--orange500); }
+    .prompt-card.completed-card { border-left-color: var(--success); }
+    .prompt-card.locked-card { opacity: 0.45; pointer-events: none; }
+
+    .prompt-card-header {
+      padding: 16px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; user-select: none;
+      transition: background-color 200ms ease;
+    }
+    .prompt-card-header:hover { background-color: var(--surfaceColor); }
+    .prompt-card-header-left { display: flex; align-items: center; gap: 12px; }
+
+    .prompt-id {
+      font-size: 11px; font-weight: 500;
+      color: var(--orange500);
+      background-color: var(--orange100);
+      padding: 4px 12px;
+      white-space: nowrap;
+    }
+    .prompt-card.completed-card .prompt-id { color: var(--success); background-color: var(--successBg); }
+    .prompt-card.locked-card .prompt-id { color: var(--secondaryText); background-color: var(--surfaceColor); }
+
+    .prompt-name { font-size: 14px; font-weight: 600; }
+    .prompt-meta { font-size: 12px; color: var(--secondaryText); margin-top: 2px; }
+
+    .status-badge { font-size: 12px; padding: 4px 12px; font-weight: 500; }
+    .badge-ready { background-color: var(--orange100); color: var(--orange500); }
+    .badge-done { background-color: var(--successBg); color: var(--success); }
+    .badge-locked { background-color: var(--surfaceColor); color: var(--secondaryText); }
+
+    .prompt-card-body { display: none; padding: 0 20px 20px; border-top: 1px solid var(--borderColor); }
+    .prompt-card.open .prompt-card-body { display: block; animation: slideDown 200ms ease; }
+
+    .meta-row { display: flex; align-items: flex-start; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .meta-label { font-size: 11px; font-weight: 500; color: var(--secondaryText); text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; margin-top: 3px; }
+    .dep-tag { font-size: 12px; padding: 2px 10px; background-color: var(--surfaceColor); color: var(--secondaryText); }
+    .artifact-tag { font-size: 12px; padding: 3px 10px; background-color: #DBEAFE; color: #3B82F6; border: 1px solid #BFDBFE; }
+
+    .prompt-box-header { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; margin-bottom: 6px; }
+    .prompt-box-label { font-size: 11px; font-weight: 500; color: var(--secondaryText); text-transform: uppercase; letter-spacing: 0.4px; }
+    .prompt-text-box {
+      background-color: #1e1e2e;
+      color: #e0e0e0;
+      border-radius: 4px;
+      padding: 16px;
+      font-size: 12px;
+      font-family: 'Courier New', monospace;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 160px;
+      overflow-y: auto;
+      border: 1px solid #333;
+    }
+
+    .prompt-actions { display: flex; gap: 8px; margin-top: 12px; align-items: center; }
+    .btn-copy {
+      background-color: var(--orange500); color: var(--white);
+      padding: 8px 16px;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer; border: none;
+      display: flex; align-items: center; gap: 6px;
+      transition: background-color 200ms ease;
+      font-family: system-ui, sans-serif;
+    }
+    .btn-copy:hover { background-color: #d94000; }
+    .btn-copy.copied { background-color: var(--success); }
+    .btn-mark-done {
+      background: transparent; color: var(--success);
+      padding: 8px 16px;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer; border: 1px solid var(--success);
+      transition: all 200ms ease;
+      font-family: system-ui, sans-serif;
+    }
+    .btn-mark-done:hover { background-color: var(--success); color: var(--white); }
+    .copy-hint { font-size: 12px; color: var(--secondaryText); }
+    .btn-export {
+      background: transparent; color: var(--orange500);
+      padding: 8px 16px;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer; border: 1px solid var(--orange500);
+      transition: all 200ms ease;
+      font-family: system-ui, sans-serif;
+    }
+    .btn-export:hover { background-color: var(--orange100); }
+    .export-hint {
+      font-size: 12px; color: var(--secondaryText);
+      background: var(--surfaceColor);
+      border-left: 2px solid var(--orange300);
+      padding: 8px 10px; line-height: 1.5;
+      margin-top: 8px;
+    }
+
+    .stage-gate {
+      background-color: var(--warningBg);
+      border-left: 4px solid var(--warning);
+      padding: 16px 20px;
+      font-size: 13px;
+      margin-top: 12px;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .error-msg {
+      background-color: #FEE2E2;
+      border-left: 4px solid #EF4444;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #991B1B;
+      margin-bottom: 16px;
+    }
+#formPage.active {
+  position: fixed;
+  top: 41px;
+  left: 0; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.form-scroll-body {
+  flex: 1;
+  overflow-y: auto;
+}
+#workflowPage.active {
+  position: fixed;
+  top: 41px;
+  left: 0; right: 0; bottom: 0;
+  overflow: hidden;
+}
+.guidance-panel {
+  display: none;
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  width: 340px;
+  background: #fff;
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.14);
+  font-family: system-ui, sans-serif;
+}
+.guidance-panel.visible { display: block; }
+.guidance-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--orange500);
+  border-radius: 6px 6px 0 0;
+}
+.guidance-panel-title {
+  font-size: 11px; font-weight: 700; color: #fff;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.guidance-panel-counter { font-size: 11px; color: rgba(255,255,255,0.75); }
+.guidance-panel-body { padding: 14px; }
+.guidance-panel-step-title {
+  font-size: 14px; font-weight: 700;
+  color: var(--textColor); margin-bottom: 6px;
+}
+.guidance-panel-text {
+  font-size: 13px; color: #555;
+  line-height: 1.6; margin: 0 0 8px;
+}
+.guidance-panel-example {
+  font-size: 12px; color: var(--secondaryText);
+  background: var(--surfaceColor);
+  border-left: 2px solid var(--orange300);
+  padding: 8px 10px; line-height: 1.5;
+}
+.guidance-panel-footer {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-top: 1px solid var(--borderColor);
+  background: var(--surfaceColor);
+  border-radius: 0 0 6px 6px;
+}
+.guidance-panel-skip {
+  font-size: 11px; color: var(--secondaryText);
+  background: none; border: none; cursor: pointer; padding: 0;
+}
+.guidance-panel-skip:hover { color: var(--textColor); }
+.guidance-panel-actions { display: flex; gap: 8px; }
+.btn-guidance-back {
+  padding: 6px 14px; font-size: 12px; font-weight: 600;
+  background: #fff; border: 1px solid var(--borderColor);
+  cursor: pointer; border-radius: 3px;
+}
+.btn-guidance-next {
+  padding: 6px 14px; font-size: 12px; font-weight: 600;
+  background: var(--orange500); color: #fff;
+  border: none; cursor: pointer; border-radius: 3px;
+}
+.btn-guidance-next:hover { background: #d44000; }
+.guidance-highlight { outline: 2px solid var(--orange500); outline-offset: 3px; }  </style>
+</head>
+<body>
+
+<!-- PAGE 0: LANDING -->
+<div class="page active" id="landingPage">
+  <div id="lp-wrap">
+    <div id="lp-grid"></div>
+
+    <!-- ── NAV ── -->
+    <nav id="lp-nav">
+      <span id="lp-nav-brand"><svg style="height:24px;width:auto;vertical-align:middle;margin-right:8px;" viewBox="0 0 104 67" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:#000;}.cls-2{fill:#fd5108;}</style></defs><path class="cls-1" d="M69.26,30.74c-2.53.41-3.83,2.28-3.83,5.57s1.73,5.53,4.37,5.53c1.23,0,2.35-.41,4.7-1.56v2.68c-2.82,1.29-4.48,1.69-6.76,1.69-2.46,0-4.19-.65-5.61-2.09-1.45-1.45-2.17-3.36-2.17-5.5,0-4.74,3.51-7.95,8.64-7.95,3.41,0,5.75,1.56,5.75,3.84,0,1.47-1.09,2.48-2.71,2.48-.83,0-1.51-.22-2.39-.72v-3.98ZM56.76,37.06c2.27-2.86,3.07-4.02,3.07-5.42s-1.11-2.53-2.6-2.53c-.91,0-1.74.43-2.14.88v5.83l-3.72,4.96v-11.31h-3.54l-5.88,9.75v-9.75h-2.03l-5.34,1.3v1.36l2.91.3v11.96h3.76l5.64-9.27v9.27h4.12l5.74-7.34ZM23.34,32.52c.87-.11,1.29-.15,1.7-.15,2.45,0,3.78,1.63,3.78,4.7,0,3.62-1.63,5.51-4.66,5.51-.25,0-.43,0-.83-.02v-10.04ZM23.34,44.25c.98.11,1.93.15,2.5.15,5.04,0,8.24-3.23,8.24-8.03,0-4.15-2.4-7.15-5.65-7.15-1.41,0-2.35.29-5.09,1.92v-2h-1.52l-5.86,1.78v1.43h2.43v16.73l-2.18.54v1.39h9.58v-1.39s-2.44-.54-2.44-.54v-4.84Z"/><path class="cls-2" d="M66.54,24.97h-15.98l2.72-4.51h15.98l-2.72,4.51ZM87.96,15.94h-15.98l-2.72,4.51h15.98l2.72-4.51Z"/></svg>Delivery Launchpad</span>
+    </nav>
+
+    <!-- ── HERO ── -->
+    <div id="lp-hero">
+      <h1 id="lp-title">Delivery<em>Launchpad.</em></h1>
+      <p id="lp-sub">an AI-powered workflow that expedites project planning by generating a full suite of tailored artifacts, enabling teams to spend less time on documentation and more time delivering value to clients.
+</p>
+      <div id="lp-cta-row">
+        <button id="lp-start-btn" onclick="launchSelected()">Start</button>
+      </div>
+    </div>
+
+  <!-- ── PROCESS CHAIN ── -->
+    <div id="lp-chain-wrap">
+      <div id="lp-chain-label">What gets produced</div>
+      <div id="lp-conveyor-outer">
+        <div id="lp-conveyor-track"></div>
+        <div id="lp-conveyor">
+
+          <div class="lp-cv-card" data-phase="Initiation">
+            <div class="lp-cv-name">Engagement Intake</div>
+            <div class="lp-cv-desc">Your brief processed into a structured summary that drives every prompt that follows.</div>
+          </div>
+
+          <div class="lp-cv-card" data-phase="Initiation">
+            <div class="lp-cv-name">Stakeholder Analysis</div>
+            <div class="lp-cv-desc">Every key stakeholder mapped by role, influence and interest, with a tailored engagement approach for each.</div>
+          </div>
+
+          <div class="lp-cv-card" data-phase="Initiation">
+            <div class="lp-cv-name">Scope Statement</div>
+            <div class="lp-cv-desc">A formal record of what is in scope, what is out, and why, ready to share with the client on day one.</div>
+          </div>
+
+          <div class="lp-cv-card" data-phase="Initiation">
+            <div class="lp-cv-name">Objectives & Success Criteria</div>
+            <div class="lp-cv-desc">Clear, measurable outcomes that define what delivery success looks like for this engagement.</div>
+          </div>
+
+          <div class="lp-cv-card lp-cv-gate" data-phase="Initiation">
+            <div class="lp-cv-name">Engagement Charter</div>
+            <div class="lp-cv-desc">The founding document of the engagement, purpose, scope, team, authority and constraints in one place.</div>
+          </div>
+
+          <div class="lp-cv-card" data-phase="Initiation">
+            <div class="lp-cv-name">Governance Framework</div>
+            <div class="lp-cv-desc">Decision-making structure, escalation paths, meeting cadence and reporting lines across the engagement.</div>
+          </div>
+
+          <div class="lp-cv-card" data-phase="Planning">
+            <div class="lp-cv-name">Work Breakdown Structure</div>
+            <div class="lp-cv-desc">Every deliverable decomposed into manageable work packages, organised across phases and workstreams.</div>
+          </div>
+
+          <div class="lp-cv-card" data-phase="Planning">
+            <div class="lp-cv-name">Schedule & Milestones</div>
+            <div class="lp-cv-desc">A phased delivery timeline with key milestones, sequencing and indicative durations.</div>
+          </div>
+
+          <div class="lp-cv-card" data-phase="Planning">
+            <div class="lp-cv-name">Critical Path</div>
+            <div class="lp-cv-desc">The minimum-time sequence through the WBS, showing which tasks cannot slip without moving the end date.</div>
+          </div>
+
+          <div class="lp-cv-card" data-phase="Planning">
+            <div class="lp-cv-name">Resource Plan</div>
+            <div class="lp-cv-desc">Roles, effort estimates and loading across the engagement team, mapped against the schedule.</div>
+          </div>
+
+          <div class="lp-cv-card" data-phase="Planning">
+            <div class="lp-cv-name">RACI Matrix</div>
+            <div class="lp-cv-desc">Accountability defined for every key activity, who is Responsible, Accountable, Consulted and Informed.</div>
+          </div>
+
+          <div class="lp-cv-card" data-phase="Planning">
+            <div class="lp-cv-name">Budget & Cost Baseline</div>
+            <div class="lp-cv-desc">A structured cost estimate across phases, resource categories and delivery activities.</div>
+          </div>
+
+          <div class="lp-cv-card" data-phase="Planning">
+            <div class="lp-cv-name">Risk Register</div>
+            <div class="lp-cv-desc">Identified risks with likelihood, impact rating, owner and mitigation action for each.</div>
+          </div>
+
+          <div class="lp-cv-card" data-phase="Planning">
+            <div class="lp-cv-name">Issue & Dependency Log</div>
+            <div class="lp-cv-desc">Known issues and cross-workstream dependencies captured and tracked from day one.</div>
+          </div>
+
+          <div class="lp-cv-card" data-phase="Planning">
+            <div class="lp-cv-name">Communications Plan</div>
+            <div class="lp-cv-desc">What gets communicated, to whom, at what frequency and through which channel.</div>
+          </div>
+
+          <div class="lp-cv-card" data-phase="Planning">
+            <div class="lp-cv-name">Status Reporting Template</div>
+            <div class="lp-cv-desc">A ready-to-use status report format aligned to your governance cadence and stakeholder needs.</div>
+          </div>
+
+          <div class="lp-cv-card" data-phase="Planning">
+            <div class="lp-cv-name">Quality Plan</div>
+            <div class="lp-cv-desc">Review gates, quality standards and acceptance criteria for every key deliverable.</div>
+          </div>
+
+          <div class="lp-cv-card" data-phase="Planning">
+            <div class="lp-cv-name">Change Control Plan</div>
+            <div class="lp-cv-desc">The process for requesting, assessing, approving and tracking scope changes throughout delivery.</div>
+          </div>
+
+          <div class="lp-cv-card lp-cv-gate" data-phase="Planning">
+            <div class="lp-cv-name">PMO Playbook</div>
+            <div class="lp-cv-desc">The complete operating manual for the engagement, every plan, process and template in one document.</div>
+          </div>
+
+        </div>
+      </div>
+     <div style="height: 32px;"></div>
+       <p id="lp-contact">For assistance contact <a href="mailto:george.prowse@au.pwc.com">george.prowse@au.pwc.com</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loadingText">Loading data...</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="header-title" id="headerTitle"><svg style="height:28px;width:auto;vertical-align:middle;margin-right:8px;" viewBox="0 0 104 67" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:#000;}.cls-2{fill:#fd5108;}</style></defs><path class="cls-1" d="M69.26,30.74c-2.53.41-3.83,2.28-3.83,5.57s1.73,5.53,4.37,5.53c1.23,0,2.35-.41,4.7-1.56v2.68c-2.82,1.29-4.48,1.69-6.76,1.69-2.46,0-4.19-.65-5.61-2.09-1.45-1.45-2.17-3.36-2.17-5.5,0-4.74,3.51-7.95,8.64-7.95,3.41,0,5.75,1.56,5.75,3.84,0,1.47-1.09,2.48-2.71,2.48-.83,0-1.51-.22-2.39-.72v-3.98ZM56.76,37.06c2.27-2.86,3.07-4.02,3.07-5.42s-1.11-2.53-2.6-2.53c-.91,0-1.74.43-2.14.88v5.83l-3.72,4.96v-11.31h-3.54l-5.88,9.75v-9.75h-2.03l-5.34,1.3v1.36l2.91.3v11.96h3.76l5.64-9.27v9.27h4.12l5.74-7.34ZM23.34,32.52c.87-.11,1.29-.15,1.7-.15,2.45,0,3.78,1.63,3.78,4.7,0,3.62-1.63,5.51-4.66,5.51-.25,0-.43,0-.83-.02v-10.04ZM23.34,44.25c.98.11,1.93.15,2.5.15,5.04,0,8.24-3.23,8.24-8.03,0-4.15-2.4-7.15-5.65-7.15-1.41,0-2.35.29-5.09,1.92v-2h-1.52l-5.86,1.78v1.43h2.43v16.73l-2.18.54v1.39h9.58v-1.39s-2.44-.54-2.44-.54v-4.84Z"/><path class="cls-2" d="M66.54,24.97h-15.98l2.72-4.51h15.98l-2.72,4.51ZM87.96,15.94h-15.98l-2.72,4.51h15.98l2.72-4.51Z"/></svg>Delivery Launchpad</span>
+  </div>
+  <span class="header-subtitle" id="headerSubtitle">Form</span>
+</div>
+
+<!-- PAGE 1: FORM -->
+<div class="page" id="formPage">
+  <div class="form-sticky-bar">
+    <div class="form-container" style="padding-bottom:0;">
+      <div class="form-intro">
+        <div class="form-intro-text">
+          <h2>New Engagement Brief</h2>
+          <p>Complete the sections below. Use dropdowns or click <strong>Enter manually</strong> on any field to type your own value.</p>
+        </div>
+        <button class="btn-start-workflow" onclick="startWorkflow()">Start Workflow &rarr;</button>
+      </div>
+      <div class="form-progress-wrap">
+        <div class="form-progress-label" id="formProgressText">0 of 8 sections opened</div>
+        <div class="progress-bar"><div class="progress-fill" id="formProgressFill" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div id="dataError"></div>
+    <div class="nav-pills" style="padding: 6px 24px 8px; max-width:860px; margin: 0 auto;">
+      <div class="nav-pill" onclick="scrollToSection('s1')">1. Context</div>
+      <div class="nav-pill" onclick="scrollToSection('s2')">2. Industry</div>
+      <div class="nav-pill" onclick="scrollToSection('s3')">3. Objectives</div>
+      <div class="nav-pill" onclick="scrollToSection('s4')">4. Services</div>
+      <div class="nav-pill" onclick="scrollToSection('s5')">5. Technology</div>
+      <div class="nav-pill" onclick="scrollToSection('s6')">6. Partners</div>
+      <div class="nav-pill" onclick="scrollToSection('s7')">7. Regulatory</div>
+      <div class="nav-pill" onclick="scrollToSection('s8')">8. Risk</div>
+    </div>
+  </div><!-- end form-sticky-bar -->
+  <div class="form-scroll-body">
+  <div class="form-container">
+
+    <!-- S1: CONTEXT -->
+<div class="section" id="s1">
+  <div class="section-header" onclick="toggleSection('s1')">
+    <div class="section-header-left">
+      <div class="section-number">1</div>
+      <div><div class="section-title">Engagement Context</div><div class="section-subtitle">Basic details about the client and engagement</div></div>
+    </div>
+    <span class="chevron"></span>
+  </div>
+  <div class="section-body">
+    <div class="field-group">
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">Client Name </label>
+          <input type="text" id="clientName" placeholder="Enter client name">
+        </div>
+        <div class="field">
+          <label class="field-label">Engagement Name </label>
+          <input type="text" id="engagementName" placeholder="Enter engagement name">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">Estimated Start Date</label>
+          <input type="date" id="startDate">
+        </div>
+        <div class="field">
+          <label class="field-label">Estimated End Date</label>
+          <input type="date" id="endDate">
+        </div>
+      </div>
+          </div>
+  </div>
+</div>
+
+    <!-- S2: INDUSTRY -->
+    <div class="section" id="s2">
+      <div class="section-header" onclick="toggleSection('s2')">
+        <div class="section-header-left">
+          <div class="section-number">2</div>
+          <div><div class="section-title">Industry</div><div class="section-subtitle">Client industry, sector and sub-sector</div></div>
+        </div>
+        <span class="chevron"></span>
+      </div>
+      <div class="section-body">
+        <div class="field-group">
+          <div class="field-row triple" id="industryFields">
+            <div class="field"><label class="field-label">Industry</label><select disabled><option>Loading...</option></select></div>
+            <div class="field"><label class="field-label">Sector</label><select disabled><option>Loading...</option></select></div>
+            <div class="field"><label class="field-label">Sub-sector</label><select disabled><option>Loading...</option></select></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S3: OBJECTIVES -->
+    <div class="section" id="s3">
+      <div class="section-header" onclick="toggleSection('s3')">
+        <div class="section-header-left">
+          <div class="section-number">3</div>
+          <div><div class="section-title">Engagement Objectives</div><div class="section-subtitle">Business problems, strategic objectives and drivers</div></div>
+        </div>
+        <span class="chevron"></span>
+      </div>
+      <div class="section-body">
+        <div class="field-group">
+          <div class="field">
+            <label class="field-label">Objective Type </label>
+            <span class="field-hint">Select all that apply</span>
+            <div class="multi-select-grid" id="objectiveTypeGrid"><div style="color:var(--secondaryText);font-size:13px;">Loading...</div></div>
+          </div>
+          <div id="objectiveCascades"></div>
+          <hr class="section-divider">
+        </div>
+      </div>
+    </div>
+
+    <!-- S4: SERVICES -->
+    <div class="section" id="s4">
+      <div class="section-header" onclick="toggleSection('s4')">
+        <div class="section-header-left">
+          <div class="section-number">4</div>
+          <div><div class="section-title">Service Offerings</div><div class="section-subtitle">PwC domains and building blocks</div></div>
+        </div>
+        <span class="chevron"></span>
+      </div>
+      <div class="section-body">
+        <div class="field-group">
+          <div class="field">
+            <label class="field-label">Domain</label>
+            <span class="field-hint">Select all domains relevant to this engagement</span>
+            <div class="multi-select-grid" id="domainGrid"><div style="color:var(--secondaryText);font-size:13px;">Loading...</div></div>
+          </div>
+          <div id="domainCascades"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S5: TECHNOLOGY -->
+    <div class="section" id="s5">
+      <div class="section-header" onclick="toggleSection('s5')">
+        <div class="section-header-left">
+          <div class="section-number">5</div>
+          <div><div class="section-title">Technology &amp; Tools</div><div class="section-subtitle">Client technologies relevant to this engagement</div></div>
+        </div>
+        <span class="chevron"></span>
+      </div>
+      <div class="section-body">
+        <div class="field-group">
+          <div class="field">
+            <label class="field-label">Technology Category</label>
+            <span class="field-hint">Select a category to browse specific technologies</span>
+            <div class="multi-select-grid" id="techCategoryGrid"><div style="color:var(--secondaryText);font-size:13px;">Loading...</div></div>
+          </div>
+          <div id="techCascades"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S6: PARTNERS -->
+    <div class="section" id="s6">
+      <div class="section-header" onclick="toggleSection('s6')">
+        <div class="section-header-left">
+          <div class="section-number">6</div>
+          <div><div class="section-title">Alliance Partners</div><div class="section-subtitle">Partner technologies and products</div></div>
+        </div>
+        <span class="chevron"></span>
+      </div>
+      <div class="section-body">
+        <div class="field-group">
+          <div class="field">
+            <label class="field-label">Alliance Partner</label>
+            <span class="field-hint">Select all partners involved in this engagement</span>
+            <div class="multi-select-grid" id="partnerGrid"><div style="color:var(--secondaryText);font-size:13px;">Loading...</div></div>
+          </div>
+          <div id="partnerCascades"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S7: REGULATORY -->
+    <div class="section" id="s7">
+      <div class="section-header" onclick="toggleSection('s7')">
+        <div class="section-header-left">
+          <div class="section-number">7</div>
+          <div><div class="section-title">Regulatory Profile</div><div class="section-subtitle">Regulatory bodies and frameworks applicable to this engagement</div></div>
+        </div>
+        <span class="chevron"></span>
+      </div>
+      <div class="section-body">
+        <div class="field-group">
+          <div class="field">
+            <label class="field-label">Industry Group</label>
+            <span class="field-hint">Select all that apply</span>
+            <div class="multi-select-grid" id="regulatoryIndustryGrid"><div style="color:var(--secondaryText);font-size:13px;">Loading...</div></div>
+          </div>
+          <div id="regulatoryCascades"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S8: RISK -->
+    <div class="section" id="s8">
+      <div class="section-header" onclick="toggleSection('s8')">
+        <div class="section-header-left">
+          <div class="section-number">8</div>
+          <div><div class="section-title">Risk Profile</div><div class="section-subtitle">Key risks relevant to this engagement</div></div>
+        </div>
+        <span class="chevron"></span>
+      </div>
+      <div class="section-body">
+        <div class="field-group">
+          <div class="field">
+            <label class="field-label">Industry Group</label>
+            <span class="field-hint">Select all that apply</span>
+            <div class="multi-select-grid" id="riskIndustryGrid"><div style="color:var(--secondaryText);font-size:13px;">Loading...</div></div>
+          </div>
+          <div id="riskCascades"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </div><!-- end form-container -->
+  </div><!-- end form-scroll-body -->
+
+</div>
+
+<!-- PAGE 2: WORKFLOW -->
+<div class="page" id="workflowPage">
+  <div class="workflow-container">
+    <div class="workflow-sidebar">
+      <div id="workflowSidebar"></div>
+    </div>
+    <div class="workflow-main">
+      <div class="workflow-header">
+  <div style="display:flex; align-items:center; gap:16px;">
+    <button class="btn btn-secondary" onclick="goBackToForm()" style="white-space:nowrap;">Back to Form</button>
+    <div>
+      <h2 id="workflowTitle">Engagement Workflow</h2>
+      <p id="workflowSubtitle">Copy each prompt in sequence into your AI tool</p>
+    </div>
+  </div>
+        <div class="progress-wrap">
+          <div class="progress-label" id="progressText">0 of 20 steps complete</div>
+          <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+        </div>
+      </div>
+      <div id="promptCards"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── APP STATE ──
+  let appData = {};
+  let completedSteps = new Set();
+  let formData = {};
+
+  // ── DATA FILES ──
+  const DATA_FILES = {
+    industries:   './data/industries.json',
+    objectives:   './data/objectives.json',
+    services:     './data/service_offerings.json',
+    technologies: './data/technologies.json',
+    partners:     './data/alliance_partners.json',
+    regulatory:   './data/regulatory_profile.json',
+    risk:         './data/risk_profile.json',
+    workflow:     './data/workflow.json'
+  };
+
+  // ── UTILITIES ──
+  function slugify(str) {
+  if (!str) return '';
+  return String(str).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+  function showLoading(msg) {
+    document.getElementById('loadingText').textContent = msg || 'Loading...';
+    document.getElementById('loadingOverlay').classList.add('visible');
+  }
+  function hideLoading() {
+    document.getElementById('loadingOverlay').classList.remove('visible');
+  }
+  function showError(msg) {
+    document.getElementById('dataError').innerHTML = `<div class="error-msg">${msg}</div>`;
+  }
+  function toggleSection(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+  if (el.classList.contains('open')) {
+    setTimeout(function() {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  }
+  updateFormProgress();
+}
+function updateFormProgress() {
+  const sections = ['s1','s2','s3','s4','s5','s6','s7','s8'];
+  const opened = sections.filter(id => {
+    const el = document.getElementById(id);
+    return el && el.classList.contains('open');
+  }).length;
+  const pct = Math.round((opened / sections.length) * 100);
+  const fill = document.getElementById('formProgressFill');
+  const label = document.getElementById('formProgressText');
+  if (fill) fill.style.width = pct + '%';
+  if (label) label.textContent = opened + ' of ' + sections.length + ' sections opened';
+}
+  function scrollToSection(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      if (!el.classList.contains('open')) el.classList.add('open');
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+  function toggleFreeText(btn, dropdownId, freeTextId) {
+    const dropdown = document.getElementById(dropdownId);
+    const freeText = document.getElementById(freeTextId);
+    const isDropdown = freeText.style.display === 'none' || freeText.style.display === '';
+    if (isDropdown) {
+      dropdown.style.display = 'none';
+      freeText.style.display = 'block';
+      btn.textContent = 'Use dropdown';
+    } else {
+      dropdown.style.display = 'block';
+      freeText.style.display = 'none';
+      btn.textContent = 'Enter manually';
+    }
+  }
+  function toggleBtn(dropId, freeId) {
+    return `<button class="btn-toggle-input" onclick="toggleFreeText(this,'${dropId}','${freeId}')">Enter manually</button>`;
+  }
+  function toggleCheckCascade(el, cascadeId) {
+    el.classList.toggle('selected');
+    const cb = el.querySelector('input[type="checkbox"]');
+    if (cb) cb.checked = el.classList.contains('selected');
+    const cascade = document.getElementById(cascadeId);
+    if (cascade) cascade.classList.toggle('visible', el.classList.contains('selected'));
+  }
+  function toggleCheckOnly(el) {
+    el.classList.toggle('selected');
+    const cb = el.querySelector('input[type="checkbox"]');
+    if (cb) cb.checked = el.classList.contains('selected');
+  }
+  function getVal(dropId, freeId) {
+    const drop = document.getElementById(dropId);
+    const free = document.getElementById(freeId);
+    if (!drop || !free) return '';
+    return free.style.display === 'block' ? free.value : drop.value;
+  }
+
+  // ── LOAD ALL DATA ──
+  async function loadAllData() {
+    showLoading('Loading data files...');
+    try {
+      const entries = await Promise.all(
+        Object.entries(DATA_FILES).map(async ([key, path]) => {
+          const res = await fetch(path);
+          if (!res.ok) throw new Error(`Failed to load ${path}`);
+          const json = await res.json();
+          return [key, json];
+        })
+      );
+      entries.forEach(([key, val]) => appData[key] = val);
+hideLoading();
+document.getElementById('dataError').innerHTML = '';
+renderAll();
+    } catch (err) {
+      hideLoading();
+      showError(`Could not load data files. Please ensure the /data/ folder is present and accessible. (${err.message})`);
+    }
+  }
+
+  // ── RENDER ALL SECTIONS ──
+  function renderAll() {
+    renderIndustry();
+    renderObjectives();
+    renderServices();
+    renderTechnologies();
+    renderPartners();
+    renderRegulatory();
+    renderRisk();
+  }
+
+  // ── RENDER: INDUSTRY ──
+  function renderIndustry() {
+    const container = document.getElementById('industryFields');
+    const data = appData.industries.industries;
+    let industryOpts = '<option value="">Select industry...</option>';
+    data.forEach(i => industryOpts += `<option value="${i.industry}">${i.industry}</option>`);
+    container.innerHTML = `
+      <div class="field">
+        <div class="field-label-row">
+          <label class="field-label">Industry </label>
+          ${toggleBtn('industryDrop','industryFree')}
+        </div>
+        <select id="industryDrop" onchange="onIndustryChange(this.value)">${industryOpts}</select>
+        <input type="text" id="industryFree" placeholder="Enter industry..." style="display:none;margin-top:6px;">
+      </div>
+      <div class="field">
+        <div class="field-label-row">
+          <label class="field-label">Sector</label>
+          ${toggleBtn('sectorDrop','sectorFree')}
+        </div>
+        <select id="sectorDrop" disabled onchange="onSectorChange(this.value)"><option value="">Select industry first...</option></select>
+        <input type="text" id="sectorFree" placeholder="Enter sector..." style="display:none;margin-top:6px;">
+      </div>
+      <div class="field">
+        <div class="field-label-row">
+          <label class="field-label">Sub-sector</label>
+          ${toggleBtn('subsectorDrop','subsectorFree')}
+        </div>
+        <select id="subsectorDrop" disabled><option value="">Select sector first...</option></select>
+        <input type="text" id="subsectorFree" placeholder="Enter sub-sector..." style="display:none;margin-top:6px;">
+      </div>`;
+  }
+  function onIndustryChange(val) {
+    const sectorDrop = document.getElementById('sectorDrop');
+    const subsectorDrop = document.getElementById('subsectorDrop');
+    sectorDrop.innerHTML = '<option value="">Select sector...</option>';
+    subsectorDrop.innerHTML = '<option value="">Select sector first...</option>';
+    sectorDrop.disabled = true;
+    subsectorDrop.disabled = true;
+    if (!val) return;
+    const ind = appData.industries.industries.find(i => i.industry === val);
+    if (!ind) return;
+    ind.sectors.forEach(s => sectorDrop.innerHTML += `<option value="${s.sector}">${s.sector}</option>`);
+    sectorDrop.disabled = false;
+  }
+  function onSectorChange(val) {
+    const industryVal = document.getElementById('industryDrop').value;
+    const subsectorDrop = document.getElementById('subsectorDrop');
+    subsectorDrop.innerHTML = '<option value="">Select sub-sector...</option>';
+    subsectorDrop.disabled = true;
+    if (!val || !industryVal) return;
+    const ind = appData.industries.industries.find(i => i.industry === industryVal);
+    if (!ind) return;
+    const sec = ind.sectors.find(s => s.sector === val);
+    if (!sec) return;
+    sec.sub_sectors.forEach(sub => subsectorDrop.innerHTML += `<option value="${sub}">${sub}</option>`);
+    subsectorDrop.disabled = false;
+  }
+
+  // ── RENDER: OBJECTIVES ──
+  function renderObjectives() {
+    const grid = document.getElementById('objectiveTypeGrid');
+    const cascades = document.getElementById('objectiveCascades');
+    const data = appData.objectives.engagement_objectives.objective_types;
+    let gridHTML = '', cascadesHTML = '';
+    data.forEach(objType => {
+      const typeId = slugify(objType.objective_type);
+      gridHTML += `<div class="check-item" onclick="toggleCheckCascade(this,'obj-${typeId}')">${objType.objective_type}</div>`;
+      let themesHTML = '';
+      objType.themes.forEach(theme => {
+        const themeId = `${typeId}-${slugify(theme.theme)}`;
+        const dropId = `obj-drop-${themeId}`, freeId = `obj-free-${themeId}`;
+        let opts = `<option value="">Select specific objective...</option>`;
+        theme.specific_objectives.forEach(o => opts += `<option value="${o}">${o}</option>`);
+        themesHTML += `
+          <div class="field" style="margin-bottom:10px;">
+            <div class="field-label-row">
+              <label class="field-label" style="font-size:13px;">${theme.theme}</label>
+              ${toggleBtn(dropId, freeId)}
+            </div>
+            <select id="${dropId}">${opts}</select>
+            <input type="text" id="${freeId}" placeholder="Enter ${theme.theme} objective..." style="display:none;margin-top:6px;">
+          </div>`;
+      });
+      cascadesHTML += `
+        <div class="cascade-block" id="obj-${typeId}">
+          <div class="field-group">
+            <div class="field">
+              <label class="field-label">${objType.objective_type}</label>
+              <span class="field-hint">Select a specific objective for each relevant theme</span>
+              <div style="margin-top:12px;">${themesHTML}</div>
+            </div>
+            <div class="field">
+              <label class="field-label">Additional Context</label>
+              <textarea id="obj-context-${typeId}" placeholder="Describe the ${objType.objective_type.toLowerCase()} in your own words..."></textarea>
+            </div>
+          </div>
+        </div>`;
+    });
+    grid.innerHTML = gridHTML;
+    cascades.innerHTML = cascadesHTML;
+  }
+
+  // ── RENDER: SERVICES ──
+  function renderServices() {
+  const grid = document.getElementById('domainGrid');
+  const cascades = document.getElementById('domainCascades');
+  const data = appData.services.domains;
+  let gridHTML = '', cascadesHTML = '';
+  data.forEach(domain => {
+    const domId = slugify(domain.domain);
+    gridHTML += `<div class="check-item" onclick="toggleCheckCascade(this,'svc-${domId}')">
+      ${domain.domain}
+    </div>`;
+    let blocksHTML = '';
+    domain.building_blocks.forEach(bb => {
+      const bbId = `bb-${domId}-${slugify(bb.building_block)}`;
+      const descId = `desc-${domId}-${slugify(bb.building_block)}`;
+      const escapedDesc = bb.description.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      blocksHTML += `
+        <div style="display:flex; flex-direction:column; gap:0;">
+          <div class="check-item" id="${bbId}" onclick="toggleBuildingBlock(this,'${descId}','${escapedDesc}')">
+            ${bb.building_block}
+          </div>
+          <div id="${descId}" style="display:none; margin-top:0; border:1px solid var(--borderColor); border-top:none; background:var(--surfaceColor); padding:12px; animation: slideDown 200ms ease;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+              <span style="font-size:11px; font-weight:500; color:var(--secondaryText); text-transform:uppercase; letter-spacing:0.4px;">Building Block Description</span>
+              <button 
+                class="btn-toggle-input" 
+                onclick="toggleDescriptionEdit('${descId}')"
+                style="font-size:11px;">
+                Edit Description
+              </button>
+            </div>
+            <p id="${descId}-display" style="font-size:13px; color:var(--textColor); line-height:1.6; margin:0;"></p>
+            <textarea 
+              id="${descId}-edit" 
+              style="display:none; width:100%; margin-top:6px; font-size:13px; min-height:100px;"
+              placeholder="Edit the building block description for this engagement..."></textarea>
+          </div>
+        </div>`;
+    });
+    cascadesHTML += `
+      <div class="cascade-block" id="svc-${domId}">
+        <div class="field-group">
+          <div class="field">
+            <label class="field-label">${domain.domain} - Building Blocks</label>
+            <span class="field-hint">Select all that apply. Click Edit Description to tailor the description for this engagement.</span>
+            <div style="display:flex; flex-direction:column; gap:6px; margin-top:10px;">${blocksHTML}</div>
+          </div>
+          <div class="field">
+            <label class="field-label">Additional Notes</label>
+            <textarea id="svc-notes-${domId}" placeholder="Any additional context for ${domain.domain} services..."></textarea>
+          </div>
+        </div>
+      </div>`;
+  });
+  grid.innerHTML = gridHTML;
+  cascades.innerHTML = cascadesHTML;
+}
+
+function toggleBuildingBlock(el, descId, description) {
+  el.classList.toggle('selected');
+  const cb = el.querySelector('input[type="checkbox"]');
+  if (cb) cb.checked = el.classList.contains('selected');
+  const descBlock = document.getElementById(descId);
+  const displayEl = document.getElementById(`${descId}-display`);
+  const editEl = document.getElementById(`${descId}-edit`);
+  if (el.classList.contains('selected')) {
+    descBlock.style.display = 'block';
+    const decoded = description.replace(/&quot;/g, '"');
+    displayEl.textContent = decoded;
+    editEl.value = decoded;
+  } else {
+    descBlock.style.display = 'none';
+    const editBtn = descBlock.querySelector('button');
+    if (editBtn) editBtn.textContent = 'Edit Description';
+    displayEl.style.display = 'block';
+    editEl.style.display = 'none';
+  }
+}
+
+function toggleDescriptionEdit(descId) {
+  const displayEl = document.getElementById(`${descId}-display`);
+  const editEl = document.getElementById(`${descId}-edit`);
+  const btn = document.querySelector(`#${descId} button`);
+  const isEditing = editEl.style.display === 'block';
+  if (isEditing) {
+    displayEl.textContent = editEl.value;
+    displayEl.style.display = 'block';
+    editEl.style.display = 'none';
+    if (btn) btn.textContent = 'Edit Description';
+  } else {
+    displayEl.style.display = 'none';
+    editEl.style.display = 'block';
+    editEl.focus();
+    if (btn) btn.textContent = 'Save Description';
+  }
+}
+
+  // ── RENDER: TECHNOLOGY ──
+  function renderTechnologies() {
+    const grid = document.getElementById('techCategoryGrid');
+    const cascades = document.getElementById('techCascades');
+    const data = appData.technologies.technology_and_tools.categories;
+    let gridHTML = '', cascadesHTML = '';
+    data.forEach(cat => {
+      const catId = slugify(cat.category);
+      gridHTML += `<div class="check-item" onclick="toggleCheckCascade(this,'tech-${catId}')">${cat.category}</div>`;
+      let subOpts = '<option value="">Select sub-category...</option>';
+      cat.sub_categories.forEach(sub => subOpts += `<option value="${sub.sub_category}">${sub.sub_category}</option>`);
+      const subDropId = `tech-sub-drop-${catId}`, subFreeId = `tech-sub-free-${catId}`;
+      const prodGridId = `tech-prod-${catId}`, prodFreeId = `tech-prod-free-${catId}`;
+      cascadesHTML += `
+        <div class="cascade-block" id="tech-${catId}">
+          <div class="field-group">
+            <div class="field">
+              <div class="field-label-row">
+                <label class="field-label">${cat.category} - Sub-category</label>
+                ${toggleBtn(subDropId, subFreeId)}
+              </div>
+              <select id="${subDropId}" onchange="onTechSubChange('${catId}',this.value)">${subOpts}</select>
+              <input type="text" id="${subFreeId}" placeholder="Enter sub-category..." style="display:none;margin-top:6px;">
+            </div>
+            <div class="cascade-block level-3" id="tech-prod-cascade-${catId}">
+              <div class="field">
+                <div class="field-label-row">
+                  <label class="field-label">Products</label>
+                  ${toggleBtn(prodGridId, prodFreeId)}
+                </div>
+                <div class="multi-select-grid" id="${prodGridId}"></div>
+                <input type="text" id="${prodFreeId}" placeholder="Enter products or tools..." style="display:none;margin-top:6px;">
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Additional Notes</label>
+              <textarea id="tech-notes-${catId}" placeholder="Any additional context..."></textarea>
+            </div>
+          </div>
+        </div>`;
+    });
+    grid.innerHTML = gridHTML;
+    cascades.innerHTML = cascadesHTML;
+  }
+  function onTechSubChange(catId, subVal) {
+    const prodGrid = document.getElementById(`tech-prod-${catId}`);
+    const cascade = document.getElementById(`tech-prod-cascade-${catId}`);
+    if (!subVal) { cascade.classList.remove('visible'); return; }
+    const cat = appData.technologies.technology_and_tools.categories.find(c => slugify(c.category) === catId);
+    if (!cat) return;
+    const sub = cat.sub_categories.find(s => s.sub_category === subVal);
+    if (!sub) return;
+    prodGrid.innerHTML = sub.options.map(o => `<div class="check-item" onclick="toggleCheckOnly(this)">${o}</div>`).join('');
+    cascade.classList.add('visible');
+  }
+
+  // ── RENDER: PARTNERS ──
+  function renderPartners() {
+    const grid = document.getElementById('partnerGrid');
+    const cascades = document.getElementById('partnerCascades');
+    const data = appData.partners.alliance_partners.partners;
+    let gridHTML = '', cascadesHTML = '';
+    data.forEach(partner => {
+      const pid = slugify(partner.partner);
+      gridHTML += `<div class="check-item" onclick="toggleCheckCascade(this,'partner-${pid}')">${partner.partner}</div>`;
+      let famOpts = '<option value="">Select product family...</option>';
+      partner.product_families.forEach(f => famOpts += `<option value="${f.product_family}">${f.product_family}</option>`);
+      const famDropId = `partner-fam-drop-${pid}`, famFreeId = `partner-fam-free-${pid}`;
+      const prodGridId = `partner-prod-${pid}`, prodFreeId = `partner-prod-free-${pid}`;
+      cascadesHTML += `
+        <div class="cascade-block" id="partner-${pid}">
+          <div class="field-group">
+            <div class="field">
+              <div class="field-label-row">
+                <label class="field-label">${partner.partner} - Product Family</label>
+                ${toggleBtn(famDropId, famFreeId)}
+              </div>
+              <select id="${famDropId}" onchange="onPartnerFamChange('${pid}',this.value)">${famOpts}</select>
+              <input type="text" id="${famFreeId}" placeholder="Enter product family..." style="display:none;margin-top:6px;">
+            </div>
+            <div class="cascade-block level-3" id="partner-prod-cascade-${pid}">
+              <div class="field">
+                <div class="field-label-row">
+                  <label class="field-label">Products</label>
+                  ${toggleBtn(prodGridId, prodFreeId)}
+                </div>
+                <div class="multi-select-grid" id="${prodGridId}"></div>
+                <input type="text" id="${prodFreeId}" placeholder="Enter products..." style="display:none;margin-top:6px;">
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Additional Notes</label>
+              <textarea id="partner-notes-${pid}" placeholder="Any additional context for ${partner.partner}..."></textarea>
+            </div>
+          </div>
+        </div>`;
+    });
+    grid.innerHTML = gridHTML;
+    cascades.innerHTML = cascadesHTML;
+  }
+  function onPartnerFamChange(pid, famVal) {
+    const prodGrid = document.getElementById(`partner-prod-${pid}`);
+    const cascade = document.getElementById(`partner-prod-cascade-${pid}`);
+    if (!famVal) { cascade.classList.remove('visible'); return; }
+    const partner = appData.partners.alliance_partners.partners.find(p => slugify(p.partner) === pid);
+    if (!partner) return;
+    const fam = partner.product_families.find(f => f.product_family === famVal);
+    if (!fam) return;
+    prodGrid.innerHTML = fam.products.map(p => `<div class="check-item" onclick="toggleCheckOnly(this)">${p}</div>`).join('');
+    cascade.classList.add('visible');
+  }
+
+  // ── RENDER: REGULATORY ──
+  function renderRegulatory() {
+    const grid = document.getElementById('regulatoryIndustryGrid');
+    const cascades = document.getElementById('regulatoryCascades');
+    const data = appData.regulatory.regulatory_profile.industry_groups;
+    let gridHTML = '', cascadesHTML = '';
+    data.forEach(group => {
+      const gid = slugify(group.industry_group);
+      gridHTML += `<div class="check-item" onclick="toggleCheckCascade(this,'reg-${gid}')">${group.industry_group}</div>`;
+      let regOpts = '<option value="">Select regulator...</option>';
+      group.regulators.forEach(r => regOpts += `<option value="${r.regulator}">${r.regulator}</option>`);
+      const regDropId = `reg-drop-${gid}`, regFreeId = `reg-free-${gid}`;
+      const reqGridId = `reg-req-${gid}`, reqFreeId = `reg-req-free-${gid}`;
+      cascadesHTML += `
+        <div class="cascade-block" id="reg-${gid}">
+          <div class="field-group">
+            <div class="field">
+              <div class="field-label-row">
+                <label class="field-label">${group.industry_group} - Regulator</label>
+                ${toggleBtn(regDropId, regFreeId)}
+              </div>
+              <select id="${regDropId}" onchange="onRegChange('${gid}',this.value)">${regOpts}</select>
+              <input type="text" id="${regFreeId}" placeholder="Enter regulator..." style="display:none;margin-top:6px;">
+            </div>
+            <div class="cascade-block level-3" id="reg-req-cascade-${gid}">
+              <div class="field">
+                <div class="field-label-row">
+                  <label class="field-label">Specific Requirements</label>
+                  ${toggleBtn(reqGridId, reqFreeId)}
+                </div>
+                <div class="multi-select-grid" id="${reqGridId}"></div>
+                <input type="text" id="${reqFreeId}" placeholder="Enter specific requirements..." style="display:none;margin-top:6px;">
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Compliance Notes</label>
+              <textarea id="reg-notes-${gid}" placeholder="Add any specific compliance context or notes..."></textarea>
+            </div>
+          </div>
+        </div>`;
+    });
+    grid.innerHTML = gridHTML;
+    cascades.innerHTML = cascadesHTML;
+  }
+  function onRegChange(gid, regVal) {
+    const reqGrid = document.getElementById(`reg-req-${gid}`);
+    const cascade = document.getElementById(`reg-req-cascade-${gid}`);
+    if (!regVal) { cascade.classList.remove('visible'); return; }
+    const group = appData.regulatory.regulatory_profile.industry_groups.find(g => slugify(g.industry_group) === gid);
+    if (!group) return;
+    const reg = group.regulators.find(r => r.regulator === regVal);
+    if (!reg) return;
+    reqGrid.innerHTML = reg.requirements.map(r => `<div class="check-item" onclick="toggleCheckOnly(this)">${r}</div>`).join('');
+    cascade.classList.add('visible');
+  }
+
+  // ── RENDER: RISK ──
+  function renderRisk() {
+    const grid = document.getElementById('riskIndustryGrid');
+    const cascades = document.getElementById('riskCascades');
+    const data = appData.risk.risk_profile.industry_groups;
+    let gridHTML = '', cascadesHTML = '';
+    data.forEach(group => {
+      const gid = slugify(group.industry_group);
+      gridHTML += `<div class="check-item" onclick="toggleCheckCascade(this,'risk-${gid}')">${group.industry_group}</div>`;
+      let riskOpts = '<option value="">Select risk type...</option>';
+      group.risk_types.forEach(r => riskOpts += `<option value="${r.risk_type}">${r.risk_type}</option>`);
+      const riskDropId = `risk-drop-${gid}`, riskFreeId = `risk-free-${gid}`;
+      const specGridId = `risk-spec-${gid}`, specFreeId = `risk-spec-free-${gid}`;
+      cascadesHTML += `
+        <div class="cascade-block" id="risk-${gid}">
+          <div class="field-group">
+            <div class="field">
+              <div class="field-label-row">
+                <label class="field-label">${group.industry_group} - Risk Type</label>
+                ${toggleBtn(riskDropId, riskFreeId)}
+              </div>
+              <select id="${riskDropId}" onchange="onRiskChange('${gid}',this.value)">${riskOpts}</select>
+              <input type="text" id="${riskFreeId}" placeholder="Enter risk type..." style="display:none;margin-top:6px;">
+            </div>
+            <div class="cascade-block level-3" id="risk-spec-cascade-${gid}">
+              <div class="field">
+                <div class="field-label-row">
+                  <label class="field-label">Specific Risks</label>
+                  ${toggleBtn(specGridId, specFreeId)}
+                </div>
+                <div class="multi-select-grid" id="${specGridId}"></div>
+                <input type="text" id="${specFreeId}" placeholder="Enter specific risks..." style="display:none;margin-top:6px;">
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Risk Notes</label>
+              <textarea id="risk-notes-${gid}" placeholder="Add any specific risk context or notes..."></textarea>
+            </div>
+          </div>
+        </div>`;
+    });
+    grid.innerHTML = gridHTML;
+    cascades.innerHTML = cascadesHTML;
+  }
+  function onRiskChange(gid, riskVal) {
+    const specGrid = document.getElementById(`risk-spec-${gid}`);
+    const cascade = document.getElementById(`risk-spec-cascade-${gid}`);
+    if (!riskVal) { cascade.classList.remove('visible'); return; }
+    const group = appData.risk.risk_profile.industry_groups.find(g => slugify(g.industry_group) === gid);
+    if (!group) return;
+    const rt = group.risk_types.find(r => r.risk_type === riskVal);
+    if (!rt) return;
+    specGrid.innerHTML = rt.specific_risks.map(r => `<div class="check-item" onclick="toggleCheckOnly(this)">${r}</div>`).join('');
+    cascade.classList.add('visible');
+  }
+
+  // ── WORKFLOW ──
+  function startWorkflow() {
+    if (!appData || Object.keys(appData).length === 0) {
+      alert('Data files are still loading. Please wait a moment and try again.');
+      return;
+    }
+    formData = compileForm();
+    showWorkflow();
+  }
+  function goBackToForm() {
+    document.getElementById('formPage').classList.add('active');
+    document.getElementById('workflowPage').classList.remove('active');
+    document.getElementById('headerSubtitle').textContent = 'Form';
+  }
+  function showWorkflow() {
+    document.getElementById('formPage').classList.remove('active');
+    document.getElementById('workflowPage').classList.add('active');
+    document.getElementById('headerSubtitle').textContent = 'Workflow';
+    document.getElementById('workflowTitle').textContent = `${formData.engagement_context.client_name} — ${formData.engagement_context.engagement_name}`;
+    renderWorkflow();
+    const mainPanel = document.querySelector('.workflow-main');
+    if (mainPanel) mainPanel.scrollTop = 0;
+    setTimeout(function() { if (mainPanel) mainPanel.scrollTop = 0; }, 300);
+    setTimeout(function() { if (mainPanel) mainPanel.scrollTop = 0; }, 700);
+    // Always jump to the first workflow guidance step regardless of where the user was in the form guidance
+    if (guidedMode && guidancePanel) {
+      const firstWorkflowStep = guidanceSteps.findIndex(s => s.target === 'promptCards');
+      if (firstWorkflowStep >= 0) {
+        currentStep = firstWorkflowStep;
+        setTimeout(function() { showGuidanceStep(currentStep); }, 500);
+      }
+    }
+  }
+
+  // ── RENDER WORKFLOW ──
+  function renderWorkflow() {
+    const sidebar = document.getElementById('workflowSidebar');
+    const cards = document.getElementById('promptCards');
+    const workflow = appData.workflow;
+    let sidebarHTML = '', cardsHTML = '';
+    let totalSteps = 0;
+
+    workflow.phases.forEach(phase => {
+      sidebarHTML += `<div class="sidebar-phase"><div class="sidebar-phase-label">${phase.phase_name}</div>`;
+      phase.prompts.forEach((prompt, idx) => {
+        totalSteps++;
+        const isFirst = phase.phase_id === 'P1' && idx === 0;
+        const status = isFirst ? 'active' : 'locked';
+        sidebarHTML += `
+          <div class="sidebar-item ${status}" id="sidebar-${prompt.prompt_id}" onclick="scrollToCard('${prompt.prompt_id}')">
+            <div class="step-dot">${prompt.prompt_id.replace('P','')}</div>
+            ${prompt.prompt_name}
+          </div>`;
+        const depsHTML = prompt.depends_on
+          ? prompt.depends_on.map(d => `<span class="dep-tag">${d}</span>`).join(' ')
+          : '<span class="dep-tag">None - first step</span>';
+        cardsHTML += `
+          <div class="prompt-card ${isFirst ? 'active-card' : 'locked-card'}" id="card-${prompt.prompt_id}">
+            <div class="prompt-card-header" onclick="toggleCard('${prompt.prompt_id}')">
+              <div class="prompt-card-header-left">
+                <span class="prompt-id">${prompt.prompt_id}</span>
+                <div>
+                  <div class="prompt-name">${prompt.prompt_name}</div>
+                </div>
+              </div>
+              <span class="status-badge ${isFirst ? 'badge-ready' : 'badge-locked'}" id="badge-${prompt.prompt_id}">
+                ${isFirst ? 'Ready' : 'Locked'}
+              </span>
+            </div>
+            <div class="prompt-card-body" id="body-${prompt.prompt_id}">
+              <div class="meta-row">
+                <span class="meta-label">Uses:</span>
+                ${depsHTML}<span class="meta-label">Produces:</span>
+                <span class="artifact-tag">${prompt.artifact}</span>
+              </div>
+              ${prompt.stage_gate ? `<div class="Stage-gate">Stage gate</div>` : ''}
+              <div class="prompt-box-header">
+                <span class="prompt-box-label">Prompt:</span>
+              </div>
+              <div class="prompt-text-box" id="prompt-text-${prompt.prompt_id}">Loading prompt...</div>
+              <div class="prompt-actions">
+                <button class="btn-copy" id="copy-btn-${prompt.prompt_id}" onclick="copyPrompt('${prompt.prompt_id}')">Copy Prompt</button>
+                <button class="btn-export" id="export-btn-${prompt.prompt_id}" onclick="exportPrompt('${prompt.prompt_id}')">Export</button>
+                <button class="btn-mark-done" onclick="markDone('${prompt.prompt_id}')">Mark Complete</button>
+              </div>
+              <div class="export-hint">Export saves a .txt backup, useful if your browser refreshes or session times out. Run each prompt with <strong>Code Interpreter enabled</strong> in your AI tool.</div>
+            </div>
+          </div>`;
+      });
+      sidebarHTML += `</div>`;
+    });
+
+    sidebar.innerHTML = sidebarHTML;
+    cards.innerHTML = cardsHTML;
+    document.getElementById('card-P1.1').classList.add('open');
+    setTimeout(function() {
+      const mainPanel = document.querySelector('.workflow-main');
+      if (mainPanel) mainPanel.scrollTop = 0;
+    }, 600);
+    document.getElementById('progressText').textContent = `0 of ${totalSteps} steps complete`;
+    loadAllPrompts(workflow);
+  }
+
+  // ── LOAD PROMPTS FROM FILES ──
+  async function loadAllPrompts(workflow) {
+    for (const phase of workflow.phases) {
+      for (const prompt of phase.prompts) {
+        const el = document.getElementById(`prompt-text-${prompt.prompt_id}`);
+        if (!el) continue;
+        try {
+          const res = await fetch(`./prompts/${prompt.file}`);
+          if (!res.ok) throw new Error(`Not found`);
+          const json = await res.json();
+          const text = buildPromptText(prompt, json, formData);
+          el.textContent = text;
+        } catch (err) {
+          el.textContent = `[Prompt file not found: ./prompts/${prompt.file}]`;
+          el.style.color = '#f87171';
+        }
+      }
+    }
+  }
+
+  // ── BUILD PROMPT TEXT ──
+  function buildPromptText(prompt, promptJson, data) {
+  if (prompt.prompt_id === 'P1.1') {
+    const briefJson = JSON.stringify(data, null, 2);
+    const instruction = promptJson.instruction || '[Instruction not found in prompt file]';
+    return instruction.replace('{{ENGAGEMENT_DATA}}', briefJson);
+  }
+  const instruction = promptJson.instruction || '[Instruction not found in prompt file]';
+  return instruction;
+}
+
+  // ── WORKFLOW CONTROLS ──
+  function toggleCard(id) {
+    const card = document.getElementById(`card-${id}`);
+    if (card.classList.contains('locked-card')) return;
+    card.classList.toggle('open');
+  }
+  function scrollToCard(id) {
+    const card = document.getElementById(`card-${id}`);
+    if (card && !card.classList.contains('locked-card')) {
+      card.classList.add('open');
+      setTimeout(function() {
+        const mainPanel = document.querySelector('.workflow-main');
+        const cardTop = card.getBoundingClientRect().top - mainPanel.getBoundingClientRect().top + mainPanel.scrollTop - 80;
+        mainPanel.scrollTo({ top: cardTop, behavior: 'smooth' });
+      }, 50);
+    }
+  }
+  function copyPrompt(id) {
+    const text = document.getElementById(`prompt-text-${id}`).textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById(`copy-btn-${id}`);
+      btn.textContent = '✓ Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.innerHTML = 'Copy Prompt'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+  function exportPrompt(id) {
+    const text = document.getElementById(`prompt-text-${id}`).textContent;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `prompt-${id}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
+    const btn = document.getElementById(`export-btn-${id}`);
+    if (btn) {
+      btn.textContent = '✓ Exported!';
+      setTimeout(() => { btn.innerHTML = 'Export'; }, 2000);
+    }
+  }
+  function markDone(id) {
+    completedSteps.add(id);
+    const card = document.getElementById(`card-${id}`);
+    const badge = document.getElementById(`badge-${id}`);
+    const sidebarItem = document.getElementById(`sidebar-${id}`);
+    card.classList.remove('active-card');
+    card.classList.add('completed-card');
+    card.classList.remove('open');
+    if (badge) { badge.textContent = 'Complete'; badge.className = 'status-badge badge-done'; }
+    if (sidebarItem) { sidebarItem.classList.remove('active'); sidebarItem.classList.add('completed'); }
+    unlockNextSteps();
+    updateProgress();
+    // Find and open the next unlocked card
+    const allCards = document.querySelectorAll('.prompt-card');
+    for (const c of allCards) {
+      if (c.classList.contains('active-card') && !c.classList.contains('completed-card')) {
+        c.classList.add('open');
+        setTimeout(function() {
+          const mainPanel = document.querySelector('.workflow-main');
+          const cardTop = c.getBoundingClientRect().top - mainPanel.getBoundingClientRect().top + mainPanel.scrollTop - 80;
+          mainPanel.scrollTo({ top: cardTop, behavior: 'smooth' });
+        }, 50);
+        break;
+      }
+    }
+  }
+  function unlockNextSteps() {
+    appData.workflow.phases.forEach(phase => {
+      phase.prompts.forEach(prompt => {
+        if (!prompt.depends_on) return;
+        const allDepsDone = prompt.depends_on.every(dep => completedSteps.has(dep));
+        if (allDepsDone) {
+          const card = document.getElementById(`card-${prompt.prompt_id}`);
+          const badge = document.getElementById(`badge-${prompt.prompt_id}`);
+          const sidebarItem = document.getElementById(`sidebar-${prompt.prompt_id}`);
+          if (card && card.classList.contains('locked-card')) {
+            card.classList.remove('locked-card');
+            card.classList.add('active-card');
+            if (badge) { badge.textContent = 'Ready'; badge.className = 'status-badge badge-ready'; }
+            if (sidebarItem) { sidebarItem.classList.remove('locked'); sidebarItem.classList.add('active'); }
+          }
+        }
+      });
+    });
+  }
+  function updateProgress() {
+    const total = appData.workflow.phases.reduce((sum, p) => sum + p.prompts.length, 0);
+    const done = completedSteps.size;
+    const pct = Math.round((done / total) * 100);
+    document.getElementById('progressFill').style.width = `${pct}%`;
+    document.getElementById('progressText').textContent = `${done} of ${total} steps complete`;
+  }
+
+  // ── FORM COMPILATION ──
+  function compileForm() {
+    return {
+      engagement_context: {
+        client_name: (document.getElementById('clientName') || {}).value || '',
+        engagement_name: (document.getElementById('engagementName') || {}).value || '',
+        start_date: (document.getElementById('startDate') || {}).value || '',
+        end_date: (document.getElementById('endDate') || {}).value || ''
+      },
+      industry: {
+        industry: getVal('industryDrop', 'industryFree'),
+        sector: getVal('sectorDrop', 'sectorFree'),
+        sub_sector: getVal('subsectorDrop', 'subsectorFree')
+      },
+      objectives: compileObjectives(),
+      scope: {
+        success_criteria: (document.getElementById('successCriteria') || {}).value || '',
+        in_scope: (document.getElementById('inScope') || {}).value || '',
+        out_of_scope: (document.getElementById('outScope') || {}).value || '',
+        additional_notes: (document.getElementById('additionalNotes') || {}).value || ''
+      },
+      service_offerings: compileServices(),
+      technology: compileTech(),
+      alliance_partners: compilePartners(),
+      regulatory_profile: compileReg(),
+      risk_profile: compileRisk()
+    };
+  }
+  function compileObjectives() {
+    const result = [];
+    if (!appData.objectives) return result;
+    appData.objectives.engagement_objectives.objective_types.forEach(objType => {
+      const typeId = slugify(objType.objective_type);
+      const cascade = document.getElementById(`obj-${typeId}`);
+      if (!cascade || !cascade.classList.contains('visible')) return;
+      const themes = [];
+      objType.themes.forEach(theme => {
+        const themeId = `${typeId}-${slugify(theme.theme)}`;
+        const val = getVal(`obj-drop-${themeId}`, `obj-free-${themeId}`);
+        if (val) themes.push({ theme: theme.theme, specific_objective: val });
+      });
+      const ctx = document.getElementById(`obj-context-${typeId}`);
+      result.push({ objective_type: objType.objective_type, themes, additional_context: ctx ? ctx.value : '' });
+    });
+    return result;
+  }
+  function compileServices() {
+  const result = [];
+  if (!appData.services) return result;
+  appData.services.domains.forEach(domain => {
+    const domId = slugify(domain.domain);
+    const cascade = document.getElementById(`svc-${domId}`);
+    if (!cascade || !cascade.classList.contains('visible')) return;
+    const selected = [];
+    domain.building_blocks.forEach(bb => {
+      const bbId = `bb-${domId}-${slugify(bb.building_block)}`;
+      const descId = `desc-${domId}-${slugify(bb.building_block)}`;
+      const el = document.getElementById(bbId);
+      if (el && el.classList.contains('selected')) {
+        const editEl = document.getElementById(`${descId}-edit`);
+        const displayEl = document.getElementById(`${descId}-display`);
+        const description = editEl && editEl.value
+          ? editEl.value
+          : displayEl
+          ? displayEl.textContent
+          : bb.description;
+        selected.push({
+          building_block: bb.building_block,
+          description: description
+        });
+      }
+    });
+    const notes = document.getElementById(`svc-notes-${domId}`);
+    result.push({
+      domain: domain.domain,
+      building_blocks: selected,
+      notes: notes ? notes.value : ''
+    });
+  });
+  return result;
+}
+  function compileTech() {
+    const result = [];
+    if (!appData.technologies) return result;
+    appData.technologies.technology_and_tools.categories.forEach(cat => {
+      const catId = slugify(cat.category);
+      const cascade = document.getElementById(`tech-${catId}`);
+      if (!cascade || !cascade.classList.contains('visible')) return;
+      const subCat = getVal(`tech-sub-drop-${catId}`, `tech-sub-free-${catId}`);
+      const prodFree = document.getElementById(`tech-prod-free-${catId}`);
+      const prodGrid = document.getElementById(`tech-prod-${catId}`);
+      const products = [];
+      if (prodFree && prodFree.style.display === 'block') {
+        if (prodFree.value) products.push(prodFree.value);
+      } else if (prodGrid) {
+        prodGrid.querySelectorAll('.check-item.selected').forEach(el => products.push(el.textContent.trim()));
+      }
+      const notes = document.getElementById(`tech-notes-${catId}`);
+      result.push({ category: cat.category, sub_category: subCat, products, notes: notes ? notes.value : '' });
+    });
+    return result;
+  }
+  function compilePartners() {
+    const result = [];
+    if (!appData.partners) return result;
+    appData.partners.alliance_partners.partners.forEach(partner => {
+      const pid = slugify(partner.partner);
+      const cascade = document.getElementById(`partner-${pid}`);
+      if (!cascade || !cascade.classList.contains('visible')) return;
+      const fam = getVal(`partner-fam-drop-${pid}`, `partner-fam-free-${pid}`);
+      const prodFree = document.getElementById(`partner-prod-free-${pid}`);
+      const prodGrid = document.getElementById(`partner-prod-${pid}`);
+      const products = [];
+      if (prodFree && prodFree.style.display === 'block') {
+        if (prodFree.value) products.push(prodFree.value);
+      } else if (prodGrid) {
+        prodGrid.querySelectorAll('.check-item.selected').forEach(el => products.push(el.textContent.trim()));
+      }
+      const notes = document.getElementById(`partner-notes-${pid}`);
+      result.push({ partner: partner.partner, product_family: fam, products, notes: notes ? notes.value : '' });
+    });
+    return result;
+  }
+  function compileReg() {
+    const result = [];
+    if (!appData.regulatory) return result;
+    appData.regulatory.regulatory_profile.industry_groups.forEach(group => {
+      const gid = slugify(group.industry_group);
+      const cascade = document.getElementById(`reg-${gid}`);
+      if (!cascade || !cascade.classList.contains('visible')) return;
+      const reg = getVal(`reg-drop-${gid}`, `reg-free-${gid}`);
+      const reqFree = document.getElementById(`reg-req-free-${gid}`);
+      const reqGrid = document.getElementById(`reg-req-${gid}`);
+      const requirements = [];
+      if (reqFree && reqFree.style.display === 'block') {
+        if (reqFree.value) requirements.push(reqFree.value);
+      } else if (reqGrid) {
+        reqGrid.querySelectorAll('.check-item.selected').forEach(el => requirements.push(el.textContent.trim()));
+      }
+      const notes = document.getElementById(`reg-notes-${gid}`);
+      result.push({ industry_group: group.industry_group, regulator: reg, requirements, compliance_notes: notes ? notes.value : '' });
+    });
+    return result;
+  }
+  function compileRisk() {
+    const result = [];
+    if (!appData.risk) return result;
+    appData.risk.risk_profile.industry_groups.forEach(group => {
+      const gid = slugify(group.industry_group);
+      const cascade = document.getElementById(`risk-${gid}`);
+      if (!cascade || !cascade.classList.contains('visible')) return;
+      const riskType = getVal(`risk-drop-${gid}`, `risk-free-${gid}`);
+      const specFree = document.getElementById(`risk-spec-free-${gid}`);
+      const specGrid = document.getElementById(`risk-spec-${gid}`);
+      const specific = [];
+      if (specFree && specFree.style.display === 'block') {
+        if (specFree.value) specific.push(specFree.value);
+      } else if (specGrid) {
+        specGrid.querySelectorAll('.check-item.selected').forEach(el => specific.push(el.textContent.trim()));
+      }
+      const notes = document.getElementById(`risk-notes-${gid}`);
+      result.push({ industry_group: group.industry_group, risk_type: riskType, specific_risks: specific, risk_notes: notes ? notes.value : '' });
+    });
+    return result;
+  }
+
+  // ── INIT ──
+  document.addEventListener('DOMContentLoaded', loadAllData);
+// ─── LANDING PAGE ───
+let guidedMode = false;
+let selectedMode = 'guided';
+
+
+function launchSelected() {
+  if (selectedMode === 'guided') {
+    guidedMode = true;
+    showFormPage();
+    setTimeout(initGuidedExperience, 300);
+  } else {
+    guidedMode = false;
+    showFormPage();
+  }
+}
+
+function showFormPage() {
+  document.getElementById('landingPage').classList.remove('active');
+  document.getElementById('formPage').classList.add('active');
+  if (typeof updateHeader === 'function') updateHeader();
+  if (!guidedMode && !document.querySelector('.guidance-toggle')) {
+    var t = document.createElement('button');
+    t.className = 'guidance-toggle';
+    t.textContent = '▶ Start Guidance';
+    t.onclick = initGuidedExperience;
+    var fr = document.querySelector('.footer-right');
+    if (fr) fr.prepend(t);
+  }
+}
+
+// ── Conveyor autoplay ──
+(function () {
+  var cardWidth = 212; // 200px card + 12px gap
+  var speed = 2800;    // ms per step - increase to slow down
+
+  function init() {
+    var conveyor = document.getElementById('lp-conveyor');
+    if (!conveyor) return;
+
+    // Clone all original cards 10 times so the conveyor runs for a very long time
+    var origCards = Array.from(conveyor.querySelectorAll('.lp-cv-card'));
+    var n = origCards.length;
+    for (var r = 0; r < 10; r++) {
+      origCards.forEach(function (c) {
+        var clone = c.cloneNode(true);
+        clone.setAttribute('aria-hidden', 'true');
+        conveyor.appendChild(clone);
+      });
+    }
+
+    var cur = 0;
+    var totalCards = n * 11; // originals + 10 clones
+    var paused = false;
+
+    function centerOffset() {
+      // How much to shift so the active card sits in the middle of the viewport
+      return Math.round(window.innerWidth / 2 - cardWidth / 2);
+    }
+
+    function activate(i, animate) {
+      // Highlight the matching card in the original set
+      origCards.forEach(function (c, j) {
+        c.classList.toggle('lp-cv-active', j === i % n);
+      });
+      conveyor.style.transition = animate === false ? 'none' : 'transform 0.6s cubic-bezier(0.4,0,0.2,1)';
+      // Offset so active card is centered in viewport
+      var shift = centerOffset() - (i * cardWidth);
+      conveyor.style.transform = 'translateX(' + shift + 'px)';
+    }
+
+    // Start immediately - no delay
+    activate(0, false);
+
+    // Pause on hover over the conveyor area
+    conveyor.addEventListener('mouseenter', function () { paused = true; });
+    conveyor.addEventListener('mouseleave', function () { paused = false; });
+
+    // Step immediately after a tiny delay so first move is instant, then keep interval
+    setTimeout(function () {
+      cur = 1;
+      activate(cur);
+      setInterval(function () {
+        if (paused) return;
+        cur++;
+        if (cur >= totalCards) {
+          activate(0, false);
+          cur = 0;
+        } else {
+          activate(cur);
+        }
+      }, speed);
+    }, speed);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+}());
+
+
+// ── GUIDED EXPERIENCE ──
+const guidanceSteps = [
+  {
+    target: 'formPage',
+    title: 'Welcome to the Engagement Brief',
+    text: 'This form captures everything the AI needs to generate your full planning suite. Work through each section carefully - the more detail you provide, the better your planning documents will be.',
+    example: null,
+    position: 'center'
+  },
+  {
+    target: 'clientName',
+    title: 'Client Name',
+    text: 'Enter the full legal name of the client organisation. This will appear on the cover of every document generated and in all engagement records.',
+    example: 'e.g. Commonwealth Bank of Australia, Department of Health, Telstra Corporation Limited',
+    position: 'below'
+  },
+  {
+    target: 'engagementName',
+    title: 'Engagement Name',
+    text: 'Give this engagement a clear, descriptive name that reflects what you are doing and for whom. Avoid internal codes - use a name that means something to the client.',
+    example: 'e.g. Finance Transformation Program, SAP S/4HANA Implementation, Operating Model Redesign',
+    position: 'below'
+  },
+  {
+    target: 'startDate',
+    title: 'Estimated Dates',
+    text: 'Enter the expected start and end date for the engagement. If not yet confirmed use your best estimate - it can be updated in the planning documents later.',
+    example: null,
+    position: 'below'
+  },
+  {
+    target: 's2',
+    title: 'Industry',
+    text: 'Select the client\'s industry, sector and sub-sector. This drives industry-specific content across all planning documents, regulatory requirements, risk profiles, stakeholder norms and more.',
+    example: 'e.g. Financial Services → Banking and Capital Markets → Retail Banking',
+    position: 'below',
+    openSection: 's2'
+  },
+  {
+    target: 's3',
+    title: 'Engagement Objectives',
+    text: 'Select all objective types that apply to this engagement then drill down to the specific objectives within each type. The more precisely you define the objectives the sharper the planning outputs will be.',
+    example: 'e.g. Business Problem → Technology & Systems → Ageing legacy technology',
+    position: 'below',
+    openSection: 's3'
+  },
+  {
+    target: 's4',
+    title: 'Service Offerings',
+    text: 'Select the PwC domains and building blocks that will be delivered in this engagement. When you select a building block its description will appear, you can edit this to reflect how it applies specifically to this client.',
+    example: 'e.g. Data & AI → Data Engineering & Data Modernization',
+    position: 'below',
+    openSection: 's4'
+  },
+  {
+    target: 's5',
+    title: 'Technology & Tools',
+    text: 'Select the technologies already in use or being implemented at the client. This gives the AI the context to tailor technical planning documents and identify technology-specific risks.',
+    example: 'e.g. ERP & Business Applications → Core ERP → SAP S/4HANA',
+    position: 'below',
+    openSection: 's5'
+  },
+  {
+    target: 's6',
+    title: 'Alliance Partners',
+    text: 'Select any alliance partners whose products are involved in this engagement. This helps the AI identify partner-specific workstreams, risks and governance considerations.',
+    example: 'e.g. SAP → ERP & Finance → SAP S/4HANA Cloud',
+    position: 'below',
+    openSection: 's6'
+  },
+  {
+    target: 's7',
+    title: 'Regulatory Profile',
+    text: 'Select the regulatory bodies and specific requirements applicable to this engagement. This drives the compliance content across the Risk Register, Scope Statement and Engagement Charter.',
+    example: 'e.g. Financial Services → APRA → CPS 234 Information Security',
+    position: 'below',
+    openSection: 's7'
+  },
+  {
+    target: 's8',
+    title: 'Risk Profile',
+    text: 'Select the risk categories and specific risks most relevant to this engagement. The more risks you identify here the more comprehensive your Risk Register will be from day one.',
+    example: 'e.g. All Industries → Technology & Cyber Risk → Legacy system risk',
+    position: 'below',
+    openSection: 's8'
+  },
+  {
+    target: 'formPage',
+    title: 'How to Fill In Each Field',
+    text: 'For every field in the form you have three options: pick a value from the dropdown or multi-select grid, click <strong>Enter manually</strong> to type your own custom answer, or simply leave the field blank if it is not relevant. All three are valid.',
+    example: 'Tip: Dropdowns give you structured options, but "Enter manually" lets you say exactly what you mean.',
+    position: 'center',
+    highlightToggleBtn: true
+  },
+  {
+    target: 'formPage',
+    title: 'Using "Enter Manually"',
+    text: 'Clicking <strong>Enter manually</strong> on any field replaces the dropdown with a free-text box so you can write your own value. This is useful when the pre-built options do not quite fit your engagement. Click it again to switch back to the dropdown.',
+    example: 'e.g. Type a bespoke service description, a niche regulator name, or a specific risk that is not in the list.',
+    position: 'center',
+    highlightToggleBtn: true
+  },
+  {
+    target: 'formPage',
+    title: 'Leaving Fields Blank',
+    text: 'You do not need to fill in every field. If a section is not relevant to your engagement, leave it blank, the AI will simply omit that context from the prompts it generates. Focus on the sections that matter most.',
+    example: 'Tip: A focused brief with accurate detail in fewer sections will produce better outputs than a partially-filled form across all sections.',
+    position: 'center'
+  },
+  {
+    target: 'formPage',
+    title: 'Ready to Go - Head to the Workflow',
+    text: 'Your Engagement Brief is complete. Click <strong>Start Workflow →</strong> at the top of this page to move to the Workflow tab and begin generating your planning suite.',
+    example: 'Tip: Keep this browser tab open throughout the workflow, each prompt references the outputs from previous steps.',
+    position: 'center',
+    goToWorkflow: true
+  },
+  {
+    target: 'promptCards',
+    title: 'Welcome to Your Workflow',
+    text: 'Each card is a planning step in sequence. Steps are <strong>locked</strong> until their pre-cursor prompts have been completed, this is intentional. Each prompt builds directly on the outputs of the ones before it, so the order matters.',
+    example: 'Tip: You will see steps unlock automatically as you mark earlier ones complete.',
+    position: 'side'
+  },
+  {
+    target: 'card-P1.1',
+    title: 'Start with P1.1',
+    text: 'P1.1 is already unlocked and ready to run. Click <strong>Copy Prompt</strong> to copy the full prompt text, then paste it into your AI tool. Once the AI has finished and you have reviewed the output, click <strong>Mark Complete</strong> to unlock the next step.',
+    example: null,
+    position: 'side'
+  },
+  {
+    target: 'card-P1.1',
+    title: 'Enable Code Interpreter',
+    text: 'Before running any prompt, make sure <strong>Code Interpreter</strong> (or the equivalent tool in your AI platform) is enabled. The prompts rely on it to process structured data correctly. Without it, outputs may be incomplete or incorrectly formatted.',
+    example: 'In ChatGPT: open a new chat → click the "+" or tools icon → enable Code Interpreter. In other tools, look for "Advanced Data Analysis" or a similar setting.',
+    position: 'side'
+  },
+  {
+    target: 'card-P1.1',
+    title: 'Copy or Export Each Prompt',
+    text: 'Use <strong>Copy Prompt</strong> to paste the prompt directly into your AI tool. Use <strong>Export Prompt</strong> to save it as a .txt file. Exporting is recommended, it ensures you do not lose your context if your browser refreshes or your session times out.',
+    example: 'Tip: Export each prompt before you run it so you always have a local backup of your full engagement context.',
+    position: 'side'
+  }
+];
+
+let currentStep = 0;
+let highlightedEl = null;
+let guidancePanel = null;
+
+function initGuidedExperience() {
+  guidedMode = true;
+  currentStep = 0;
+
+  if (!guidancePanel) {
+    guidancePanel = document.createElement('div');
+    guidancePanel.className = 'guidance-panel';
+    guidancePanel.id = 'guidancePanel';
+    document.body.appendChild(guidancePanel);
+  }
+
+  showGuidanceStep(currentStep);
+}
+
+function showGuidanceStep(index) {
+  if (index < 0 || index >= guidanceSteps.length) return;
+
+  const step = guidanceSteps[index];
+
+  if (highlightedEl) {
+    highlightedEl.classList.remove('guidance-highlight');
+    highlightedEl = null;
+  }
+
+  if (step.openSection) {
+    const section = document.getElementById(step.openSection);
+    if (section && !section.classList.contains('open')) {
+      section.classList.add('open');
+    }
+  }
+
+  const targetEl = document.getElementById(step.target);
+  const isFirst = index === 0;
+  const isLast = index === guidanceSteps.length - 1;
+
+  // Determine next-button label: if this step triggers workflow transition, label it accordingly
+  const isGoToWorkflow = !!step.goToWorkflow;
+  let nextLabel = isLast ? 'Finish;' : (isGoToWorkflow ? 'Go to Workflow;' : 'Next;');
+
+  guidancePanel.innerHTML = `
+    <div class="guidance-panel-header">
+      <span class="guidance-panel-title">Guided Experience</span>
+      <span class="guidance-panel-counter">Step ${index + 1} of ${guidanceSteps.length}</span>
+    </div>
+    <div class="guidance-panel-body">
+      <div class="guidance-panel-step-title">${step.title}</div>
+      <p class="guidance-panel-text">${step.text}</p>
+      ${step.example ? `<div class="guidance-panel-example">${step.example}</div>` : ''}
+    </div>
+    <div class="guidance-panel-footer">
+      <button class="guidance-panel-skip" onclick="skipGuidance()">Skip Guidance</button>
+      <div class="guidance-panel-actions">
+        ${!isFirst ? `<button class="btn-guidance-back" onclick="prevGuidanceStep()">Back</button>` : ''}
+        <button class="btn-guidance-next" onclick="nextGuidanceStep()">
+          ${nextLabel}
+        </button>
+      </div>
+    </div>
+  `;
+
+  guidancePanel.classList.add('visible');
+
+  // Highlight the target element if it exists
+  if (targetEl) {
+    targetEl.classList.add('guidance-highlight');
+    highlightedEl = targetEl;
+    // Only scroll on the form page — on the workflow page the panel is fixed and no scroll is needed
+    if (document.getElementById('formPage').classList.contains('active')) {
+      targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  // Highlight a visible "Enter manually" toggle button for the how-to-fill steps
+  if (step.highlightToggleBtn) {
+    const toggleBtns = document.querySelectorAll('.btn-toggle-input');
+    let firstVisible = null;
+    for (const btn of toggleBtns) {
+      const rect = btn.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) { firstVisible = btn; break; }
+    }
+    if (firstVisible) {
+      firstVisible.classList.add('guidance-highlight');
+      highlightedEl = firstVisible;
+      firstVisible.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+}
+
+function nextGuidanceStep() {
+  const step = guidanceSteps[currentStep];
+  // If this step is the "go to workflow" transition, fire it first
+  if (step && step.goToWorkflow) {
+    startWorkflow();
+    currentStep++;
+    // Give the workflow a moment to render before showing the next guidance card
+    setTimeout(function() { showGuidanceStep(currentStep); }, 400);
+    return;
+  }
+  if (currentStep < guidanceSteps.length - 1) {
+    currentStep++;
+    showGuidanceStep(currentStep);
+  } else {
+    skipGuidance();
+  }
+}
+
+function prevGuidanceStep() {
+  if (currentStep > 0) {
+    currentStep--;
+    showGuidanceStep(currentStep);
+  }
+}
+
+function skipGuidance() {
+  if (guidancePanel) {
+    guidancePanel.classList.remove('visible');
+  }
+  if (highlightedEl) {
+    highlightedEl.classList.remove('guidance-highlight');
+    highlightedEl = null;
+  }
+  guidedMode = false;
+}
+</script>
+</body>
+</html>

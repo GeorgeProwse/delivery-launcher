@@ -1,0 +1,397 @@
+{
+  "engagement_objectives": {
+    "field_type": "multi-select",
+    "objective_types": [
+      {
+        "objective_type": "Business Problem",
+        "description": "What is broken or underperforming today",
+        "themes": [
+          {
+            "theme": "Financial Performance",
+            "specific_objectives": ["N/A",
+              "High operating costs",
+              "Declining margins",
+              "Inefficient capital allocation",
+              "Poor financial reporting accuracy",
+              "Lack of financial visibility and transparency",
+              "Ineffective budgeting and forecasting",
+              "High cost of finance function",
+              "Revenue leakage",
+              "Inefficient tax management",
+              "Poor working capital management"
+            ]
+          },
+          {
+            "theme": "Operational Performance",
+            "specific_objectives": ["N/A",
+              "Inefficient or broken business processes",
+              "High error rates and rework",
+              "Poor productivity",
+              "Lack of process standardisation",
+              "Siloed operations across business units",
+              "Ineffective supplier and vendor management",
+              "Poor asset utilisation",
+              "High cost of operations",
+              "Lack of operational visibility",
+              "Ineffective demand and capacity planning"
+            ]
+          },
+          {
+            "theme": "Customer & Market",
+            "specific_objectives": ["N/A",
+              "Poor customer experience",
+              "High customer churn",
+              "Declining market share",
+              "Inability to acquire new customers",
+              "Lack of customer insight and analytics",
+              "Inconsistent customer service across channels",
+              "Slow response to changing customer needs",
+              "Ineffective pricing strategy",
+              "Poor brand perception",
+              "Weak digital customer engagement"
+            ]
+          },
+          {
+            "theme": "Data & Information",
+            "specific_objectives": ["N/A",
+              "Poor data quality",
+              "Fragmented and siloed data",
+              "Lack of trusted single source of truth",
+              "Inability to access and use data effectively",
+              "Inadequate data governance",
+              "Lack of real-time reporting and insight",
+              "Ineffective use of analytics",
+              "Data duplication and inconsistency",
+              "Lack of data literacy across the organisation",
+              "Inability to leverage AI and advanced analytics"
+            ]
+          },
+          {
+            "theme": "Technology & Systems",
+            "specific_objectives": ["N/A",
+              "Ageing and legacy technology landscape",
+              "Fragmented and poorly integrated systems",
+              "High cost of IT operations and maintenance",
+              "Inability to scale technology infrastructure",
+              "Poor system performance and reliability",
+              "Lack of digital capabilities",
+              "Shadow IT and ungoverned technology use",
+              "Poor cybersecurity posture",
+              "Technology debt inhibiting innovation",
+              "Lack of cloud adoption"
+            ]
+          },
+          {
+            "theme": "People & Organisation",
+            "specific_objectives": ["N/A",
+              "High employee turnover and attrition",
+              "Low employee engagement and morale",
+              "Skills gaps and capability shortfalls",
+              "Ineffective organisational structure",
+              "Poor leadership and management effectiveness",
+              "Resistance to change",
+              "Lack of innovation culture",
+              "Ineffective performance management",
+              "Poor workforce planning",
+              "Unclear roles and responsibilities"
+            ]
+          },
+          {
+            "theme": "Risk & Control",
+            "specific_objectives": ["N/A",
+              "Weak internal control environment",
+              "High exposure to operational risk",
+              "Inadequate risk management frameworks",
+              "Poor visibility of enterprise risk",
+              "Ineffective audit and assurance processes",
+              "Lack of business continuity and resilience planning",
+              "Supply chain vulnerability",
+              "Third party and vendor risk exposure",
+              "Fraud and financial crime exposure",
+              "Cybersecurity vulnerabilities"
+            ]
+          }
+        ]
+      },
+      {
+        "objective_type": "Strategic Objective",
+        "description": "Where the client wants to get to",
+        "themes": [
+          {
+            "theme": "Growth & Market Position",
+            "specific_objectives": ["N/A",
+              "Enter new markets or geographies",
+              "Launch new products or services",
+              "Grow market share",
+              "Develop new customer segments",
+              "Build strategic partnerships and alliances",
+              "Monetise data and digital assets",
+              "Develop platform or ecosystem business model",
+              "Improve pricing and revenue management",
+              "Accelerate organic growth",
+              "Drive inorganic growth through M&A"
+            ]
+          },
+          {
+            "theme": "Business Transformation",
+            "specific_objectives": ["N/A",
+              "Define and implement a new business strategy",
+              "Transform the operating model",
+              "Drive enterprise-wide digital transformation",
+              "Consolidate and simplify the business",
+              "Outsource or shared services non-core functions",
+              "Restructure the organisation",
+              "Build a data and AI-driven business",
+              "Transform the customer experience",
+              "Achieve operational excellence",
+              "Build a sustainable and responsible business"
+            ]
+          },
+          {
+            "theme": "Financial Strategy",
+            "specific_objectives": ["N/A",
+              "Improve return on invested capital",
+              "Optimise cost structure",
+              "Improve cash flow and working capital",
+              "Optimise tax position",
+              "Prepare for IPO or capital markets transaction",
+              "Drive shareholder value",
+              "Achieve financial targets and KPIs",
+              "Improve financial planning and analysis capability",
+              "Optimise capital allocation",
+              "Deliver cost reduction programme"
+            ]
+          },
+          {
+            "theme": "Innovation & Differentiation",
+            "specific_objectives": ["N/A",
+              "Build innovation capability and culture",
+              "Develop and launch digital products and services",
+              "Leverage AI and emerging technologies",
+              "Create competitive differentiation through technology",
+              "Build an agile and adaptive organisation",
+              "Develop new business models",
+              "Accelerate speed to market",
+              "Build ecosystem and platform capabilities",
+              "Harness IoT and connected technologies",
+              "Drive sustainability through innovation"
+            ]
+          },
+          {
+            "theme": "Sustainability & ESG",
+            "specific_objectives": ["N/A",
+              "Define and implement ESG strategy",
+              "Achieve net zero or carbon reduction targets",
+              "Improve ESG reporting and disclosure",
+              "Build sustainable supply chain",
+              "Improve social impact and community engagement",
+              "Strengthen corporate governance",
+              "Meet investor ESG expectations",
+              "Embed sustainability into products and services",
+              "Reduce environmental footprint",
+              "Build workforce diversity and inclusion"
+            ]
+          }
+        ]
+      },
+      {
+        "objective_type": "Regulatory & Compliance Driver",
+        "description": "What the client is being required to do",
+        "themes": [
+          {
+            "theme": "Financial Regulation",
+            "specific_objectives": ["N/A",
+              "Comply with new or changing financial regulation",
+              "Meet capital adequacy and liquidity requirements",
+              "Strengthen financial crime compliance",
+              "Improve AML and KYC processes",
+              "Meet sanctions compliance requirements",
+              "Comply with reporting and disclosure requirements",
+              "Address regulatory findings or remediation",
+              "Prepare for regulatory examination or audit",
+              "Implement new accounting standards",
+              "Manage tax compliance obligations"
+            ]
+          },
+          {
+            "theme": "Data & Privacy Regulation",
+            "specific_objectives": ["N/A",
+              "Comply with GDPR or equivalent data privacy regulation",
+              "Implement data residency and sovereignty requirements",
+              "Strengthen data protection controls",
+              "Meet consent management requirements",
+              "Address data breach or privacy incident",
+              "Comply with sector-specific data regulations",
+              "Implement privacy by design",
+              "Meet cross-border data transfer requirements",
+              "Strengthen data subject rights management",
+              "Comply with AI regulation and ethics requirements"
+            ]
+          },
+          {
+            "theme": "Operational & Industry Regulation",
+            "specific_objectives": ["N/A",
+              "Comply with industry-specific operational regulation",
+              "Meet health and safety regulatory requirements",
+              "Comply with environmental regulation",
+              "Meet product safety and quality standards",
+              "Comply with trade and export control requirements",
+              "Meet licensing and authorisation requirements",
+              "Address operational resilience regulatory requirements",
+              "Comply with third party and outsourcing regulation",
+              "Meet consumer protection requirements",
+              "Comply with competition and antitrust regulation"
+            ]
+          },
+          {
+            "theme": "Cyber & Technology Regulation",
+            "specific_objectives": ["N/A",
+              "Comply with cybersecurity regulation",
+              "Meet critical national infrastructure protection requirements",
+              "Comply with NIS2 or equivalent directive",
+              "Meet DORA requirements",
+              "Comply with cloud and technology regulation",
+              "Address technology risk regulatory requirements",
+              "Meet secure software development requirements",
+              "Comply with AI governance regulation",
+              "Meet digital operational resilience requirements",
+              "Comply with telecommunications regulation"
+            ]
+          }
+        ]
+      },
+      {
+        "objective_type": "Technology Driver",
+        "description": "What technology challenges or opportunities are driving the engagement",
+        "themes": [
+          {
+            "theme": "Technology Modernisation",
+            "specific_objectives": ["N/A",
+              "Replace or upgrade legacy ERP system",
+              "Migrate to cloud infrastructure",
+              "Modernise data platform and architecture",
+              "Consolidate fragmented application landscape",
+              "Decommission legacy systems",
+              "Upgrade or replace CRM platform",
+              "Modernise integration architecture",
+              "Implement new HR technology platform",
+              "Replace on-premise solutions with SaaS",
+              "Modernise customer-facing digital platforms"
+            ]
+          },
+          {
+            "theme": "Digital Enablement",
+            "specific_objectives": ["N/A",
+              "Build digital products and channels",
+              "Implement AI and machine learning capabilities",
+              "Enable data-driven decision making",
+              "Implement robotic process automation",
+              "Build mobile and omnichannel capabilities",
+              "Implement IoT and connected device capabilities",
+              "Enable real-time analytics and reporting",
+              "Build API and ecosystem integration capabilities",
+              "Implement intelligent automation",
+              "Enable personalisation at scale"
+            ]
+          },
+          {
+            "theme": "Technology Risk & Security",
+            "specific_objectives": ["N/A",
+              "Strengthen cybersecurity posture",
+              "Implement zero trust security architecture",
+              "Improve identity and access management",
+              "Address technology vulnerabilities",
+              "Improve disaster recovery and business continuity",
+              "Strengthen cloud security",
+              "Implement security operations centre",
+              "Address third party technology risk",
+              "Improve technology resilience",
+              "Implement data loss prevention controls"
+            ]
+          },
+          {
+            "theme": "Technology Efficiency",
+            "specific_objectives": ["N/A",
+              "Reduce IT costs and total cost of ownership",
+              "Optimise cloud spend",
+              "Improve IT service delivery and performance",
+              "Rationalise software licensing",
+              "Improve DevOps and delivery capability",
+              "Optimise IT vendor and contract management",
+              "Improve IT governance and control",
+              "Reduce technology complexity",
+              "Improve IT service management processes",
+              "Build internal technology capability"
+            ]
+          }
+        ]
+      },
+      {
+        "objective_type": "People & Organisational Driver",
+        "description": "What workforce or structural challenges are driving the engagement",
+        "themes": [
+          {
+            "theme": "Organisational Change",
+            "specific_objectives": ["N/A",
+              "Implement a new organisational structure",
+              "Manage a major business transformation programme",
+              "Integrate organisations following a merger or acquisition",
+              "Separate or carve out a business unit",
+              "Transition to a new operating model",
+              "Consolidate shared services or outsourcing",
+              "Manage workforce restructuring or redundancy",
+              "Drive culture change programme",
+              "Improve change management capability",
+              "Build organisational agility and adaptability"
+            ]
+          },
+          {
+            "theme": "Workforce Capability",
+            "specific_objectives": ["N/A",
+              "Address critical skills gaps",
+              "Build digital and technology skills",
+              "Develop leadership capability",
+              "Upskill workforce for new ways of working",
+              "Build data and analytics literacy",
+              "Develop agile and product management capability",
+              "Build customer experience capability",
+              "Improve workforce planning and talent pipeline",
+              "Develop change management capability",
+              "Build innovation and entrepreneurial capability"
+            ]
+          },
+          {
+            "theme": "Employee Experience & Engagement",
+            "specific_objectives": ["N/A",
+              "Improve employee engagement and satisfaction",
+              "Reduce employee turnover and attrition",
+              "Improve diversity, equity and inclusion",
+              "Enhance employee well-being and mental health",
+              "Build a high performance culture",
+              "Improve internal communication and collaboration",
+              "Enhance recognition and reward programmes",
+              "Build a culture of continuous learning",
+              "Improve new employee onboarding experience",
+              "Strengthen employee value proposition"
+            ]
+          },
+          {
+            "theme": "Future of Work",
+            "specific_objectives": ["N/A",
+              "Implement hybrid and flexible working models",
+              "Redesign work for human and machine collaboration",
+              "Build workforce resilience and adaptability",
+              "Implement AI-augmented workforce models",
+              "Redesign jobs and roles for the digital age",
+              "Build gig and contingent workforce strategies",
+              "Implement new workforce productivity tools",
+              "Develop workforce sustainability strategy",
+              "Build multigenerational workforce strategies",
+              "Implement new performance management approaches"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

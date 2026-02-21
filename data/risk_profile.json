@@ -1,0 +1,380 @@
+{
+  "risk_profile": {
+    "field_type": "multi-select",
+    "description": "The risk categories and specific risks most relevant to this client and engagement",
+    "risk_rating_options": ["High", "Medium", "Low"],
+    "risk_maturity_options": ["Initial", "Developing", "Defined", "Managed", "Optimising"],
+    "industry_groups": [
+      {
+        "industry_group": "All Industries",
+        "risk_types": [
+          {
+            "risk_type": "Strategic Risk",
+            "specific_risks": [
+              "Business model disruption",
+              "Failure to execute strategy",
+              "Mergers and acquisitions risk",
+              "Reputational risk",
+              "Geopolitical risk",
+              "Market and competitive risk",
+              "Stakeholder and investor relations risk",
+              "Concentration risk",
+              "Joint venture and partnership risk",
+              "Board and governance effectiveness"
+            ]
+          },
+          {
+            "risk_type": "Financial Risk",
+            "specific_risks": [
+              "Liquidity and funding risk",
+              "Credit and counterparty risk",
+              "Market and interest rate risk",
+              "Foreign exchange risk",
+              "Financial reporting risk",
+              "Tax risk",
+              "Fraud and financial crime risk",
+              "Insurance and liability risk",
+              "Revenue leakage risk",
+              "Capital adequacy risk"
+            ]
+          },
+          {
+            "risk_type": "Operational Risk",
+            "specific_risks": [
+              "Business process failure",
+              "Third party and supplier risk",
+              "Business continuity risk",
+              "Project and programme delivery risk",
+              "Change management risk",
+              "Health and safety risk",
+              "Asset and infrastructure risk",
+              "Quality and product risk",
+              "Natural disaster and climate risk",
+              "Outsourcing and offshoring risk"
+            ]
+          },
+          {
+            "risk_type": "Technology & Cyber Risk",
+            "specific_risks": [
+              "Ransomware and malware risk",
+              "Data breach risk",
+              "Legacy system risk",
+              "Cloud migration risk",
+              "Third party technology risk",
+              "System availability and resilience risk",
+              "AI and machine learning risk",
+              "IoT and connected device risk",
+              "Identity and access management risk",
+              "Technology concentration risk"
+            ]
+          },
+          {
+            "risk_type": "People Risk",
+            "specific_risks": [
+              "Key person dependency",
+              "Talent attraction and retention",
+              "Workforce capability and skills gaps",
+              "Industrial relations risk",
+              "Workplace culture and conduct risk",
+              "Employee misconduct and fraud",
+              "Workforce health and wellbeing",
+              "Contractor and contingent workforce risk",
+              "Succession planning risk",
+              "Diversity and inclusion risk"
+            ]
+          },
+          {
+            "risk_type": "Legal & Compliance Risk",
+            "specific_risks": [
+              "Contract and commercial risk",
+              "Intellectual property risk",
+              "Litigation and dispute risk",
+              "Regulatory breach risk",
+              "Whistleblower risk",
+              "Conflict of interest risk",
+              "Bribery and corruption risk",
+              "Trade and sanctions compliance risk",
+              "Consumer protection risk",
+              "Privacy and data breach risk"
+            ]
+          },
+          {
+            "risk_type": "ESG & Sustainability Risk",
+            "specific_risks": [
+              "Climate transition risk",
+              "Physical climate risk",
+              "Stranded asset risk",
+              "Water scarcity risk",
+              "Biodiversity and land use risk",
+              "Supply chain sustainability risk",
+              "Social licence to operate risk",
+              "Greenwashing risk",
+              "ESG reporting and disclosure risk",
+              "Stakeholder activism risk"
+            ]
+          }
+        ]
+      },
+      {
+        "industry_group": "Financial Services",
+        "risk_types": [
+          {
+            "risk_type": "Prudential Risk",
+            "specific_risks": [
+              "Capital adequacy risk",
+              "Liquidity coverage ratio risk",
+              "Net stable funding ratio risk",
+              "Credit concentration risk",
+              "Large exposures risk",
+              "Pillar 2 supervisory review risk",
+              "Stress testing risk",
+              "Recovery and resolution planning risk",
+              "Contagion risk",
+              "Systemic risk"
+            ]
+          },
+          {
+            "risk_type": "Financial Crime Risk",
+            "specific_risks": [
+              "Money laundering risk",
+              "Terrorism financing risk",
+              "Sanctions breach risk",
+              "Bribery and corruption risk",
+              "Market manipulation risk",
+              "Insider trading risk",
+              "Tax evasion facilitation risk",
+              "Proliferation financing risk",
+              "Fraud risk",
+              "Cybercrime risk"
+            ]
+          },
+          {
+            "risk_type": "Conduct & Consumer Risk",
+            "specific_risks": [
+              "Mis-selling risk",
+              "Product suitability risk",
+              "Conflicts of interest risk",
+              "Remuneration and incentive risk",
+              "Vulnerable customer risk",
+              "Complaints handling risk",
+              "Unfair contract terms risk",
+              "Responsible lending risk",
+              "Superannuation member outcomes risk",
+              "Insurance claims handling risk"
+            ]
+          }
+        ]
+      },
+      {
+        "industry_group": "Health & Life Sciences",
+        "risk_types": [
+          {
+            "risk_type": "Clinical & Patient Risk",
+            "specific_risks": [
+              "Patient safety risk",
+              "Clinical governance risk",
+              "Medication error risk",
+              "Adverse event risk",
+              "Infection control risk",
+              "Clinical trial risk",
+              "Medical device failure risk",
+              "Diagnostic error risk",
+              "Treatment outcome risk",
+              "Consent and autonomy risk"
+            ]
+          },
+          {
+            "risk_type": "Regulatory & Quality Risk",
+            "specific_risks": [
+              "TGA compliance risk",
+              "AHPRA registration risk",
+              "Aged care quality standards risk",
+              "NDIS compliance risk",
+              "Medicare compliance risk",
+              "Clinical coding risk",
+              "Accreditation risk",
+              "Pharmacovigilance risk",
+              "Product recall risk",
+              "Supply chain quality risk"
+            ]
+          }
+        ]
+      },
+      {
+        "industry_group": "Energy & Utilities",
+        "risk_types": [
+          {
+            "risk_type": "Energy Market Risk",
+            "specific_risks": [
+              "Wholesale energy price risk",
+              "Retail margin risk",
+              "Network revenue risk",
+              "Renewable energy certificate risk",
+              "Carbon price risk",
+              "Fuel supply risk",
+              "Demand forecasting risk",
+              "Interconnector risk",
+              "Ancillary services risk",
+              "Hedging and derivative risk"
+            ]
+          },
+          {
+            "risk_type": "Infrastructure & Operational Risk",
+            "specific_risks": [
+              "Asset failure and outage risk",
+              "Network reliability risk",
+              "Critical infrastructure protection risk",
+              "Natural disaster risk",
+              "Bushfire risk",
+              "Flood risk",
+              "Cyber attack on operational technology risk",
+              "SCADA and control system risk",
+              "Aging infrastructure risk",
+              "New technology integration risk"
+            ]
+          }
+        ]
+      },
+      {
+        "industry_group": "Government & Public Sector",
+        "risk_types": [
+          {
+            "risk_type": "Public Accountability Risk",
+            "specific_risks": [
+              "Parliamentary scrutiny risk",
+              "Freedom of information risk",
+              "Audit finding risk",
+              "Ministerial direction risk",
+              "Public interest disclosure risk",
+              "Procurement compliance risk",
+              "Grant administration risk",
+              "Programme delivery risk",
+              "Policy implementation risk",
+              "Inter-agency coordination risk"
+            ]
+          },
+          {
+            "risk_type": "National Security Risk",
+            "specific_risks": [
+              "Foreign interference risk",
+              "Critical infrastructure attack risk",
+              "Espionage risk",
+              "Classified information risk",
+              "Security clearance risk",
+              "Supply chain national security risk",
+              "Foreign investment risk",
+              "Cyber espionage risk",
+              "Insider threat risk",
+              "Disinformation risk"
+            ]
+          }
+        ]
+      },
+      {
+        "industry_group": "Technology, Media & Telecommunications",
+        "risk_types": [
+          {
+            "risk_type": "Digital Platform Risk",
+            "specific_risks": [
+              "Platform liability risk",
+              "Content moderation risk",
+              "Algorithmic bias risk",
+              "Data monetisation risk",
+              "Digital advertising risk",
+              "Platform dependency risk",
+              "App store risk",
+              "Digital rights management risk",
+              "Online safety risk",
+              "Deepfake and synthetic media risk"
+            ]
+          },
+          {
+            "risk_type": "Telecommunications Risk",
+            "specific_risks": [
+              "Network outage risk",
+              "Spectrum risk",
+              "Roaming and interconnection risk",
+              "Infrastructure sharing risk",
+              "5G deployment risk",
+              "NBN dependency risk",
+              "Critical communications risk",
+              "Emergency services network risk",
+              "Telecommunications security risk",
+              "Foreign equipment vendor risk"
+            ]
+          }
+        ]
+      },
+      {
+        "industry_group": "Consumer & Retail",
+        "risk_types": [
+          {
+            "risk_type": "Supply Chain Risk",
+            "specific_risks": [
+              "Supplier concentration risk",
+              "Offshore manufacturing risk",
+              "Logistics and freight risk",
+              "Inventory management risk",
+              "Raw material price risk",
+              "Food safety and contamination risk",
+              "Product recall risk",
+              "Counterfeiting and grey market risk",
+              "Ethical sourcing risk",
+              "Modern slavery in supply chain risk"
+            ]
+          },
+          {
+            "risk_type": "Consumer & Brand Risk",
+            "specific_risks": [
+              "Brand and reputational risk",
+              "Consumer sentiment risk",
+              "Social media risk",
+              "Product liability risk",
+              "Customer data breach risk",
+              "Loyalty programme risk",
+              "Pricing and promotional risk",
+              "Channel conflict risk",
+              "Franchise risk",
+              "Retail crime and loss prevention risk"
+            ]
+          }
+        ]
+      },
+      {
+        "industry_group": "Industrial & Manufacturing",
+        "risk_types": [
+          {
+            "risk_type": "Industrial Safety Risk",
+            "specific_risks": [
+              "Major hazard facility risk",
+              "Dangerous goods risk",
+              "Industrial accident risk",
+              "Mine safety risk",
+              "Contractor safety risk",
+              "Equipment and machinery risk",
+              "Noise and vibration risk",
+              "Hazardous substance exposure risk",
+              "Fatigue management risk",
+              "Emergency response risk"
+            ]
+          },
+          {
+            "risk_type": "Environmental Risk",
+            "specific_risks": [
+              "Environmental contamination risk",
+              "Waste management risk",
+              "Emissions and pollution risk",
+              "Water usage and discharge risk",
+              "Biodiversity impact risk",
+              "Site rehabilitation risk",
+              "Environmental licence breach risk",
+              "Climate physical risk to assets",
+              "Carbon and emissions liability risk",
+              "Community environmental impact risk"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

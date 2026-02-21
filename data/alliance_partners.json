@@ -1,0 +1,592 @@
+{
+  "alliance_partners": {
+    "field_type": "multi-select",
+    "partners": [
+      {
+        "partner": "Adobe",
+        "product_families": [
+          {
+            "product_family": "Experience Cloud",
+            "products": [
+              "Adobe Experience Manager",
+              "Adobe Experience Platform",
+              "Adobe Analytics",
+              "Adobe Target",
+              "Adobe Campaign",
+              "Adobe Audience Manager",
+              "Adobe Customer Journey Analytics"
+            ]
+          },
+          {
+            "product_family": "Commerce",
+            "products": [
+              "Adobe Commerce (Magento)",
+              "Adobe Commerce Cloud"
+            ]
+          },
+          {
+            "product_family": "Creative & Document",
+            "products": [
+              "Adobe Creative Cloud",
+              "Adobe Document Cloud",
+              "Adobe Acrobat Sign",
+              "Adobe Workfront"
+            ]
+          },
+          {
+            "product_family": "Data & AI",
+            "products": [
+              "Adobe Sensei (AI)",
+              "Adobe Real-Time CDP",
+              "Adobe Journey Optimizer"
+            ]
+          }
+        ]
+      },
+      {
+        "partner": "AWS",
+        "product_families": [
+          {
+            "product_family": "Compute & Infrastructure",
+            "products": [
+              "Amazon EC2",
+              "Amazon ECS",
+              "Amazon EKS",
+              "AWS Lambda",
+              "AWS Outposts",
+              "AWS Elastic Beanstalk"
+            ]
+          },
+          {
+            "product_family": "Storage & Database",
+            "products": [
+              "Amazon S3",
+              "Amazon RDS",
+              "Amazon DynamoDB",
+              "Amazon Redshift",
+              "Amazon Aurora",
+              "AWS Backup"
+            ]
+          },
+          {
+            "product_family": "Data & Analytics",
+            "products": [
+              "AWS Glue",
+              "Amazon Athena",
+              "Amazon EMR",
+              "Amazon Kinesis",
+              "AWS Lake Formation",
+              "Amazon QuickSight"
+            ]
+          },
+          {
+            "product_family": "AI & Machine Learning",
+            "products": [
+              "Amazon SageMaker",
+              "AWS Bedrock",
+              "Amazon Rekognition",
+              "Amazon Comprehend",
+              "Amazon Lex",
+              "AWS Trainium"
+            ]
+          },
+          {
+            "product_family": "Security & Identity",
+            "products": [
+              "AWS IAM",
+              "AWS Security Hub",
+              "Amazon GuardDuty",
+              "AWS Shield",
+              "AWS WAF",
+              "Amazon Macie"
+            ]
+          },
+          {
+            "product_family": "Networking & Integration",
+            "products": [
+              "Amazon VPC",
+              "AWS Direct Connect",
+              "Amazon API Gateway",
+              "AWS Transit Gateway",
+              "Amazon CloudFront",
+              "AWS App Mesh"
+            ]
+          },
+          {
+            "product_family": "DevOps & Developer Tools",
+            "products": [
+              "AWS CodePipeline",
+              "AWS CodeBuild",
+              "AWS CodeDeploy",
+              "AWS CloudFormation",
+              "AWS CDK",
+              "Amazon CodeCatalyst"
+            ]
+          }
+        ]
+      },
+      {
+        "partner": "Google",
+        "product_families": [
+          {
+            "product_family": "Cloud Infrastructure",
+            "products": [
+              "Google Compute Engine",
+              "Google Kubernetes Engine",
+              "Google Cloud Run",
+              "Google Cloud Functions",
+              "Google Cloud VMware Engine"
+            ]
+          },
+          {
+            "product_family": "Data & Analytics",
+            "products": [
+              "Google BigQuery",
+              "Google Cloud Dataflow",
+              "Google Cloud Dataproc",
+              "Google Looker",
+              "Google Cloud Pub/Sub",
+              "Google Cloud Composer"
+            ]
+          },
+          {
+            "product_family": "AI & Machine Learning",
+            "products": [
+              "Google Vertex AI",
+              "Google Gemini",
+              "Google Cloud Natural Language API",
+              "Google Cloud Vision API",
+              "Google Cloud Speech-to-Text",
+              "Google Cloud AutoML"
+            ]
+          },
+          {
+            "product_family": "Security",
+            "products": [
+              "Google Chronicle",
+              "Google Security Command Center",
+              "Google Cloud Armor",
+              "Google BeyondCorp Enterprise",
+              "Google Mandiant"
+            ]
+          },
+          {
+            "product_family": "Workspace & Productivity",
+            "products": [
+              "Google Workspace",
+              "Google Meet",
+              "Google Drive",
+              "Google Sites",
+              "Google AppSheet"
+            ]
+          },
+          {
+            "product_family": "Networking",
+            "products": [
+              "Google Cloud CDN",
+              "Google Cloud Load Balancing",
+              "Google Cloud Interconnect",
+              "Google Cloud DNS",
+              "Google Network Intelligence Centre"
+            ]
+          }
+        ]
+      },
+      {
+        "partner": "Guidewire",
+        "product_families": [
+          {
+            "product_family": "Core Insurance",
+            "products": [
+              "Guidewire PolicyCenter",
+              "Guidewire ClaimCenter",
+              "Guidewire BillingCenter"
+            ]
+          },
+          {
+            "product_family": "Digital & Engagement",
+            "products": [
+              "Guidewire CustomerEngage",
+              "Guidewire ProducerEngage",
+              "Guidewire ServiceRepEngage",
+              "Guidewire VendorEngage"
+            ]
+          },
+          {
+            "product_family": "Data & Analytics",
+            "products": [
+              "Guidewire DataHub",
+              "Guidewire InfoCenter",
+              "Guidewire Explore",
+              "Guidewire Predict",
+              "Guidewire Compare"
+            ]
+          },
+          {
+            "product_family": "Cloud Platform",
+            "products": [
+              "Guidewire Cloud Platform",
+              "Guidewire Marketplace",
+              "Guidewire Integration Framework",
+              "Guidewire Cloud APIs"
+            ]
+          }
+        ]
+      },
+      {
+        "partner": "Microsoft",
+        "product_families": [
+          {
+            "product_family": "Azure Cloud",
+            "products": [
+              "Azure Virtual Machines",
+              "Azure Kubernetes Service",
+              "Azure App Service",
+              "Azure Functions",
+              "Azure Virtual Desktop",
+              "Azure Arc"
+            ]
+          },
+          {
+            "product_family": "Data & Analytics",
+            "products": [
+              "Azure Synapse Analytics",
+              "Azure Data Factory",
+              "Azure Databricks",
+              "Microsoft Fabric",
+              "Azure Stream Analytics",
+              "Microsoft Power BI"
+            ]
+          },
+          {
+            "product_family": "AI & Machine Learning",
+            "products": [
+              "Azure OpenAI Service",
+              "Azure Machine Learning",
+              "Azure Cognitive Services",
+              "Microsoft Copilot",
+              "Azure Bot Service",
+              "Azure Applied AI Services"
+            ]
+          },
+          {
+            "product_family": "Business Applications",
+            "products": [
+              "Microsoft Dynamics 365 Finance",
+              "Microsoft Dynamics 365 Supply Chain",
+              "Microsoft Dynamics 365 Sales",
+              "Microsoft Dynamics 365 Customer Service",
+              "Microsoft Dynamics 365 Field Service",
+              "Microsoft Dynamics 365 Human Resources"
+            ]
+          },
+          {
+            "product_family": "Productivity & Collaboration",
+            "products": [
+              "Microsoft 365",
+              "Microsoft Teams",
+              "Microsoft SharePoint",
+              "Microsoft Viva",
+              "Microsoft Power Platform",
+              "Microsoft Power Apps",
+              "Microsoft Power Automate"
+            ]
+          },
+          {
+            "product_family": "Security & Identity",
+            "products": [
+              "Microsoft Sentinel",
+              "Microsoft Defender",
+              "Microsoft Entra ID",
+              "Microsoft Purview",
+              "Microsoft Intune",
+              "Microsoft Priva"
+            ]
+          },
+          {
+            "product_family": "DevOps & Development",
+            "products": [
+              "Azure DevOps",
+              "GitHub",
+              "Azure API Management",
+              "Azure Integration Services",
+              "Visual Studio",
+              "Microsoft Dev Box"
+            ]
+          }
+        ]
+      },
+      {
+        "partner": "Oracle",
+        "product_families": [
+          {
+            "product_family": "Cloud Infrastructure",
+            "products": [
+              "Oracle Cloud Infrastructure (OCI)",
+              "Oracle Autonomous Database",
+              "Oracle Cloud VMware Solution",
+              "Oracle Kubernetes Engine",
+              "Oracle Cloud Functions"
+            ]
+          },
+          {
+            "product_family": "ERP & Finance",
+            "products": [
+              "Oracle Fusion Cloud ERP",
+              "Oracle Fusion Cloud EPM",
+              "Oracle Fusion Cloud SCM",
+              "Oracle EBS",
+              "Oracle Fusion Cloud Procurement",
+              "Oracle Fusion Cloud Project Management"
+            ]
+          },
+          {
+            "product_family": "HCM",
+            "products": [
+              "Oracle Fusion Cloud HCM",
+              "Oracle Taleo",
+              "Oracle Fusion Cloud Workforce Management",
+              "Oracle Fusion Cloud Payroll",
+              "Oracle Learning Management"
+            ]
+          },
+          {
+            "product_family": "CX & Sales",
+            "products": [
+              "Oracle Fusion Cloud CX",
+              "Oracle Sales",
+              "Oracle Service",
+              "Oracle Marketing",
+              "Oracle Commerce",
+              "Oracle CPQ"
+            ]
+          },
+          {
+            "product_family": "Data & Analytics",
+            "products": [
+              "Oracle Analytics Cloud",
+              "Oracle Data Integrator",
+              "Oracle GoldenGate",
+              "Oracle Big Data Service",
+              "Oracle Essbase"
+            ]
+          },
+          {
+            "product_family": "Industry Solutions",
+            "products": [
+              "Oracle Utilities",
+              "Oracle Health (Cerner)",
+              "Oracle Financial Services",
+              "Oracle Hospitality",
+              "Oracle Construction and Engineering"
+            ]
+          }
+        ]
+      },
+      {
+        "partner": "Salesforce",
+        "product_families": [
+          {
+            "product_family": "Sales & Service",
+            "products": [
+              "Sales Cloud",
+              "Service Cloud",
+              "Field Service",
+              "Revenue Cloud",
+              "Salesforce CPQ"
+            ]
+          },
+          {
+            "product_family": "Marketing & Commerce",
+            "products": [
+              "Marketing Cloud",
+              "Marketing Cloud Account Engagement (Pardot)",
+              "Commerce Cloud",
+              "Loyalty Management",
+              "Referral Marketing"
+            ]
+          },
+          {
+            "product_family": "Data & AI",
+            "products": [
+              "Salesforce Data Cloud",
+              "Einstein AI",
+              "Einstein Analytics",
+              "Tableau",
+              "MuleSoft"
+            ]
+          },
+          {
+            "product_family": "Platform & Development",
+            "products": [
+              "Salesforce Platform",
+              "Heroku",
+              "Salesforce Flow",
+              "Apex & Visualforce",
+              "Lightning Web Components"
+            ]
+          },
+          {
+            "product_family": "Industry Clouds",
+            "products": [
+              "Financial Services Cloud",
+              "Health Cloud",
+              "Manufacturing Cloud",
+              "Consumer Goods Cloud",
+              "Energy & Utilities Cloud",
+              "Government Cloud",
+              "Nonprofit Cloud",
+              "Education Cloud"
+            ]
+          },
+          {
+            "product_family": "Collaboration & Productivity",
+            "products": [
+              "Slack",
+              "Salesforce Anywhere",
+              "Quip"
+            ]
+          }
+        ]
+      },
+      {
+        "partner": "SAP",
+        "product_families": [
+          {
+            "product_family": "ERP & Finance",
+            "products": [
+              "SAP S/4HANA Cloud",
+              "SAP S/4HANA On-premise",
+              "SAP ECC",
+              "SAP Central Finance",
+              "SAP Group Reporting",
+              "SAP Cash Management"
+            ]
+          },
+          {
+            "product_family": "Supply Chain",
+            "products": [
+              "SAP Integrated Business Planning (IBP)",
+              "SAP Extended Warehouse Management",
+              "SAP Transportation Management",
+              "SAP Manufacturing Execution",
+              "SAP Asset Management",
+              "SAP Ariba"
+            ]
+          },
+          {
+            "product_family": "Human Experience Management",
+            "products": [
+              "SAP SuccessFactors Employee Central",
+              "SAP SuccessFactors Recruiting",
+              "SAP SuccessFactors Learning",
+              "SAP SuccessFactors Performance & Goals",
+              "SAP SuccessFactors Compensation",
+              "SAP SuccessFactors Workforce Analytics"
+            ]
+          },
+          {
+            "product_family": "Customer Experience",
+            "products": [
+              "SAP Sales Cloud",
+              "SAP Service Cloud",
+              "SAP Commerce Cloud",
+              "SAP Marketing Cloud",
+              "SAP Customer Data Platform"
+            ]
+          },
+          {
+            "product_family": "Data & Analytics",
+            "products": [
+              "SAP Analytics Cloud",
+              "SAP BW/4HANA",
+              "SAP Datasphere",
+              "SAP HANA Cloud",
+              "SAP Business Objects"
+            ]
+          },
+          {
+            "product_family": "Platform & Integration",
+            "products": [
+              "SAP Business Technology Platform (BTP)",
+              "SAP Integration Suite",
+              "SAP Extension Suite",
+              "SAP Build",
+              "SAP Signavio"
+            ]
+          },
+          {
+            "product_family": "Industry Solutions",
+            "products": [
+              "SAP for Banking",
+              "SAP for Insurance",
+              "SAP for Utilities",
+              "SAP for Healthcare",
+              "SAP for Public Sector",
+              "SAP for Retail",
+              "SAP for Oil & Gas"
+            ]
+          }
+        ]
+      },
+      {
+        "partner": "Workday",
+        "product_families": [
+          {
+            "product_family": "Human Capital Management",
+            "products": [
+              "Workday Human Resource Management",
+              "Workday Payroll",
+              "Workday Time Tracking",
+              "Workday Absence Management",
+              "Workday Benefits Administration",
+              "Workday Compensation"
+            ]
+          },
+          {
+            "product_family": "Talent Management",
+            "products": [
+              "Workday Recruiting",
+              "Workday Learning",
+              "Workday Performance Management",
+              "Workday Succession Planning",
+              "Workday Career & Development",
+              "Workday Skills Cloud"
+            ]
+          },
+          {
+            "product_family": "Finance",
+            "products": [
+              "Workday Financial Management",
+              "Workday Accounting Centre",
+              "Workday Revenue Management",
+              "Workday Expenses",
+              "Workday Procurement",
+              "Workday Projects"
+            ]
+          },
+          {
+            "product_family": "Planning & Analytics",
+            "products": [
+              "Workday Adaptive Planning",
+              "Workday People Analytics",
+              "Workday Prism Analytics",
+              "Workday Financial Planning",
+              "Workday Workforce Planning"
+            ]
+          },
+          {
+            "product_family": "Platform & Integration",
+            "products": [
+              "Workday Platform",
+              "Workday Extend",
+              "Workday Integration Cloud",
+              "Workday Studio",
+              "Workday AI and ML"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
