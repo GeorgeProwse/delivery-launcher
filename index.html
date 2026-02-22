@@ -3928,6 +3928,8 @@ textarea {
       <p id="lp-sub">an AI-powered workflow that expedites project planning by generating a full suite of tailored artifacts, enabling teams to spend less time on documentation and more time delivering value to clients.
 </p>
       <div id="lp-cta-row">
+        <button class="lp-chip lp-chip-active" id="chip-guided" onclick="selectMode('guided')">Guided</button>
+        <button class="lp-chip" id="chip-quick" onclick="selectMode('quick')">Quick</button>
         <button id="lp-start-btn" onclick="launchSelected()">Start</button>
       </div>
     </div>
@@ -4043,6 +4045,7 @@ textarea {
         <div class="brief-strength-bar-bg"><div class="brief-strength-bar" id="briefStrengthBar"></div></div>
         <span class="brief-strength-value" id="briefStrengthLabel">—</span>
       </div>
+      <button class="fb-btn-ghost" onclick="clearAllFormData()" style="color:#c00;border-color:#f5c0c0;" title="Clear all data and start a new engagement">New Engagement</button>
       <button class="fb-btn-ghost" onclick="loadExampleData()">Load Example</button>
       <button class="fb-btn-primary" onclick="startWorkflow()">Launch Workflow →</button>
     </div>
@@ -9325,6 +9328,7 @@ function renderObjectives() {
 var _fbObjData = {};
 
 function fbSelectObjType(el, typeName) {
+  _fssSaveObj();
   document.querySelectorAll("#objTypeList .fb-tab-item").forEach(function (t) {
     t.classList.remove("active");
   });
@@ -9390,6 +9394,7 @@ function fbSelectObjType(el, typeName) {
     typeName +
     '..." onchange="fbFieldChange(\'s3\')"></textarea>' +
     "</div>";
+  _fssApplyObj(typeId);
 }
 
 function fbObjChange(typeId) {
@@ -9437,6 +9442,7 @@ function renderServices() {
 }
 
 function fbSelectDomain(el, domainName) {
+  _fssSaveServices();
   document
     .querySelectorAll("#domainTabList .fb-tab-item")
     .forEach(function (t) {
@@ -9511,6 +9517,7 @@ function fbSelectDomain(el, domainName) {
     domainName +
     '..." onchange="fbFieldChange(\'s4\')"></textarea>' +
     "</div>";
+  _fssApplyServices(domId);
 }
 
 function fbBBToggleEdit(descId, editBtnId, btn) {
@@ -9566,6 +9573,7 @@ function renderTechnologies() {
 }
 
 function fbSelectTechCat(el, catName) {
+  _fssSaveTech();
   document.querySelectorAll("#techCatList .fb-tab-item").forEach(function (t) {
     t.classList.remove("active");
   });
@@ -9609,6 +9617,7 @@ function fbSelectTechCat(el, catName) {
     catId +
     '" style="width:100%;padding:8px;border:1px solid var(--borderColor);border-radius:3px;font-size:13px;font-family:system-ui;min-height:60px;" placeholder="Additional context..." onchange="fbFieldChange(\'s5\')"></textarea>' +
     "</div>";
+  _fssApplyTech(slugify(catName));
 }
 
 function fbToggleTechSub(el, catId, subName) {
@@ -9685,6 +9694,7 @@ function renderPartners() {
 }
 
 function fbSelectPartner(el, partnerName) {
+  _fssSavePartners();
   document
     .querySelectorAll("#partnerTabList .fb-tab-item")
     .forEach(function (t) {
@@ -9729,6 +9739,7 @@ function fbSelectPartner(el, partnerName) {
     partnerName +
     '..." onchange="fbFieldChange(\'s6\')"></textarea>' +
     "</div>";
+  _fssApplyPartners(pid);
 }
 
 function fbTogglePartnerFam(el, pid, famName) {
@@ -9794,6 +9805,7 @@ function renderRegulatory() {
 }
 
 function fbSelectRegGroup(el, groupName) {
+  _fssSaveReg();
   document.querySelectorAll("#regGroupList .fb-tab-item").forEach(function (t) {
     t.classList.remove("active");
   });
@@ -9842,6 +9854,7 @@ function fbSelectRegGroup(el, groupName) {
   panel.innerHTML =
     '<div class="fb-section-hint">Select applicable regulators and their requirements</div>' +
     items;
+  _fssApplyReg(gid);
 }
 
 function fbToggleRegCheck(el, rid) {
@@ -9879,6 +9892,7 @@ function renderRisk() {
 }
 
 function fbSelectRiskGroup(el, groupName) {
+  _fssSaveRisk();
   document
     .querySelectorAll("#riskGroupList .fb-tab-item")
     .forEach(function (t) {
@@ -9929,6 +9943,7 @@ function fbSelectRiskGroup(el, groupName) {
   panel.innerHTML =
     '<div class="fb-section-hint">Select applicable risk types and specific risks</div>' +
     items;
+  _fssApplyRisk(gid);
 }
 
 function fbToggleRiskCheck(el, rtid) {
@@ -11342,6 +11357,19 @@ const DRAFT_KEY = "pwc_launchpad_draft";
 
 // ── Collect all saveable field values ──
 function collectFormState() {
+  // Flush current active panel selections into _formSelState before serialising
+  _fssSaveObj();
+  _fssSaveServices();
+  _fssSaveTech();
+  _fssSavePartners();
+  _fssSaveReg();
+  _fssSaveRisk();
+  // Capture industry from hidden selects into selState
+  _formSelState.industry = {
+    industry:  (document.getElementById("industryDrop")  || {}).value || "",
+    sector:    (document.getElementById("sectorDrop")    || {}).value || "",
+    subsector: (document.getElementById("subsectorDrop") || {}).value || "",
+  };
   var ids = [
     "clientName",
     "engagementName",
@@ -11353,11 +11381,12 @@ function collectFormState() {
     "totalBudget",
     "engagementDescription",
   ];
-  var state = { _ts: new Date().toISOString(), fields: {} };
+  var state = { _ts: new Date().toISOString(), fields: {}, selState: null };
   ids.forEach(function (id) {
     var el = document.getElementById(id);
     if (el) state.fields[id] = el.value;
   });
+  try { state.selState = JSON.parse(JSON.stringify(_formSelState)); } catch(e) {}
   return state;
 }
 
@@ -11372,6 +11401,73 @@ function applyFormState(state) {
     const el = document.getElementById(id);
     if (el && val) el.value = val;
   });
+  if (!state.selState) return;
+  _formSelState = state.selState;
+
+  // Restore industry cascade by simulating pill clicks
+  var ind = _formSelState.industry || {};
+  if (ind.industry) {
+    var indPill = Array.from(document.querySelectorAll("#industryPills .fb-pill"))
+      .find(function(p) { return p.textContent.trim() === ind.industry; });
+    if (indPill) {
+      indPill.click();
+      setTimeout(function() {
+        if (ind.sector) {
+          var secPill = Array.from(document.querySelectorAll("#sectorPills .fb-pill"))
+            .find(function(p) { return p.textContent.trim() === ind.sector; });
+          if (secPill) {
+            secPill.click();
+            setTimeout(function() {
+              if (ind.subsector) {
+                var subPill = Array.from(document.querySelectorAll("#subsectorPills .fb-pill"))
+                  .find(function(p) { return p.textContent.trim() === ind.subsector; });
+                if (subPill) subPill.click();
+              }
+            }, 150);
+          }
+        }
+      }, 150);
+    }
+  }
+
+  // Update left-side tab dots for sections with saved selections
+  setTimeout(function() {
+    var dotSections = [
+      { state: _formSelState.services, listId: "domainTabList", hasKey: function(s) { return Object.keys(s.bbs || {}).length > 0; } },
+      { state: _formSelState.tech,     listId: "techCatList",   hasKey: function(s) { return (s.subs || []).length > 0; } },
+      { state: _formSelState.partners, listId: "partnerTabList", hasKey: function(s) { return (s.families || []).length > 0; } },
+      { state: _formSelState.reg,      listId: "regGroupList",  hasKey: function(s) { return (s.checked || []).length > 0; } },
+      { state: _formSelState.risk,     listId: "riskGroupList", hasKey: function(s) { return (s.checked || []).length > 0; } },
+    ];
+    dotSections.forEach(function(ds) {
+      if (!ds.state) return;
+      Object.keys(ds.state).forEach(function(key) {
+        if (!ds.hasKey(ds.state[key])) return;
+        document.querySelectorAll("#" + ds.listId + " .fb-tab-item").forEach(function(t) {
+          if (slugify(t.textContent.trim()) === key) {
+            t.classList.add("has-data");
+            var dot = t.querySelector(".fb-tab-dot"); if (dot) dot.style.background = "#22c55e";
+          }
+        });
+      });
+    });
+    // Objectives tab dots
+    if (_formSelState.obj) {
+      Object.keys(_formSelState.obj).forEach(function(typeId) {
+        var saved = _formSelState.obj[typeId];
+        if (saved && Object.values(saved.drops || {}).some(function(v) { return v; })) {
+          document.querySelectorAll("#objTypeList .fb-tab-item").forEach(function(t) {
+            if (slugify(t.textContent.trim()) === typeId) {
+              t.classList.add("has-data");
+              var dot = t.querySelector(".fb-tab-dot"); if (dot) dot.style.background = "#22c55e";
+            }
+          });
+        }
+      });
+    }
+    fbEvalDots();
+    if (typeof updateBriefStrength === "function") updateBriefStrength();
+  }, 400);
 }
 
 // ── Auto-save on any input/change inside the form ──
@@ -11442,7 +11538,239 @@ function restoreDraft() {
 
 function dismissDraft() {
   localStorage.removeItem(DRAFT_KEY);
+  localStorage.removeItem("pwc_launchpad_progress");
   document.getElementById("draftBanner").classList.remove("visible");
+}
+
+// ── Section selection state — persists across tab switches and is included in drafts ──
+var _formSelState = { industry: {}, obj: {}, services: {}, tech: {}, partners: {}, reg: {}, risk: {} };
+
+function _fssSaveObj() {
+  var tab = document.querySelector("#objTypeList .fb-tab-item.active");
+  if (!tab) return;
+  var typeName = tab.textContent.trim();
+  var typeId = slugify(typeName);
+  if (!_formSelState.obj) _formSelState.obj = {};
+  var drops = {}, frees = {};
+  document.querySelectorAll('[id^="obj-drop-' + typeId + '"]').forEach(function(el) { drops[el.id] = el.value; });
+  document.querySelectorAll('[id^="obj-free-' + typeId + '"]').forEach(function(el) { if (el.value) frees[el.id] = { val: el.value, isManual: el.style.display !== "none" }; });
+  var ctx = document.getElementById("obj-context-" + typeId);
+  _formSelState.obj[typeId] = { typeName: typeName, drops: drops, frees: frees, context: ctx ? ctx.value : "" };
+}
+function _fssApplyObj(typeId) {
+  var saved = _formSelState.obj && _formSelState.obj[typeId];
+  if (!saved) return;
+  Object.keys(saved.drops || {}).forEach(function(id) { var el = document.getElementById(id); if (el) el.value = saved.drops[id]; });
+  Object.keys(saved.frees || {}).forEach(function(id) {
+    var entry = saved.frees[id];
+    var el = document.getElementById(id); if (!el || !entry.val) return;
+    el.value = entry.val;
+    if (entry.isManual) {
+      el.style.display = "";
+      var drop = document.getElementById(id.replace("obj-free-", "obj-drop-"));
+      if (drop) drop.style.display = "none";
+    }
+  });
+  var ctx = document.getElementById("obj-context-" + typeId); if (ctx && saved.context) ctx.value = saved.context;
+  fbEvalObjDot(typeId);
+}
+
+function _fssSaveServices() {
+  var tab = document.querySelector("#domainTabList .fb-tab-item.active");
+  if (!tab) return;
+  var domId = slugify(tab.textContent.trim());
+  var bbs = {};
+  document.querySelectorAll("#domainBlockPanel .fb-bb-item.selected").forEach(function(el) { bbs[el.id] = true; });
+  var notes = document.getElementById("svc-notes-" + domId);
+  if (!_formSelState.services) _formSelState.services = {};
+  _formSelState.services[domId] = { bbs: bbs, notes: notes ? notes.value : "" };
+}
+function _fssApplyServices(domId) {
+  var saved = _formSelState.services && _formSelState.services[domId];
+  if (!saved) return;
+  Object.keys(saved.bbs || {}).forEach(function(bbId) {
+    var el = document.getElementById(bbId);
+    if (el && !el.classList.contains("selected")) el.classList.add("selected");
+  });
+  var notes = document.getElementById("svc-notes-" + domId);
+  if (notes && saved.notes) notes.value = saved.notes;
+  var tab = document.querySelector("#domainTabList .fb-tab-item.active");
+  if (tab) {
+    var hasAny = document.querySelectorAll("#domainBlockPanel .fb-bb-item.selected").length > 0;
+    tab.classList.toggle("has-data", hasAny);
+    tab.querySelector(".fb-tab-dot").style.background = hasAny ? "#22c55e" : "";
+  }
+}
+
+function _fssSaveTech() {
+  var tab = document.querySelector("#techCatList .fb-tab-item.active");
+  if (!tab) return;
+  var catId = slugify(tab.textContent.trim());
+  var subs = Array.from(document.querySelectorAll("#tech-subs-" + catId + " .fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
+  var prods = Array.from(document.querySelectorAll("#tech-prod-chips-" + catId + " .fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
+  var notes = document.getElementById("tech-notes-" + catId);
+  if (!_formSelState.tech) _formSelState.tech = {};
+  _formSelState.tech[catId] = { subs: subs, prods: prods, notes: notes ? notes.value : "" };
+}
+function _fssApplyTech(catId) {
+  var saved = _formSelState.tech && _formSelState.tech[catId];
+  if (!saved || !(saved.subs || []).length) return;
+  (saved.subs || []).forEach(function(subText) {
+    document.querySelectorAll("#tech-subs-" + catId + " .fb-chip").forEach(function(c) {
+      if (c.textContent.trim() === subText && !c.classList.contains("selected")) c.classList.add("selected");
+    });
+  });
+  var cat = appData.technologies && appData.technologies.technology_and_tools.categories.find(function(c) { return slugify(c.category) === catId; });
+  var prodsDiv = document.getElementById("tech-prods-" + catId);
+  if (cat && prodsDiv) {
+    var html = '<div class="fb-detail-label">Products</div><div class="fb-chip-grid" id="tech-prod-chips-' + catId + '">';
+    (saved.subs || []).forEach(function(sn) {
+      var s = cat.sub_categories.find(function(x) { return x.sub_category === sn; });
+      if (s && (s.products || s.options)) (s.products || s.options).forEach(function(p) {
+        var sel = (saved.prods || []).indexOf(p) >= 0 ? " selected" : "";
+        html += '<span class="fb-chip' + sel + '" onclick="this.classList.toggle(\'selected\');fbEvalDots();">' + p + "</span>";
+      });
+    });
+    html += "</div>";
+    prodsDiv.innerHTML = html;
+  }
+  var notes = document.getElementById("tech-notes-" + catId);
+  if (notes && saved.notes) notes.value = saved.notes;
+  var tab = document.querySelector("#techCatList .fb-tab-item.active");
+  if (tab) { tab.classList.add("has-data"); tab.querySelector(".fb-tab-dot").style.background = "#22c55e"; }
+}
+
+function _fssSavePartners() {
+  var tab = document.querySelector("#partnerTabList .fb-tab-item.active");
+  if (!tab) return;
+  var pid = slugify(tab.textContent.trim());
+  var families = Array.from(document.querySelectorAll("#partner-fams-" + pid + " .fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
+  var prods = Array.from(document.querySelectorAll("#partner-prods-" + pid + " .fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
+  var notes = document.getElementById("partner-notes-" + pid);
+  if (!_formSelState.partners) _formSelState.partners = {};
+  _formSelState.partners[pid] = { families: families, prods: prods, notes: notes ? notes.value : "" };
+}
+function _fssApplyPartners(pid) {
+  var saved = _formSelState.partners && _formSelState.partners[pid];
+  if (!saved || !(saved.families || []).length) return;
+  (saved.families || []).forEach(function(famText) {
+    document.querySelectorAll("#partner-fams-" + pid + " .fb-chip").forEach(function(c) {
+      if (c.textContent.trim() === famText && !c.classList.contains("selected")) c.classList.add("selected");
+    });
+  });
+  var partner = appData.partners && appData.partners.alliance_partners.partners.find(function(p) { return slugify(p.partner) === pid; });
+  var prodsDiv = document.getElementById("partner-prods-" + pid);
+  if (partner && prodsDiv) {
+    var html = '<div class="fb-detail-label">Products</div><div class="fb-chip-grid">';
+    (saved.families || []).forEach(function(fn) {
+      var fam = partner.product_families.find(function(f) { return f.product_family === fn; });
+      if (fam && fam.products) fam.products.forEach(function(p) {
+        var sel = (saved.prods || []).indexOf(p) >= 0 ? " selected" : "";
+        html += '<span class="fb-chip' + sel + '" onclick="this.classList.toggle(\'selected\');fbEvalDots();">' + p + "</span>";
+      });
+    });
+    html += "</div>";
+    prodsDiv.innerHTML = html;
+  }
+  var notes = document.getElementById("partner-notes-" + pid);
+  if (notes && saved.notes) notes.value = saved.notes;
+  var tab = document.querySelector("#partnerTabList .fb-tab-item.active");
+  if (tab) { tab.classList.add("has-data"); tab.querySelector(".fb-tab-dot").style.background = "#22c55e"; }
+}
+
+function _fssSaveReg() {
+  var tab = document.querySelector("#regGroupList .fb-tab-item.active");
+  if (!tab) return;
+  var gid = slugify(tab.textContent.trim());
+  var checked = [], reqs = {};
+  document.querySelectorAll("#regDetailPanel .fb-check-item.checked").forEach(function(el) {
+    var name = el.querySelector(".fb-check-name"); if (!name) return;
+    var regName = name.textContent.trim(); checked.push(regName);
+    var reqDiv = el.nextElementSibling;
+    if (reqDiv) reqs[regName] = Array.from(reqDiv.querySelectorAll(".fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
+  });
+  if (!_formSelState.reg) _formSelState.reg = {};
+  _formSelState.reg[gid] = { checked: checked, reqs: reqs };
+}
+function _fssApplyReg(gid) {
+  var saved = _formSelState.reg && _formSelState.reg[gid];
+  if (!saved || !(saved.checked || []).length) return;
+  (saved.checked || []).forEach(function(regName) {
+    document.querySelectorAll("#regDetailPanel .fb-check-item").forEach(function(el) {
+      var nameEl = el.querySelector(".fb-check-name");
+      if (nameEl && nameEl.textContent.trim() === regName && !el.classList.contains("checked")) {
+        var rid = gid + "-" + slugify(regName);
+        fbToggleRegCheck(el, rid);
+        var reqReqs = (saved.reqs && saved.reqs[regName]) || [];
+        var wrap = document.getElementById("req-wrap-" + rid);
+        if (wrap) reqReqs.forEach(function(reqText) {
+          wrap.querySelectorAll(".fb-chip").forEach(function(c) { if (c.textContent.trim() === reqText) c.classList.add("selected"); });
+        });
+      }
+    });
+  });
+}
+
+function _fssSaveRisk() {
+  var tab = document.querySelector("#riskGroupList .fb-tab-item.active");
+  if (!tab) return;
+  var gid = slugify(tab.textContent.trim());
+  var checked = [], risks = {};
+  document.querySelectorAll("#riskDetailPanel .fb-check-item.checked").forEach(function(el) {
+    var name = el.querySelector(".fb-check-name"); if (!name) return;
+    var riskType = name.textContent.trim(); checked.push(riskType);
+    var riskDiv = el.nextElementSibling;
+    if (riskDiv) risks[riskType] = Array.from(riskDiv.querySelectorAll(".fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
+  });
+  if (!_formSelState.risk) _formSelState.risk = {};
+  _formSelState.risk[gid] = { checked: checked, risks: risks };
+}
+function _fssApplyRisk(gid) {
+  var saved = _formSelState.risk && _formSelState.risk[gid];
+  if (!saved || !(saved.checked || []).length) return;
+  (saved.checked || []).forEach(function(riskType) {
+    document.querySelectorAll("#riskDetailPanel .fb-check-item").forEach(function(el) {
+      var nameEl = el.querySelector(".fb-check-name");
+      if (nameEl && nameEl.textContent.trim() === riskType && !el.classList.contains("checked")) {
+        var rtid = gid + "-" + slugify(riskType);
+        fbToggleRiskCheck(el, rtid);
+        var riskRisks = (saved.risks && saved.risks[riskType]) || [];
+        var wrap = document.getElementById("risk-wrap-" + rtid);
+        if (wrap) riskRisks.forEach(function(riskText) {
+          wrap.querySelectorAll(".fb-chip").forEach(function(c) { if (c.textContent.trim() === riskText) c.classList.add("selected"); });
+        });
+      }
+    });
+  });
+}
+
+function clearAllFormData() {
+  if (!confirm("Start a new engagement? This will clear all current data and cannot be undone.")) return;
+  ["clientName","engagementName","engagementLead","startDate","endDate","deliveryMethodology","feeStructure","totalBudget","engagementDescription"].forEach(function(id) {
+    var el = document.getElementById(id); if (el) el.value = "";
+  });
+  ["industryDrop","sectorDrop","subsectorDrop"].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ""; });
+  document.querySelectorAll("#industryPills .fb-pill, #sectorPills .fb-pill, #subsectorPills .fb-pill").forEach(function(p) { p.classList.remove("selected"); });
+  var sp = document.getElementById("sectorPills"); if (sp) sp.innerHTML = '<span class="fb-cascade-placeholder">Select an industry first</span>';
+  var ssp = document.getElementById("subsectorPills"); if (ssp) ssp.innerHTML = '<span class="fb-cascade-placeholder">Select a sector first</span>';
+  var ts = document.getElementById("trail-sector"); if (ts) { ts.classList.remove("ready"); ts.classList.add("fb-cascade-dim"); }
+  var tss = document.getElementById("trail-subsector"); if (tss) { tss.classList.remove("ready"); tss.classList.add("fb-cascade-dim"); }
+  _formSelState = { industry: {}, obj: {}, services: {}, tech: {}, partners: {}, reg: {}, risk: {} };
+  ["domainBlockPanel","techDetailPanel","partnerDetailPanel","regDetailPanel","riskDetailPanel","objThemePanel"].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.innerHTML = '<div class="fb-panel-empty">Select an option on the left</div>';
+  });
+  document.querySelectorAll(".fb-tab-item").forEach(function(t) {
+    t.classList.remove("active","has-data");
+    var dot = t.querySelector(".fb-tab-dot"); if (dot) dot.style.background = "";
+  });
+  try { localStorage.removeItem(DRAFT_KEY); localStorage.removeItem("pwc_launchpad_progress"); } catch(e) {}
+  var banner = document.getElementById("draftBanner"); if (banner) banner.classList.remove("visible");
+  ["clientName","engagementName"].forEach(function(id) { if (typeof setFieldError === "function") setFieldError(id, ""); });
+  fbEvalDots();
+  if (typeof updateBriefStrength === "function") updateBriefStrength();
+  fbGoToSection(1);
+  showToast("Ready for a new engagement brief.", "success");
 }
 
 // ── Section completion dot logic ──
@@ -12391,6 +12719,14 @@ document.addEventListener("DOMContentLoaded", function () {
 // ─── LANDING PAGE ───
 let guidedMode = false;
 let selectedMode = "guided";
+
+function selectMode(mode) {
+  selectedMode = mode;
+  var gBtn = document.getElementById("chip-guided");
+  var qBtn = document.getElementById("chip-quick");
+  if (gBtn) gBtn.classList.toggle("lp-chip-active", mode === "guided");
+  if (qBtn) qBtn.classList.toggle("lp-chip-active", mode === "quick");
+}
 
 function launchSelected() {
   if (selectedMode === "guided") {
