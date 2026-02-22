@@ -1115,8 +1115,7 @@ textarea {
 }
 .sidebar-item.locked {
   color: var(--grey400);
-  cursor: default;
-  pointer-events: none;
+  cursor: pointer;
 }
 
 .step-dot {
@@ -1407,6 +1406,13 @@ textarea {
   pointer-events: none;
   box-shadow: none;
 }
+/* When navigated to via sidebar, locked card becomes fully accessible */
+.prompt-card.locked-card.sidebar-override {
+  opacity: 1;
+  pointer-events: auto;
+  border-left-color: var(--grey300);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
 
 /* CHANGE 4: orange pulse animation on newly unlocked card */
 @keyframes cardPulse {
@@ -1604,13 +1610,13 @@ textarea {
   background-color: #1a1b2e;
   color: #d4d8e8;
   border-radius: 6px;
-  padding: 16px;
+  padding: 10px 12px;
   font-size: 12px;
   font-family: "Courier New", monospace;
-  line-height: 1.75;
+  line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
-  max-height: 180px;
+  max-height: 100px;
   overflow-y: auto;
   border: 1px solid #2a2b3d;
   transition: max-height 300ms ease;
@@ -10122,7 +10128,7 @@ function renderWorkflow() {
       // CHANGE 10: aria attributes on sidebar items
       sidebarHTML += `
           <div class="sidebar-item ${status}" id="sidebar-${prompt.prompt_id}"
-            role="button" tabindex="${status === "locked" ? "-1" : "0"}"
+            role="button" tabindex="0"
             aria-label="Go to ${prompt.prompt_name}"
             onclick="scrollToCard('${prompt.prompt_id}')"
             onkeydown="if(event.key==='Enter'||event.key===' '){scrollToCard('${prompt.prompt_id}');}">
@@ -10463,7 +10469,9 @@ function buildPromptDataBlock(promptId, slice, sliceJson) {
 // ── WORKFLOW CONTROLS ──
 function toggleCard(id) {
   const card = document.getElementById(`card-${id}`);
-  if (!card || card.classList.contains("locked-card")) return;
+  if (!card) return;
+  // Locked cards can only be toggled if they have been overridden via sidebar navigation
+  if (card.classList.contains("locked-card") && !card.classList.contains("sidebar-override")) return;
   card.classList.toggle("open");
   const headerEl = document.getElementById("header-" + id);
   if (headerEl)
@@ -10474,18 +10482,24 @@ function toggleCard(id) {
 }
 function scrollToCard(id) {
   const card = document.getElementById(`card-${id}`);
-  if (card && !card.classList.contains("locked-card")) {
-    card.classList.add("open");
-    setTimeout(function () {
-      const mainPanel = document.querySelector(".workflow-main");
-      const cardTop =
-        card.getBoundingClientRect().top -
-        mainPanel.getBoundingClientRect().top +
-        mainPanel.scrollTop -
-        80;
-      mainPanel.scrollTo({ top: cardTop, behavior: "smooth" });
-    }, 50);
+  if (!card) return;
+  card.classList.add("open");
+  // If the card is locked, add a sidebar-override so it becomes interactive
+  if (card.classList.contains("locked-card")) {
+    card.classList.add("sidebar-override");
   }
+  // Update header aria state
+  const headerEl = document.getElementById("header-" + id);
+  if (headerEl) headerEl.setAttribute("aria-expanded", "true");
+  setTimeout(function () {
+    const mainPanel = document.querySelector(".workflow-main");
+    const cardTop =
+      card.getBoundingClientRect().top -
+      mainPanel.getBoundingClientRect().top +
+      mainPanel.scrollTop -
+      120;
+    mainPanel.scrollTo({ top: cardTop, behavior: "smooth" });
+  }, 50);
 }
 function copyPrompt(id) {
   const text = document.getElementById(`prompt-text-${id}`).textContent;
@@ -10585,7 +10599,7 @@ function doMarkDone(id) {
   if (sidebarItem) {
     sidebarItem.classList.remove("active");
     sidebarItem.classList.add("completed");
-    sidebarItem.setAttribute("tabindex", "-1");
+    sidebarItem.setAttribute("tabindex", "0");
   }
   if (headerEl) headerEl.setAttribute("aria-expanded", "false");
   unlockNextSteps();
@@ -10619,7 +10633,7 @@ function doMarkDone(id) {
               card.getBoundingClientRect().top -
               mainPanel.getBoundingClientRect().top +
               mainPanel.scrollTop -
-              80;
+              120;
             mainPanel.scrollTo({ top: cardTop, behavior: "smooth" });
             // Pulse highlight
             setTimeout(function () {
@@ -12027,7 +12041,7 @@ function reopenStep(id) {
           if (ds) {
             ds.classList.remove("active");
             ds.classList.add("locked");
-            ds.setAttribute("tabindex", "-1");
+            ds.setAttribute("tabindex", "0");
           }
           if (dh) {
             dh.setAttribute("tabindex", "-1");
