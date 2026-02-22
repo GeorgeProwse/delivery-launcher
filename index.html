@@ -11646,6 +11646,26 @@ function loadExampleData() {
     });
     if (objTab) objTab.click();
   }, 500);
+  // S3: set objective dropdowns after panel has rendered
+  setTimeout(function () {
+    var sv2 = function (id, v) {
+      var e = document.getElementById(id);
+      if (e) e.value = v;
+    };
+    sv2(
+      "obj-drop-business-problem-operational-performance",
+      "Siloed operations across business units",
+    );
+    sv2(
+      "obj-drop-business-problem-data-information",
+      "Fragmented and siloed data",
+    );
+    sv2(
+      "obj-drop-business-problem-technology-systems",
+      "Ageing and legacy technology landscape",
+    );
+    if (typeof fbObjChange === "function") fbObjChange("business-problem");
+  }, 700);
   // S4: open Data & AI domain
   setTimeout(function () {
     var domTab = Array.from(
@@ -11664,7 +11684,7 @@ function loadExampleData() {
       }, 200);
     }
   }, 800);
-  // S5: open ERP tech category
+  // S5: open Data & Analytics tech category
   setTimeout(function () {
     var techTab = Array.from(
       document.querySelectorAll("#techCatList .fb-tab-item"),
@@ -11679,6 +11699,24 @@ function loadExampleData() {
       }, 200);
     }
   }, 1100);
+  // S6: open AWS partner and select product families
+  setTimeout(function () {
+    var partTab = Array.from(
+      document.querySelectorAll("#partnerTabList .fb-tab-item"),
+    ).find(function (t) {
+      return t.textContent.trim() === "AWS";
+    });
+    if (partTab) {
+      partTab.click();
+      setTimeout(function () {
+        document
+          .querySelectorAll("#partnerDetailPanel .fb-chip")
+          .forEach(function (chip, i) {
+            if (i < 2) chip.click();
+          });
+      }, 200);
+    }
+  }, 1300);
   // S7: open Financial Services regulatory group
   setTimeout(function () {
     var regTab = Array.from(
@@ -11693,7 +11731,25 @@ function loadExampleData() {
         if (firstReg) firstReg.click();
       }, 200);
     }
-  }, 1300);
+  }, 1500);
+  // S8: open Financial Services risk group and select risk types
+  setTimeout(function () {
+    var riskTab = Array.from(
+      document.querySelectorAll("#riskGroupList .fb-tab-item"),
+    ).find(function (t) {
+      return t.textContent.trim() === "Financial Services";
+    });
+    if (riskTab) {
+      riskTab.click();
+      setTimeout(function () {
+        document
+          .querySelectorAll("#riskDetailPanel .fb-check-item")
+          .forEach(function (item, i) {
+            if (i < 2) item.click();
+          });
+      }, 200);
+    }
+  }, 1700);
   setTimeout(function () {
     fbEvalDots();
     if (typeof updateBriefStrength === "function") updateBriefStrength();
@@ -11702,7 +11758,7 @@ function loadExampleData() {
       localStorage.setItem(DRAFT_KEY, JSON.stringify(st));
     } catch (e) {}
     showToast("Example data loaded.", "success");
-  }, 1800);
+  }, 2200);
 }
 
 // Wire Brief Strength to all form interactions
