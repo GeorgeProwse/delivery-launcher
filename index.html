@@ -2307,6 +2307,45 @@ textarea {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
   overflow: hidden;
 }
+#sparseBriefModalBox .gate-modal-header {
+  background: var(--warningBg);
+  border-bottom: 1px solid #fde68a;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#sparseBriefModalBox .gate-modal-icon {
+  font-size: 20px;
+}
+#sparseBriefModalBox .gate-modal-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #78350f;
+}
+#sparseBriefModalBox .gate-modal-body {
+  padding: 20px 24px;
+  font-size: 13px;
+  color: var(--textColor);
+  line-height: 1.7;
+}
+#sparseBriefModalBox .gate-modal-body p {
+  margin-bottom: 12px;
+}
+#sparseBriefModalBox .gate-modal-body p:last-child {
+  margin-bottom: 0;
+}
+#sparseBriefModalBox .gate-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--borderColor);
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+#sparseBriefModalBox .btn-gate-confirm {
+  opacity: 1;
+  pointer-events: auto;
+}
 .resume-modal-header {
   padding: 16px 20px;
   border-bottom: 1px solid var(--borderColor);
