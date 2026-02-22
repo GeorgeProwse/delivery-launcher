@@ -972,11 +972,11 @@ textarea {
 
 /* workflow layout */
 .workflow-container {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0;
   display: grid;
-  grid-template-columns: 230px 1fr;
+  grid-template-columns: 260px 1fr;
   gap: 0;
   align-items: stretch;
   height: 100%;
@@ -991,7 +991,54 @@ textarea {
   height: 100%;
   background: var(--cardBg);
   border-right: 1px solid var(--borderColor);
-  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
+}
+/* Sidebar overall progress summary */
+.sidebar-summary {
+  padding: 14px 14px 12px;
+  border-bottom: 1px solid var(--borderColor);
+  background: var(--cardBg);
+  flex-shrink: 0;
+}
+.sidebar-summary-title {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--secondaryText);
+  margin-bottom: 6px;
+}
+.sidebar-summary-count {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--textColor);
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+.sidebar-summary-subtext {
+  font-size: 11px;
+  color: var(--secondaryText);
+  margin-bottom: 8px;
+}
+.sidebar-summary-bar-outer {
+  height: 6px;
+  background: var(--grey200);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.sidebar-summary-bar-inner {
+  height: 100%;
+  background: var(--orange500);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+.sidebar-phase-list {
+  flex: 1;
+  overflow-y: auto;
+  padding-top: 4px;
 }
 .sidebar-header {
   background: var(--orange500);
@@ -1006,26 +1053,46 @@ textarea {
   border-bottom: 1px solid var(--borderColor);
 }
 .sidebar-phase-label {
-  padding: 6px 14px;
-  font-size: 11px;
-  font-weight: 500;
+  padding: 8px 14px 6px;
+  font-size: 10px;
+  font-weight: 700;
   color: var(--secondaryText);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   background: var(--surfaceColor);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.sidebar-phase-count-badge {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--grey400);
+  background: var(--grey200);
+  padding: 1px 7px;
+  border-radius: 100px;
+  white-space: nowrap;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.sidebar-phase-count-badge.phase-all-done {
+  background: var(--successBg);
+  color: var(--success);
 }
 /* CHANGE 10: keyboard-focusable sidebar items */
 .sidebar-item {
-  padding: 7px 14px 7px 17px;
+  padding: 8px 14px 8px 16px;
   font-size: 12px;
   font-weight: 400;
   color: var(--textColor);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   transition: all 120ms ease;
-  border-left: 2px solid transparent;
+  border-left: 3px solid transparent;
+  line-height: 1.3;
 }
 .sidebar-item:hover {
   background: var(--orange100);
@@ -1053,31 +1120,37 @@ textarea {
 }
 
 .step-dot {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background-color: var(--grey200);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 700;
   color: var(--grey500);
   flex-shrink: 0;
+  border: 1.5px solid var(--grey300);
 }
 .sidebar-item.active .step-dot {
   background-color: var(--orange500);
   color: var(--white);
+  border-color: var(--orange500);
 }
 .sidebar-item.completed .step-dot {
   background-color: var(--success);
   color: var(--white);
+  border-color: var(--success);
+}
+.sidebar-item.locked .step-dot {
+  border-color: var(--grey200);
 }
 
 .workflow-header {
-  background: var(--bgColor);
+  background: var(--cardBg);
   border-bottom: 1px solid var(--borderColor);
-  padding: 14px 20px;
+  padding: 16px 24px;
   margin-bottom: 0;
   display: flex;
   align-items: center;
@@ -1085,18 +1158,26 @@ textarea {
   position: sticky;
   top: 0;
   z-index: 150;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 .workflow-header h2 {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 4px;
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 3px;
+  letter-spacing: -0.01em;
 }
 .workflow-header p {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--secondaryText);
 }
 .progress-wrap {
   text-align: right;
+}
+.workflow-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
 }
 .form-progress-wrap {
   display: flex;
@@ -1117,19 +1198,20 @@ textarea {
 }
 .progress-label {
   font-size: 12px;
-  color: var(--secondaryText);
+  font-weight: 600;
+  color: var(--textColor);
   margin-bottom: 2px;
 }
 /* CHANGE 6: per-phase breakdown text */
 .progress-breakdown {
   font-size: 11px;
   color: var(--secondaryText);
-  margin-bottom: 4px;
+  margin-bottom: 5px;
   opacity: 0.8;
 }
 .progress-bar {
-  width: 160px;
-  height: 8px;
+  width: 180px;
+  height: 7px;
   background-color: var(--grey200);
   border-radius: 4px;
   overflow: hidden;
@@ -1143,20 +1225,30 @@ textarea {
 
 /* CHANGE 5: Phase filter pill bar */
 .phase-filter-bar {
-  background: var(--bgColor);
+  background: var(--cardBg);
   border-bottom: 1px solid var(--borderColor);
-  padding: 8px 20px;
+  padding: 10px 24px;
   position: sticky;
-  top: 57px;
+  top: 65px;
   z-index: 140;
 }
 .phase-filter-pills {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
+  align-items: center;
+}
+.phase-filter-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--secondaryText);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-right: 2px;
+  white-space: nowrap;
 }
 .phase-filter-pill {
-  padding: 4px 14px;
+  padding: 5px 14px;
   font-size: 12px;
   font-weight: 500;
   border: 1.5px solid var(--borderColor);
@@ -1168,8 +1260,9 @@ textarea {
   font-family: system-ui, sans-serif;
 }
 .phase-filter-pill:hover {
-  border-color: var(--orange500);
+  border-color: var(--orange300);
   color: var(--orange500);
+  background: var(--orange100);
 }
 .phase-filter-pill:focus {
   outline: 2px solid var(--orange500);
@@ -1180,7 +1273,7 @@ textarea {
   border-color: var(--orange500);
   color: #fff;
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(253, 81, 8, 0.3);
+  box-shadow: 0 2px 8px rgba(253, 81, 8, 0.28);
 }
 
 /* CHANGE 12: Single workflow tip banner */
@@ -1188,16 +1281,16 @@ textarea {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: var(--surfaceColor);
-  border-bottom: 1px solid var(--borderColor);
-  padding: 8px 20px;
+  background: #eff6ff;
+  border-bottom: 1px solid #bfdbfe;
+  padding: 9px 24px;
   font-size: 12px;
-  color: var(--secondaryText);
+  color: #1e40af;
 }
 .workflow-tip-icon {
   font-size: 14px;
   flex-shrink: 0;
-  color: var(--orange500);
+  color: #3b82f6;
 }
 .workflow-tip-text {
   flex: 1;
@@ -1207,7 +1300,7 @@ textarea {
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--secondaryText);
+  color: #93c5fd;
   font-size: 14px;
   padding: 2px 6px;
   border-radius: 2px;
@@ -1215,7 +1308,7 @@ textarea {
   font-family: system-ui, sans-serif;
 }
 .workflow-tip-dismiss:hover {
-  color: var(--textColor);
+  color: #1e40af;
 }
 
 /* CHANGE 1: Phase divider banners in main card area */
@@ -1223,12 +1316,13 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 16px 10px 16px;
-  margin: 16px 0 8px 0;
-  background: var(--surfaceColor);
+  padding: 12px 18px;
+  margin: 20px 0 10px 0;
+  background: var(--cardBg);
   border: 1px solid var(--borderColor);
   border-left: 4px solid var(--orange500);
-  border-radius: 0 3px 3px 0;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 .phase-divider:first-child {
   margin-top: 0;
@@ -1236,7 +1330,7 @@ textarea {
 .phase-divider-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 .phase-divider-number {
   font-size: 10px;
@@ -1245,28 +1339,30 @@ textarea {
   letter-spacing: 0.08em;
   color: var(--orange500);
   background: var(--orange100);
-  padding: 3px 8px;
-  border-radius: 2px;
+  padding: 3px 10px;
+  border-radius: 100px;
 }
 .phase-divider-name {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   color: var(--textColor);
+  letter-spacing: -0.01em;
 }
 .phase-divider-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   flex-shrink: 0;
 }
 .phase-divider-count {
   font-size: 11px;
+  font-weight: 500;
   color: var(--secondaryText);
   white-space: nowrap;
 }
 .phase-divider-bar-outer {
-  width: 80px;
-  height: 5px;
+  width: 90px;
+  height: 6px;
   background: var(--grey200);
   border-radius: 3px;
   overflow: hidden;
@@ -1280,28 +1376,36 @@ textarea {
 
 /* CHANGE 3: padding on promptCards container */
 #promptCards {
-  padding: 0 20px 32px;
+  padding: 16px 24px 40px;
 }
 
 .prompt-card {
   background: var(--cardBg);
   border: 1px solid var(--borderColor);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   overflow: hidden;
   border-left: 4px solid var(--grey200);
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
   transition:
     border-color 200ms ease,
     box-shadow 200ms ease;
 }
+.prompt-card:hover {
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
 .prompt-card.active-card {
   border-left-color: var(--orange500);
+  box-shadow: 0 2px 8px rgba(253, 81, 8, 0.1);
 }
 .prompt-card.completed-card {
   border-left-color: var(--success);
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.08);
 }
 .prompt-card.locked-card {
   opacity: 0.45;
   pointer-events: none;
+  box-shadow: none;
 }
 
 /* CHANGE 4: orange pulse animation on newly unlocked card */
@@ -1325,13 +1429,14 @@ textarea {
 
 /* CHANGE 10: focusable card headers */
 .prompt-card-header {
-  padding: 16px 20px;
+  padding: 14px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
   user-select: none;
   transition: background-color 200ms ease;
+  gap: 12px;
 }
 .prompt-card-header:hover {
   background-color: var(--surfaceColor);
@@ -1344,33 +1449,47 @@ textarea {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
+}
+.prompt-card-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .prompt-id {
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 10px;
+  font-weight: 700;
   color: var(--orange500);
   background-color: var(--orange100);
-  padding: 4px 12px;
+  padding: 3px 10px;
+  border-radius: 100px;
   white-space: nowrap;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
 }
 .prompt-card.completed-card .prompt-id {
   color: var(--success);
   background-color: var(--successBg);
+  border: 1px solid rgba(34, 197, 94, 0.2);
 }
 .prompt-card.locked-card .prompt-id {
-  color: var(--secondaryText);
+  color: var(--grey400);
   background-color: var(--surfaceColor);
 }
 
 .prompt-name {
   font-size: 14px;
   font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
 }
 .prompt-meta {
   font-size: 12px;
   color: var(--secondaryText);
   margin-top: 2px;
+  line-height: 1.4;
 }
 
 /* CHANGE 8: dependency sub-label on locked cards */
@@ -1383,21 +1502,27 @@ textarea {
 }
 
 .status-badge {
-  font-size: 12px;
+  font-size: 11px;
   padding: 4px 12px;
-  font-weight: 500;
+  font-weight: 600;
+  border-radius: 100px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .badge-ready {
   background-color: var(--orange100);
   color: var(--orange500);
+  border: 1px solid rgba(253, 81, 8, 0.15);
 }
 .badge-done {
   background-color: var(--successBg);
   color: var(--success);
+  border: 1px solid rgba(34, 197, 94, 0.2);
 }
 .badge-locked {
   background-color: var(--surfaceColor);
   color: var(--secondaryText);
+  border: 1px solid var(--borderColor);
 }
 
 .prompt-card-body {
@@ -1462,8 +1587,8 @@ textarea {
   color: var(--secondaryText);
   background: transparent;
   border: 1px solid var(--borderColor);
-  border-radius: 3px;
-  padding: 3px 9px;
+  border-radius: 6px;
+  padding: 4px 10px;
   cursor: pointer;
   transition: all 120ms ease;
   font-family: system-ui, sans-serif;
@@ -1539,23 +1664,26 @@ textarea {
 .btn-copy {
   background-color: var(--orange500);
   color: var(--white);
-  padding: 8px 16px;
+  padding: 8px 18px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   border: none;
-  border-radius: 2px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: background-color 200ms ease;
+  transition: background-color 200ms ease, box-shadow 200ms ease;
   font-family: system-ui, sans-serif;
+  box-shadow: 0 2px 6px rgba(253, 81, 8, 0.25);
 }
 .btn-copy:hover {
   background-color: #d94000;
+  box-shadow: 0 3px 10px rgba(253, 81, 8, 0.35);
 }
 .btn-copy.copied {
   background-color: var(--success);
+  box-shadow: 0 2px 6px rgba(34, 197, 94, 0.25);
 }
 
 /* Secondary/ghost utility actions — CHANGE 11 */
@@ -1567,7 +1695,7 @@ textarea {
   font-weight: 500;
   cursor: pointer;
   border: 1px solid var(--borderColor);
-  border-radius: 2px;
+  border-radius: 6px;
   transition: all 200ms ease;
   font-family: system-ui, sans-serif;
 }
@@ -1591,7 +1719,7 @@ textarea {
   font-weight: 500;
   cursor: pointer;
   border: 1px solid var(--borderColor);
-  border-radius: 2px;
+  border-radius: 6px;
   transition: all 200ms ease;
   font-family: system-ui, sans-serif;
 }
@@ -2098,7 +2226,7 @@ textarea {
   font-weight: 500;
   cursor: pointer;
   border: 1px solid var(--borderColor);
-  border-radius: 2px;
+  border-radius: 6px;
   transition: all 140ms ease;
   display: none;
   font-family: system-ui, sans-serif;
@@ -2117,12 +2245,12 @@ textarea {
 .btn-mark-done {
   background: transparent;
   color: var(--success);
-  padding: 7px 14px;
+  padding: 7px 16px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   border: 1.5px solid var(--success);
-  border-radius: 2px;
+  border-radius: 6px;
   transition: all 200ms ease;
   font-family: system-ui, sans-serif;
   white-space: nowrap;
@@ -2130,6 +2258,7 @@ textarea {
 .btn-mark-done:hover {
   background-color: var(--success);
   color: var(--white);
+  box-shadow: 0 2px 6px rgba(34, 197, 94, 0.3);
 }
 /* CHANGE 11: Edit as small secondary ghost */
 .btn-edit-prompt {
@@ -2140,7 +2269,7 @@ textarea {
   font-weight: 500;
   cursor: pointer;
   border: 1px solid var(--borderColor);
-  border-radius: 2px;
+  border-radius: 6px;
   transition: all 140ms ease;
   font-family: system-ui, sans-serif;
 }
@@ -2523,15 +2652,19 @@ textarea {
   font-size: 12px;
   font-weight: 600;
   background: transparent;
-  color: var(--textColor);
+  color: var(--secondaryText);
   border: 1px solid var(--borderColor);
-  border-radius: 2px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 140ms ease;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 .btn-bulk-export:hover {
   background: var(--grey100);
+  color: var(--textColor);
   border-color: var(--grey400);
 }
 .btn-bulk-export.exported {
@@ -3595,13 +3728,23 @@ textarea {
     overflow-y: hidden;
     border-right: none;
     border-bottom: 1px solid var(--borderColor);
-    padding-top: 0;
     /* Horizontal scroll strip */
     display: flex;
     flex-direction: row;
     align-items: stretch;
+    box-shadow: none;
   }
-  .workflow-sidebar #workflowSidebar {
+  .sidebar-summary {
+    display: none;
+  }
+  .sidebar-phase-list {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  .workflow-sidebar .sidebar-phase-list #workflowSidebar {
     display: flex;
     flex-direction: row;
     min-width: max-content;
@@ -3621,6 +3764,11 @@ textarea {
     background: var(--surfaceColor);
     border-right: 1px solid var(--borderColor);
     min-width: 26px;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .sidebar-phase-count-badge {
+    display: none;
   }
   .sidebar-item {
     padding: 8px 12px;
@@ -4186,18 +4334,29 @@ textarea {
 <div class="page" id="workflowPage">
   <div class="workflow-container">
     <div class="workflow-sidebar" id="workflowSidebarWrap">
-      <div id="workflowSidebar"></div>
+      <!-- Sidebar overall progress summary -->
+      <div class="sidebar-summary" id="sidebarSummary">
+        <div class="sidebar-summary-title">Overall Progress</div>
+        <div class="sidebar-summary-count" id="sidebarSummaryCount">0 of 20 steps</div>
+        <div class="sidebar-summary-subtext" id="sidebarSummarySubtext">Get started below</div>
+        <div class="sidebar-summary-bar-outer">
+          <div class="sidebar-summary-bar-inner" id="sidebarSummaryBar" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="sidebar-phase-list">
+        <div id="workflowSidebar"></div>
+      </div>
     </div>
     <div class="workflow-main">
       <div class="workflow-header">
         <div style="display:flex; align-items:center; gap:16px;">
-          <button class="btn btn-secondary" onclick="goBackToForm()" style="white-space:nowrap;">Back to Form</button>
+          <button class="btn btn-secondary" onclick="goBackToForm()" style="white-space:nowrap;">&#8592; Back</button>
           <div>
             <h2 id="workflowTitle">Engagement Workflow</h2>
             <p id="workflowSubtitle">Copy each prompt in sequence into your AI tool</p>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+        <div style="display:flex;align-items:center;gap:14px;flex-shrink:0;">
           <button class="btn-bulk-export" id="bulkExportBtn" onclick="exportAllPrompts()">&#8681; Export All</button>
           <div class="progress-wrap">
             <div class="progress-label" id="progressText" aria-live="polite">0 of 20 steps complete</div>
@@ -4208,7 +4367,9 @@ textarea {
       </div>
       <!-- CHANGE 5: Phase filter pill row -->
       <div class="phase-filter-bar">
-        <div class="phase-filter-pills" id="phaseFilterPills"></div>
+        <div class="phase-filter-pills" id="phaseFilterPills">
+          <span class="phase-filter-label">Filter:</span>
+        </div>
       </div>
       <!-- CHANGE 12: Single dismissible tip banner -->
       <div class="workflow-tip-banner" id="workflowTipBanner">
@@ -9927,7 +10088,8 @@ function renderWorkflow() {
 
   workflow.phases.forEach((phase) => {
     phaseIndex++;
-    sidebarHTML += `<div class="sidebar-phase"><div class="sidebar-phase-label">${phase.phase_name}</div>`;
+    const phaseStepCountForBadge = phase.prompts.length;
+    sidebarHTML += `<div class="sidebar-phase"><div class="sidebar-phase-label"><span>Phase ${phaseIndex} &mdash; ${phase.phase_name}</span><span class="sidebar-phase-count-badge" id="sidebar-phase-badge-${phase.phase_id}">0/${phaseStepCountForBadge}</span></div>`;
 
     // CHANGE 1: Phase header banner in main cards area
     const phaseStepCount = phase.prompts.length;
@@ -10033,7 +10195,11 @@ function renderWorkflow() {
   }, 600);
   document.getElementById("progressText").textContent =
     `0 of ${totalSteps} steps complete`;
+  // Update sidebar summary initial state
+  var sidebarCount = document.getElementById("sidebarSummaryCount");
+  if (sidebarCount) sidebarCount.textContent = "0 of " + totalSteps + " steps";
   updatePhaseProgress();
+  updateSidebarPhaseBadges();
   loadAllPrompts(workflow);
 }
 
@@ -10528,7 +10694,37 @@ function updateProgress() {
     .join(" · ");
   const pbEl = document.getElementById("progressBreakdown");
   if (pbEl) pbEl.textContent = phaseBreakdown;
+  // Update sidebar summary bar
+  var sidebarBar = document.getElementById("sidebarSummaryBar");
+  var sidebarCount = document.getElementById("sidebarSummaryCount");
+  var sidebarSubtext = document.getElementById("sidebarSummarySubtext");
+  if (sidebarBar) sidebarBar.style.width = pct + "%";
+  if (sidebarCount) sidebarCount.textContent = done + " of " + total + " steps";
+  if (sidebarSubtext) {
+    if (done === 0) sidebarSubtext.textContent = "Get started below";
+    else if (done === total) sidebarSubtext.textContent = "All steps complete!";
+    else sidebarSubtext.textContent = pct + "% complete";
+  }
   updatePhaseProgress();
+  updateSidebarPhaseBadges();
+}
+
+function updateSidebarPhaseBadges() {
+  if (!appData || !appData.workflow) return;
+  appData.workflow.phases.forEach(function (phase) {
+    var total = phase.prompts.length;
+    var done = phase.prompts.filter(function (p) {
+      return completedSteps.has(p.prompt_id);
+    }).length;
+    var badge = document.getElementById("sidebar-phase-badge-" + phase.phase_id);
+    if (!badge) return;
+    badge.textContent = done + "/" + total;
+    if (done === total) {
+      badge.classList.add("phase-all-done");
+    } else {
+      badge.classList.remove("phase-all-done");
+    }
+  });
 }
 
 function updatePhaseProgress() {
@@ -10548,12 +10744,12 @@ function updatePhaseProgress() {
 
 // ── FORM COMPILATION ──
 
-// CHANGE 5: Build phase filter pills dynamically
+/// CHANGE 5: Build phase filter pills dynamically
 function buildPhaseFilterPills() {
   var container = document.getElementById("phaseFilterPills");
   if (!container || !appData || !appData.workflow) return;
   var html =
-    '<button class="phase-filter-pill active" data-phase="all" onclick="filterByPhase(&quot;all&quot;)" tabindex="0">All</button>';
+    '<span class="phase-filter-label">Filter:</span><button class="phase-filter-pill active" data-phase="all" onclick="filterByPhase(&quot;all&quot;)" tabindex="0">All</button>';
   appData.workflow.phases.forEach(function (p) {
     html +=
       '<button class="phase-filter-pill" data-phase="' +
