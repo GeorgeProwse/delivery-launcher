@@ -1,0 +1,3292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PwC Digital Design System — Component Catalogue</title>
+<style>
+/* ── RESET ── */
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;font-size:14px;line-height:1.6}
+
+/* ── TOKENS ── */
+:root{
+  --o500:#FD5108;--o300:#FFAA72;--o100:#FFE8D4;
+  --black:#000;--white:#fff;
+  --g100:#EEEFF1;--g200:#DFE3E6;--g300:#CBD1D6;--g400:#B5BCC4;--g500:#A1A8B3;
+  --success:#22C55E;--successBg:#DCFCE7;
+  --warning:#EAB308;--warningBg:#FEF3C7;
+  --error:#EF4444;--errorBg:#FEE2E2;
+  --info:#3B82F6;--infoBg:#DBEAFE;
+  --radius:4px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
+  --shadow-md:0 4px 24px rgba(0,0,0,.12);
+  /* 8-col grid baseline */
+  --col:8px;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── LAYOUT ── */
+.app{display:flex;min-height:100vh}
+
+/* Sidebar */
+.sidebar{width:224px;flex-shrink:0;background:#fff;border-right:1px solid var(--g200);position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column}
+.sidebar-logo{padding:24px 24px 16px;border-bottom:1px solid var(--g200);display:flex;align-items:center;gap:12px}
+.sidebar-label{font-size:11px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.08em;padding:20px 24px 6px}
+.nav-link{display:flex;align-items:center;gap:10px;padding:9px 24px;font-size:13px;color:var(--g500);text-decoration:none;border-left:2px solid transparent;transition:all .15s ease;cursor:pointer}
+.nav-link:hover{color:var(--black);background:var(--g100)}
+.nav-link.active{color:var(--o500);font-weight:600;border-left:2px solid var(--o500);background:var(--o100)}
+.nav-link svg{flex-shrink:0}
+
+/* Main */
+.main{flex:1;min-width:0}
+
+/* Top bar */
+.topbar{background:#fff;border-bottom:1px solid var(--g200);padding:0 48px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-title{font-size:15px;font-weight:600}
+.topbar-right{display:flex;align-items:center;gap:16px}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--o100);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* Content */
+.content{padding:48px}
+
+/* Sections */
+.section{margin-bottom:80px;animation:fadeIn .3s ease}
+.section-header{margin-bottom:32px}
+.section-title{font-size:22px;font-weight:600;color:var(--black);margin-bottom:6px}
+.section-desc{font-size:13px;color:var(--g500);line-height:1.6;max-width:640px}
+.section-divider{height:2px;background:linear-gradient(90deg,var(--o500) 0%,var(--o100) 100%);margin-bottom:32px;width:48px}
+
+/* Subsection */
+.sub{margin-bottom:40px}
+.sub-title{font-size:13px;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px}
+
+/* ── GRID SYSTEM ── */
+/* All demo areas snap to an 8px grid */
+.row{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+.row.center{align-items:center}
+.row.stretch{align-items:stretch}
+.col-1{flex:0 0 calc(8.333% - 15px)}
+.col-2{flex:0 0 calc(16.667% - 14px)}
+.col-3{flex:0 0 calc(25% - 12px)}
+.col-4{flex:0 0 calc(33.333% - 11px)}
+.col-6{flex:0 0 calc(50% - 8px)}
+.col-8{flex:0 0 calc(66.667% - 6px)}
+.col-12{flex:0 0 100%}
+@media(max-width:1200px){.col-4{flex:0 0 calc(50% - 8px)}.col-3{flex:0 0 calc(33.333% - 11px)}}
+@media(max-width:900px){.col-3,.col-4,.col-6,.col-8{flex:0 0 100%}}
+
+/* ── COMPONENT CARD (wrapper for each demo) ── */
+.demo-card{background:#fff;border:1px solid var(--g200);padding:24px;display:flex;flex-direction:column;gap:16px}
+.demo-card-label{font-size:11px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+/* All demo cards in a row get equal height */
+.row.stretch .demo-card{height:100%}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:system-ui,sans-serif;font-weight:600;cursor:pointer;border:none;transition:all .2s ease;white-space:nowrap}
+.btn:focus-visible{outline:2px solid var(--o500);outline-offset:2px}
+.btn-primary{background:var(--o300);color:var(--black);padding:10px 20px;font-size:14px}
+.btn-primary:hover{background:#f09a5e}
+.btn-secondary{background:transparent;color:var(--black);padding:10px 20px;font-size:14px;border:1px solid var(--black)}
+.btn-secondary:hover{background:var(--g100)}
+.btn-tertiary{background:transparent;color:var(--o500);padding:10px 20px;font-size:14px;text-decoration:underline}
+.btn-tertiary:hover{color:#d94000}
+.btn-destructive{background:transparent;color:var(--error);padding:10px 20px;font-size:14px;border:1px solid var(--error)}
+.btn-destructive:hover{background:var(--errorBg)}
+.btn-disabled{background:var(--g200);color:var(--g400);padding:10px 20px;font-size:14px;cursor:not-allowed;opacity:.7}
+.btn-sm{padding:6px 14px;font-size:12px}
+.btn-lg{padding:14px 28px;font-size:16px}
+.btn-icon{width:40px;height:40px;padding:0;background:transparent;border:1px solid var(--g200);border-radius:var(--radius);color:var(--g500)}
+.btn-icon:hover{border-color:var(--g400);color:var(--black)}
+.btn-loading .spin{animation:spin 1s linear infinite;display:inline-flex}
+
+/* ── FORM CONTROLS ── */
+.field{display:flex;flex-direction:column;gap:6px}
+.label{font-size:14px;font-weight:500;color:var(--black)}
+.hint{font-size:12px;color:var(--g500)}
+.input{width:100%;padding:10px 12px;border:1px solid var(--g200);border-radius:var(--radius);font-size:14px;font-family:inherit;background:#fff;color:var(--black);outline:none;transition:border-color .2s ease}
+.input:focus{border-color:var(--o500);box-shadow:0 0 0 3px rgba(253,81,8,.1)}
+.input::placeholder{color:var(--g400)}
+.textarea{resize:vertical;min-height:96px}
+
+/* Checkbox */
+.check-wrap{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.check-box{width:20px;height:20px;border:2px solid var(--g400);background:transparent;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s ease;cursor:pointer}
+.check-box.checked{border-color:var(--o500);background:var(--o500)}
+.check-wrap:hover .check-box{border-color:var(--o500)}
+
+/* Radio */
+.radio-wrap{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.radio-outer{width:20px;height:20px;border-radius:50%;border:2px solid var(--g400);background:transparent;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s ease;cursor:pointer}
+.radio-outer.selected{border-color:var(--o500)}
+.radio-dot{width:10px;height:10px;border-radius:50%;background:var(--o500);transform:scale(0);transition:transform .15s ease}
+.radio-outer.selected .radio-dot{transform:scale(1)}
+
+/* Toggle */
+.toggle-wrap{display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
+.toggle-track{width:44px;height:24px;border-radius:12px;background:var(--g300);position:relative;transition:background .2s ease;cursor:pointer;flex-shrink:0}
+.toggle-track.on{background:var(--o500)}
+.toggle-thumb{width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s cubic-bezier(.4,0,.2,1);box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle-track.on .toggle-thumb{left:22px}
+
+/* Slider */
+.slider-wrap{display:flex;align-items:center;gap:12px}
+.slider-track{flex:1;height:6px;background:var(--g200);border-radius:3px;position:relative;cursor:pointer}
+.slider-fill{height:100%;background:var(--o500);border-radius:3px;pointer-events:none}
+.slider-thumb{width:18px;height:18px;border-radius:50%;background:var(--o500);position:absolute;top:50%;transform:translate(-50%,-50%);cursor:grab;box-shadow:0 2px 6px rgba(253,81,8,.4);transition:box-shadow .15s ease}
+.slider-thumb:hover{box-shadow:0 2px 10px rgba(253,81,8,.6)}
+.slider-input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.slider-val{font-size:13px;font-weight:500;min-width:40px;text-align:right;color:var(--black)}
+
+/* Dropdown */
+.dropdown{position:relative}
+.dropdown-btn{width:100%;padding:10px 12px;border:1px solid var(--g200);border-radius:var(--radius);font-size:14px;font-family:inherit;background:#fff;color:var(--black);display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:border-color .2s ease}
+.dropdown-btn:focus{outline:none;border-color:var(--o500);box-shadow:0 0 0 3px rgba(253,81,8,.1)}
+.dropdown-btn.placeholder{color:var(--g400)}
+.dropdown-chevron{transition:transform .2s ease;flex-shrink:0}
+.dropdown-chevron.open{transform:rotate(180deg)}
+.dropdown-list{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--g200);border-radius:var(--radius);box-shadow:var(--shadow-md);z-index:200;overflow:hidden;animation:fadeIn .15s ease}
+.dropdown-item{padding:10px 14px;font-size:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:background .1s ease;color:var(--black)}
+.dropdown-item:hover{background:var(--g100)}
+.dropdown-item.selected{background:var(--o100);color:var(--o500);font-weight:500}
+
+/* Search */
+.search-wrap{display:flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--g200);border-radius:var(--radius);background:var(--g100);transition:all .2s ease}
+.search-wrap:focus-within{border-color:var(--o500);background:#fff;box-shadow:0 0 0 3px rgba(253,81,8,.1)}
+.search-input{border:none;background:transparent;outline:none;font-size:14px;font-family:inherit;color:var(--black);flex:1}
+.search-input::placeholder{color:var(--g400)}
+
+/* ── CARDS ── */
+.card{background:#fff;border:1px solid var(--g200);padding:24px}
+.card-sm{padding:16px}
+.panel{background:#fff;border:1px solid var(--g200)}
+.panel-hd{padding:16px 20px;border-bottom:1px solid var(--g200);display:flex;justify-content:space-between;align-items:center}
+.panel-hd-title{font-size:15px;font-weight:600}
+.panel-bd{padding:20px}
+.panel-ft{padding:14px 20px;border-top:1px solid var(--g200);display:flex;justify-content:flex-end;gap:10px}
+
+/* Stat card */
+.stat-card{background:#fff;border:1px solid var(--g200);padding:20px}
+.stat-icon{width:40px;height:40px;background:var(--o100);display:flex;align-items:center;justify-content:center;margin-bottom:16px;flex-shrink:0}
+.stat-value{font-size:26px;font-weight:600;line-height:1.1}
+.stat-label{font-size:12px;color:var(--g500);margin-bottom:6px}
+.stat-change{font-size:12px;font-weight:500}
+.stat-change.pos{color:var(--success)}
+.stat-change.neg{color:var(--error)}
+.stat-change.neu{color:var(--g500)}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;font-size:12px;font-weight:500;white-space:nowrap}
+.badge-brand{background:var(--o100);color:var(--o500)}
+.badge-success{background:var(--successBg);color:var(--success)}
+.badge-warning{background:var(--warningBg);color:var(--warning)}
+.badge-error{background:var(--errorBg);color:var(--error)}
+.badge-info{background:var(--infoBg);color:var(--info)}
+.badge-default{background:var(--g100);color:var(--g500)}
+
+/* ── TABS ── */
+.tabs-underline{display:flex;border-bottom:1px solid var(--g200)}
+.tab-ul{padding:10px 20px;background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;font-size:14px;font-family:inherit;color:var(--g500);font-weight:400;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s ease;white-space:nowrap}
+.tab-ul:hover{color:var(--black)}
+.tab-ul.active{color:var(--o500);font-weight:600;border-bottom:2px solid var(--o500)}
+.tab-count{padding:2px 7px;border-radius:10px;font-size:11px;font-weight:500;background:var(--g100);color:var(--g500)}
+.tab-ul.active .tab-count{background:var(--o100);color:var(--o500)}
+
+.tabs-pill{display:flex;gap:4px;padding:4px;background:var(--g100);width:fit-content}
+.tab-pill{padding:7px 16px;background:transparent;border:none;font-size:13px;font-family:inherit;color:var(--g500);cursor:pointer;transition:all .15s ease;font-weight:400}
+.tab-pill.active{background:#fff;color:var(--black);font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+
+/* ── BREADCRUMBS ── */
+.breadcrumb{display:flex;align-items:center;gap:6px}
+.bc-item{font-size:13px;color:var(--g500);text-decoration:none;transition:color .15s ease}
+.bc-item:hover{color:var(--black)}
+.bc-item.current{color:var(--black);font-weight:500}
+.bc-sep{color:var(--g300)}
+
+/* ── PAGINATION ── */
+.pagination{display:flex;align-items:center;gap:6px}
+.pg-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:1px solid var(--g200);background:#fff;font-size:13px;font-family:inherit;cursor:pointer;transition:all .15s ease;color:var(--black)}
+.pg-btn:hover{border-color:var(--g400)}
+.pg-btn.active{background:var(--black);border-color:var(--black);color:#fff;font-weight:600}
+.pg-btn.disabled{color:var(--g400);cursor:not-allowed}
+.pg-prev,.pg-next{padding:0 12px;width:auto;gap:4px}
+
+/* ── ACCORDION ── */
+.accordion{border:1px solid var(--g200)}
+.acc-item{border-bottom:1px solid var(--g200)}
+.acc-item:last-child{border-bottom:none}
+.acc-hd{width:100%;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;border:none;background:transparent;cursor:pointer;font-size:14px;font-family:inherit;color:var(--black);font-weight:500;text-align:left;transition:background .15s ease}
+.acc-hd:hover{background:var(--g100)}
+.acc-chevron{transition:transform .25s ease;flex-shrink:0;color:var(--g500)}
+.acc-chevron.open{transform:rotate(180deg)}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease}
+.acc-body.open{max-height:400px}
+.acc-content{padding:4px 20px 16px;font-size:14px;color:var(--g500);line-height:1.6}
+
+/* ── ALERTS ── */
+.alert{display:flex;gap:14px;padding:14px 18px;border-left:4px solid;align-items:flex-start}
+.alert-success{background:var(--successBg);border-color:var(--success)}
+.alert-error{background:var(--errorBg);border-color:var(--error)}
+.alert-warning{background:var(--warningBg);border-color:var(--warning)}
+.alert-info{background:var(--infoBg);border-color:var(--info)}
+.alert-icon{flex-shrink:0;margin-top:1px}
+.alert-body{flex:1}
+.alert-title{font-size:14px;font-weight:600;margin-bottom:3px}
+.alert-msg{font-size:13px;opacity:.85}
+.alert-close{background:transparent;border:none;cursor:pointer;padding:2px;color:var(--g500);flex-shrink:0}
+
+/* ── TOAST ── */
+.toast{display:flex;align-items:center;gap:12px;padding:14px 18px;background:#fff;border:1px solid var(--g200);box-shadow:var(--shadow-md);min-width:300px;max-width:420px;animation:fadeIn .2s ease}
+.toast-icon{flex-shrink:0}
+.toast-msg{flex:1;font-size:14px}
+.toast-close{background:transparent;border:none;cursor:pointer;color:var(--g400);padding:2px}
+
+/* ── TOOLTIP ── */
+.tooltip-wrap{position:relative;display:inline-flex}
+.tooltip-box{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--black);color:#fff;font-size:12px;padding:7px 11px;border-radius:var(--radius);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s ease;z-index:300}
+.tooltip-box::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--black)}
+.tooltip-wrap:hover .tooltip-box{opacity:1}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:flex;align-items:center;justify-content:center;animation:fadeIn .2s ease}
+.modal{background:#fff;width:480px;max-width:90vw;box-shadow:var(--shadow-md);display:flex;flex-direction:column;animation:fadeIn .2s ease;position:relative;z-index:501}
+.modal-hd{padding:20px 24px;border-bottom:1px solid var(--g200);display:flex;justify-content:space-between;align-items:center}
+.modal-title{font-size:17px;font-weight:600}
+.modal-bd{padding:24px}
+.modal-ft{padding:14px 24px;border-top:1px solid var(--g200);display:flex;justify-content:flex-end;gap:10px}
+.modal-close{background:transparent;border:none;cursor:pointer;color:var(--g500);padding:4px}
+
+/* ── DRAWER ── */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500}
+.drawer{position:fixed;right:0;top:0;bottom:0;width:400px;max-width:90vw;background:#fff;box-shadow:-4px 0 32px rgba(0,0,0,.12);z-index:501;display:flex;flex-direction:column;animation:slideIn .25s ease}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.drawer-hd{padding:16px 20px;border-bottom:1px solid var(--g200);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.drawer-bd{padding:20px;flex:1;overflow-y:auto}
+.drawer-ft{padding:14px 20px;border-top:1px solid var(--g200);display:flex;justify-content:flex-end;gap:10px;flex-shrink:0}
+
+/* ── CONFIRM DIALOG ── */
+.confirm{background:#fff;width:400px;max-width:90vw;padding:24px;box-shadow:var(--shadow-md);animation:fadeIn .2s ease;position:relative;z-index:501}
+.confirm-icon{width:44px;height:44px;border-radius:50%;background:var(--errorBg);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ── PROGRESS ── */
+.progress-track{height:8px;background:var(--g200);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:var(--o500);border-radius:4px;transition:width .4s ease}
+
+/* Stepped */
+.steps{display:flex;align-items:flex-start;gap:0}
+.step{flex:1;display:flex;flex-direction:column}
+.step-line{height:3px;margin-bottom:10px;transition:background .3s ease}
+.step-line.done{background:var(--black)}
+.step-line.active{background:var(--o500)}
+.step-line.future{background:var(--g300)}
+.step-label{font-size:13px;display:flex;align-items:center;gap:5px}
+.step-label.done{color:var(--black);font-weight:400}
+.step-label.active{color:var(--black);font-weight:600}
+.step-label.future{color:var(--g500);font-weight:400}
+
+/* Spinner */
+.spinner{animation:spin 1s linear infinite}
+
+/* Skeleton */
+.skel{background:var(--g100);border-radius:4px;animation:pulse 1.6s ease-in-out infinite}
+.skel-circle{border-radius:50%}
+.skel-text{height:14px;margin-bottom:8px}
+.skel-text:last-child{margin-bottom:0}
+
+/* ── TABLE ── */
+.table-wrap{border:1px solid var(--g200);overflow:hidden}
+.table{width:100%;border-collapse:collapse}
+.table th{padding:11px 16px;font-size:12px;font-weight:600;color:var(--g500);text-align:left;background:var(--g100);border-bottom:1px solid var(--g200);white-space:nowrap}
+.table td{padding:14px 16px;font-size:13px;color:var(--black);border-bottom:1px solid var(--g200)}
+.table tr:last-child td{border-bottom:none}
+.table tbody tr{transition:background .12s ease;cursor:pointer}
+.table tbody tr:hover{background:var(--g100)}
+.table tbody tr.selected{background:var(--o100)}
+.table-check{width:20px;height:20px;cursor:pointer;accent-color:var(--o500)}
+
+/* ── SIDEBAR NAV ── */
+.sidenav{width:196px;border-right:1px solid var(--g200);display:flex;flex-direction:column;background:#fff}
+.sidenav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:14px;color:var(--black);cursor:pointer;border-left:3px solid transparent;transition:all .12s ease}
+.sidenav-item:hover{background:var(--g100)}
+.sidenav-item.active{background:var(--o100);color:var(--o500);font-weight:600;border-left:3px solid var(--o500)}
+
+/* ── CHAT ── */
+.chat-panel{background:#fff;border:1px solid var(--g200);display:flex;flex-direction:column;height:420px;box-shadow:var(--shadow-md)}
+.chat-hd{padding:14px 18px;border-bottom:1px solid var(--g200);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.chat-messages{flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:14px}
+.chat-msg-ai{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.chat-msg-user{display:flex;justify-content:flex-end}
+.chat-bubble-user{background:var(--g100);border-radius:var(--radius);padding:10px 14px;font-size:14px;max-width:80%}
+.chat-input-wrap{border-top:1px solid var(--g200);padding:12px;flex-shrink:0}
+.chat-input-inner{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--g200);border-radius:var(--radius)}
+.chat-input-inner:focus-within{border-color:var(--o500);box-shadow:0 0 0 3px rgba(253,81,8,.1)}
+.chat-input{flex:1;border:none;outline:none;font-size:14px;font-family:inherit;background:transparent}
+
+/* FAB */
+.fab{width:56px;height:56px;border-radius:50%;background:var(--o500);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(253,81,8,.35);transition:transform .2s ease,box-shadow .2s ease}
+.fab:hover{transform:scale(1.06);box-shadow:0 6px 24px rgba(253,81,8,.45)}
+
+/* ── EMPTY STATE ── */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 32px;text-align:center}
+.empty-icon{width:64px;height:64px;border-radius:50%;background:var(--g100);display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.empty-title{font-size:16px;font-weight:600;margin-bottom:8px}
+.empty-desc{font-size:13px;color:var(--g500);max-width:280px;margin-bottom:24px;line-height:1.6}
+
+/* ── CHART CONTAINERS ── */
+/* Every chart card is fixed height so they align in grid */
+.chart-card{background:#fff;border:1px solid var(--g200);padding:20px;display:flex;flex-direction:column}
+.chart-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.chart-sub{font-size:12px;color:var(--g500);margin-bottom:16px}
+.chart-area{flex:1;position:relative;min-height:0}
+.chart-legend{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--g500);cursor:pointer;transition:opacity .15s ease}
+.legend-item.muted{opacity:.35}
+.legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.legend-line{width:16px;height:3px;flex-shrink:0}
+
+/* SVG chart shared */
+.chart-svg{width:100%;overflow:visible;display:block}
+.grid-line{stroke:var(--g200);stroke-width:1;stroke-dasharray:4,4}
+.axis-label{font-size:10px;fill:#A1A8B3;font-family:system-ui,sans-serif}
+.data-line{stroke-width:2;fill:none}
+.data-point{cursor:pointer;transition:r .12s ease}
+.data-bar{cursor:pointer;transition:opacity .15s ease}
+.data-bar:hover{opacity:.8}
+.chart-tooltip{position:absolute;background:var(--black);color:#fff;font-size:12px;padding:6px 10px;border-radius:var(--radius);pointer-events:none;white-space:nowrap;transform:translate(-50%,-110%);z-index:200;transition:opacity .1s ease}
+
+/* ── COLOUR PALETTE ── */
+.colour-swatch{width:100%;height:56px}
+.colour-meta{padding:10px 0 0;font-size:12px}
+.colour-name{font-weight:600;margin-bottom:2px}
+.colour-hex{color:var(--g500)}
+
+/* ── TYPOGRAPHY SPECIMEN ── */
+.type-row{display:flex;align-items:baseline;gap:24px;padding:16px 0;border-bottom:1px solid var(--g200)}
+.type-row:last-child{border-bottom:none}
+.type-spec{font-size:11px;color:var(--g400);min-width:120px;flex-shrink:0}
+
+/* ── SPACING VISUAL ── */
+.space-block{background:var(--o100);display:inline-block}
+
+/* ── UTILITY ── */
+.icon-btn-bare{background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--g500);padding:4px;transition:color .15s ease}
+.icon-btn-bare:hover{color:var(--black)}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.mt-8{margin-top:8px}
+.mt-16{margin-top:16px}
+.mt-24{margin-top:24px}
+.gap-8{gap:8px}
+.gap-12{gap:12px}
+.gap-16{gap:16px}
+.gap-24{gap:24px}
+.flex{display:flex}
+.flex-col{flex-direction:column}
+.items-center{align-items:center}
+.justify-between{justify-content:space-between}
+.justify-end{justify-content:flex-end}
+.w-full{width:100%}
+.text-secondary{color:var(--g500)}
+.text-sm{font-size:13px}
+.fw-600{font-weight:600}
+.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═══ SIDEBAR ═══ -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <svg width="72" height="46" viewBox="0 0 104 67" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#000" d="M69.26,30.74c-2.53.41-3.83,2.28-3.83,5.57s1.73,5.53,4.37,5.53c1.23,0,2.35-.41,4.7-1.56v2.68c-2.82,1.29-4.48,1.69-6.76,1.69-2.46,0-4.19-.65-5.61-2.09-1.45-1.45-2.17-3.36-2.17-5.5,0-4.74,3.51-7.95,8.64-7.95,3.41,0,5.75,1.56,5.75,3.84,0,1.47-1.09,2.48-2.71,2.48-.83,0-1.51-.22-2.39-.72v-3.98ZM56.76,37.06c2.27-2.86,3.07-4.02,3.07-5.42s-1.11-2.53-2.6-2.53c-.91,0-1.74.43-2.14.88v5.83l-3.72,4.96v-11.31h-3.54l-5.88,9.75v-9.75h-2.03l-5.34,1.3v1.36l2.91.3v11.96h3.76l5.64-9.27v9.27h4.12l5.74-7.34ZM23.34,32.52c.87-.11,1.29-.15,1.7-.15,2.45,0,3.78,1.63,3.78,4.7,0,3.62-1.63,5.51-4.66,5.51-.25,0-.43,0-.83-.02v-10.04ZM23.34,44.25c.98.11,1.93.15,2.5.15,5.04,0,8.24-3.23,8.24-8.03,0-4.15-2.4-7.15-5.65-7.15-1.41,0-2.35.29-5.09,1.92v-2h-1.52l-5.86,1.78v1.43h2.43v16.73l-2.18.54v1.39h9.58v-1.39s-2.44-.54-2.44-.54v-4.84Z"/>
+      <path fill="#fd5108" d="M66.54,24.97h-15.98l2.72-4.51h15.98l-2.72,4.51ZM87.96,15.94h-15.98l-2.72,4.51h15.98l2.72-4.51Z"/>
+    </svg>
+  </div>
+  <div class="sidebar-label">Components</div>
+  <a class="nav-link active" href="#buttons" onclick="setActive(this)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="8" rx="1"/></svg>
+    Buttons
+  </a>
+  <a class="nav-link" href="#forms" onclick="setActive(this)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6M9 8h6M9 16h4"/><rect x="3" y="3" width="18" height="18" rx="1"/></svg>
+    Form Controls
+  </a>
+  <a class="nav-link" href="#cards" onclick="setActive(this)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="1"/><path d="M2 10h20"/></svg>
+    Cards
+  </a>
+  <a class="nav-link" href="#modals" onclick="setActive(this)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="5" width="14" height="14"/><path d="M5 5 2 2M19 5l3-3M5 19l-3 3M19 19l3 3"/></svg>
+    Modals & Overlays
+  </a>
+  <a class="nav-link" href="#navigation" onclick="setActive(this)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    Navigation
+  </a>
+  <a class="nav-link" href="#feedback" onclick="setActive(this)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    Feedback
+  </a>
+  <a class="nav-link" href="#progress" onclick="setActive(this)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    Progress & Loading
+  </a>
+  <a class="nav-link" href="#data" onclick="setActive(this)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+    Data Table
+  </a>
+  <a class="nav-link" href="#charts" onclick="setActive(this)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Charts
+  </a>
+  <a class="nav-link" href="#chat" onclick="setActive(this)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Chat & Assistant
+  </a>
+  <a class="nav-link" href="#foundations" onclick="setActive(this)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    Foundations
+  </a>
+</nav>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">PwC Digital Design System <span style="font-weight:400;color:var(--g500)">— Component Catalogue</span></div>
+    <div class="topbar-right">
+      <span style="font-size:12px;color:var(--g500)">v2.0</span>
+      <div class="avatar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FD5108" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+    </div>
+  </div>
+  <div class="content">
+
+<style>
+.label-wrap{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.comp-label{font-size:11px;color:var(--g500);font-weight:500}
+</style>
+
+<!-- ══════════════════════════════════════════
+     BUTTONS
+══════════════════════════════════════════ -->
+<section class="section" id="buttons">
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">Buttons</div>
+    <div class="section-desc">Sharp corners on all buttons. Primary always uses Orange 300 for WCAG accessibility. Orange 500 is never used as a button background.</div>
+  </div>
+
+  <!-- Row 1: Variants -->
+  <div class="sub"><div class="sub-title">Variants</div>
+    <div class="row center gap-16">
+      <div class="label-wrap">
+        <button class="btn btn-primary">Primary</button>
+        <div class="comp-label">Primary</div>
+      </div>
+      <div class="label-wrap">
+        <button class="btn btn-secondary">Secondary</button>
+        <div class="comp-label">Secondary</div>
+      </div>
+      <div class="label-wrap">
+        <button class="btn btn-tertiary">Tertiary</button>
+        <div class="comp-label">Tertiary / Link</div>
+      </div>
+      <div class="label-wrap">
+        <button class="btn btn-destructive">Destructive</button>
+        <div class="comp-label">Destructive</div>
+      </div>
+      <div class="label-wrap">
+        <button class="btn btn-disabled" disabled>Disabled</button>
+        <div class="comp-label">Disabled</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: Sizes -->
+  <div class="sub"><div class="sub-title">Sizes</div>
+    <div class="row center gap-16">
+      <div class="label-wrap">
+        <button class="btn btn-primary btn-sm">Small</button>
+        <div class="comp-label">Small — 6/14px</div>
+      </div>
+      <div class="label-wrap">
+        <button class="btn btn-primary">Medium</button>
+        <div class="comp-label">Medium — 10/20px</div>
+      </div>
+      <div class="label-wrap">
+        <button class="btn btn-primary btn-lg">Large</button>
+        <div class="comp-label">Large — 14/28px</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: With Icons + Loading -->
+  <div class="sub"><div class="sub-title">With Icons &amp; Loading</div>
+    <div class="row center gap-16">
+      <button class="btn btn-primary" style="gap:8px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Item
+      </button>
+      <button class="btn btn-secondary" style="gap:8px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download
+      </button>
+      <button class="btn btn-primary btn-loading" id="loadBtn" onclick="simulateLoad(this)">
+        <span class="btn-text">Click to Load</span>
+        <span class="btn-spinner" style="display:none">
+          <svg class="spinner" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Loading...
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Row 4: Icon Buttons -->
+  <div class="sub"><div class="sub-title">Icon Buttons</div>
+    <div class="row center gap-12">
+      <div class="label-wrap">
+        <button class="btn btn-icon" aria-label="Add">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="comp-label">Add</div>
+      </div>
+      <div class="label-wrap">
+        <button class="btn btn-icon" aria-label="Edit">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <div class="comp-label">Edit</div>
+      </div>
+      <div class="label-wrap">
+        <button class="btn btn-icon" aria-label="Delete">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </button>
+        <div class="comp-label">Delete</div>
+      </div>
+      <div class="label-wrap">
+        <button class="btn btn-icon" aria-label="Share">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        </button>
+        <div class="comp-label">Share</div>
+      </div>
+      <div class="label-wrap">
+        <button class="btn btn-icon" aria-label="Settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <div class="comp-label">Settings</div>
+      </div>
+      <div class="label-wrap">
+        <button class="btn btn-icon" aria-label="More options">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+        </button>
+        <div class="comp-label">More</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     FORM CONTROLS
+══════════════════════════════════════════ -->
+<section class="section" id="forms">
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">Form Controls</div>
+    <div class="section-desc">Inputs use 4px border-radius as functional elements. All interactive states use Orange 500. Everything below is fully interactive.</div>
+  </div>
+
+  <div class="row stretch gap-16">
+
+    <!-- Text Input -->
+    <div class="col-6">
+      <div class="demo-card" style="height:100%">
+        <div class="demo-card-label">Text Input</div>
+        <div class="field">
+          <label class="label" for="inp1">Full Name</label>
+          <input class="input" id="inp1" type="text" placeholder="Enter your full name"/>
+          <span class="hint">This will appear on your profile</span>
+        </div>
+        <div class="field">
+          <label class="label" for="inp2">Email Address</label>
+          <input class="input" id="inp2" type="email" placeholder="you@pwc.com"/>
+        </div>
+        <div class="field">
+          <label class="label" for="inp3">Disabled Field</label>
+          <input class="input" id="inp3" type="text" value="Cannot edit this" disabled style="background:var(--g100);color:var(--g400);cursor:not-allowed"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Textarea + Search -->
+    <div class="col-6">
+      <div class="demo-card" style="height:100%">
+        <div class="demo-card-label">Textarea &amp; Search</div>
+        <div class="field">
+          <label class="label" for="ta1">Message</label>
+          <textarea class="input textarea" id="ta1" placeholder="Describe the issue in detail..."></textarea>
+          <span class="hint">Maximum 500 characters</span>
+        </div>
+        <div class="field">
+          <label class="label">Search</label>
+          <div class="search-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--g400)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="search-input" placeholder="Search components..."/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dropdown -->
+    <div class="col-6">
+      <div class="demo-card" style="height:100%">
+        <div class="demo-card-label">Dropdown Select</div>
+        <div class="field">
+          <label class="label">Service Line</label>
+          <div class="dropdown" id="dd1">
+            <button class="dropdown-btn placeholder" onclick="toggleDrop('dd1')" id="dd1-btn">
+              <span id="dd1-val">Select service line</span>
+              <svg class="dropdown-chevron" id="dd1-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--g400)" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="dropdown-list" id="dd1-list" style="display:none">
+              <div class="dropdown-item" onclick="selectDrop('dd1','Consulting')">Consulting</div>
+              <div class="dropdown-item" onclick="selectDrop('dd1','Advisory')">Advisory</div>
+              <div class="dropdown-item" onclick="selectDrop('dd1','Tax &amp; Legal')">Tax &amp; Legal</div>
+              <div class="dropdown-item" onclick="selectDrop('dd1','Assurance')">Assurance</div>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Region</label>
+          <div class="dropdown" id="dd2">
+            <button class="dropdown-btn placeholder" onclick="toggleDrop('dd2')" id="dd2-btn">
+              <span id="dd2-val">Select region</span>
+              <svg class="dropdown-chevron" id="dd2-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--g400)" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="dropdown-list" id="dd2-list" style="display:none">
+              <div class="dropdown-item" onclick="selectDrop('dd2','EMEA')">EMEA</div>
+              <div class="dropdown-item" onclick="selectDrop('dd2','Americas')">Americas</div>
+              <div class="dropdown-item" onclick="selectDrop('dd2','Asia Pacific')">Asia Pacific</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Checkbox + Radio -->
+    <div class="col-6">
+      <div class="demo-card" style="height:100%">
+        <div class="demo-card-label">Checkboxes &amp; Radio</div>
+        <div style="font-size:13px;font-weight:500;margin-bottom:10px">Notifications</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+          <label class="check-wrap" onclick="toggleCheck('cb1')">
+            <div class="check-box checked" id="cb1">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <span style="font-size:14px">Email notifications</span>
+          </label>
+          <label class="check-wrap" onclick="toggleCheck('cb2')">
+            <div class="check-box" id="cb2"></div>
+            <span style="font-size:14px">SMS notifications</span>
+          </label>
+          <label class="check-wrap" onclick="toggleCheck('cb3')">
+            <div class="check-box checked" id="cb3">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <span style="font-size:14px">In-app alerts</span>
+          </label>
+        </div>
+        <div style="font-size:13px;font-weight:500;margin-bottom:10px">Priority</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <label class="radio-wrap" onclick="selectRadio('r1')">
+            <div class="radio-outer selected" id="r1"><div class="radio-dot"></div></div>
+            <span style="font-size:14px">High priority</span>
+          </label>
+          <label class="radio-wrap" onclick="selectRadio('r2')">
+            <div class="radio-outer" id="r2"><div class="radio-dot"></div></div>
+            <span style="font-size:14px">Medium priority</span>
+          </label>
+          <label class="radio-wrap" onclick="selectRadio('r3')">
+            <div class="radio-outer" id="r3"><div class="radio-dot"></div></div>
+            <span style="font-size:14px">Low priority</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toggle + Slider -->
+    <div class="col-6">
+      <div class="demo-card" style="height:100%">
+        <div class="demo-card-label">Toggles</div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <label class="toggle-wrap" onclick="toggleSwitch('t1')">
+            <div class="toggle-track on" id="t1"><div class="toggle-thumb"></div></div>
+            <span style="font-size:14px" id="t1-label">Dark mode — On</span>
+          </label>
+          <label class="toggle-wrap" onclick="toggleSwitch('t2')">
+            <div class="toggle-track" id="t2"><div class="toggle-thumb"></div></div>
+            <span style="font-size:14px" id="t2-label">Analytics — Off</span>
+          </label>
+          <label class="toggle-wrap" onclick="toggleSwitch('t3')">
+            <div class="toggle-track on" id="t3"><div class="toggle-thumb"></div></div>
+            <span style="font-size:14px" id="t3-label">Auto-save — On</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6">
+      <div class="demo-card" style="height:100%">
+        <div class="demo-card-label">Sliders</div>
+        <div style="display:flex;flex-direction:column;gap:24px">
+          <div class="field">
+            <label class="label">Budget allocation — <span id="s1-val">65</span>%</label>
+            <div class="slider-wrap">
+              <div class="slider-track" id="s1-track">
+                <div class="slider-fill" id="s1-fill" style="width:65%"></div>
+                <div class="slider-thumb" id="s1-thumb" style="left:65%"></div>
+                <input type="range" class="slider-input" min="0" max="100" value="65" oninput="updateSlider('s1',this.value)"/>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">Risk tolerance — <span id="s2-val">30</span>%</label>
+            <div class="slider-wrap">
+              <div class="slider-track" id="s2-track">
+                <div class="slider-fill" id="s2-fill" style="width:30%"></div>
+                <div class="slider-thumb" id="s2-thumb" style="left:30%"></div>
+                <input type="range" class="slider-input" min="0" max="100" value="30" oninput="updateSlider('s2',this.value)"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     CARDS
+══════════════════════════════════════════ -->
+<section class="section" id="cards">
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">Cards &amp; Containers</div>
+    <div class="section-desc">All branded containers use sharp corners. 24px internal padding standard. 1px Grey 200 border.</div>
+  </div>
+
+  <div class="row stretch gap-16">
+    <div class="col-4">
+      <div class="demo-card-label">Standard Card</div>
+      <div class="card" style="margin-top:8px">
+        <div style="font-size:15px;font-weight:600;margin-bottom:8px">Card Title</div>
+        <p style="font-size:14px;color:var(--g500);line-height:1.6;margin-bottom:16px">Card content with 24px padding. Sharp corners reflect PwC brand identity throughout.</p>
+        <button class="btn btn-primary btn-sm">View Details</button>
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="demo-card-label">Panel with Header</div>
+      <div class="panel" style="margin-top:8px">
+        <div class="panel-hd">
+          <span class="panel-hd-title">Panel Title</span>
+          <button class="btn btn-secondary btn-sm">Action</button>
+        </div>
+        <div class="panel-bd" style="font-size:14px;color:var(--g500);line-height:1.6">Panel body with 20px padding. Header uses 1px divider at Grey 200.</div>
+        <div class="panel-ft">
+          <button class="btn btn-secondary btn-sm">Cancel</button>
+          <button class="btn btn-primary btn-sm">Save</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="demo-card-label">Stat Card</div>
+      <div class="stat-card" style="margin-top:8px">
+        <div class="stat-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--o500)" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        </div>
+        <div class="stat-label">Total Revenue</div>
+        <div class="stat-value">$45,231</div>
+        <div class="stat-change pos mt-8">↑ 12.5% from last month</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stat card grid row -->
+  <div class="row stretch gap-16" style="margin-top:16px">
+    <div class="col-3">
+      <div class="stat-card">
+        <div class="stat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--o500)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div class="stat-label">Active Users</div>
+        <div class="stat-value">2,345</div>
+        <div class="stat-change pos mt-8">↑ 8.2%</div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="stat-card">
+        <div class="stat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--o500)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <div class="stat-label">Documents</div>
+        <div class="stat-value">1,234</div>
+        <div class="stat-change neg mt-8">↓ 2.4%</div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="stat-card">
+        <div class="stat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--o500)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div class="stat-label">Avg. Response</div>
+        <div class="stat-value">4m 32s</div>
+        <div class="stat-change neu mt-8">→ No change</div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="stat-card">
+        <div class="stat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--o500)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div class="stat-label">Uptime</div>
+        <div class="stat-value">99.9%</div>
+        <div class="stat-change pos mt-8">↑ 0.1%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     MODALS & OVERLAYS
+══════════════════════════════════════════ -->
+<section class="section" id="modals">
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">Modals &amp; Overlays</div>
+    <div class="section-desc">Sharp-cornered containers with overlay backdrop. Header / Body / Footer structure throughout. Click buttons to open live demos.</div>
+  </div>
+
+  <div class="row gap-16">
+    <!-- Static preview of modal -->
+    <div class="col-6">
+      <div class="demo-card-label">Modal Dialog</div>
+      <div style="border:1px solid var(--g200);margin-top:8px">
+        <div style="padding:20px 24px;border-bottom:1px solid var(--g200);display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:17px;font-weight:600">Edit Project</span>
+          <button class="icon-btn-bare"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div style="padding:24px">
+          <div class="field" style="margin-bottom:12px">
+            <label class="label" style="font-size:13px">Project Name</label>
+            <input class="input" type="text" value="Digital Transformation Q3" style="font-size:13px;padding:8px 10px"/>
+          </div>
+          <div class="field">
+            <label class="label" style="font-size:13px">Description</label>
+            <textarea class="input textarea" style="font-size:13px;padding:8px 10px;min-height:64px">Initiatives for the third quarter digital programme.</textarea>
+          </div>
+        </div>
+        <div style="padding:14px 24px;border-top:1px solid var(--g200);display:flex;justify-content:flex-end;gap:10px">
+          <button class="btn btn-secondary btn-sm">Cancel</button>
+          <button class="btn btn-primary btn-sm">Save Changes</button>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="openModal('modal1')">Open Live Modal</button>
+    </div>
+
+    <!-- Confirm dialog -->
+    <div class="col-6">
+      <div class="demo-card-label">Confirm / Destructive Dialog</div>
+      <div style="border:1px solid var(--g200);padding:24px;margin-top:8px">
+        <div style="display:flex;gap:16px;margin-bottom:20px">
+          <div class="confirm-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--error)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div>
+            <div style="font-size:15px;font-weight:600;margin-bottom:6px">Delete Project?</div>
+            <p style="font-size:13px;color:var(--g500);line-height:1.6">This will permanently delete <strong>Digital Transformation Q3</strong> and all associated data. This action cannot be undone.</p>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:10px">
+          <button class="btn btn-secondary btn-sm">Cancel</button>
+          <button class="btn btn-sm" style="background:var(--error);color:#fff;font-weight:600;border:none;padding:6px 14px;cursor:pointer">Delete Project</button>
+        </div>
+      </div>
+      <button class="btn btn-destructive btn-sm" style="margin-top:12px" onclick="openModal('modal2')">Open Live Confirm</button>
+    </div>
+
+    <!-- Drawer preview -->
+    <div class="col-12">
+      <div class="demo-card-label">Side Panel / Drawer</div>
+      <div style="display:flex;border:1px solid var(--g200);height:280px;overflow:hidden;margin-top:8px">
+        <div style="flex:1;background:var(--g100);display:flex;align-items:center;justify-content:center">
+          <span style="font-size:13px;color:var(--g500)">Main content area</span>
+        </div>
+        <div style="width:320px;background:#fff;border-left:1px solid var(--g200);display:flex;flex-direction:column;box-shadow:-4px 0 16px rgba(0,0,0,.06)">
+          <div style="padding:16px 20px;border-bottom:1px solid var(--g200);display:flex;justify-content:space-between;align-items:center;flex-shrink:0">
+            <span style="font-size:15px;font-weight:600">Project Details</span>
+            <button class="icon-btn-bare"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          </div>
+          <div style="padding:16px;flex:1;overflow-y:auto">
+            <div class="field" style="margin-bottom:12px">
+              <label class="label" style="font-size:12px">Project Name</label>
+              <input class="input" type="text" value="Digital Transformation Q3" style="font-size:13px;padding:8px 10px"/>
+            </div>
+            <div class="field">
+              <label class="label" style="font-size:12px">Owner</label>
+              <input class="input" type="text" value="Sarah Chen" style="font-size:13px;padding:8px 10px"/>
+            </div>
+          </div>
+          <div style="padding:12px 16px;border-top:1px solid var(--g200);display:flex;justify-content:flex-end;gap:8px;flex-shrink:0">
+            <button class="btn btn-secondary btn-sm">Cancel</button>
+            <button class="btn btn-primary btn-sm">Save</button>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="openDrawer()">Open Live Drawer</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     NAVIGATION
+══════════════════════════════════════════ -->
+<section class="section" id="navigation">
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">Navigation</div>
+    <div class="section-desc">All navigation elements use sharp corners. Orange 500 indicates active state. Pagination uses black for active page.</div>
+  </div>
+
+  <!-- Underline tabs -->
+  <div class="sub"><div class="sub-title">Underline Tabs</div>
+    <div class="tabs-underline" id="tabs1">
+      <button class="tab-ul active" onclick="switchTab('tabs1',0,this)">Overview</button>
+      <button class="tab-ul" onclick="switchTab('tabs1',1,this)">Analytics <span class="tab-count">12</span></button>
+      <button class="tab-ul" onclick="switchTab('tabs1',2,this)">Reports</button>
+      <button class="tab-ul" onclick="switchTab('tabs1',3,this)">Settings</button>
+    </div>
+    <div style="padding:16px 0 0;font-size:13px;color:var(--g500)" id="tabs1-content">Showing: Overview content area</div>
+  </div>
+
+  <!-- Pill tabs -->
+  <div class="sub"><div class="sub-title">Pill Tabs</div>
+    <div class="tabs-pill" id="tabs2">
+      <button class="tab-pill active" onclick="switchPill('tabs2',this)">All</button>
+      <button class="tab-pill" onclick="switchPill('tabs2',this)">Active</button>
+      <button class="tab-pill" onclick="switchPill('tabs2',this)">Pending</button>
+      <button class="tab-pill" onclick="switchPill('tabs2',this)">Archived</button>
+    </div>
+  </div>
+
+  <!-- Breadcrumbs -->
+  <div class="sub"><div class="sub-title">Breadcrumbs</div>
+    <nav class="breadcrumb">
+      <a class="bc-item" href="#">Home</a>
+      <svg class="bc-sep" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <a class="bc-item" href="#">Projects</a>
+      <svg class="bc-sep" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <a class="bc-item" href="#">Digital</a>
+      <svg class="bc-sep" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <a class="bc-item current" href="#">Q3 Transformation</a>
+    </nav>
+  </div>
+
+  <!-- Pagination -->
+  <div class="sub"><div class="sub-title">Pagination</div>
+    <div class="pagination" id="pgn">
+      <button class="pg-btn pg-prev disabled" onclick="pgPrev()" id="pg-prev">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        Prev
+      </button>
+      <button class="pg-btn active" onclick="pgSelect(this)">1</button>
+      <button class="pg-btn" onclick="pgSelect(this)">2</button>
+      <button class="pg-btn" onclick="pgSelect(this)">3</button>
+      <button class="pg-btn" onclick="pgSelect(this)">4</button>
+      <button class="pg-btn" onclick="pgSelect(this)">5</button>
+      <button class="pg-btn pg-next" onclick="pgNext()" id="pg-next">
+        Next
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Accordion -->
+  <div class="sub"><div class="sub-title">Accordion</div>
+    <div class="accordion">
+      <div class="acc-item">
+        <button class="acc-hd" onclick="toggleAcc(this)">
+          Getting Started
+          <svg class="acc-chevron open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="acc-body open">
+          <div class="acc-content">Begin by installing the design system package and importing the required CSS tokens. The system works across React, Angular, Vue, and plain HTML.</div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-hd" onclick="toggleAcc(this)">
+          Configuration Options
+          <svg class="acc-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="acc-body">
+          <div class="acc-content">Configure theme tokens, spacing scale, and component overrides via CSS custom properties. Dark mode is supported via a class toggle on the root element.</div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-hd" onclick="toggleAcc(this)">
+          Advanced Features
+          <svg class="acc-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="acc-body">
+          <div class="acc-content">Advanced usage includes composable chart primitives, data table virtualisation, and integration with PwC's backend authentication service.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar nav demo -->
+  <div class="sub"><div class="sub-title">Sidebar Navigation</div>
+    <div style="display:flex;border:1px solid var(--g200);height:260px;overflow:hidden">
+      <div class="sidenav" id="sidenav1">
+        <div class="sidenav-item active" onclick="switchSidenav(this,'sidenav1')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Dashboard
+        </div>
+        <div class="sidenav-item" onclick="switchSidenav(this,'sidenav1')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Users
+        </div>
+        <div class="sidenav-item" onclick="switchSidenav(this,'sidenav1')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+          Documents
+        </div>
+        <div class="sidenav-item" onclick="switchSidenav(this,'sidenav1')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Analytics
+        </div>
+        <div class="sidenav-item" onclick="switchSidenav(this,'sidenav1')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>
+          Settings
+        </div>
+      </div>
+      <div style="flex:1;background:var(--g100);display:flex;align-items:center;justify-content:center">
+        <span style="font-size:13px;color:var(--g500)" id="sidenav1-content">Dashboard content</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Avatar -->
+  <div class="sub"><div class="sub-title">Avatar</div>
+    <div class="row center gap-16">
+      <div class="label-wrap">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--o100);display:flex;align-items:center;justify-content:center">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--o500)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="comp-label">Small — 28px</div>
+      </div>
+      <div class="label-wrap">
+        <div class="avatar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--o500)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="comp-label">Medium — 36px</div>
+      </div>
+      <div class="label-wrap">
+        <div style="width:48px;height:48px;border-radius:50%;background:var(--o100);display:flex;align-items:center;justify-content:center">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--o500)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="comp-label">Large — 48px</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     FEEDBACK
+══════════════════════════════════════════ -->
+<section class="section" id="feedback">
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">Feedback Components</div>
+    <div class="section-desc">Semantic colours strictly mapped: green=success, red=error, yellow=warning, blue=info. All badges are sharp-cornered. Toasts are interactive.</div>
+  </div>
+
+  <div class="row stretch gap-16">
+
+    <!-- Alerts -->
+    <div class="col-6">
+      <div class="demo-card-label">Alert Banners</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+        <div class="alert alert-success">
+          <svg class="alert-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <div class="alert-body">
+            <div class="alert-title">Changes saved</div>
+            <div class="alert-msg">Your project settings have been updated successfully.</div>
+          </div>
+          <button class="alert-close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div class="alert alert-error">
+          <svg class="alert-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--error)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div class="alert-body">
+            <div class="alert-title">Upload failed</div>
+            <div class="alert-msg">File size exceeds the 10MB limit. Please compress and retry.</div>
+          </div>
+          <button class="alert-close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div class="alert alert-warning">
+          <svg class="alert-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div class="alert-body">
+            <div class="alert-title">Session expiring</div>
+            <div class="alert-msg">Your session will expire in 5 minutes. Save your work.</div>
+          </div>
+          <button class="alert-close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div class="alert alert-info">
+          <svg class="alert-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <div class="alert-body">
+            <div class="alert-title">Update available</div>
+            <div class="alert-msg">Version 2.4.1 is ready. Refresh to apply the update.</div>
+          </div>
+          <button class="alert-close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badges + Tooltip + Empty -->
+    <div class="col-6" style="display:flex;flex-direction:column;gap:24px">
+      <!-- Badges -->
+      <div>
+        <div class="demo-card-label">Badges &amp; Tags</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
+          <span class="badge badge-brand">Brand New</span>
+          <span class="badge badge-success">Active</span>
+          <span class="badge badge-warning">Pending</span>
+          <span class="badge badge-error">Urgent</span>
+          <span class="badge badge-info">Info</span>
+          <span class="badge badge-default">Default</span>
+          <span class="badge badge-default">Draft</span>
+          <span class="badge badge-success">Approved</span>
+        </div>
+      </div>
+
+      <!-- Tooltip -->
+      <div>
+        <div class="demo-card-label">Tooltip</div>
+        <div style="margin-top:8px">
+          <div class="tooltip-wrap">
+            <button class="btn btn-secondary btn-sm">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Hover for tooltip
+            </button>
+            <div class="tooltip-box">Appears above the trigger element</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast triggers -->
+      <div>
+        <div class="demo-card-label">Toast Notifications</div>
+        <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px">
+          <button class="btn btn-secondary btn-sm" onclick="showToast('success','Changes saved successfully!')">Success</button>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('error','Upload failed. Try again.')">Error</button>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('warning','Session expires in 5 min.')">Warning</button>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('info','Version 2.4.1 available.')">Info</button>
+        </div>
+      </div>
+
+      <!-- Empty state -->
+      <div>
+        <div class="demo-card-label">Empty State</div>
+        <div class="card" style="margin-top:8px">
+          <div class="empty" style="padding:32px 24px">
+            <div class="empty-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--g400)" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="empty-title">No projects yet</div>
+            <p class="empty-desc">Get started by creating your first project. It only takes a moment.</p>
+            <button class="btn btn-primary btn-sm">Create Project</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     PROGRESS & LOADING
+══════════════════════════════════════════ -->
+<section class="section" id="progress">
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">Progress &amp; Loading</div>
+    <div class="section-desc">Orange 500 fills progress indicators. Spinners use SVG arcs. Skeleton blocks pulse on Grey 100.</div>
+  </div>
+
+  <div class="row stretch gap-16">
+
+    <!-- Linear progress -->
+    <div class="col-6">
+      <div class="demo-card-label">Linear Progress</div>
+      <div class="card" style="margin-top:8px;gap:20px;display:flex;flex-direction:column">
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+            <span style="font-size:13px">Uploading files</span>
+            <span style="font-size:13px;color:var(--g500)" id="prog1-pct">68%</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" id="prog1-fill" style="width:68%"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+            <span style="font-size:13px">Processing data</span>
+            <span style="font-size:13px;color:var(--g500)">35%</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:35%"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+            <span style="font-size:13px">Complete</span>
+            <span style="font-size:13px;color:var(--success)">100%</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:100%;background:var(--success)"></div></div>
+        </div>
+        <button class="btn btn-secondary btn-sm" style="width:fit-content" onclick="animateProgress()">Simulate Upload</button>
+      </div>
+    </div>
+
+    <!-- Stepped progress -->
+    <div class="col-6">
+      <div class="demo-card-label">Stepped Progress</div>
+      <div class="card" style="margin-top:8px">
+        <div class="steps">
+          <div class="step">
+            <div class="step-line done"></div>
+            <div class="step-label done">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Account
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-line active"></div>
+            <div class="step-label active">Profile</div>
+          </div>
+          <div class="step">
+            <div class="step-line future"></div>
+            <div class="step-label future">Settings</div>
+          </div>
+          <div class="step">
+            <div class="step-line future"></div>
+            <div class="step-label future">Review</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spinners -->
+    <div class="col-6">
+      <div class="demo-card-label">Spinners</div>
+      <div class="card" style="margin-top:8px;display:flex;gap:32px;align-items:center;flex-wrap:wrap">
+        <div class="label-wrap">
+          <svg class="spinner" width="16" height="16" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="var(--g200)" stroke-width="3" fill="none"/>
+            <circle cx="12" cy="12" r="10" stroke="var(--o500)" stroke-width="3" fill="none" stroke-dasharray="62.83" stroke-dashoffset="47.12" stroke-linecap="round"/>
+          </svg>
+          <div class="comp-label">16px</div>
+        </div>
+        <div class="label-wrap">
+          <svg class="spinner" width="24" height="24" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="var(--g200)" stroke-width="3" fill="none"/>
+            <circle cx="12" cy="12" r="10" stroke="var(--o500)" stroke-width="3" fill="none" stroke-dasharray="62.83" stroke-dashoffset="47.12" stroke-linecap="round"/>
+          </svg>
+          <div class="comp-label">24px</div>
+        </div>
+        <div class="label-wrap">
+          <svg class="spinner" width="32" height="32" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="var(--g200)" stroke-width="3" fill="none"/>
+            <circle cx="12" cy="12" r="10" stroke="var(--o500)" stroke-width="3" fill="none" stroke-dasharray="62.83" stroke-dashoffset="47.12" stroke-linecap="round"/>
+          </svg>
+          <div class="comp-label">32px</div>
+        </div>
+        <div class="label-wrap">
+          <svg class="spinner" width="48" height="48" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="var(--g200)" stroke-width="3" fill="none"/>
+            <circle cx="12" cy="12" r="10" stroke="var(--o500)" stroke-width="3" fill="none" stroke-dasharray="62.83" stroke-dashoffset="47.12" stroke-linecap="round"/>
+          </svg>
+          <div class="comp-label">48px</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skeleton -->
+    <div class="col-6">
+      <div class="demo-card-label">Skeleton Loading</div>
+      <div class="card" style="margin-top:8px">
+        <div style="display:flex;gap:12px;margin-bottom:16px;align-items:center">
+          <div class="skel skel-circle" style="width:44px;height:44px;flex-shrink:0"></div>
+          <div style="flex:1">
+            <div class="skel skel-text" style="width:45%"></div>
+            <div class="skel skel-text" style="width:65%;height:12px"></div>
+          </div>
+        </div>
+        <div class="skel skel-text" style="width:100%"></div>
+        <div class="skel skel-text" style="width:92%"></div>
+        <div class="skel skel-text" style="width:78%"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">
+          <div class="skel" style="height:64px"></div>
+          <div class="skel" style="height:64px"></div>
+          <div class="skel" style="height:64px"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     DATA TABLE
+══════════════════════════════════════════ -->
+<section class="section" id="data">
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">Data Table</div>
+    <div class="section-desc">Click rows to select. Orange 100 selected state. Sort columns, use checkboxes. Status badges use semantic colours.</div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div class="search-wrap" style="width:280px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--g400)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-input" placeholder="Search users..." oninput="filterTable(this.value)"/>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-secondary btn-sm">Export</button>
+      <button class="btn btn-primary btn-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add User
+      </button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="table" id="mainTable">
+      <thead>
+        <tr>
+          <th style="width:40px"><input type="checkbox" class="table-check" onchange="toggleAllRows(this)"/></th>
+          <th onclick="sortTable(1)" style="cursor:pointer">Name <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle"><path d="M6 9l6-6 6 6M6 15l6 6 6-6"/></svg></th>
+          <th>Email</th>
+          <th onclick="sortTable(3)" style="cursor:pointer">Role <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle"><path d="M6 9l6-6 6 6M6 15l6 6 6-6"/></svg></th>
+          <th>Status</th>
+          <th>Joined</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr onclick="toggleRow(this)">
+          <td><input type="checkbox" class="table-check row-check" onclick="event.stopPropagation();toggleRowCheck(this)"/></td>
+          <td style="font-weight:500">Sarah Chen</td>
+          <td style="color:var(--g500)">s.chen@pwc.com</td>
+          <td>Partner</td>
+          <td><span class="badge badge-success">Active</span></td>
+          <td style="color:var(--g500)">Jan 2022</td>
+          <td><button class="icon-btn-bare"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></td>
+        </tr>
+        <tr onclick="toggleRow(this)">
+          <td><input type="checkbox" class="table-check row-check" onclick="event.stopPropagation();toggleRowCheck(this)"/></td>
+          <td style="font-weight:500">James Okafor</td>
+          <td style="color:var(--g500)">j.okafor@pwc.com</td>
+          <td>Senior Manager</td>
+          <td><span class="badge badge-success">Active</span></td>
+          <td style="color:var(--g500)">Mar 2021</td>
+          <td><button class="icon-btn-bare"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></td>
+        </tr>
+        <tr onclick="toggleRow(this)">
+          <td><input type="checkbox" class="table-check row-check" onclick="event.stopPropagation();toggleRowCheck(this)"/></td>
+          <td style="font-weight:500">Priya Nair</td>
+          <td style="color:var(--g500)">p.nair@pwc.com</td>
+          <td>Manager</td>
+          <td><span class="badge badge-warning">Pending</span></td>
+          <td style="color:var(--g500)">Aug 2023</td>
+          <td><button class="icon-btn-bare"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></td>
+        </tr>
+        <tr onclick="toggleRow(this)">
+          <td><input type="checkbox" class="table-check row-check" onclick="event.stopPropagation();toggleRowCheck(this)"/></td>
+          <td style="font-weight:500">Tom Willis</td>
+          <td style="color:var(--g500)">t.willis@pwc.com</td>
+          <td>Associate</td>
+          <td><span class="badge badge-default">Inactive</span></td>
+          <td style="color:var(--g500)">Nov 2020</td>
+          <td><button class="icon-btn-bare"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></td>
+        </tr>
+        <tr onclick="toggleRow(this)">
+          <td><input type="checkbox" class="table-check row-check" onclick="event.stopPropagation();toggleRowCheck(this)"/></td>
+          <td style="font-weight:500">Elena Vasquez</td>
+          <td style="color:var(--g500)">e.vasquez@pwc.com</td>
+          <td>Director</td>
+          <td><span class="badge badge-success">Active</span></td>
+          <td style="color:var(--g500)">Jun 2019</td>
+          <td><button class="icon-btn-bare"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:13px;color:var(--g500)">
+    <span id="table-count">Showing 5 of 5 users</span>
+    <div class="pagination">
+      <button class="pg-btn pg-prev disabled">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="pg-btn active">1</button>
+      <button class="pg-btn">2</button>
+      <button class="pg-btn">3</button>
+      <button class="pg-btn pg-next">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     CHARTS
+══════════════════════════════════════════ -->
+<section class="section" id="charts">
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">Charts</div>
+    <div class="section-desc">All charts are pure SVG — uniform card height, same padding, same axis style. Hover data points for tooltips. Click legend items to show/hide series.</div>
+  </div>
+
+  <!-- All chart cards use this fixed structure:
+       .chart-card > .chart-title + .chart-sub + .chart-area[height:220px] + .chart-legend
+       Every card in the grid is col-6 so they perfectly align -->
+
+  <div class="row stretch gap-16">
+
+    <!-- ─── LINE CHART ─── -->
+    <div class="col-6">
+      <div class="chart-card">
+        <div class="chart-title">Revenue Trend</div>
+        <div class="chart-sub">Monthly performance — current vs previous year</div>
+        <div class="chart-area" style="height:220px" id="lineChart"></div>
+        <div class="chart-legend">
+          <div class="legend-item" id="leg-line-1" onclick="toggleLegend('leg-line-1','line-series-1')">
+            <div class="legend-line" style="background:var(--o500)"></div>Current Year
+          </div>
+          <div class="legend-item" id="leg-line-2" onclick="toggleLegend('leg-line-2','line-series-2')">
+            <div class="legend-line" style="background:var(--g400)"></div>Previous Year
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── BAR CHART ─── -->
+    <div class="col-6">
+      <div class="chart-card">
+        <div class="chart-title">Quarterly Sales</div>
+        <div class="chart-sub">Revenue by quarter vs target</div>
+        <div class="chart-area" style="height:220px" id="barChart"></div>
+        <div class="chart-legend">
+          <div class="legend-item" id="leg-bar-1" onclick="toggleLegend('leg-bar-1','bar-series-1')">
+            <div class="legend-dot" style="background:var(--o500)"></div>Actual
+          </div>
+          <div class="legend-item" id="leg-bar-2" onclick="toggleLegend('leg-bar-2','bar-series-2')">
+            <div class="legend-dot" style="background:var(--o300)"></div>Target
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── AREA CHART ─── -->
+    <div class="col-6">
+      <div class="chart-card">
+        <div class="chart-title">User Growth</div>
+        <div class="chart-sub">Cumulative active users over time</div>
+        <div class="chart-area" style="height:220px" id="areaChart"></div>
+        <div class="chart-legend">
+          <div class="legend-item">
+            <div class="legend-dot" style="background:var(--o500)"></div>Active Users
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── STACKED BAR ─── -->
+    <div class="col-6">
+      <div class="chart-card">
+        <div class="chart-title">Revenue by Segment</div>
+        <div class="chart-sub">Stacked contribution per quarter</div>
+        <div class="chart-area" style="height:220px" id="stackedBarChart"></div>
+        <div class="chart-legend">
+          <div class="legend-item" id="leg-s1" onclick="toggleLegend('leg-s1','stack-1')"><div class="legend-dot" style="background:var(--o500)"></div>Consulting</div>
+          <div class="legend-item" id="leg-s2" onclick="toggleLegend('leg-s2','stack-2')"><div class="legend-dot" style="background:var(--o300)"></div>Advisory</div>
+          <div class="legend-item" id="leg-s3" onclick="toggleLegend('leg-s3','stack-3')"><div class="legend-dot" style="background:var(--g300)"></div>Tax</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── GROUPED BAR ─── -->
+    <div class="col-6">
+      <div class="chart-card">
+        <div class="chart-title">Budget vs Actual</div>
+        <div class="chart-sub">Side-by-side comparison per quarter</div>
+        <div class="chart-area" style="height:220px" id="groupedBarChart"></div>
+        <div class="chart-legend">
+          <div class="legend-item" id="leg-g1" onclick="toggleLegend('leg-g1','grp-1')"><div class="legend-dot" style="background:var(--o500)"></div>Actual</div>
+          <div class="legend-item" id="leg-g2" onclick="toggleLegend('leg-g2','grp-2')"><div class="legend-dot" style="background:var(--o300)"></div>Budget</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── PIE CHART ─── -->
+    <div class="col-6">
+      <div class="chart-card">
+        <div class="chart-title">Revenue Mix</div>
+        <div class="chart-sub">Proportional breakdown by service line</div>
+        <div class="chart-area" style="height:220px;display:flex;align-items:center;justify-content:center" id="pieChart"></div>
+        <div class="chart-legend">
+          <div class="legend-item" id="leg-p1" onclick="toggleLegend('leg-p1','pie-1')"><div class="legend-dot" style="background:var(--o500)"></div>Consulting 45%</div>
+          <div class="legend-item" id="leg-p2" onclick="toggleLegend('leg-p2','pie-2')"><div class="legend-dot" style="background:var(--o300)"></div>Advisory 30%</div>
+          <div class="legend-item" id="leg-p3" onclick="toggleLegend('leg-p3','pie-3')"><div class="legend-dot" style="background:var(--g300)"></div>Tax 15%</div>
+          <div class="legend-item" id="leg-p4" onclick="toggleLegend('leg-p4','pie-4')"><div class="legend-dot" style="background:var(--g200)"></div>Other 10%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── DONUT CHART ─── -->
+    <div class="col-6">
+      <div class="chart-card">
+        <div class="chart-title">Project Status</div>
+        <div class="chart-sub">Completion overview across portfolio</div>
+        <div class="chart-area" style="height:220px;display:flex;align-items:center;justify-content:center" id="donutChart"></div>
+        <div class="chart-legend">
+          <div class="legend-item" id="leg-d1" onclick="toggleLegend('leg-d1','donut-1')"><div class="legend-dot" style="background:var(--o500)"></div>Complete 58%</div>
+          <div class="legend-item" id="leg-d2" onclick="toggleLegend('leg-d2','donut-2')"><div class="legend-dot" style="background:var(--o300)"></div>In Progress 26%</div>
+          <div class="legend-item" id="leg-d3" onclick="toggleLegend('leg-d3','donut-3')"><div class="legend-dot" style="background:var(--g300)"></div>Pending 16%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SCATTER PLOT ─── -->
+    <div class="col-6">
+      <div class="chart-card">
+        <div class="chart-title">Risk vs Return</div>
+        <div class="chart-sub">Portfolio positioning — bubble size = AUM</div>
+        <div class="chart-area" style="height:220px" id="scatterChart"></div>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--o500)"></div>Core</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--o300)"></div>Growth</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--g300)"></div>Speculative</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── RADAR ─── -->
+    <div class="col-6">
+      <div class="chart-card">
+        <div class="chart-title">Competency Assessment</div>
+        <div class="chart-sub">Team capability across six dimensions</div>
+        <div class="chart-area" style="height:220px;display:flex;align-items:center;justify-content:center" id="radarChart"></div>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--o500);opacity:.3;border:2px solid var(--o500)"></div>Current</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--g200);border:2px solid var(--g400)"></div>Target</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── COMPOSED ─── -->
+    <div class="col-6">
+      <div class="chart-card">
+        <div class="chart-title">Volume &amp; Trend</div>
+        <div class="chart-sub">Bars show volume; line shows rolling average</div>
+        <div class="chart-area" style="height:220px" id="composedChart"></div>
+        <div class="chart-legend">
+          <div class="legend-item" id="leg-c1" onclick="toggleLegend('leg-c1','comp-bars')"><div class="legend-dot" style="background:var(--o300)"></div>Volume</div>
+          <div class="legend-item" id="leg-c2" onclick="toggleLegend('leg-c2','comp-line')"><div class="legend-line" style="background:var(--o500)"></div>Trend</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── TREEMAP ─── -->
+    <div class="col-6">
+      <div class="chart-card">
+        <div class="chart-title">Spend by Category</div>
+        <div class="chart-sub">Relative size = proportional spend</div>
+        <div class="chart-area" style="height:220px" id="treemapChart"></div>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--o500)"></div>Technology</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--o300)"></div>People</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--o100)"></div>Facilities</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--g200)"></div>Other</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── FUNNEL ─── -->
+    <div class="col-6">
+      <div class="chart-card">
+        <div class="chart-title">Sales Pipeline</div>
+        <div class="chart-sub">Conversion rate across deal stages</div>
+        <div class="chart-area" style="height:220px" id="funnelChart"></div>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--o500)"></div>Conversion: 17.9%</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     CHAT & ASSISTANT
+══════════════════════════════════════════ -->
+<section class="section" id="chat">
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">Virtual Assistant &amp; Chat</div>
+    <div class="section-desc">FAB triggers the chat panel. Sharp-cornered panel. AI messages show icon above text. Type and press Enter to send.</div>
+  </div>
+  <div class="row gap-16">
+    <div class="col-4">
+      <div class="demo-card-label">FAB — Closed State</div>
+      <div style="height:120px;background:var(--g100);border:1px solid var(--g200);display:flex;align-items:center;justify-content:center;margin-top:8px">
+        <button class="fab" aria-label="Open chat">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="col-8">
+      <div class="demo-card-label">Chat Panel</div>
+      <div class="chat-panel" style="margin-top:8px">
+        <div class="chat-hd">
+          <div style="display:flex;align-items:center;gap:8px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--o500)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span style="font-weight:600">PwC Assistant</span>
+            <span class="badge badge-success" style="font-size:10px">Online</span>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="icon-btn-bare"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+            <button class="icon-btn-bare"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          </div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-msg-ai">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--o500)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <div style="font-size:14px;line-height:1.6;max-width:85%">Hello! I'm your PwC digital assistant. How can I help you today?</div>
+          </div>
+          <div class="chat-msg-user">
+            <div class="chat-bubble-user">Can you show me the design system components?</div>
+          </div>
+          <div class="chat-msg-ai">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--o500)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <div style="font-size:14px;line-height:1.6;max-width:85%">Of course! The catalogue on this page covers buttons, forms, navigation, charts, and more — all following PwC brand standards. Use the sidebar to navigate.</div>
+          </div>
+        </div>
+        <div class="chat-input-wrap">
+          <div class="chat-input-inner">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--g400)" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+            <input class="chat-input" id="chatInput" placeholder="Type a message..." onkeypress="chatSend(event)"/>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--g400)" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     FOUNDATIONS
+══════════════════════════════════════════ -->
+<section class="section" id="foundations">
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">Foundations</div>
+    <div class="section-desc">Design tokens, typographic scale, spacing, and animation keyframes underpinning all components.</div>
+  </div>
+
+  <!-- Colour palette — equal swatches in 7-col grid -->
+  <div class="sub"><div class="sub-title">Colour Palette</div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:12px">
+      <div><div class="colour-swatch" style="background:var(--o500)"></div><div class="colour-meta"><div class="colour-name">Orange 500</div><div class="colour-hex">#FD5108</div></div></div>
+      <div><div class="colour-swatch" style="background:var(--o300)"></div><div class="colour-meta"><div class="colour-name">Orange 300</div><div class="colour-hex">#FFAA72</div></div></div>
+      <div><div class="colour-swatch" style="background:var(--o100)"></div><div class="colour-meta"><div class="colour-name">Orange 100</div><div class="colour-hex">#FFE8D4</div></div></div>
+      <div><div class="colour-swatch" style="background:#000"></div><div class="colour-meta"><div class="colour-name">Black</div><div class="colour-hex">#000000</div></div></div>
+      <div><div class="colour-swatch" style="background:#fff;border:1px solid var(--g200)"></div><div class="colour-meta"><div class="colour-name">White</div><div class="colour-hex">#FFFFFF</div></div></div>
+      <div><div class="colour-swatch" style="background:var(--g100)"></div><div class="colour-meta"><div class="colour-name">Grey 100</div><div class="colour-hex">#EEEFF1</div></div></div>
+      <div><div class="colour-swatch" style="background:var(--g200)"></div><div class="colour-meta"><div class="colour-name">Grey 200</div><div class="colour-hex">#DFE3E6</div></div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:12px;margin-top:12px">
+      <div><div class="colour-swatch" style="background:var(--g300)"></div><div class="colour-meta"><div class="colour-name">Grey 300</div><div class="colour-hex">#CBD1D6</div></div></div>
+      <div><div class="colour-swatch" style="background:var(--g400)"></div><div class="colour-meta"><div class="colour-name">Grey 400</div><div class="colour-hex">#B5BCC4</div></div></div>
+      <div><div class="colour-swatch" style="background:var(--g500)"></div><div class="colour-meta"><div class="colour-name">Grey 500</div><div class="colour-hex">#A1A8B3</div></div></div>
+      <div><div class="colour-swatch" style="background:var(--success)"></div><div class="colour-meta"><div class="colour-name">Success</div><div class="colour-hex">#22C55E</div></div></div>
+      <div><div class="colour-swatch" style="background:var(--warning)"></div><div class="colour-meta"><div class="colour-name">Warning</div><div class="colour-hex">#EAB308</div></div></div>
+      <div><div class="colour-swatch" style="background:var(--error)"></div><div class="colour-meta"><div class="colour-name">Error</div><div class="colour-hex">#EF4444</div></div></div>
+      <div><div class="colour-swatch" style="background:var(--info)"></div><div class="colour-meta"><div class="colour-name">Info</div><div class="colour-hex">#3B82F6</div></div></div>
+    </div>
+  </div>
+
+  <!-- Typography -->
+  <div class="sub"><div class="sub-title">Typography Scale</div>
+    <div style="border:1px solid var(--g200)">
+      <div class="type-row"><span class="type-spec">H1 · 32px · 600</span><span style="font-size:32px;font-weight:600">Heading One</span></div>
+      <div class="type-row"><span class="type-spec">H2 · 24px · 600</span><span style="font-size:24px;font-weight:600">Heading Two</span></div>
+      <div class="type-row"><span class="type-spec">H3 · 18px · 600</span><span style="font-size:18px;font-weight:600">Heading Three</span></div>
+      <div class="type-row"><span class="type-spec">H4 · 16px · 600</span><span style="font-size:16px;font-weight:600">Heading Four</span></div>
+      <div class="type-row"><span class="type-spec">Body · 14px · 400</span><span style="font-size:14px;font-weight:400;line-height:1.6">The quick brown fox jumps over the lazy dog. Body text uses system-ui at 14px with 1.6 line height for optimal legibility.</span></div>
+      <div class="type-row"><span class="type-spec">Label · 14px · 500</span><span style="font-size:14px;font-weight:500">Form Label Text</span></div>
+      <div class="type-row"><span class="type-spec">Caption · 12px · 400</span><span style="font-size:12px;font-weight:400;color:var(--g500)">Supporting caption or helper text</span></div>
+      <div class="type-row"><span class="type-spec">Micro · 11px · 500</span><span style="font-size:11px;font-weight:500;color:var(--g500)">MICRO LABEL · UPPERCASE</span></div>
+    </div>
+  </div>
+
+  <!-- Spacing -->
+  <div class="sub"><div class="sub-title">Spacing Scale (8px grid)</div>
+    <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end">
+      <div class="label-wrap"><div class="space-block" style="width:4px;height:4px"></div><div class="comp-label">xs · 4px</div></div>
+      <div class="label-wrap"><div class="space-block" style="width:8px;height:8px"></div><div class="comp-label">sm · 8px</div></div>
+      <div class="label-wrap"><div class="space-block" style="width:12px;height:12px"></div><div class="comp-label">md · 12px</div></div>
+      <div class="label-wrap"><div class="space-block" style="width:16px;height:16px"></div><div class="comp-label">lg · 16px</div></div>
+      <div class="label-wrap"><div class="space-block" style="width:20px;height:20px"></div><div class="comp-label">xl · 20px</div></div>
+      <div class="label-wrap"><div class="space-block" style="width:24px;height:24px"></div><div class="comp-label">2xl · 24px</div></div>
+      <div class="label-wrap"><div class="space-block" style="width:32px;height:32px"></div><div class="comp-label">3xl · 32px</div></div>
+      <div class="label-wrap"><div class="space-block" style="width:48px;height:48px"></div><div class="comp-label">4xl · 48px</div></div>
+    </div>
+  </div>
+
+  <!-- Animations -->
+  <div class="sub"><div class="sub-title">Animation Keyframes</div>
+    <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:center">
+      <div class="label-wrap">
+        <svg class="spinner" width="32" height="32" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" stroke="var(--g200)" stroke-width="3" fill="none"/>
+          <circle cx="12" cy="12" r="10" stroke="var(--o500)" stroke-width="3" fill="none" stroke-dasharray="62.83" stroke-dashoffset="47.12" stroke-linecap="round"/>
+        </svg>
+        <div class="comp-label">spin · 1s linear</div>
+      </div>
+      <div class="label-wrap">
+        <div style="width:32px;height:32px;background:var(--o500);animation:pulse 1.5s ease-in-out infinite"></div>
+        <div class="comp-label">pulse · 1.5s ease</div>
+      </div>
+      <div class="label-wrap">
+        <div style="width:32px;height:32px;background:var(--o100);border:1px solid var(--o300);animation:fadeIn 2s ease infinite alternate"></div>
+        <div class="comp-label">fadeIn · 0.3s ease</div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ══════════════════════════════════════════
+     OVERLAYS (modals/drawers rendered here)
+══════════════════════════════════════════ -->
+<div id="modal1" style="display:none" class="modal-overlay" onclick="closeModal('modal1',event)">
+  <div class="modal">
+    <div class="modal-hd">
+      <span class="modal-title">Edit Project</span>
+      <button class="modal-close" onclick="closeModal('modal1')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-bd">
+      <div class="field" style="margin-bottom:14px">
+        <label class="label">Project Name</label>
+        <input class="input" type="text" value="Digital Transformation Q3"/>
+      </div>
+      <div class="field">
+        <label class="label">Description</label>
+        <textarea class="input textarea" style="min-height:80px">Initiatives for the third quarter digital programme.</textarea>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary btn-sm" onclick="closeModal('modal1')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="closeModal('modal1')">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal2" style="display:none" class="modal-overlay" onclick="closeModal('modal2',event)">
+  <div class="confirm">
+    <div style="display:flex;gap:16px;margin-bottom:20px">
+      <div class="confirm-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--error)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:6px">Delete Project?</div>
+        <p style="font-size:13px;color:var(--g500);line-height:1.6">This will permanently remove the project. This cannot be undone.</p>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px">
+      <button class="btn btn-secondary btn-sm" onclick="closeModal('modal2')">Cancel</button>
+      <button class="btn btn-sm" style="background:var(--error);color:#fff;border:none;padding:6px 14px;font-weight:600;cursor:pointer" onclick="closeModal('modal2');showToast('error','Project deleted.')">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div id="drawer" style="display:none">
+  <div class="drawer-overlay" onclick="closeDrawer()"></div>
+  <div class="drawer">
+    <div class="drawer-hd">
+      <span style="font-weight:600;font-size:15px">Project Details</span>
+      <button class="icon-btn-bare" onclick="closeDrawer()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="drawer-bd">
+      <div class="field" style="margin-bottom:14px">
+        <label class="label">Project Name</label>
+        <input class="input" type="text" value="Digital Transformation Q3"/>
+      </div>
+      <div class="field" style="margin-bottom:14px">
+        <label class="label">Owner</label>
+        <input class="input" type="text" value="Sarah Chen"/>
+      </div>
+      <div class="field">
+        <label class="label">Status</label>
+        <div class="dropdown" id="dd-drawer">
+          <button class="dropdown-btn" onclick="toggleDrop('dd-drawer')" id="dd-drawer-btn">
+            <span id="dd-drawer-val">Active</span>
+            <svg class="dropdown-chevron" id="dd-drawer-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--g400)" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="dropdown-list" id="dd-drawer-list" style="display:none">
+            <div class="dropdown-item selected" onclick="selectDrop('dd-drawer','Active')">Active
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--o500)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="dropdown-item" onclick="selectDrop('dd-drawer','Pending')">Pending</div>
+            <div class="dropdown-item" onclick="selectDrop('dd-drawer','On Hold')">On Hold</div>
+            <div class="dropdown-item" onclick="selectDrop('dd-drawer','Closed')">Closed</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="drawer-ft">
+      <button class="btn btn-secondary btn-sm" onclick="closeDrawer()">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="closeDrawer();showToast('success','Changes saved.')">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div id="toastContainer" style="position:fixed;top:24px;right:24px;z-index:1000;display:flex;flex-direction:column;gap:10px;pointer-events:none"></div>
+
+<script>
+// ── NAV ACTIVE ──
+function setActive(el){
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  el.classList.add('active');
+}
+window.addEventListener('scroll',()=>{
+  const sections=document.querySelectorAll('.section');
+  const links=document.querySelectorAll('.nav-link');
+  let cur='';
+  sections.forEach(s=>{if(window.scrollY>=s.offsetTop-120)cur=s.id});
+  links.forEach(l=>{
+    const href=l.getAttribute('href');
+    l.classList.toggle('active',href==='#'+cur);
+  });
+});
+
+// ── BUTTONS ──
+function simulateLoad(btn){
+  btn.querySelector('.btn-text').style.display='none';
+  btn.querySelector('.btn-spinner').style.display='flex';
+  btn.disabled=true;
+  setTimeout(()=>{
+    btn.querySelector('.btn-text').style.display='';
+    btn.querySelector('.btn-spinner').style.display='none';
+    btn.disabled=false;
+  },2500);
+}
+
+// ── DROPDOWNS ──
+function toggleDrop(id){
+  const list=document.getElementById(id+'-list');
+  const chev=document.getElementById(id+'-chev');
+  const isOpen=list.style.display!=='none';
+  document.querySelectorAll('.dropdown-list').forEach(l=>l.style.display='none');
+  document.querySelectorAll('.dropdown-chevron').forEach(c=>c.classList.remove('open'));
+  if(!isOpen){list.style.display='block';chev.classList.add('open');}
+}
+function selectDrop(id,val){
+  document.getElementById(id+'-val').textContent=val;
+  document.getElementById(id+'-btn').classList.remove('placeholder');
+  document.getElementById(id+'-list').style.display='none';
+  document.getElementById(id+'-chev').classList.remove('open');
+  document.querySelectorAll('#'+id+'-list .dropdown-item').forEach(i=>{
+    i.classList.toggle('selected',i.textContent.trim().startsWith(val));
+  });
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.dropdown')){
+    document.querySelectorAll('.dropdown-list').forEach(l=>l.style.display='none');
+    document.querySelectorAll('.dropdown-chevron').forEach(c=>c.classList.remove('open'));
+  }
+});
+
+// ── CHECKBOXES ──
+function toggleCheck(id){
+  const box=document.getElementById(id);
+  const isChecked=box.classList.toggle('checked');
+  box.innerHTML=isChecked?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>':'';
+}
+
+// ── RADIO ──
+const radios=['r1','r2','r3'];
+function selectRadio(id){
+  radios.forEach(r=>{
+    const el=document.getElementById(r);
+    el.classList.toggle('selected',r===id);
+  });
+}
+
+// ── TOGGLE ──
+function toggleSwitch(id){
+  const track=document.getElementById(id);
+  const isOn=track.classList.toggle('on');
+  const label=document.getElementById(id+'-label');
+  const name=label.textContent.split(' — ')[0];
+  label.textContent=name+' — '+(isOn?'On':'Off');
+}
+
+// ── SLIDER ──
+function updateSlider(id,val){
+  document.getElementById(id+'-fill').style.width=val+'%';
+  document.getElementById(id+'-thumb').style.left=val+'%';
+  document.getElementById(id+'-val').textContent=val;
+}
+
+// ── TABS ──
+const tabLabels=['Overview','Analytics','Reports','Settings'];
+function switchTab(groupId,idx,el){
+  const tabs=document.querySelectorAll('#'+groupId+' .tab-ul');
+  tabs.forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const content=document.getElementById(groupId+'-content');
+  if(content)content.textContent='Showing: '+tabLabels[idx]+' content area';
+}
+function switchPill(groupId,el){
+  const tabs=document.querySelectorAll('#'+groupId+' .tab-pill');
+  tabs.forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── ACCORDION ──
+function toggleAcc(btn){
+  const item=btn.parentElement;
+  const body=item.querySelector('.acc-body');
+  const chev=btn.querySelector('.acc-chevron');
+  const isOpen=body.classList.toggle('open');
+  chev.classList.toggle('open',isOpen);
+}
+
+// ── PAGINATION ──
+let pgCur=1,pgMax=5;
+function pgSelect(btn){
+  document.querySelectorAll('.pagination .pg-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  pgCur=parseInt(btn.textContent);
+  document.getElementById('pg-prev').classList.toggle('disabled',pgCur===1);
+  document.getElementById('pg-next').classList.toggle('disabled',pgCur===pgMax);
+}
+function pgPrev(){if(pgCur>1){const btns=[...document.querySelectorAll('.pagination .pg-btn:not(.pg-prev):not(.pg-next)')];pgSelect(btns[pgCur-2]);}}
+function pgNext(){if(pgCur<pgMax){const btns=[...document.querySelectorAll('.pagination .pg-btn:not(.pg-prev):not(.pg-next)')];pgSelect(btns[pgCur]);}}
+
+// ── SIDEBAR NAV ──
+function switchSidenav(el,groupId){
+  document.querySelectorAll('#'+groupId+' .sidenav-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  const content=document.getElementById(groupId+'-content');
+  if(content)content.textContent=el.textContent.trim()+' content';
+}
+
+// ── MODAL ──
+function openModal(id){document.getElementById(id).style.display='flex';}
+function closeModal(id,e){if(!e||e.target===document.getElementById(id))document.getElementById(id).style.display='none';}
+function openDrawer(){document.getElementById('drawer').style.display='block';}
+function closeDrawer(){document.getElementById('drawer').style.display='none';}
+
+// ── TOAST ──
+const toastIcons={
+  success:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+  error:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+  warning:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EAB308" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  info:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
+};
+const toastBg={success:'var(--successBg)',error:'var(--errorBg)',warning:'var(--warningBg)',info:'var(--infoBg)'};
+function showToast(type,msg){
+  const c=document.getElementById('toastContainer');
+  const t=document.createElement('div');
+  t.className='toast';
+  t.style.pointerEvents='all';
+  t.style.borderLeft='4px solid '+(type==='success'?'var(--success)':type==='error'?'var(--error)':type==='warning'?'var(--warning)':'var(--info)');
+  t.innerHTML=`<span class="toast-icon">${toastIcons[type]}</span><span class="toast-msg">${msg}</span><button class="toast-close" onclick="this.parentElement.remove()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+  c.appendChild(t);
+  setTimeout(()=>{if(t.parentElement)t.remove();},4000);
+}
+
+// ── PROGRESS ──
+function animateProgress(){
+  let v=0;
+  const fill=document.getElementById('prog1-fill');
+  const pct=document.getElementById('prog1-pct');
+  fill.style.width='0%';
+  const iv=setInterval(()=>{
+    v+=2;
+    fill.style.width=v+'%';
+    pct.textContent=v+'%';
+    if(v>=100){clearInterval(iv);showToast('success','Upload complete!');}
+  },60);
+}
+
+// ── TABLE ──
+function toggleRow(tr){
+  tr.classList.toggle('selected');
+  tr.querySelector('.row-check').checked=tr.classList.contains('selected');
+}
+function toggleRowCheck(cb){
+  cb.closest('tr').classList.toggle('selected',cb.checked);
+}
+function toggleAllRows(masterCb){
+  document.querySelectorAll('.row-check').forEach(cb=>{
+    cb.checked=masterCb.checked;
+    cb.closest('tr').classList.toggle('selected',masterCb.checked);
+  });
+}
+function filterTable(q){
+  const rows=document.querySelectorAll('#tableBody tr');
+  let shown=0;
+  rows.forEach(r=>{
+    const match=r.textContent.toLowerCase().includes(q.toLowerCase());
+    r.style.display=match?'':'none';
+    if(match)shown++;
+  });
+  document.getElementById('table-count').textContent='Showing '+shown+' of 5 users';
+}
+
+// ── CHAT ──
+const replies=[
+  "I can help you with that. The design system has comprehensive documentation for every component.",
+  "Great question! All interactive states use Orange 500 (#FD5108) consistently.",
+  "The spacing scale is based on multiples of 4px, starting at xs (4px) up to 4xl (48px).",
+  "For accessibility, primary buttons always use Orange 300 (#FFAA72) — never Orange 500 on backgrounds."
+];
+let replyIdx=0;
+function chatSend(e){
+  if(e.key==='Enter'){
+    const input=document.getElementById('chatInput');
+    const msg=input.value.trim();
+    if(!msg)return;
+    const msgs=document.getElementById('chatMessages');
+    // user msg
+    const uDiv=document.createElement('div');
+    uDiv.className='chat-msg-user';
+    uDiv.innerHTML='<div class="chat-bubble-user">'+msg+'</div>';
+    msgs.appendChild(uDiv);
+    input.value='';
+    // ai reply
+    setTimeout(()=>{
+      const aDiv=document.createElement('div');
+      aDiv.className='chat-msg-ai';
+      aDiv.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--o500)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><div style="font-size:14px;line-height:1.6;max-width:85%">'+replies[replyIdx%replies.length]+'</div>';
+      msgs.appendChild(aDiv);
+      replyIdx++;
+      msgs.scrollTop=msgs.scrollHeight;
+    },600);
+    msgs.scrollTop=msgs.scrollHeight;
+  }
+}
+
+// ── CHART LEGEND TOGGLE ──
+function toggleLegend(legId,seriesClass){
+  const leg=document.getElementById(legId);
+  const isMuted=leg.classList.toggle('muted');
+  document.querySelectorAll('.'+seriesClass).forEach(el=>{
+    el.style.opacity=isMuted?'0':'1';
+    el.style.transition='opacity .2s ease';
+  });
+}
+
+// ═══════════════════════════════════════
+// CHART RENDERING — pure SVG, responsive
+// ═══════════════════════════════════════
+function makeChartTooltip(parent){
+  const t=document.createElement('div');
+  t.className='chart-tooltip';
+  t.style.opacity='0';
+  t.style.position='absolute';
+  parent.style.position='relative';
+  parent.appendChild(t);
+  return t;
+}
+function showTip(tip,x,y,html){
+  tip.innerHTML=html;
+  tip.style.left=x+'px';
+  tip.style.top=y+'px';
+  tip.style.opacity='1';
+}
+function hideTip(tip){tip.style.opacity='0';}
+
+// Helper: build responsive SVG with fixed viewBox
+function makeSVG(W,H){
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','0 0 '+W+' '+H);
+  svg.style.width='100%';
+  svg.style.height='100%';
+  svg.style.overflow='visible';
+  svg.style.display='block';
+  return svg;
+}
+function svgEl(tag,attrs){
+  const el=document.createElementNS('http://www.w3.org/2000/svg',tag);
+  for(const[k,v]of Object.entries(attrs))el.setAttribute(k,v);
+  return el;
+}
+function drawGrid(svg,W,H,padL,padR,padT,padB,yTicks,xLabels){
+  const iW=W-padL-padR,iH=H-padT-padB;
+  yTicks.forEach(t=>{
+    const y=padT+iH-(t.norm*iH);
+    svg.appendChild(svgEl('line',{x1:padL,y1:y,x2:padL+iW,y2:y,class:'grid-line'}));
+    svg.appendChild(svgEl('text',{x:padL-6,y:y+4,class:'axis-label','text-anchor':'end',fill:'#A1A8B3',stroke:'none',style:'font-size:10px;font-family:system-ui,sans-serif'})).textContent=t.label;
+  });
+  xLabels.forEach((label,i)=>{
+    const x=padL+(i/(xLabels.length-1||1))*iW;
+    svg.appendChild(svgEl('text',{x,y:H-padB+14,class:'axis-label','text-anchor':'middle',fill:'#A1A8B3',stroke:'none',style:'font-size:10px;font-family:system-ui,sans-serif'})).textContent=label;
+  });
+}
+
+// LINE CHART
+(function(){
+  const el=document.getElementById('lineChart');
+  if(!el)return;
+  const W=560,H=200,padL=40,padR=16,padT=12,padB=28;
+  const svg=makeSVG(W,H);
+  const data1=[42,31,58,73,49,85,67,91];
+  const data2=[35,42,38,61,55,49,72,68];
+  const labels=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'];
+  const max=100,iW=W-padL-padR,iH=H-padT-padB;
+  const tip=makeChartTooltip(el);
+  el.appendChild(svg);
+  drawGrid(svg,W,H,padL,padR,padT,padB,
+    [{norm:0,label:'0'},{norm:.25,label:'25'},{norm:.5,label:'50'},{norm:.75,label:'75'},{norm:1,label:'100'}],
+    labels);
+  function ptX(i){return padL+(i/(data1.length-1))*iW;}
+  function ptY(v){return padT+iH-(v/max)*iH;}
+  // Series 1
+  const pts1=data1.map((v,i)=>ptX(i)+','+ptY(v)).join(' ');
+  const poly1=svgEl('polyline',{points:pts1,fill:'none',stroke:'#FD5108','stroke-width':'2',class:'line-series-1'});
+  svg.appendChild(poly1);
+  data1.forEach((v,i)=>{
+    const c=svgEl('circle',{cx:ptX(i),cy:ptY(v),r:'4',fill:'#FD5108',class:'data-point line-series-1',stroke:'#fff','stroke-width':'1.5'});
+    c.addEventListener('mouseenter',e=>{c.setAttribute('r','6');showTip(tip,ptX(i)*el.offsetWidth/W,ptY(v)*el.offsetHeight/H,labels[i]+': '+v);});
+    c.addEventListener('mouseleave',()=>{c.setAttribute('r','4');hideTip(tip);});
+    svg.appendChild(c);
+  });
+  // Series 2
+  const pts2=data2.map((v,i)=>ptX(i)+','+ptY(v)).join(' ');
+  const poly2=svgEl('polyline',{points:pts2,fill:'none',stroke:'#B5BCC4','stroke-width':'2',class:'line-series-2'});
+  svg.appendChild(poly2);
+  data2.forEach((v,i)=>{
+    const c=svgEl('circle',{cx:ptX(i),cy:ptY(v),r:'4',fill:'#B5BCC4',class:'data-point line-series-2',stroke:'#fff','stroke-width':'1.5'});
+    c.addEventListener('mouseenter',e=>{c.setAttribute('r','6');showTip(tip,ptX(i)*el.offsetWidth/W,ptY(v)*el.offsetHeight/H,'Prior: '+v);});
+    c.addEventListener('mouseleave',()=>{c.setAttribute('r','4');hideTip(tip);});
+    svg.appendChild(c);
+  });
+})();
+
+// BAR CHART
+(function(){
+  const el=document.getElementById('barChart');
+  if(!el)return;
+  const W=560,H=200,padL=40,padR=16,padT=12,padB=28;
+  const svg=makeSVG(W,H);
+  const actual=[68,82,55,91];
+  const target=[75,78,70,85];
+  const labels=['Q1','Q2','Q3','Q4'];
+  const max=100,iW=W-padL-padR,iH=H-padT-padB;
+  const tip=makeChartTooltip(el);
+  el.appendChild(svg);
+  drawGrid(svg,W,H,padL,padR,padT,padB,
+    [{norm:0,label:'0'},{norm:.25,label:'25M'},{norm:.5,label:'50M'},{norm:.75,label:'75M'},{norm:1,label:'100M'}],
+    labels);
+  const grpW=iW/labels.length;
+  const barW=grpW*0.35;
+  labels.forEach((lbl,i)=>{
+    const gx=padL+i*grpW+grpW/2;
+    [[actual[i],'#FD5108','bar-series-1'],[target[i],'#FFAA72','bar-series-2']].forEach(([v,col,cls],j)=>{
+      const bh=(v/max)*iH;
+      const bx=gx+(j===0?-barW-2:2);
+      const by=padT+iH-bh;
+      const r=svgEl('rect',{x:bx,y:by,width:barW,height:bh,fill:col,class:'data-bar '+cls});
+      r.addEventListener('mouseenter',()=>{showTip(tip,bx*el.offsetWidth/W,(by)*el.offsetHeight/H,(j===0?'Actual ':'Target ')+v+'M');});
+      r.addEventListener('mouseleave',()=>{hideTip(tip);});
+      svg.appendChild(r);
+    });
+  });
+})();
+
+// AREA CHART
+(function(){
+  const el=document.getElementById('areaChart');
+  if(!el)return;
+  const W=560,H=200,padL=40,padR=16,padT=12,padB=28;
+  const svg=makeSVG(W,H);
+  const data=[12,19,28,35,42,58,71,88];
+  const labels=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'];
+  const max=100,iW=W-padL-padR,iH=H-padT-padB;
+  const tip=makeChartTooltip(el);
+  el.appendChild(svg);
+  drawGrid(svg,W,H,padL,padR,padT,padB,
+    [{norm:0,label:'0'},{norm:.25,label:'25k'},{norm:.5,label:'50k'},{norm:.75,label:'75k'},{norm:1,label:'100k'}],
+    labels);
+  const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
+  const grad=document.createElementNS('http://www.w3.org/2000/svg','linearGradient');
+  grad.setAttribute('id','areaGrad');grad.setAttribute('x1','0');grad.setAttribute('y1','0');grad.setAttribute('x2','0');grad.setAttribute('y2','1');
+  const s1=document.createElementNS('http://www.w3.org/2000/svg','stop');s1.setAttribute('offset','0%');s1.setAttribute('stop-color','#FD5108');s1.setAttribute('stop-opacity','0.2');
+  const s2=document.createElementNS('http://www.w3.org/2000/svg','stop');s2.setAttribute('offset','100%');s2.setAttribute('stop-color','#FD5108');s2.setAttribute('stop-opacity','0');
+  grad.appendChild(s1);grad.appendChild(s2);defs.appendChild(grad);svg.appendChild(defs);
+  function ptX(i){return padL+(i/(data.length-1))*iW;}
+  function ptY(v){return padT+iH-(v/max)*iH;}
+  const topPts=data.map((v,i)=>ptX(i)+','+ptY(v)).join(' ');
+  const areaPts=topPts+' '+ptX(data.length-1)+','+(padT+iH)+' '+ptX(0)+','+(padT+iH);
+  svg.appendChild(svgEl('polygon',{points:areaPts,fill:'url(#areaGrad)'}));
+  svg.appendChild(svgEl('polyline',{points:topPts,fill:'none',stroke:'#FD5108','stroke-width':'2'}));
+  data.forEach((v,i)=>{
+    const c=svgEl('circle',{cx:ptX(i),cy:ptY(v),r:'4',fill:'#FD5108',stroke:'#fff','stroke-width':'1.5',class:'data-point'});
+    c.addEventListener('mouseenter',()=>{c.setAttribute('r','6');showTip(tip,ptX(i)*el.offsetWidth/W,ptY(v)*el.offsetHeight/H,labels[i]+': '+(v+'k'));});
+    c.addEventListener('mouseleave',()=>{c.setAttribute('r','4');hideTip(tip);});
+    svg.appendChild(c);
+  });
+})();
+
+// STACKED BAR
+(function(){
+  const el=document.getElementById('stackedBarChart');
+  if(!el)return;
+  const W=560,H=200,padL=40,padR=16,padT=12,padB=28;
+  const svg=makeSVG(W,H);
+  const segs=[[45,38,52,61],[28,31,25,22],[15,18,14,10]];
+  const cols=['#FD5108','#FFAA72','#CBD1D6'];
+  const cls=['stack-1','stack-2','stack-3'];
+  const labels=['Q1','Q2','Q3','Q4'];
+  const max=100,iW=W-padL-padR,iH=H-padT-padB;
+  const tip=makeChartTooltip(el);
+  el.appendChild(svg);
+  drawGrid(svg,W,H,padL,padR,padT,padB,
+    [{norm:0,label:'0'},{norm:.25,label:'25'},{norm:.5,label:'50'},{norm:.75,label:'75'},{norm:1,label:'100'}],
+    labels);
+  const bW=iW/labels.length*0.55;
+  labels.forEach((lbl,i)=>{
+    const gx=padL+i*(iW/labels.length)+(iW/labels.length-bW)/2;
+    let base=padT+iH;
+    segs.forEach((seg,si)=>{
+      const bh=(seg[i]/max)*iH;
+      base-=bh;
+      const r=svgEl('rect',{x:gx,y:base,width:bW,height:bh,fill:cols[si],class:'data-bar '+cls[si]});
+      const segName=['Consulting','Advisory','Tax'][si];
+      r.addEventListener('mouseenter',()=>{showTip(tip,gx*el.offsetWidth/W,base*el.offsetHeight/H,segName+': '+seg[i]+'%');});
+      r.addEventListener('mouseleave',()=>{hideTip(tip);});
+      svg.appendChild(r);
+    });
+  });
+})();
+
+// GROUPED BAR
+(function(){
+  const el=document.getElementById('groupedBarChart');
+  if(!el)return;
+  const W=560,H=200,padL=40,padR=16,padT=12,padB=28;
+  const svg=makeSVG(W,H);
+  const actual=[65,80,58,92];const budget=[70,75,72,88];
+  const labels=['Q1','Q2','Q3','Q4'];
+  const max=100,iW=W-padL-padR,iH=H-padT-padB;
+  const tip=makeChartTooltip(el);
+  el.appendChild(svg);
+  drawGrid(svg,W,H,padL,padR,padT,padB,
+    [{norm:0,label:'0'},{norm:.25,label:'25M'},{norm:.5,label:'50M'},{norm:.75,label:'75M'},{norm:1,label:'100M'}],
+    labels);
+  const grpW=iW/labels.length;
+  const barW=grpW*0.33;
+  labels.forEach((lbl,i)=>{
+    const gx=padL+i*grpW+grpW/2;
+    [[actual[i],'#FD5108','grp-1','Actual'],[budget[i],'#FFAA72','grp-2','Budget']].forEach(([v,col,cls,name],j)=>{
+      const bh=(v/max)*iH;
+      const bx=gx+(j===0?-barW-1:1);
+      const by=padT+iH-bh;
+      const r=svgEl('rect',{x:bx,y:by,width:barW,height:bh,fill:col,class:'data-bar '+cls});
+      r.addEventListener('mouseenter',()=>{showTip(tip,bx*el.offsetWidth/W,by*el.offsetHeight/H,name+': '+v+'M');});
+      r.addEventListener('mouseleave',()=>{hideTip(tip);});
+      svg.appendChild(r);
+    });
+  });
+})();
+
+// PIE CHART
+(function(){
+  const el=document.getElementById('pieChart');
+  if(!el)return;
+  const data=[{v:45,col:'#FD5108',cls:'pie-1',name:'Consulting'},{v:30,col:'#FFAA72',cls:'pie-2',name:'Advisory'},{v:15,col:'#CBD1D6',cls:'pie-3',name:'Tax'},{v:10,col:'#DFE3E6',cls:'pie-4',name:'Other'}];
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','-1 -1 2 2');svg.style.width='180px';svg.style.height='180px';
+  let cum=0;
+  const tip=makeChartTooltip(el);
+  data.forEach(d=>{
+    const start=cum*2*Math.PI/100-Math.PI/2;
+    cum+=d.v;
+    const end=cum*2*Math.PI/100-Math.PI/2;
+    const x1=Math.cos(start),y1=Math.sin(start);
+    const x2=Math.cos(end),y2=Math.sin(end);
+    const large=d.v>50?1:0;
+    const path=svgEl('path',{d:`M 0 0 L ${x1} ${y1} A 1 1 0 ${large} 1 ${x2} ${y2} Z`,fill:d.col,class:'data-bar '+d.cls,style:'cursor:pointer;transition:transform .15s ease;transform-origin:center'});
+    const mid=(start+end)/2;
+    path.addEventListener('mouseenter',()=>{path.style.transform='scale(1.05)';showTip(tip,90+Math.cos(mid)*80,90+Math.sin(mid)*80,d.name+': '+d.v+'%');});
+    path.addEventListener('mouseleave',()=>{path.style.transform='scale(1)';hideTip(tip);});
+    svg.appendChild(path);
+  });
+  el.appendChild(svg);
+})();
+
+// DONUT
+(function(){
+  const el=document.getElementById('donutChart');
+  if(!el)return;
+  const data=[{v:58,col:'#FD5108',cls:'donut-1',name:'Complete'},{v:26,col:'#FFAA72',cls:'donut-2',name:'In Progress'},{v:16,col:'#CBD1D6',cls:'donut-3',name:'Pending'}];
+  const R=0.7,r=0.42;
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','-1 -1 2 2');svg.style.width='180px';svg.style.height='180px';
+  let cum=0;
+  const tip=makeChartTooltip(el);
+  data.forEach(d=>{
+    const start=cum*2*Math.PI/100-Math.PI/2;
+    cum+=d.v;
+    const end=cum*2*Math.PI/100-Math.PI/2;
+    const x1o=Math.cos(start)*R,y1o=Math.sin(start)*R;
+    const x2o=Math.cos(end)*R,y2o=Math.sin(end)*R;
+    const x1i=Math.cos(end)*r,y1i=Math.sin(end)*r;
+    const x2i=Math.cos(start)*r,y2i=Math.sin(start)*r;
+    const large=d.v>50?1:0;
+    const path=svgEl('path',{d:`M${x1o} ${y1o} A${R} ${R} 0 ${large} 1 ${x2o} ${y2o} L${x1i} ${y1i} A${r} ${r} 0 ${large} 0 ${x2i} ${y2i} Z`,fill:d.col,class:'data-bar '+d.cls,style:'cursor:pointer;transition:transform .15s ease;transform-origin:center'});
+    const mid=(start+end)/2;
+    path.addEventListener('mouseenter',()=>{path.style.transform='scale(1.04)';showTip(tip,90+Math.cos(mid)*80,90+Math.sin(mid)*80,d.name+': '+d.v+'%');});
+    path.addEventListener('mouseleave',()=>{path.style.transform='scale(1)';hideTip(tip);});
+    svg.appendChild(path);
+  });
+  // Centre label
+  const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+  t.setAttribute('x','0');t.setAttribute('y','0.07');t.setAttribute('text-anchor','middle');t.setAttribute('font-size','0.28');t.setAttribute('font-weight','600');t.setAttribute('fill','#000');t.setAttribute('font-family','system-ui,sans-serif');t.textContent='58%';
+  const t2=document.createElementNS('http://www.w3.org/2000/svg','text');
+  t2.setAttribute('x','0');t2.setAttribute('y','0.25');t2.setAttribute('text-anchor','middle');t2.setAttribute('font-size','0.14');t2.setAttribute('fill','#A1A8B3');t2.setAttribute('font-family','system-ui,sans-serif');t2.textContent='Done';
+  svg.appendChild(t);svg.appendChild(t2);
+  el.appendChild(svg);
+})();
+
+// SCATTER
+(function(){
+  const el=document.getElementById('scatterChart');
+  if(!el)return;
+  const W=560,H=200,padL=40,padR=16,padT=12,padB=28;
+  const svg=makeSVG(W,H);
+  const points=[
+    {x:15,y:22,r:7,col:'#FD5108',name:'Fund A'},{x:28,y:45,r:10,col:'#FD5108',name:'Fund B'},
+    {x:45,y:38,r:6,col:'#FFAA72',name:'Fund C'},{x:60,y:62,r:12,col:'#FFAA72',name:'Fund D'},
+    {x:72,y:55,r:8,col:'#FD5108',name:'Fund E'},{x:38,y:30,r:5,col:'#CBD1D6',name:'Fund F'},
+    {x:55,y:78,r:9,col:'#FFAA72',name:'Fund G'},{x:82,y:71,r:11,col:'#FD5108',name:'Fund H'},
+    {x:20,y:58,r:6,col:'#CBD1D6',name:'Fund I'},{x:68,y:42,r:8,col:'#CBD1D6',name:'Fund J'}
+  ];
+  const tip=makeChartTooltip(el);
+  el.appendChild(svg);
+  const iW=W-padL-padR,iH=H-padT-padB;
+  drawGrid(svg,W,H,padL,padR,padT,padB,
+    [{norm:0,label:'0%'},{norm:.25,label:'25%'},{norm:.5,label:'50%'},{norm:.75,label:'75%'},{norm:1,label:'100%'}],
+    ['Low Risk','','','','High Risk']);
+  points.forEach(p=>{
+    const cx=padL+(p.x/100)*iW,cy=padT+iH-(p.y/100)*iH;
+    const c=svgEl('circle',{cx,cy,r:p.r,fill:p.col,opacity:'0.8',class:'data-point',style:'cursor:pointer'});
+    c.addEventListener('mouseenter',()=>{c.setAttribute('opacity','1');showTip(tip,cx*el.offsetWidth/W,(cy-p.r-4)*el.offsetHeight/H,p.name+': Risk '+p.x+'% / Return '+p.y+'%');});
+    c.addEventListener('mouseleave',()=>{c.setAttribute('opacity','0.8');hideTip(tip);});
+    svg.appendChild(c);
+  });
+})();
+
+// RADAR
+(function(){
+  const el=document.getElementById('radarChart');
+  if(!el)return;
+  const axes=['Strategy','Execution','People','Innovation','Finance','Risk'];
+  const current=[80,65,90,55,72,68];
+  const target=[85,80,85,75,80,75];
+  const cx=100,cy=100,R=75;
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','0 0 200 200');svg.style.width='200px';svg.style.height='200px';
+  const n=axes.length;
+  function pt(i,v){const a=(i/n)*2*Math.PI-Math.PI/2;return{x:cx+Math.cos(a)*(v/100)*R,y:cy+Math.sin(a)*(v/100)*R};}
+  // Grid rings
+  [.25,.5,.75,1].forEach(f=>{
+    const pts=axes.map((_,i)=>pt(i,f*100));
+    const poly=svgEl('polygon',{points:pts.map(p=>p.x+','+p.y).join(' '),fill:'none',stroke:'#DFE3E6','stroke-width':'1'});
+    svg.appendChild(poly);
+  });
+  // Spokes
+  axes.forEach((_,i)=>{const p=pt(i,100);svg.appendChild(svgEl('line',{x1:cx,y1:cy,x2:p.x,y2:p.y,stroke:'#DFE3E6','stroke-width':'1'}));});
+  // Target fill
+  const tPts=target.map((_,i)=>pt(i,target[i]));
+  svg.appendChild(svgEl('polygon',{points:tPts.map(p=>p.x+','+p.y).join(' '),fill:'#DFE3E6',stroke:'#B5BCC4','stroke-width':'1.5',opacity:'0.5'}));
+  // Current fill
+  const cPts=current.map((_,i)=>pt(i,current[i]));
+  svg.appendChild(svgEl('polygon',{points:cPts.map(p=>p.x+','+p.y).join(' '),fill:'#FD5108',stroke:'#FD5108','stroke-width':'2',opacity:'0.25'}));
+  svg.appendChild(svgEl('polygon',{points:cPts.map(p=>p.x+','+p.y).join(' '),fill:'none',stroke:'#FD5108','stroke-width':'2'}));
+  // Labels
+  axes.forEach((a,i)=>{
+    const p=pt(i,115);
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',p.x);t.setAttribute('y',p.y+4);t.setAttribute('text-anchor','middle');
+    t.setAttribute('font-size','9');t.setAttribute('fill','#A1A8B3');t.setAttribute('font-family','system-ui,sans-serif');
+    t.textContent=a;svg.appendChild(t);
+  });
+  el.appendChild(svg);
+})();
+
+// COMPOSED
+(function(){
+  const el=document.getElementById('composedChart');
+  if(!el)return;
+  const W=560,H=200,padL=40,padR=16,padT=12,padB=28;
+  const svg=makeSVG(W,H);
+  const bars=[52,68,45,78,61,85,72,90];
+  const trend=[50,55,58,64,65,70,73,80];
+  const labels=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'];
+  const max=100,iW=W-padL-padR,iH=H-padT-padB;
+  const tip=makeChartTooltip(el);
+  el.appendChild(svg);
+  drawGrid(svg,W,H,padL,padR,padT,padB,
+    [{norm:0,label:'0'},{norm:.25,label:'25'},{norm:.5,label:'50'},{norm:.75,label:'75'},{norm:1,label:'100'}],
+    labels);
+  const bW=(iW/bars.length)*0.55;
+  bars.forEach((v,i)=>{
+    const bx=padL+(i+0.5)*(iW/bars.length)-bW/2;
+    const bh=(v/max)*iH;
+    const by=padT+iH-bh;
+    const r=svgEl('rect',{x:bx,y:by,width:bW,height:bh,fill:'#FFAA72',class:'data-bar comp-bars'});
+    r.addEventListener('mouseenter',()=>{showTip(tip,bx*el.offsetWidth/W,by*el.offsetHeight/H,labels[i]+': '+v);});
+    r.addEventListener('mouseleave',()=>{hideTip(tip);});
+    svg.appendChild(r);
+  });
+  const tpts=trend.map((v,i)=>(padL+(i+0.5)*(iW/trend.length))+','+(padT+iH-(v/max)*iH)).join(' ');
+  const tline=svgEl('polyline',{points:tpts,fill:'none',stroke:'#FD5108','stroke-width':'2.5',class:'comp-line','stroke-linecap':'round','stroke-linejoin':'round'});
+  svg.appendChild(tline);
+  trend.forEach((v,i)=>{
+    const cx2=padL+(i+0.5)*(iW/trend.length),cy2=padT+iH-(v/max)*iH;
+    const c=svgEl('circle',{cx:cx2,cy:cy2,r:'4',fill:'#FD5108',stroke:'#fff','stroke-width':'1.5',class:'data-point comp-line'});
+    c.addEventListener('mouseenter',()=>{c.setAttribute('r','6');showTip(tip,cx2*el.offsetWidth/W,(cy2-8)*el.offsetHeight/H,'Trend: '+v);});
+    c.addEventListener('mouseleave',()=>{c.setAttribute('r','4');hideTip(tip);});
+    svg.appendChild(c);
+  });
+})();
+
+// TREEMAP
+(function(){
+  const el=document.getElementById('treemapChart');
+  if(!el)return;
+  const tiles=[
+    {name:'Technology',pct:42,col:'#FD5108',textCol:'#fff',w:0.58,h:1.0,x:0,y:0},
+    {name:'People',pct:24,col:'#FFAA72',textCol:'#000',w:0.42,h:0.55,x:0.58,y:0},
+    {name:'Travel',pct:18,col:'#FFE8D4',textCol:'#000',w:0.42,h:0.45,x:0.58,y:0.55},
+    {name:'Facilities',pct:10,col:'#DFE3E6',textCol:'#000',w:0.3,h:0.35,x:0,y:1.0},
+    {name:'Other',pct:6,col:'#EEEFF1',textCol:'#A1A8B3',w:0.3,h:0.35,x:0.3,y:1.0}
+  ];
+  const W=100,H=100;
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','0 0 100 100');svg.style.width='100%';svg.style.height='100%';svg.style.display='block';
+  const tip=makeChartTooltip(el);
+  // Use a proper treemap layout
+  const layout=[
+    {x:0,y:0,w:58,h:100},{x:58,y:0,w:42,h:55},{x:58,y:55,w:42,h:45},
+    {x:0,y:70,w:32,h:30},{x:32,y:70,w:26,h:30}
+  ];
+  tiles.forEach((t,i)=>{
+    const l=layout[i];if(!l)return;
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.style.cursor='pointer';
+    const rect=svgEl('rect',{x:l.x+0.5,y:l.y+0.5,width:l.w-1,height:l.h-1,fill:t.col});
+    const tx=document.createElementNS('http://www.w3.org/2000/svg','text');
+    tx.setAttribute('x',l.x+l.w/2);tx.setAttribute('y',l.y+l.h/2-4);
+    tx.setAttribute('text-anchor','middle');tx.setAttribute('font-size',l.w>30?'8':'7');
+    tx.setAttribute('fill',t.textCol);tx.setAttribute('font-family','system-ui,sans-serif');tx.setAttribute('font-weight','600');
+    tx.textContent=t.name;
+    const tx2=document.createElementNS('http://www.w3.org/2000/svg','text');
+    tx2.setAttribute('x',l.x+l.w/2);tx2.setAttribute('y',l.y+l.h/2+8);
+    tx2.setAttribute('text-anchor','middle');tx2.setAttribute('font-size','7');
+    tx2.setAttribute('fill',t.textCol);tx2.setAttribute('font-family','system-ui,sans-serif');tx2.setAttribute('opacity','0.8');
+    tx2.textContent=t.pct+'%';
+    g.appendChild(rect);g.appendChild(tx);g.appendChild(tx2);
+    g.addEventListener('mouseenter',()=>{rect.setAttribute('opacity','0.85');showTip(tip,(l.x+l.w/2)*el.offsetWidth/100,(l.y)*el.offsetHeight/100,t.name+': '+t.pct+'%');});
+    g.addEventListener('mouseleave',()=>{rect.setAttribute('opacity','1');hideTip(tip);});
+    svg.appendChild(g);
+  });
+  el.appendChild(svg);
+})();
+
+// FUNNEL
+(function(){
+  const el=document.getElementById('funnelChart');
+  if(!el)return;
+  const stages=[
+    {name:'Leads',val:1200,col:'#FD5108'},
+    {name:'Qualified',val:940,col:'#fd6a2a'},
+    {name:'Proposal',val:645,col:'#FFAA72'},
+    {name:'Negotiation',val:420,col:'#ffc99a'},
+    {name:'Won',val:215,col:'#22C55E'}
+  ];
+  const W=560,H=200,padL=60,padR=80,padT=8,padB=8;
+  const svg=makeSVG(W,H);
+  const tip=makeChartTooltip(el);
+  el.appendChild(svg);
+  const stageH=(H-padT-padB)/stages.length-3;
+  const maxW=W-padL-padR;
+  stages.forEach((s,i)=>{
+    const ratio=s.val/stages[0].val;
+    const bW=maxW*ratio;
+    const bX=padL+(maxW-bW)/2;
+    const by=padT+i*(stageH+3);
+    const r=svgEl('rect',{x:bX,y:by,width:bW,height:stageH,fill:s.col,class:'data-bar',rx:'0'});
+    const label=document.createElementNS('http://www.w3.org/2000/svg','text');
+    label.setAttribute('x',padL-6);label.setAttribute('y',by+stageH/2+4);label.setAttribute('text-anchor','end');
+    label.setAttribute('font-size','10');label.setAttribute('fill','#A1A8B3');label.setAttribute('font-family','system-ui,sans-serif');
+    label.textContent=s.name;
+    const valLabel=document.createElementNS('http://www.w3.org/2000/svg','text');
+    valLabel.setAttribute('x',bX+bW+6);valLabel.setAttribute('y',by+stageH/2+4);valLabel.setAttribute('text-anchor','start');
+    valLabel.setAttribute('font-size','10');valLabel.setAttribute('fill','#A1A8B3');valLabel.setAttribute('font-family','system-ui,sans-serif');
+    valLabel.textContent=s.val.toLocaleString();
+    r.addEventListener('mouseenter',()=>{showTip(tip,(bX+bW/2)*el.offsetWidth/W,by*el.offsetHeight/H,s.name+': '+s.val.toLocaleString()+' ('+Math.round(ratio*100)+'%)');});
+    r.addEventListener('mouseleave',()=>{hideTip(tip);});
+    svg.appendChild(r);svg.appendChild(label);svg.appendChild(valLabel);
+  });
+})();
+
+</script>
+</body>
+</html>
+
+<!-- ════════════════════ CHAT + FOUNDATIONS ════════════════════ -->
+<section class="section" id="chat">
+  <div class="section-eyebrow"><div class="section-eyebrow-line"></div><div class="section-eyebrow-text">10 — AI</div></div>
+  <div class="section-title">Chat &amp; Virtual Assistant</div>
+  <div class="section-desc">FAB opens the chat panel. AI messages display icon above text. Type and press Enter. Typing indicator shows before AI replies.</div>
+  <div class="grid g2" style="gap:16px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">FAB — Trigger Button</div>
+      <div style="height:140px;background:var(--g1);border:1px solid var(--g2);display:flex;align-items:center;justify-content:center;position:relative">
+        <button class="fab" aria-label="Open assistant">
+          <svg width="22" height="22" style="color:#fff"><use href="#ic-spark"/></svg>
+        </button>
+        <span style="position:absolute;bottom:12px;font-size:11px;color:var(--g4)">Click to open chat panel</span>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Chat Panel</div>
+      <div class="chat-panel">
+        <div class="chat-hd">
+          <div class="chat-hd-left">
+            <div class="chat-hd-avatar"><svg width="18" height="18" style="color:#fff"><use href="#ic-spark"/></svg></div>
+            <div>
+              <div style="font-size:13px;font-weight:700">PwC Assistant</div>
+              <div class="chat-hd-status"><span class="status-dot"></span>Online — responds instantly</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn-icon" style="border:none;width:28px;height:28px"><svg width="14" height="14"><use href="#ic-morev"/></svg></button>
+            <button class="btn-icon" style="border:none;width:28px;height:28px"><svg width="14" height="14"><use href="#ic-x"/></svg></button>
+          </div>
+        </div>
+        <div class="chat-msgs" id="chatMsgs">
+          <div class="ai-msg">
+            <svg width="14" height="14" style="color:var(--o5)"><use href="#ic-spark"/></svg>
+            <div class="ai-bubble">Hello! I'm your PwC design system assistant. How can I help you build better digital experiences today?</div>
+          </div>
+          <div class="user-msg"><div class="user-bubble">What's the primary button spec?</div></div>
+          <div class="ai-msg">
+            <svg width="14" height="14" style="color:var(--o5)"><use href="#ic-spark"/></svg>
+            <div class="ai-bubble">Primary buttons use <strong>Orange 300 (#FFAA72)</strong> background with black text — never Orange 500. This ensures WCAG AA compliance. Padding: 10px 22px, font-weight: 600, no border-radius (sharp corners).</div>
+          </div>
+        </div>
+        <div class="chat-inp-wrap">
+          <div class="chat-inp-inner">
+            <svg width="16" height="16" style="color:var(--g4)"><use href="#ic-clip"/></svg>
+            <input class="chat-inp" id="chatInp" placeholder="Ask about the design system..." onkeydown="sendChat(event)"/>
+            <svg width="16" height="16" style="color:var(--g4)"><use href="#ic-mic"/></svg>
+            <button class="chat-send" onclick="sendChatBtn()"><svg width="14" height="14" style="color:#fff"><use href="#ic-send"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ FOUNDATIONS ════════════════════ -->
+<section class="section" id="foundations">
+  <div class="section-eyebrow"><div class="section-eyebrow-line"></div><div class="section-eyebrow-text">11 — Tokens</div></div>
+  <div class="section-title">Design Foundations</div>
+  <div class="section-desc">Colour tokens, typographic scale, spacing system, and shape principles that underpin every component in this catalogue.</div>
+
+  <div class="sub">
+    <div class="sub-header"><div><div class="sub-title">Brand Colours</div></div></div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="swatch-col" style="background:#FD5108"></div><div class="swatch-info"><div class="swatch-name">Orange 500</div><div class="swatch-hex">#FD5108</div></div></div>
+      <div class="swatch"><div class="swatch-col" style="background:#FFAA72"></div><div class="swatch-info"><div class="swatch-name">Orange 300</div><div class="swatch-hex">#FFAA72</div></div></div>
+      <div class="swatch"><div class="swatch-col" style="background:#FFE8D4"></div><div class="swatch-info"><div class="swatch-name">Orange 100</div><div class="swatch-hex">#FFE8D4</div></div></div>
+      <div class="swatch"><div class="swatch-col" style="background:#000"></div><div class="swatch-info"><div class="swatch-name">Black</div><div class="swatch-hex">#000000</div></div></div>
+      <div class="swatch"><div class="swatch-col" style="background:#fff;border:1px solid #DFE3E6"></div><div class="swatch-info"><div class="swatch-name">White</div><div class="swatch-hex">#FFFFFF</div></div></div>
+      <div class="swatch"><div class="swatch-col" style="background:#EEEFF1"></div><div class="swatch-info"><div class="swatch-name">Grey 100</div><div class="swatch-hex">#EEEFF1</div></div></div>
+      <div class="swatch"><div class="swatch-col" style="background:#DFE3E6"></div><div class="swatch-info"><div class="swatch-name">Grey 200</div><div class="swatch-hex">#DFE3E6</div></div></div>
+    </div>
+    <div class="swatch-grid" style="margin-top:10px">
+      <div class="swatch"><div class="swatch-col" style="background:#CBD1D6"></div><div class="swatch-info"><div class="swatch-name">Grey 300</div><div class="swatch-hex">#CBD1D6</div></div></div>
+      <div class="swatch"><div class="swatch-col" style="background:#B5BCC4"></div><div class="swatch-info"><div class="swatch-name">Grey 400</div><div class="swatch-hex">#B5BCC4</div></div></div>
+      <div class="swatch"><div class="swatch-col" style="background:#A1A8B3"></div><div class="swatch-info"><div class="swatch-name">Grey 500</div><div class="swatch-hex">#A1A8B3</div></div></div>
+      <div class="swatch"><div class="swatch-col" style="background:#22C55E"></div><div class="swatch-info"><div class="swatch-name">Success</div><div class="swatch-hex">#22C55E</div></div></div>
+      <div class="swatch"><div class="swatch-col" style="background:#EAB308"></div><div class="swatch-info"><div class="swatch-name">Warning</div><div class="swatch-hex">#EAB308</div></div></div>
+      <div class="swatch"><div class="swatch-col" style="background:#EF4444"></div><div class="swatch-info"><div class="swatch-name">Error</div><div class="swatch-hex">#EF4444</div></div></div>
+      <div class="swatch"><div class="swatch-col" style="background:#3B82F6"></div><div class="swatch-info"><div class="swatch-name">Info</div><div class="swatch-hex">#3B82F6</div></div></div>
+    </div>
+  </div>
+
+  <div class="sub">
+    <div class="sub-header"><div><div class="sub-title">Typography Scale</div></div></div>
+    <div style="border:1px solid var(--g2);background:#fff">
+      <div class="type-row"><div class="type-spec">H1 · 32px · 700</div><div class="type-sample" style="font-size:32px;font-weight:700;letter-spacing:-.03em">Heading One</div></div>
+      <div class="type-row"><div class="type-spec">H2 · 24px · 700</div><div class="type-sample" style="font-size:24px;font-weight:700;letter-spacing:-.02em">Heading Two</div></div>
+      <div class="type-row"><div class="type-spec">H3 · 18px · 600</div><div class="type-sample" style="font-size:18px;font-weight:600">Heading Three</div></div>
+      <div class="type-row"><div class="type-spec">H4 · 16px · 600</div><div class="type-sample" style="font-size:16px;font-weight:600">Heading Four</div></div>
+      <div class="type-row"><div class="type-spec">Body · 14px · 400</div><div class="type-sample" style="font-size:14px;font-weight:400;line-height:1.7;color:var(--g5)">The quick brown fox jumps over the lazy dog. Body text is set in system-ui at 14px for optimal on-screen legibility across all devices and resolutions.</div></div>
+      <div class="type-row"><div class="type-spec">Label · 13px · 500</div><div class="type-sample" style="font-size:13px;font-weight:500">Form Label · Table Header · Navigation</div></div>
+      <div class="type-row"><div class="type-spec">Caption · 12px · 400</div><div class="type-sample" style="font-size:12px;font-weight:400;color:var(--g5)">Helper text, hints, and supporting captions beneath inputs</div></div>
+      <div class="type-row"><div class="type-spec">Micro · 11px · 600</div><div class="type-sample" style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g4)">SECTION LABEL · EYEBROW TEXT · TABLE HEADERS</div></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="gap:16px">
+    <div>
+      <div class="sub-header"><div><div class="sub-title">Spacing Scale (8px base)</div></div></div>
+      <div class="space-demo">
+        <div><div class="space-block" style="width:4px;height:4px"></div><div class="space-meta">xs 4px</div></div>
+        <div><div class="space-block" style="width:8px;height:8px"></div><div class="space-meta">sm 8px</div></div>
+        <div><div class="space-block" style="width:12px;height:12px"></div><div class="space-meta">md 12px</div></div>
+        <div><div class="space-block" style="width:16px;height:16px"></div><div class="space-meta">lg 16px</div></div>
+        <div><div class="space-block" style="width:24px;height:24px"></div><div class="space-meta">xl 24px</div></div>
+        <div><div class="space-block" style="width:32px;height:32px"></div><div class="space-meta">2xl 32px</div></div>
+        <div><div class="space-block" style="width:48px;height:48px"></div><div class="space-meta">3xl 48px</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="sub-header"><div><div class="sub-title">Shape Principles</div></div></div>
+      <div class="col" style="gap:12px">
+        <div style="display:flex;gap:12px;align-items:center">
+          <div style="width:56px;height:32px;background:var(--o3)"></div>
+          <div><div style="font-size:13px;font-weight:600">Branded — Sharp (0px)</div><div style="font-size:11px;color:var(--g5)">Buttons, cards, badges, modals, panels</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center">
+          <div style="width:56px;height:32px;background:var(--g1);border:1.5px solid var(--g2);border-radius:4px"></div>
+          <div><div style="font-size:13px;font-weight:600">Functional — 4px radius</div><div style="font-size:11px;color:var(--g5)">Inputs, dropdowns, search, tooltips</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center">
+          <div style="width:32px;height:32px;background:var(--o1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--o5)">SC</div>
+          <div><div style="font-size:13px;font-weight:600">Circle — 50%</div><div style="font-size:11px;color:var(--g5)">Avatars, toggle thumbs, spinners, confirm icons</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- ════ OVERLAYS ════ -->
+<div id="m1" style="display:none" class="overlay" onclick="closeM('m1',event)">
+  <div class="modal">
+    <div class="mh"><div class="mh-left"><div class="mh-title">Edit Project</div><div class="mh-sub">Digital Transformation Q3</div></div><button class="m-close" onclick="closeM('m1')"><svg width="18" height="18"><use href="#ic-x"/></svg></button></div>
+    <div class="mb"><div class="col" style="gap:14px">
+      <div class="field"><label class="lbl">Project Name</label><input class="inp" value="Digital Transformation Q3"/></div>
+      <div class="grid g2" style="gap:10px">
+        <div class="field"><label class="lbl">Service Line</label><select class="inp"><option>Consulting</option><option>Advisory</option></select></div>
+        <div class="field"><label class="lbl">Priority</label><select class="inp"><option>High</option><option>Medium</option></select></div>
+      </div>
+      <div class="field"><label class="lbl">Description</label><textarea class="inp inp-area" style="min-height:72px">Comprehensive digital modernisation across 14 business units.</textarea></div>
+    </div></div>
+    <div class="mf"><button class="btn btn-ghost btn-sm" onclick="closeM('m1')">Cancel</button><button class="btn btn-p btn-sm" onclick="closeM('m1');showToast('ok','Project updated','Changes saved successfully.')">Save Changes</button></div>
+  </div>
+</div>
+
+<div id="m2" style="display:none" class="overlay" onclick="closeM('m2',event)">
+  <div class="confirm">
+    <div class="confirm-icon-wrap"><svg width="22" height="22" style="color:var(--er)"><use href="#ic-warn"/></svg></div>
+    <div style="font-size:16px;font-weight:700;margin-bottom:8px">Delete Project?</div>
+    <p style="font-size:13px;color:var(--g5);line-height:1.7;margin-bottom:22px">This will permanently delete <strong>Digital Transformation Q3</strong> and all associated files, milestones, and comments. This action cannot be undone.</p>
+    <div style="display:flex;justify-content:flex-end;gap:10px">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('m2')">Cancel</button>
+      <button class="btn btn-sm" style="background:var(--er);color:#fff;border:none;padding:7px 16px;font-weight:700;cursor:pointer" onclick="closeM('m2');showToast('er','Project deleted','Digital Transformation Q3 was removed.')">Delete Project</button>
+    </div>
+  </div>
+</div>
+
+<div id="drawerEl" style="display:none">
+  <div class="drawer-overlay" onclick="closeDrawer()"></div>
+  <div class="drawer">
+    <div class="dh"><span class="dh-title">Project Details</span><button class="m-close" onclick="closeDrawer()"><svg width="18" height="18"><use href="#ic-x"/></svg></button></div>
+    <div class="db"><div class="col" style="gap:14px">
+      <div class="field"><label class="lbl">Project Name</label><input class="inp" value="Digital Transformation Q3"/></div>
+      <div class="field"><label class="lbl">Owner</label><input class="inp" value="Sarah Chen — Partner"/></div>
+      <div class="field"><label class="lbl">Status</label>
+        <div class="sel-wrap" id="dsel">
+          <button class="sel-btn" id="dsel-btn" onclick="toggleSel('dsel')"><span id="dsel-val">Active</span><svg class="sel-chev" id="dsel-c" width="16" height="16"><use href="#ic-chev-d"/></svg></button>
+          <div class="sel-list" id="dsel-list" style="display:none">
+            <div class="sel-item sel" onclick="pickSel('dsel','Active')">Active<svg width="14" height="14" style="color:var(--o5)"><use href="#ic-check"/></svg></div>
+            <div class="sel-item" onclick="pickSel('dsel','On Hold')">On Hold</div>
+            <div class="sel-item" onclick="pickSel('dsel','Completed')">Completed</div>
+          </div>
+        </div>
+      </div>
+      <div class="field"><label class="lbl">Notes</label><textarea class="inp inp-area">Phase 2 commenced August 2024. Cloud migration on track.</textarea></div>
+    </div></div>
+    <div class="df"><button class="btn btn-ghost btn-sm" onclick="closeDrawer()">Cancel</button><button class="btn btn-p btn-sm" onclick="closeDrawer();showToast('ok','Saved','Project details updated.')">Save Changes</button></div>
+  </div>
+</div>
+
+<div id="toastStack" style="position:fixed;top:22px;right:22px;z-index:1000;display:flex;flex-direction:column;gap:8px;pointer-events:none"></div>
+
+<script>
+// ──────────────────────────────────────────────
+// SIDEBAR SCROLL SPY
+// ──────────────────────────────────────────────
+window.addEventListener('scroll',()=>{
+  const secs=document.querySelectorAll('.section');
+  const links=document.querySelectorAll('.sb-link');
+  let cur='';
+  secs.forEach(s=>{if(window.scrollY>=s.offsetTop-100)cur=s.id});
+  links.forEach(l=>{l.classList.toggle('active',l.getAttribute('href')==='#'+cur)});
+});
+
+// ──────────────────────────────────────────────
+// BUTTONS
+// ──────────────────────────────────────────────
+function simulateLoad(b){
+  b.querySelector('.btn-text').style.display='none';
+  const sp=b.querySelector('.btn-spin');sp.style.display='flex';b.disabled=true;
+  setTimeout(()=>{sp.style.display='none';b.querySelector('.btn-text').style.display='';b.disabled=false;showToast('ok','Done','Report generated successfully.');},2800);
+}
+
+// ──────────────────────────────────────────────
+// FORM CONTROLS
+// ──────────────────────────────────────────────
+function toggleSel(id){
+  const list=document.getElementById(id+'-list');
+  const chev=document.getElementById(id+'-c');
+  const btn=document.getElementById(id+'-btn');
+  const open=list.style.display!=='none';
+  document.querySelectorAll('.sel-list').forEach(l=>l.style.display='none');
+  document.querySelectorAll('.sel-chev').forEach(c=>c.classList.remove('open'));
+  document.querySelectorAll('.sel-btn').forEach(b=>b.classList.remove('open'));
+  if(!open){list.style.display='block';chev.classList.add('open');btn.classList.add('open');}
+}
+function pickSel(id,val){
+  document.getElementById(id+'-val').textContent=val;
+  document.getElementById(id+'-btn').classList.remove('placeholder','open');
+  document.getElementById(id+'-list').style.display='none';
+  document.getElementById(id+'-c').classList.remove('open');
+  document.querySelectorAll('#'+id+'-list .sel-item').forEach(i=>{
+    const isMatch=i.textContent.trim().startsWith(val);
+    i.classList.toggle('sel',isMatch);
+    if(isMatch&&!i.querySelector('svg')){const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.style.color='var(--o5)';s.setAttribute('width','14');s.setAttribute('height','14');s.innerHTML='<use href="#ic-check"/>';i.appendChild(s);}
+  });
+}
+document.addEventListener('click',e=>{if(!e.target.closest('.sel-wrap')){document.querySelectorAll('.sel-list').forEach(l=>l.style.display='none');document.querySelectorAll('.sel-chev').forEach(c=>c.classList.remove('open'));document.querySelectorAll('.sel-btn').forEach(b=>b.classList.remove('open'));}});
+
+function toggleCb(id){
+  const b=document.getElementById(id);const on=b.classList.toggle('on');
+  b.innerHTML=on?'<svg width="11" height="11" style="color:#fff"><use href="#ic-check"/></svg>':'';
+}
+const rbs=['rb1','rb2','rb3'];
+function pickRb(id){rbs.forEach(r=>{const el=document.getElementById(r);el.classList.toggle('on',r===id);});}
+
+function toggleTg(id){
+  const t=document.getElementById(id);const on=t.classList.toggle('on');
+  const lbl=id+'-l',sub=id+'-sub';
+  const name=document.getElementById(lbl).textContent;
+  document.getElementById(sub).textContent=on?'Currently enabled':'Currently disabled';
+}
+
+function moveSlider(id,v,col){
+  const c=col||'var(--o5)';
+  document.getElementById(id+'-f').style.width=v+'%';
+  document.getElementById(id+'-f').style.background=c;
+  document.getElementById(id+'-th').style.left=v+'%';
+  document.getElementById(id+'-th').style.borderColor=c;
+  const dispCol=col?col.replace('var(','').replace(')',''):'var(--o5)';
+  document.getElementById(id+'-v').style.color=c;
+  document.getElementById(id+'-v').textContent=v+'%';
+}
+
+// ──────────────────────────────────────────────
+// NAVIGATION
+// ──────────────────────────────────────────────
+function switchUl(gid,el){
+  document.querySelectorAll('#'+gid+' .tab-u').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  const c=document.getElementById(gid+'-con');
+  if(c)c.textContent='Displaying: '+el.textContent.trim()+' content';
+}
+function switchPill(gid,el){
+  document.querySelectorAll('#'+gid+' .tab-p').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+}
+function toggleAcc(btn){
+  const body=btn.nextElementSibling;
+  const chev=btn.querySelector('.acc-chev');
+  const on=body.classList.toggle('on');
+  btn.classList.toggle('on',on);chev.classList.toggle('on',on);
+}
+let pgCur=1;
+function pgClick(btn){
+  document.querySelectorAll('#pg1 .pg-btn:not(.pg-ctrl)').forEach(b=>b.classList.remove('pg-on'));
+  btn.classList.add('pg-on');
+  pgCur=parseInt(btn.textContent)||pgCur;
+  document.getElementById('pg-prev').classList.toggle('pg-dis',pgCur===1);
+  document.getElementById('pg-next').classList.toggle('pg-dis',pgCur===8);
+}
+function pgPrev(){if(pgCur>1){const btns=[...document.querySelectorAll('#pg1 .pg-btn:not(.pg-ctrl)')];const cur=btns.findIndex(b=>b.classList.contains('pg-on'));if(cur>0)pgClick(btns[cur-1]);}}
+function pgNext(){if(pgCur<8){const btns=[...document.querySelectorAll('#pg1 .pg-btn:not(.pg-ctrl)')];const cur=btns.findIndex(b=>b.classList.contains('pg-on'));if(cur<btns.length-1)pgClick(btns[cur+1]);}}
+function switchSn(el,id){document.querySelectorAll('#'+id+' .sn-item').forEach(i=>i.classList.remove('on'));el.classList.add('on');const c=document.getElementById(id+'-con');if(c)c.textContent=el.textContent.trim()+' — main content area';}
+
+// ──────────────────────────────────────────────
+// MODALS
+// ──────────────────────────────────────────────
+function openM(id){document.getElementById(id).style.display='flex';}
+function closeM(id,e){if(!e||e.target===document.getElementById(id))document.getElementById(id).style.display='none';}
+function openDrawer(){document.getElementById('drawerEl').style.display='block';}
+function closeDrawer(){document.getElementById('drawerEl').style.display='none';}
+
+// ──────────────────────────────────────────────
+// TOAST
+// ──────────────────────────────────────────────
+const TICONS={ok:'#ic-ok',er:'#ic-err',wa:'#ic-warn',in:'#ic-info'};
+const TCOLORS={ok:'var(--ok)',er:'var(--er)',wa:'var(--wa)',in:'var(--in)'};
+function showToast(type,title,msg){
+  const s=document.getElementById('toastStack');
+  const t=document.createElement('div');t.className='toast';t.style.pointerEvents='all';
+  t.style.borderLeft='3px solid '+TCOLORS[type];
+  t.innerHTML=`<div class="toast-accent" style="background:${TCOLORS[type]}"></div>
+    <svg width="16" height="16" style="color:${TCOLORS[type]};flex-shrink:0"><use href="${TICONS[type]}"/></svg>
+    <div class="toast-body"><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div>
+    <button class="toast-close" onclick="this.closest('.toast').remove()"><svg width="13" height="13"><use href="#ic-x"/></svg></button>`;
+  s.appendChild(t);setTimeout(()=>{if(t.parentElement)t.remove();},4500);
+}
+
+// ──────────────────────────────────────────────
+// PROGRESS
+// ──────────────────────────────────────────────
+function animateProg(){
+  let v=0;const f=document.getElementById('p1f');const vl=document.getElementById('p1v');
+  f.style.width='0%';f.style.background='var(--o5)';vl.style.color='var(--o5)';
+  const iv=setInterval(()=>{v+=1.5;f.style.width=v+'%';vl.textContent=Math.round(v)+'%';
+    if(v>=100){clearInterval(iv);f.style.background='var(--ok)';vl.style.color='var(--ok)';showToast('ok','Upload complete','analysis.pdf uploaded successfully.');}
+  },40);
+}
+
+// ──────────────────────────────────────────────
+// TABLE
+// ──────────────────────────────────────────────
+function selRow(tr){
+  const on=tr.classList.toggle('row-sel');
+  tr.querySelector('.row-ck').checked=on;
+  updateSelBar();
+}
+function rowCk(cb){cb.closest('tr').classList.toggle('row-sel',cb.checked);updateSelBar();}
+function selAll(master){
+  document.querySelectorAll('.row-ck').forEach(c=>{c.checked=master.checked;c.closest('tr').classList.toggle('row-sel',master.checked);});
+  updateSelBar();
+}
+function updateSelBar(){
+  const n=document.querySelectorAll('.row-sel').length;
+  const bar=document.getElementById('sel-bar');
+  bar.style.display=n>0?'flex':'none';
+  document.getElementById('sel-count').textContent=n+' client'+(n!==1?'s':'')+' selected';
+}
+function filterTbl(q){
+  let shown=0;
+  document.querySelectorAll('#tblBody tr').forEach(r=>{
+    const m=r.textContent.toLowerCase().includes(q.toLowerCase());
+    r.style.display=m?'':'none';if(m)shown++;
+  });
+  document.getElementById('tbl-info').textContent='Showing '+shown+' of 5 clients';
+}
+function sortTbl(col){
+  const tbody=document.getElementById('tblBody');
+  const rows=[...tbody.querySelectorAll('tr')];
+  rows.sort((a,b)=>(a.cells[col]?.textContent||'').localeCompare(b.cells[col]?.textContent||''));
+  rows.forEach(r=>tbody.appendChild(r));
+}
+
+// ──────────────────────────────────────────────
+// CHAT
+// ──────────────────────────────────────────────
+const REPLIES=[
+  "Primary buttons use Orange 300 (#FFAA72) — never Orange 500 as background.",
+  "All branded elements use sharp corners (border-radius: 0). Only functional elements like inputs get 4px radius.",
+  "The spacing scale is 8px-based: xs=4, sm=8, md=12, lg=16, xl=24, 2xl=32, 3xl=48.",
+  "Dark mode uses: background #1a1a1a, card #242424, text #ffffff, border #333333.",
+  "Charts use Orange 500 as the primary series colour, Orange 300 for secondary, Grey 400 for tertiary."
+];
+let rIdx=0;
+function sendChat(e){if(e.key==='Enter')doSend();}
+function sendChatBtn(){doSend();}
+function doSend(){
+  const inp=document.getElementById('chatInp');const msg=inp.value.trim();if(!msg)return;
+  const msgs=document.getElementById('chatMsgs');
+  const u=document.createElement('div');u.className='user-msg';
+  u.innerHTML='<div class="user-bubble">'+msg+'</div>';msgs.appendChild(u);inp.value='';
+  // typing
+  const typing=document.createElement('div');typing.className='ai-msg';
+  typing.innerHTML='<svg width="14" height="14" style="color:var(--o5)"><use href="#ic-spark"/></svg><div class="chat-typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+  msgs.appendChild(typing);msgs.scrollTop=msgs.scrollHeight;
+  setTimeout(()=>{
+    typing.remove();
+    const a=document.createElement('div');a.className='ai-msg';
+    a.innerHTML='<svg width="14" height="14" style="color:var(--o5)"><use href="#ic-spark"/></svg><div class="ai-bubble">'+REPLIES[rIdx%REPLIES.length]+'</div>';
+    msgs.appendChild(a);rIdx++;msgs.scrollTop=msgs.scrollHeight;
+  },800);
+}
+
+// ──────────────────────────────────────────────
+// CHART HELPERS
+// ──────────────────────────────────────────────
+function mkSVG(W,H){
+  const s=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  s.setAttribute('viewBox','0 0 '+W+' '+H);s.style.cssText='width:100%;height:100%;display:block;overflow:visible';return s;
+}
+function el(tag,a){const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const[k,v]of Object.entries(a))e.setAttribute(k,v);return e;}
+function mkTip(parent){
+  const t=document.createElement('div');t.className='ct';parent.style.position='relative';parent.appendChild(t);return t;
+}
+function tip(t,x,y,html,W,H,elW,elH){t.innerHTML=html;t.style.left=(x/W*elW)+'px';t.style.top=((y-10)/H*elH)+'px';t.style.opacity='1';}
+function hideTip(t){t.style.opacity='0';}
+function axes(svg,W,H,pL,pR,pT,pB,yTks,xLbls){
+  const iW=W-pL-pR,iH=H-pT-pB;
+  yTks.forEach(tk=>{
+    const y=pT+iH-tk.n*iH;
+    svg.appendChild(el('line',{x1:pL,y1:y,x2:pL+iW,y2:y,stroke:'#DFE3E6','stroke-width':'1','stroke-dasharray':'3,3'}));
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',pL-6);t.setAttribute('y',y+3);t.setAttribute('text-anchor','end');t.setAttribute('font-size','9');t.setAttribute('fill','#A1A8B3');t.setAttribute('font-family','system-ui');t.textContent=tk.l;svg.appendChild(t);
+  });
+  xLbls.forEach((l,i)=>{
+    const x=pL+(i/(xLbls.length-1||1))*iW;
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',x);t.setAttribute('y',H-pB+13);t.setAttribute('text-anchor','middle');t.setAttribute('font-size','9');t.setAttribute('fill','#A1A8B3');t.setAttribute('font-family','system-ui');t.textContent=l;svg.appendChild(t);
+  });
+}
+function legToggle(legId,cls){
+  const l=document.getElementById(legId);
+  if(!l)return;
+  const off=l.classList.toggle('off');
+  document.querySelectorAll('.'+cls).forEach(e=>e.style.opacity=off?'0':'1');
+}
+
+// ─── LINE CHART ───
+(function(){
+  const el2=document.getElementById('lineC');if(!el2)return;
+  const W=560,H=180,pL=38,pR=12,pT=10,pB=24;
+  const d1=[42,55,38,72,61,85,69,91,78,88,95,102];
+  const d2=[35,42,50,58,49,62,71,68,75,80,85,90];
+  const lbl=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const max=110,iW=W-pL-pR,iH=H-pT-pB;
+  const svg=mkSVG(W,H);el2.appendChild(svg);
+  const tp=mkTip(el2);
+  axes(svg,W,H,pL,pR,pT,pB,[{n:0,l:'0'},{n:.25,l:'25'},{n:.5,l:'50'},{n:.75,l:'75'},{n:1,l:'100'}],lbl);
+  const px=i=>pL+(i/(d1.length-1))*iW;
+  const py=v=>pT+iH-(v/max)*iH;
+  // area fill
+  const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
+  const g=document.createElementNS('http://www.w3.org/2000/svg','linearGradient');
+  g.id='lg1';g.setAttribute('x1','0');g.setAttribute('y1','0');g.setAttribute('x2','0');g.setAttribute('y2','1');
+  const s1=document.createElementNS('http://www.w3.org/2000/svg','stop');s1.setAttribute('offset','0%');s1.setAttribute('stop-color','#FD5108');s1.setAttribute('stop-opacity','0.12');
+  const s2=document.createElementNS('http://www.w3.org/2000/svg','stop');s2.setAttribute('offset','100%');s2.setAttribute('stop-color','#FD5108');s2.setAttribute('stop-opacity','0');
+  g.appendChild(s1);g.appendChild(s2);defs.appendChild(g);svg.appendChild(defs);
+  const areaPts=d1.map((v,i)=>px(i)+','+py(v)).join(' ')+' '+px(d1.length-1)+','+(pT+iH)+' '+px(0)+','+(pT+iH);
+  svg.appendChild(el('polygon',{points:areaPts,fill:'url(#lg1)'}));
+  // series 2
+  svg.appendChild(el('polyline',{points:d2.map((v,i)=>px(i)+','+py(v)).join(' '),fill:'none',stroke:'#CBD1D6','stroke-width':'1.5','stroke-dasharray':'4,3',class:'lls2'}));
+  // series 1
+  svg.appendChild(el('polyline',{points:d1.map((v,i)=>px(i)+','+py(v)).join(' '),fill:'none',stroke:'#FD5108','stroke-width':'2',class:'lls1'}));
+  d1.forEach((v,i)=>{
+    const c=el('circle',{cx:px(i),cy:py(v),r:'3.5',fill:'#FD5108',stroke:'#fff','stroke-width':'1.5',class:'lls1',style:'cursor:pointer'});
+    c.addEventListener('mouseenter',()=>{c.setAttribute('r','5.5');tip(tp,px(i),py(v),lbl[i]+': £'+v+'M',W,H,el2.offsetWidth,el2.offsetHeight);});
+    c.addEventListener('mouseleave',()=>{c.setAttribute('r','3.5');hideTip(tp);});
+    svg.appendChild(c);
+  });
+  d2.forEach((v,i)=>{
+    const c=el('circle',{cx:px(i),cy:py(v),r:'3',fill:'#CBD1D6',stroke:'#fff','stroke-width':'1.5',class:'lls2',style:'cursor:pointer'});
+    c.addEventListener('mouseenter',()=>{c.setAttribute('r','5');tip(tp,px(i),py(v),'Prior: £'+v+'M',W,H,el2.offsetWidth,el2.offsetHeight);});
+    c.addEventListener('mouseleave',()=>{c.setAttribute('r','3');hideTip(tp);});
+    svg.appendChild(c);
+  });
+})();
+
+// ─── BAR CHART ───
+(function(){
+  const e=document.getElementById('barC');if(!e)return;
+  const W=560,H=180,pL=38,pR=12,pT=10,pB=24;
+  const act=[68,82,55,91];const tgt=[75,78,70,85];const lbl=['Q1','Q2','Q3','Q4'];
+  const max=100,iW=W-pL-pR,iH=H-pT-pB;
+  const svg=mkSVG(W,H);e.appendChild(svg);const tp=mkTip(e);
+  axes(svg,W,H,pL,pR,pT,pB,[{n:0,l:'0'},{n:.25,l:'25M'},{n:.5,l:'50M'},{n:.75,l:'75M'},{n:1,l:'100M'}],lbl);
+  const gW=iW/lbl.length;const bW=gW*.34;
+  lbl.forEach((_,i)=>{
+    const gx=pL+i*gW+gW/2;
+    [[act[i],'#FD5108','bls1','Actual'],[tgt[i],'#FFAA72','bls2','Target']].forEach(([v,col,cls,name],j)=>{
+      const bh=(v/max)*iH;const bx=gx+(j===0?-bW-1:1);const by=pT+iH-bh;
+      const r=document.createElementNS('http://www.w3.org/2000/svg','rect');
+      r.setAttribute('x',bx);r.setAttribute('y',by);r.setAttribute('width',bW);r.setAttribute('height',bh);r.setAttribute('fill',col);r.setAttribute('class',cls);r.style.cursor='pointer';r.style.transition='opacity .15s';
+      r.addEventListener('mouseenter',()=>{r.style.opacity='.75';tip(tp,bx,by,name+': £'+v+'M',W,H,e.offsetWidth,e.offsetHeight);});
+      r.addEventListener('mouseleave',()=>{r.style.opacity='1';hideTip(tp);});
+      svg.appendChild(r);
+    });
+  });
+})();
+
+// ─── AREA CHART ───
+(function(){
+  const e=document.getElementById('areaC');if(!e)return;
+  const W=560,H=180,pL=38,pR=12,pT=10,pB=24;
+  const d=[850,1020,1340,1680,1920,2140,2380,2580,2710,2780,2820,2847];
+  const lbl=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const max=3000,iW=W-pL-pR,iH=H-pT-pB;
+  const svg=mkSVG(W,H);e.appendChild(svg);const tp=mkTip(e);
+  const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
+  const g=document.createElementNS('http://www.w3.org/2000/svg','linearGradient');g.id='lg2';g.setAttribute('x1','0');g.setAttribute('y1','0');g.setAttribute('x2','0');g.setAttribute('y2','1');
+  const s1=document.createElementNS('http://www.w3.org/2000/svg','stop');s1.setAttribute('offset','0%');s1.setAttribute('stop-color','#FD5108');s1.setAttribute('stop-opacity','0.15');
+  const s2=document.createElementNS('http://www.w3.org/2000/svg','stop');s2.setAttribute('offset','100%');s2.setAttribute('stop-color','#FD5108');s2.setAttribute('stop-opacity','0');
+  g.appendChild(s1);g.appendChild(s2);defs.appendChild(g);svg.appendChild(defs);
+  axes(svg,W,H,pL,pR,pT,pB,[{n:0,l:'0'},{n:.33,l:'1k'},{n:.67,l:'2k'},{n:1,l:'3k'}],lbl);
+  const px=i=>pL+(i/(d.length-1))*iW;const py=v=>pT+iH-(v/max)*iH;
+  const ap=d.map((v,i)=>px(i)+','+py(v)).join(' ')+' '+px(d.length-1)+','+(pT+iH)+' '+px(0)+','+(pT+iH);
+  svg.appendChild(el('polygon',{points:ap,fill:'url(#lg2)'}));
+  svg.appendChild(el('polyline',{points:d.map((v,i)=>px(i)+','+py(v)).join(' '),fill:'none',stroke:'#FD5108','stroke-width':'2'}));
+  d.forEach((v,i)=>{
+    const c=el('circle',{cx:px(i),cy:py(v),r:'3',fill:'#FD5108',stroke:'#fff','stroke-width':'1.5',style:'cursor:pointer'});
+    c.addEventListener('mouseenter',()=>{c.setAttribute('r','5');tip(tp,px(i),py(v),lbl[i]+': '+v+' clients',W,H,e.offsetWidth,e.offsetHeight);});
+    c.addEventListener('mouseleave',()=>{c.setAttribute('r','3');hideTip(tp);});
+    svg.appendChild(c);
+  });
+})();
+
+// ─── STACKED BAR ───
+(function(){
+  const e=document.getElementById('stackC');if(!e)return;
+  const W=560,H=180,pL=38,pR=12,pT=10,pB=24;
+  const segs=[[45,38,52,61],[28,31,25,22],[15,18,14,10]];
+  const cols=['#FD5108','#FFAA72','#CBD1D6'];const cls2=['ss1','ss2','ss3'];
+  const names=['Consulting','Advisory','Tax'];const lbl=['Q1','Q2','Q3','Q4'];
+  const max=100,iW=W-pL-pR,iH=H-pT-pB;
+  const svg=mkSVG(W,H);e.appendChild(svg);const tp=mkTip(e);
+  axes(svg,W,H,pL,pR,pT,pB,[{n:0,l:'0'},{n:.25,l:'25'},{n:.5,l:'50'},{n:.75,l:'75'},{n:1,l:'100'}],lbl);
+  const bW=(iW/lbl.length)*.55;
+  lbl.forEach((_,i)=>{
+    const bx=pL+i*(iW/lbl.length)+(iW/lbl.length-bW)/2;
+    let base=pT+iH;
+    segs.forEach((seg,si)=>{
+      const bh=(seg[i]/max)*iH;base-=bh;
+      const r=document.createElementNS('http://www.w3.org/2000/svg','rect');
+      r.setAttribute('x',bx);r.setAttribute('y',base);r.setAttribute('width',bW);r.setAttribute('height',bh);r.setAttribute('fill',cols[si]);r.setAttribute('class',cls2[si]);r.style.cursor='pointer';
+      r.addEventListener('mouseenter',()=>{r.style.opacity='.75';tip(tp,bx,base,names[si]+': '+seg[i]+'%',W,H,e.offsetWidth,e.offsetHeight);});
+      r.addEventListener('mouseleave',()=>{r.style.opacity='1';hideTip(tp);});
+      svg.appendChild(r);
+    });
+  });
+})();
+
+// ─── GROUPED BAR ───
+(function(){
+  const e=document.getElementById('grpC');if(!e)return;
+  const W=560,H=180,pL=38,pR=12,pT=10,pB=24;
+  const act=[65,80,58,92];const bud=[70,75,72,88];const lbl=['Q1','Q2','Q3','Q4'];
+  const max=100,iW=W-pL-pR,iH=H-pT-pB;
+  const svg=mkSVG(W,H);e.appendChild(svg);const tp=mkTip(e);
+  axes(svg,W,H,pL,pR,pT,pB,[{n:0,l:'0'},{n:.25,l:'25M'},{n:.5,l:'50M'},{n:.75,l:'75M'},{n:1,l:'100M'}],lbl);
+  const gW=iW/lbl.length;const bW=gW*.32;
+  lbl.forEach((_,i)=>{
+    const gx=pL+i*gW+gW/2;
+    [[act[i],'#FD5108','gs1','Actual'],[bud[i],'#FFAA72','gs2','Budget']].forEach(([v,col,cls,name],j)=>{
+      const bh=(v/max)*iH;const bx=gx+(j===0?-bW-1:1);const by=pT+iH-bh;
+      const r=document.createElementNS('http://www.w3.org/2000/svg','rect');
+      r.setAttribute('x',bx);r.setAttribute('y',by);r.setAttribute('width',bW);r.setAttribute('height',bh);r.setAttribute('fill',col);r.setAttribute('class',cls);r.style.cursor='pointer';
+      r.addEventListener('mouseenter',()=>{r.style.opacity='.75';tip(tp,bx,by,name+': £'+v+'M',W,H,e.offsetWidth,e.offsetHeight);});
+      r.addEventListener('mouseleave',()=>{r.style.opacity='1';hideTip(tp);});
+      svg.appendChild(r);
+    });
+  });
+})();
+
+// ─── PIE CHART ───
+(function(){
+  const e=document.getElementById('pieC');if(!e)return;
+  const segs=[{v:45,col:'#FD5108',cls:'ps1',name:'Consulting'},{v:30,col:'#FFAA72',cls:'ps2',name:'Advisory'},{v:15,col:'#CBD1D6',cls:'ps3',name:'Tax'},{v:10,col:'#DFE3E6',cls:'ps4',name:'Deals'}];
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','-1 -1 2 2');svg.style.cssText='width:180px;height:180px;flex-shrink:0';
+  const tp=mkTip(e);let cum=0;
+  segs.forEach(d=>{
+    const a0=cum*2*Math.PI/100-Math.PI/2;cum+=d.v;const a1=cum*2*Math.PI/100-Math.PI/2;
+    const x0=Math.cos(a0),y0=Math.sin(a0),x1=Math.cos(a1),y1=Math.sin(a1);
+    const lg=d.v>50?1:0;
+    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d',`M0 0 L${x0} ${y0} A1 1 0 ${lg} 1 ${x1} ${y1}Z`);
+    p.setAttribute('fill',d.col);p.setAttribute('class',d.cls);p.style.cssText='cursor:pointer;transition:transform .15s ease;transform-origin:center';
+    const mid=(a0+a1)/2;
+    p.addEventListener('mouseenter',()=>{p.style.transform='scale(1.06)';tip(tp,90+Math.cos(mid)*80,90+Math.sin(mid)*80,d.name+': '+d.v+'%',200,180,e.offsetWidth,e.offsetHeight);});
+    p.addEventListener('mouseleave',()=>{p.style.transform='scale(1)';hideTip(tp);});
+    svg.appendChild(p);
+  });
+  e.appendChild(svg);
+  // legend in card
+  const leg=document.createElement('div');leg.style.cssText='display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--g5)';
+  segs.forEach(d=>{leg.innerHTML+=`<div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;background:${d.col}"></div>${d.name}<strong style="margin-left:auto;color:var(--bk)">${d.v}%</strong></div>`;});
+  e.appendChild(leg);
+})();
+
+// ─── DONUT ───
+(function(){
+  const e=document.getElementById('donutC');if(!e)return;
+  const segs=[{v:58,col:'#FD5108',cls:'ds1',name:'Complete'},{v:26,col:'#FFAA72',cls:'ds2',name:'In Progress'},{v:16,col:'#CBD1D6',cls:'ds3',name:'Pending'}];
+  const R=.72,r=.44;
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','-1 -1 2 2');svg.style.cssText='width:160px;height:160px;flex-shrink:0';
+  const tp=mkTip(e);let cum=0;
+  segs.forEach(d=>{
+    const a0=cum*2*Math.PI/100-Math.PI/2;cum+=d.v;const a1=cum*2*Math.PI/100-Math.PI/2;
+    const x0o=Math.cos(a0)*R,y0o=Math.sin(a0)*R,x1o=Math.cos(a1)*R,y1o=Math.sin(a1)*R;
+    const x0i=Math.cos(a1)*r,y0i=Math.sin(a1)*r,x1i=Math.cos(a0)*r,y1i=Math.sin(a0)*r;
+    const lg=d.v>50?1:0;
+    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d',`M${x0o} ${y0o} A${R} ${R} 0 ${lg} 1 ${x1o} ${y1o} L${x0i} ${y0i} A${r} ${r} 0 ${lg} 0 ${x1i} ${y1i}Z`);
+    p.setAttribute('fill',d.col);p.setAttribute('class',d.cls);p.style.cssText='cursor:pointer;transition:transform .15s ease;transform-origin:center';
+    const mid=(a0+(a1))/2;
+    p.addEventListener('mouseenter',()=>{p.style.transform='scale(1.04)';tip(tp,80+Math.cos(mid)*70,80+Math.sin(mid)*70,d.name+': '+d.v+'%',200,180,e.offsetWidth,e.offsetHeight);});
+    p.addEventListener('mouseleave',()=>{p.style.transform='scale(1)';hideTip(tp);});
+    svg.appendChild(p);
+  });
+  // Centre label
+  const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+  t.setAttribute('x','0');t.setAttribute('y','0.08');t.setAttribute('text-anchor','middle');t.setAttribute('font-size','0.3');t.setAttribute('font-weight','700');t.setAttribute('fill','#000');t.setAttribute('font-family','system-ui');t.textContent='58%';
+  const t2=document.createElementNS('http://www.w3.org/2000/svg','text');
+  t2.setAttribute('x','0');t2.setAttribute('y','0.26');t2.setAttribute('text-anchor','middle');t2.setAttribute('font-size','0.14');t2.setAttribute('fill','#A1A8B3');t2.setAttribute('font-family','system-ui');t2.textContent='Complete';
+  svg.appendChild(t);svg.appendChild(t2);
+  e.appendChild(svg);
+  // right side stats
+  const stats=document.createElement('div');stats.style.cssText='display:flex;flex-direction:column;gap:10px';
+  [{v:58,col:'#FD5108',label:'Complete'},{v:26,col:'#FFAA72',label:'In Progress'},{v:16,col:'#CBD1D6',label:'Pending'}].forEach(d=>{
+    stats.innerHTML+=`<div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:12px"><span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:${d.col};display:inline-block"></span>${d.label}</span><strong>${d.v}%</strong></div><div style="height:4px;background:var(--g2);border-radius:2px"><div style="width:${d.v}%;height:100%;background:${d.col};border-radius:2px"></div></div></div>`;
+  });
+  e.appendChild(stats);
+})();
+
+// ─── SCATTER ───
+(function(){
+  const e=document.getElementById('scatC');if(!e)return;
+  const W=560,H=180,pL=38,pR=12,pT=10,pB=24;
+  const pts=[
+    {x:12,y:18,r:7,col:'#FD5108',name:'Fund A'},{x:25,y:42,r:10,col:'#FD5108',name:'Fund B'},
+    {x:42,y:35,r:6,col:'#FFAA72',name:'Fund C'},{x:58,y:60,r:12,col:'#FFAA72',name:'Fund D'},
+    {x:70,y:52,r:8,col:'#FD5108',name:'Fund E'},{x:35,y:28,r:5,col:'#CBD1D6',name:'Fund F'},
+    {x:52,y:75,r:9,col:'#FFAA72',name:'Fund G'},{x:80,y:68,r:11,col:'#FD5108',name:'Fund H'},
+    {x:18,y:55,r:6,col:'#CBD1D6',name:'Fund I'},{x:65,y:40,r:8,col:'#CBD1D6',name:'Fund J'}
+  ];
+  const svg=mkSVG(W,H);e.appendChild(svg);const tp=mkTip(e);
+  const iW=W-pL-pR,iH=H-pT-pB;
+  axes(svg,W,H,pL,pR,pT,pB,[{n:0,l:'0%'},{n:.25,l:'25%'},{n:.5,l:'50%'},{n:.75,l:'75%'},{n:1,l:'100%'}],['Low Risk','','','','High Risk']);
+  pts.forEach(p=>{
+    const cx=pL+(p.x/100)*iW,cy=pT+iH-(p.y/100)*iH;
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',cx);c.setAttribute('cy',cy);c.setAttribute('r',p.r);c.setAttribute('fill',p.col);c.setAttribute('opacity','0.75');c.style.cursor='pointer';c.style.transition='r .12s,opacity .12s';
+    c.addEventListener('mouseenter',()=>{c.setAttribute('opacity','1');c.setAttribute('r',p.r+3);tip(tp,cx,cy,p.name+' · Risk '+p.x+'% / Return '+p.y+'%',W,H,e.offsetWidth,e.offsetHeight);});
+    c.addEventListener('mouseleave',()=>{c.setAttribute('opacity','0.75');c.setAttribute('r',p.r);hideTip(tp);});
+    svg.appendChild(c);
+  });
+})();
+
+// ─── RADAR ───
+(function(){
+  const e=document.getElementById('radC');if(!e)return;
+  const axes2=['Strategy','Execution','People','Innovation','Finance','Risk'];
+  const cur=[80,65,90,55,72,68],tgt=[85,80,85,75,80,75];
+  const cx=100,cy=100,R=70;const n=axes2.length;
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 200 200');svg.style.cssText='width:200px;height:200px';
+  function pt(i,v){const a=(i/n)*2*Math.PI-Math.PI/2;return{x:cx+Math.cos(a)*(v/100)*R,y:cy+Math.sin(a)*(v/100)*R};}
+  [.25,.5,.75,1].forEach(f=>{const ps=axes2.map((_,i)=>pt(i,f*100));svg.appendChild(el('polygon',{points:ps.map(p=>p.x+','+p.y).join(' '),fill:'none',stroke:'#DFE3E6','stroke-width':'1'}));});
+  axes2.forEach((_,i)=>{const p=pt(i,100);svg.appendChild(el('line',{x1:cx,y1:cy,x2:p.x,y2:p.y,stroke:'#DFE3E6','stroke-width':'1'}));});
+  const tp2=tgt.map((_,i)=>pt(i,tgt[i]));svg.appendChild(el('polygon',{points:tp2.map(p=>p.x+','+p.y).join(' '),fill:'#DFE3E6',stroke:'#CBD1D6','stroke-width':'1.5',opacity:'.6'}));
+  const cp=cur.map((_,i)=>pt(i,cur[i]));svg.appendChild(el('polygon',{points:cp.map(p=>p.x+','+p.y).join(' '),fill:'#FD5108',stroke:'#FD5108','stroke-width':'2',opacity:'.2'}));svg.appendChild(el('polygon',{points:cp.map(p=>p.x+','+p.y).join(' '),fill:'none',stroke:'#FD5108','stroke-width':'2'}));
+  axes2.forEach((a,i)=>{const p=pt(i,118);const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',p.x);t.setAttribute('y',p.y+3);t.setAttribute('text-anchor','middle');t.setAttribute('font-size','8.5');t.setAttribute('fill','#A1A8B3');t.setAttribute('font-family','system-ui');t.textContent=a;svg.appendChild(t);});
+  e.appendChild(svg);
+})();
+
+// ─── COMPOSED ───
+(function(){
+  const e=document.getElementById('compC');if(!e)return;
+  const W=560,H=180,pL=38,pR=12,pT=10,pB=24;
+  const bars=[52,68,45,78,61,85,72,90];const trend=[50,55,58,64,65,70,73,80];const lbl=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'];
+  const max=100,iW=W-pL-pR,iH=H-pT-pB;
+  const svg=mkSVG(W,H);e.appendChild(svg);const tp=mkTip(e);
+  axes(svg,W,H,pL,pR,pT,pB,[{n:0,l:'0'},{n:.25,l:'25'},{n:.5,l:'50'},{n:.75,l:'75'},{n:1,l:'100'}],lbl);
+  const bW=(iW/bars.length)*.55;
+  bars.forEach((v,i)=>{
+    const bx=pL+(i+.5)*(iW/bars.length)-bW/2;const bh=(v/max)*iH;const by=pT+iH-bh;
+    const r=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    r.setAttribute('x',bx);r.setAttribute('y',by);r.setAttribute('width',bW);r.setAttribute('height',bh);r.setAttribute('fill','#FFAA72');r.setAttribute('class','cs1');r.style.cursor='pointer';
+    r.addEventListener('mouseenter',()=>{r.style.opacity='.7';tip(tp,bx,by,lbl[i]+': '+v,W,H,e.offsetWidth,e.offsetHeight);});
+    r.addEventListener('mouseleave',()=>{r.style.opacity='1';hideTip(tp);});
+    svg.appendChild(r);
+  });
+  const tpts=trend.map((v,i)=>(pL+(i+.5)*(iW/trend.length))+','+(pT+iH-(v/max)*iH)).join(' ');
+  svg.appendChild(el('polyline',{points:tpts,fill:'none',stroke:'#FD5108','stroke-width':'2','stroke-linecap':'round','stroke-linejoin':'round',class:'cs2'}));
+  trend.forEach((v,i)=>{
+    const cx2=pL+(i+.5)*(iW/trend.length),cy2=pT+iH-(v/max)*iH;
+    const c=el('circle',{cx:cx2,cy:cy2,r:'3.5',fill:'#FD5108',stroke:'#fff','stroke-width':'1.5',class:'cs2',style:'cursor:pointer'});
+    c.addEventListener('mouseenter',()=>{c.setAttribute('r','5.5');tip(tp,cx2,cy2,'Trend: '+v,W,H,e.offsetWidth,e.offsetHeight);});
+    c.addEventListener('mouseleave',()=>{c.setAttribute('r','3.5');hideTip(tp);});
+    svg.appendChild(c);
+  });
+})();
+
+// ─── TREEMAP ───
+(function(){
+  const e=document.getElementById('treeC');if(!e)return;
+  const tiles=[
+    {name:'Technology',pct:42,col:'#FD5108',tc:'#fff'},{name:'People',pct:24,col:'#FFAA72',tc:'#000'},
+    {name:'Travel',pct:18,col:'#FFE8D4',tc:'#000'},{name:'Facilities',pct:10,col:'#DFE3E6',tc:'#000'},
+    {name:'Other',pct:6,col:'#EEEFF1',tc:'#A1A8B3'}
+  ];
+  const layout=[{x:0,y:0,w:57,h:100},{x:57,y:0,w:43,h:54},{x:57,y:54,w:43,h:46},{x:0,y:70,w:32,h:30},{x:32,y:70,w:25,h:30}];
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 100 100');svg.style.cssText='width:100%;height:100%;display:block';
+  const tp=mkTip(e);
+  tiles.forEach((t,i)=>{
+    const l=layout[i];if(!l)return;
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');g.style.cursor='pointer';
+    const r=el('rect',{x:l.x+.4,y:l.y+.4,width:l.w-.8,height:l.h-.8,fill:t.col});
+    const tx=document.createElementNS('http://www.w3.org/2000/svg','text');tx.setAttribute('x',l.x+l.w/2);tx.setAttribute('y',l.y+l.h/2-3);tx.setAttribute('text-anchor','middle');tx.setAttribute('font-size',l.w>30?'7.5':'6.5');tx.setAttribute('fill',t.tc);tx.setAttribute('font-family','system-ui');tx.setAttribute('font-weight','700');tx.textContent=t.name;
+    const tx2=document.createElementNS('http://www.w3.org/2000/svg','text');tx2.setAttribute('x',l.x+l.w/2);tx2.setAttribute('y',l.y+l.h/2+8);tx2.setAttribute('text-anchor','middle');tx2.setAttribute('font-size','6.5');tx2.setAttribute('fill',t.tc);tx2.setAttribute('font-family','system-ui');tx2.setAttribute('opacity','0.8');tx2.textContent=t.pct+'%';
+    g.appendChild(r);g.appendChild(tx);g.appendChild(tx2);
+    g.addEventListener('mouseenter',()=>{r.setAttribute('opacity','.82');tip(tp,(l.x+l.w/2)*e.offsetWidth/100,l.y*e.offsetHeight/100,t.name+': '+t.pct+'%',100,100,e.offsetWidth,e.offsetHeight);});
+    g.addEventListener('mouseleave',()=>{r.setAttribute('opacity','1');hideTip(tp);});
+    svg.appendChild(g);
+  });
+  e.appendChild(svg);
+})();
+
+// ─── FUNNEL ───
+(function(){
+  const e=document.getElementById('funC');if(!e)return;
+  const stages=[{name:'Leads',v:1200,col:'#FD5108'},{name:'Qualified',v:940,col:'#fd6a2a'},{name:'Proposal',v:645,col:'#FFAA72'},{name:'Negotiation',v:420,col:'#ffc89a'},{name:'Won',v:215,col:'#22C55E'}];
+  const W=560,H=180,pL=70,pR=70,pT=8,pB=8;
+  const svg=mkSVG(W,H);e.appendChild(svg);const tp=mkTip(e);
+  const sH=(H-pT-pB)/stages.length-3;const maxW=W-pL-pR;
+  stages.forEach((s,i)=>{
+    const ratio=s.v/stages[0].v;const bW=maxW*ratio;const bX=pL+(maxW-bW)/2;const by=pT+i*(sH+3);
+    const r=document.createElementNS('http://www.w3.org/2000/svg','rect');r.setAttribute('x',bX);r.setAttribute('y',by);r.setAttribute('width',bW);r.setAttribute('height',sH);r.setAttribute('fill',s.col);r.style.cursor='pointer';
+    const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');lbl.setAttribute('x',pL-8);lbl.setAttribute('y',by+sH/2+3);lbl.setAttribute('text-anchor','end');lbl.setAttribute('font-size','9.5');lbl.setAttribute('fill','#A1A8B3');lbl.setAttribute('font-family','system-ui');lbl.textContent=s.name;
+    const vl=document.createElementNS('http://www.w3.org/2000/svg','text');vl.setAttribute('x',bX+bW+6);vl.setAttribute('y',by+sH/2+3);vl.setAttribute('text-anchor','start');vl.setAttribute('font-size','9.5');vl.setAttribute('fill','#A1A8B3');vl.setAttribute('font-family','system-ui');vl.textContent=s.v.toLocaleString();
+    r.addEventListener('mouseenter',()=>{r.style.opacity='.8';tip(tp,(bX+bW/2),by,s.name+': '+s.v.toLocaleString()+' ('+Math.round(ratio*100)+'%)',W,H,e.offsetWidth,e.offsetHeight);});
+    r.addEventListener('mouseleave',()=>{r.style.opacity='1';hideTip(tp);});
+    svg.appendChild(r);svg.appendChild(lbl);svg.appendChild(vl);
+  });
+})();
+
+</script>
+</body>
+</html>
