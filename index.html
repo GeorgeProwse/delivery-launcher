@@ -10297,138 +10297,9 @@ function loadAllPrompts(workflow) {
 }
 
 // ── BUILD PROMPT TEXT ──
-function buildPromptContext(data) {
-  const context = {
-    engagement_context: data.engagement_context || {},
-    industry: data.industry || {},
-    objectives: data.objectives || [],
-    service_offerings: data.service_offerings || [],
-    technology: data.technology || [],
-    alliance_partners: data.alliance_partners || [],
-    regulatory_profile: data.regulatory_profile || [],
-    risk_profile: data.risk_profile || [],
-  };
-  return JSON.stringify(context, null, 2);
-}
-
-// ── PER-PROMPT DATA ROUTING TABLE (Chunk 5 — #21 & #22) ──
-// Maps each prompt_id to the data keys it should receive.
-// 'FULL' = entire compiled form (used only by P1.1).
-// All other entries receive only the listed keys, ensuring each prompt
-// gets the full relevant subset rather than a truncated 8-field snapshot.
-const PROMPT_DATA_ROUTING = {
-  "P1.1": "FULL",
-  "P1.2": [
-    "engagement_context",
-    "industry",
-    "objectives",
-    "service_offerings",
-    "technology",
-    "alliance_partners",
-  ],
-  "P1.3": [
-    "engagement_context",
-    "industry",
-    "objectives",
-    "service_offerings",
-    "technology",
-    "regulatory_profile",
-  ],
-  "P1.4": [
-    "engagement_context",
-    "industry",
-    "objectives",
-    "service_offerings",
-    "technology",
-    "alliance_partners",
-    "regulatory_profile",
-    "risk_profile",
-  ],
-  "P1.5": [
-    "engagement_context",
-    "industry",
-    "objectives",
-    "service_offerings",
-    "alliance_partners",
-    "regulatory_profile",
-  ],
-  "P2.1": [
-    "engagement_context",
-    "industry",
-    "objectives",
-    "service_offerings",
-    "technology",
-  ],
-  "P2.2": [
-    "engagement_context",
-    "industry",
-    "objectives",
-    "service_offerings",
-    "technology",
-    "alliance_partners",
-  ],
-  "P2.3": [
-    "engagement_context",
-    "industry",
-    "objectives",
-    "service_offerings",
-    "technology",
-  ],
-  "P2.4": [
-    "engagement_context",
-    "industry",
-    "objectives",
-    "service_offerings",
-    "technology",
-    "regulatory_profile",
-    "risk_profile",
-  ],
-  "P2.5": [
-    "engagement_context",
-    "industry",
-    "objectives",
-    "service_offerings",
-    "alliance_partners",
-  ],
-  "P2.6": [
-    "engagement_context",
-    "industry",
-    "objectives",
-    "service_offerings",
-    "regulatory_profile",
-  ],
-  "P2.7": [
-    "engagement_context",
-    "industry",
-    "objectives",
-    "service_offerings",
-  ],
-  "P2.8": [
-    "engagement_context",
-    "industry",
-    "objectives",
-    "service_offerings",
-    "technology",
-    "alliance_partners",
-    "regulatory_profile",
-    "risk_profile",
-  ],
-};
-
-// Build a data slice for a given prompt_id from the full compiled form.
-// Chunk 5 #22: engagement_context always carries the new S1 fields
-// (delivery_methodology, fee_structure, total_budget, engagement_lead,
-//  engagement_description) — they flow automatically to any prompt that
-//  includes 'engagement_context' in its routing entry.
-function buildPromptDataSlice(promptId, data) {
-  const keys = PROMPT_DATA_ROUTING[promptId];
-  if (!keys || keys === "FULL") return data;
-  const slice = {};
-  keys.forEach(function (k) {
-    if (data[k] !== undefined) slice[k] = data[k];
-  });
-  return slice;
-}
+// P1.1 injects global standards + full engagement data to establish session context.
+// All subsequent prompts (P1.2 onwards) receive instruction only — they reference
+// the engagement data already established in session history via P1.1.
 
 function buildPromptText(prompt, promptJson, data) {
   const instruction =
@@ -10445,51 +10316,9 @@ function buildPromptText(prompt, promptJson, data) {
       .replace("{{ENGAGEMENT_DATA}}", briefJson);
   }
 
-  // All other prompts — build curated data slice for this prompt
-  const slice = buildPromptDataSlice(pid, data);
-  const sliceJson = JSON.stringify(slice, null, 2);
-
-  // If the instruction already contains {{ENGAGEMENT_DATA}}, replace it
-  // with the curated slice (legacy support)
-  if (instruction.includes("{{ENGAGEMENT_DATA}}")) {
-    return instruction.replace("{{ENGAGEMENT_DATA}}", sliceJson);
-  }
-
-  // Standard path — replace {{PROMPT_DATA}} placeholder appended to each instruction
-  if (instruction.includes("{{PROMPT_DATA}}")) {
-    const dataBlock = buildPromptDataBlock(pid, slice, sliceJson);
-    return instruction.replace("{{PROMPT_DATA}}", dataBlock);
-  }
-
-  // Fallback (should not be reached after Chunk 5 update)
-  return (
-    instruction + "\n\n---\n\n" + buildPromptDataBlock(pid, slice, sliceJson)
-  );
-}
-
-// Format the data block with a descriptive header so the AI gets clear context
-function buildPromptDataBlock(promptId, slice, sliceJson) {
-  const keys = Object.keys(slice);
-  const summary = keys
-    .map(function (k) {
-      const v = slice[k];
-      if (Array.isArray(v))
-        return (
-          k + " (" + v.length + " item" + (v.length !== 1 ? "s" : "") + ")"
-        );
-      if (typeof v === "object" && v !== null)
-        return k + " (" + Object.keys(v).length + " fields)";
-      return k;
-    })
-    .join(", ");
-  return (
-    "ENGAGEMENT DATA FOR " +
-    promptId +
-    "\nFields: " +
-    summary +
-    "\n\n" +
-    sliceJson
-  );
+  // All other prompts — instruction only
+  // Engagement data is already established in session history via P1.1
+  return instruction;
 }
 
 // ── WORKFLOW CONTROLS ──
