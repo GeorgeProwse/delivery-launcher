@@ -339,6 +339,184 @@
                     },
                 ],
             },
+
+            // ── Industry frameworks ──────────────────────────────────────────────
+
+            financialServices: {
+                title: 'Financial Services Strategy',
+                subtitle: 'PwC Strategy Framework | Banking & Capital Markets | 2025',
+                mission: 'Deliver sustainable growth and trusted client outcomes through digital innovation and risk excellence',
+                pillars: [
+                    {
+                        id: 1,
+                        title: 'Client & Revenue Growth',
+                        okrs: [{
+                            id: 1,
+                            title: 'Grow net interest income by 12% through enhanced advisory',
+                            initiatives: [
+                                { id: 1, title: 'Launch wealth management digital platform', activities: ['Design client segmentation model', 'Select and procure platform', 'Deliver UX design workshops', 'Execute phased rollout plan'] },
+                                { id: 2, title: 'Expand high-net-worth client base', activities: ['Define referral programme structure', 'Recruit private banking specialists', 'Launch client event series', 'Set up relationship management KPIs'] },
+                            ],
+                        }],
+                    },
+                    {
+                        id: 2,
+                        title: 'Risk & Compliance Excellence',
+                        okrs: [{
+                            id: 2,
+                            title: 'Achieve zero material regulatory findings by Q4',
+                            initiatives: [
+                                { id: 3, title: 'Strengthen three lines of defence model', activities: ['Review risk appetite framework', 'Roll out control self-assessment', 'Implement regulatory horizon scanning', 'Brief board risk committee'] },
+                                { id: 4, title: 'Deploy automated compliance monitoring', activities: ['Assess RegTech vendor landscape', 'Build data pipeline from core systems', 'Conduct parallel-run testing', 'Train compliance team on new tools'] },
+                            ],
+                        }],
+                    },
+                    {
+                        id: 3,
+                        title: 'Operational & Cost Efficiency',
+                        okrs: [{
+                            id: 3,
+                            title: 'Reduce cost-to-income ratio to below 55%',
+                            initiatives: [
+                                { id: 5, title: 'Core banking modernisation', activities: ['Assess and document legacy system estate', 'Build cloud migration roadmap', 'Develop API integration layer', 'Plan decommissioning schedule'] },
+                                { id: 6, title: 'Achieve straight-through processing for key journeys', activities: ['Apply process mining to high-volume flows', 'Deploy RPA for repetitive tasks', 'Define exception-handling framework', 'Track STP rate weekly on dashboard'] },
+                            ],
+                        }],
+                    },
+                ],
+            },
+
+            healthcareLifeSciences: {
+                title: 'Healthcare Transformation Strategy',
+                subtitle: 'PwC Strategy Framework | Healthcare & Life Sciences | 2025',
+                mission: 'Improve patient outcomes and build organisational resilience through clinical excellence and digital transformation',
+                pillars: [
+                    {
+                        id: 1,
+                        title: 'Clinical Quality & Patient Experience',
+                        okrs: [{
+                            id: 1,
+                            title: 'Achieve top-quartile patient satisfaction (Friends & Family Test)',
+                            initiatives: [
+                                { id: 1, title: 'Redesign end-to-end patient journey', activities: ['Run patient experience mapping workshops', 'Engage frontline clinical staff', 'Implement real-time feedback mechanism', 'Act on monthly patient insight reports'] },
+                                { id: 2, title: 'Standardise clinical pathways across sites', activities: ['Conduct evidence-based protocol review', 'Align multi-disciplinary teams on standards', 'Develop pathway governance model', 'Measure and publish clinical outcomes'] },
+                            ],
+                        }],
+                    },
+                    {
+                        id: 2,
+                        title: 'Workforce & Capacity Planning',
+                        okrs: [{
+                            id: 2,
+                            title: 'Reduce agency and bank staffing spend by 20%',
+                            initiatives: [
+                                { id: 3, title: 'Implement integrated workforce planning programme', activities: ['Build demand forecasting model linked to activity data', 'Deploy rota optimisation tool', 'Develop flexible working policy framework', 'Set workforce KPI dashboard'] },
+                                { id: 4, title: 'Strengthen talent attraction and retention', activities: ['Define career pathway framework by role', 'Launch staff wellbeing programme', 'Conduct market pay benchmarking', 'Analyse and act on exit interview data'] },
+                            ],
+                        }],
+                    },
+                    {
+                        id: 3,
+                        title: 'Digital Health & Data',
+                        okrs: [{
+                            id: 3,
+                            title: 'Deploy integrated EPR across all acute sites within 18 months',
+                            initiatives: [
+                                { id: 5, title: 'Execute EPR implementation programme', activities: ['Complete clinical requirements gathering', 'Run vendor selection and commercial negotiation', 'Develop data migration and cleansing plan', 'Sequence go-live by site with change management'] },
+                                { id: 6, title: 'Launch remote monitoring and virtual care programme', activities: ['Identify high-impact patient cohorts', 'Source and procure clinical-grade devices', 'Deliver clinician training and adoption programme', 'Establish governance for virtual care pathways'] },
+                            ],
+                        }],
+                    },
+                ],
+            },
+
+            energyUtilities: {
+                title: 'Energy Transition Strategy',
+                subtitle: 'PwC Strategy Framework | Energy, Utilities & Resources | 2025',
+                mission: 'Lead the transition to clean energy while delivering reliable, affordable services and long-term stakeholder value',
+                pillars: [
+                    {
+                        id: 1,
+                        title: 'Net Zero & Decarbonisation',
+                        okrs: [{
+                            id: 1,
+                            title: 'Reduce Scope 1 & 2 emissions by 50% by 2030',
+                            initiatives: [
+                                { id: 1, title: 'Expand renewable energy portfolio', activities: ['Conduct site feasibility assessments for solar and wind', 'Develop grid connection and consenting strategy', 'Build investment case and secure board approval', 'Execute phased construction and commissioning'] },
+                                { id: 2, title: 'Electrify operational fleet and facilities', activities: ['Assess fleet composition and prioritise EV conversion', 'Roll out EV charging infrastructure at depots', 'Publish vehicle replacement schedule', 'Deliver driver training and change programme'] },
+                            ],
+                        }],
+                    },
+                    {
+                        id: 2,
+                        title: 'Network & Grid Modernisation',
+                        okrs: [{
+                            id: 2,
+                            title: 'Achieve 99.98% network reliability across the distribution network',
+                            initiatives: [
+                                { id: 3, title: 'Deploy smart grid technology at scale', activities: ['Complete smart meter rollout to all residential customers', 'Upgrade SCADA and control room systems', 'Implement AI-driven predictive maintenance programme', 'Establish real-time network monitoring centre'] },
+                                { id: 4, title: 'Integrate distributed energy resources', activities: ['Procure and deploy DER management platform', 'Design flexibility tariff products for customers', 'Integrate DER dispatch with balancing mechanism', 'Publish DER connection roadmap for partners'] },
+                            ],
+                        }],
+                    },
+                    {
+                        id: 3,
+                        title: 'Customer Value & Growth',
+                        okrs: [{
+                            id: 3,
+                            title: 'Increase customer net promoter score by 25 points',
+                            initiatives: [
+                                { id: 5, title: 'Transform digital self-service experience', activities: ['Redesign customer portal UX from user research', 'Build API integration layer with billing and smart metering', 'Deploy 24/7 AI-assisted chatbot', 'Track digital containment rate monthly'] },
+                                { id: 6, title: 'Launch green energy and flexibility products', activities: ['Design green tariff structure with commercial sign-off', 'Develop EV tariff with charge network operators', 'Launch demand-side response programme for SME customers', 'Communicate sustainability credentials through campaign'] },
+                            ],
+                        }],
+                    },
+                ],
+            },
+
+            retailConsumer: {
+                title: 'Retail Growth Strategy',
+                subtitle: 'PwC Strategy Framework | Retail & Consumer | 2025',
+                mission: 'Create personalised, seamless experiences that build lasting customer loyalty and drive profitable growth',
+                pillars: [
+                    {
+                        id: 1,
+                        title: 'Omnichannel Customer Experience',
+                        okrs: [{
+                            id: 1,
+                            title: 'Grow online revenue to 40% of total sales',
+                            initiatives: [
+                                { id: 1, title: 'Implement unified commerce platform', activities: ['Complete platform vendor selection and business case', 'Integrate real-time inventory across stores and online', 'Optimise click-and-collect fulfilment process', 'Simplify returns across all channels'] },
+                                { id: 2, title: 'Deploy personalisation at scale', activities: ['Build customer data platform consolidating all touchpoints', 'Develop AI-driven product recommendation model', 'Run A/B test programme to improve conversion', 'Deliver personalised email and push notification campaigns'] },
+                            ],
+                        }],
+                    },
+                    {
+                        id: 2,
+                        title: 'Supply Chain Resilience',
+                        okrs: [{
+                            id: 2,
+                            title: 'Reduce out-of-stock events by 35% across top 500 SKUs',
+                            initiatives: [
+                                { id: 3, title: 'Transform demand forecasting capability', activities: ['Develop ML-based demand forecasting model', 'Build supplier data-sharing portal for joint replenishment', 'Review and update safety stock policies by category', 'Deploy automated replenishment for fast-moving lines'] },
+                                { id: 4, title: 'Diversify and nearshore sourcing base', activities: ['Map current supplier concentration risk by category', 'Dual-source all critical SKUs within 12 months', 'Redesign logistics network for shorter lead times', 'Build supplier development programme for nearshore partners'] },
+                            ],
+                        }],
+                    },
+                    {
+                        id: 3,
+                        title: 'Sustainable & Profitable Growth',
+                        okrs: [{
+                            id: 3,
+                            title: 'Reach 80% sustainable product range by 2026',
+                            initiatives: [
+                                { id: 5, title: 'Implement sustainable sourcing standards', activities: ['Define minimum sustainability certification by category', 'Launch supplier audit and improvement programme', 'Commission sustainable materials R&D with key suppliers', 'Publish annual sustainable sourcing scorecard'] },
+                                { id: 6, title: 'Launch circular economy model', activities: ['Design and pilot product take-back scheme', 'Build peer-to-peer resale platform for pre-owned goods', 'Set category-level packaging reduction targets', 'Communicate circularity story through brand marketing'] },
+                            ],
+                        }],
+                    },
+                ],
+            },
         };
 
         // --- SVG Icons ---
@@ -598,20 +776,97 @@
         }
 
         // --- Examples picker dialog ---
+        // All catalogue entries. `category` drives the tab filter.
+        const EXAMPLE_CATALOGUE = [
+            // Industry frameworks
+            {
+                key: 'financialServices',
+                category: 'industry',
+                sector: 'Banking & Capital Markets',
+                title: 'Financial Services',
+                color: colors.orange500,
+                desc: 'Drive sustainable growth and risk excellence across client advisory, compliance modernisation, and cost efficiency.',
+            },
+            {
+                key: 'healthcareLifeSciences',
+                category: 'industry',
+                sector: 'Healthcare & Life Sciences',
+                title: 'Healthcare Transformation',
+                color: colors.orange400,
+                desc: 'Improve patient outcomes and organisational resilience through clinical excellence, workforce planning, and digital health.',
+            },
+            {
+                key: 'energyUtilities',
+                category: 'industry',
+                sector: 'Energy, Utilities & Resources',
+                title: 'Energy Transition',
+                color: colors.orange300,
+                desc: 'Lead the transition to clean energy with a focus on decarbonisation, network modernisation, and customer value.',
+            },
+            {
+                key: 'retailConsumer',
+                category: 'industry',
+                sector: 'Retail & Consumer',
+                title: 'Retail Growth',
+                color: colors.orange500,
+                desc: 'Drive omnichannel excellence, supply chain resilience, and sustainable profitable growth across the retail value chain.',
+            },
+            // Generic templates
+            {
+                key: 'digitalTransformation',
+                category: 'generic',
+                title: 'Digital Transformation',
+                color: colors.orange500,
+                desc: 'Drive digital transformation with focus on customer experience, operational excellence, and innovation culture.',
+            },
+            {
+                key: 'salesGrowth',
+                category: 'generic',
+                title: 'Sales Growth',
+                color: colors.orange400,
+                desc: 'Accelerate revenue growth through market expansion, sales excellence, and customer success initiatives.',
+            },
+            {
+                key: 'sustainability',
+                category: 'generic',
+                title: 'Sustainability',
+                color: colors.orange300,
+                desc: 'Build a sustainable business with focus on environmental impact, social responsibility, and governance.',
+            },
+            {
+                key: 'productDevelopment',
+                category: 'generic',
+                title: 'Product Development',
+                color: colors.orange400,
+                desc: 'Deliver innovative products through improved innovation pipeline, product quality, and faster time to market.',
+            },
+        ];
+
         function ExamplesModal({ onClose, onLoad }) {
-            const exampleList = [
-                { key: 'digitalTransformation', title: 'Digital Transformation', color: colors.orange500, desc: 'Drive digital transformation with focus on customer experience, operational excellence, and innovation culture.' },
-                { key: 'salesGrowth', title: 'Sales Growth', color: colors.orange400, desc: 'Accelerate revenue growth through market expansion, sales excellence, and customer success initiatives.' },
-                { key: 'sustainability', title: 'Sustainability', color: colors.orange300, desc: 'Build a sustainable business with focus on environmental impact, social responsibility, and governance.' },
-                { key: 'productDevelopment', title: 'Product Development', color: colors.orange400, desc: 'Deliver innovative products through improved innovation pipeline, product quality, and faster time to market.' },
+            const [activeTab, setActiveTab] = useState('all');
+
+            const tabs = [
+                { key: 'all', label: 'All' },
+                { key: 'industry', label: 'Industry Frameworks' },
+                { key: 'generic', label: 'Generic Templates' },
             ];
 
+            const visible = activeTab === 'all'
+                ? EXAMPLE_CATALOGUE
+                : EXAMPLE_CATALOGUE.filter((e) => e.category === activeTab);
+
             return (
-                <Modal onClose={onClose} width="900px">
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
-                        <h2 style={{ fontSize: '24px', fontWeight: '600', color: colors.black }}>
-                            Load Example Strategy
-                        </h2>
+                <Modal onClose={onClose} width="960px">
+                    {/* Header */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                        <div>
+                            <h2 style={{ fontSize: '24px', fontWeight: '600', color: colors.black }}>
+                                Load Strategy Template
+                            </h2>
+                            <p style={{ fontSize: '14px', color: colors.grey500, marginTop: '4px' }}>
+                                Choose an industry framework or a generic template to start from.
+                            </p>
+                        </div>
                         <button
                             className="button"
                             style={{ background: 'transparent', padding: '8px', borderRadius: '8px', color: colors.grey500 }}
@@ -622,8 +877,33 @@
                         </button>
                     </div>
 
+                    {/* Tab strip */}
+                    <div style={{ display: 'flex', gap: '4px', borderBottom: `2px solid ${colors.grey200}`, marginBottom: '24px', marginTop: '20px' }}>
+                        {tabs.map((tab) => (
+                            <button
+                                key={tab.key}
+                                className="button"
+                                style={{
+                                    padding: '10px 20px',
+                                    background: 'transparent',
+                                    borderRadius: '8px 8px 0 0',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                    color: activeTab === tab.key ? colors.orange500 : colors.grey500,
+                                    borderBottom: activeTab === tab.key ? `2px solid ${colors.orange500}` : '2px solid transparent',
+                                    marginBottom: '-2px',
+                                }}
+                                onClick={() => setActiveTab(tab.key)}
+                                aria-pressed={activeTab === tab.key}
+                            >
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Card grid */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
-                        {exampleList.map((ex) => (
+                        {visible.map((ex) => (
                             <div
                                 key={ex.key}
                                 className="card"
@@ -632,39 +912,58 @@
                                 role="button"
                                 tabIndex={0}
                                 onKeyDown={(e) => e.key === 'Enter' && onLoad(ex.key)}
-                                aria-label={`Load ${ex.title} example`}
+                                aria-label={`Load ${ex.title} template`}
                             >
                                 <div style={{ height: '4px', backgroundColor: ex.color }} />
                                 <div style={{ padding: '20px' }}>
-                                    <h3 style={{ fontSize: '18px', fontWeight: '600', color: colors.orange500, marginBottom: '8px' }}>
+                                    {ex.sector && (
+                                        <div style={{
+                                            display: 'inline-block',
+                                            fontSize: '11px',
+                                            fontWeight: '600',
+                                            color: colors.orange500,
+                                            backgroundColor: colors.orange100,
+                                            padding: '3px 8px',
+                                            borderRadius: '4px',
+                                            marginBottom: '10px',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.4px',
+                                        }}>
+                                            {ex.sector}
+                                        </div>
+                                    )}
+                                    <h3 style={{ fontSize: '16px', fontWeight: '600', color: colors.black, marginBottom: '6px' }}>
                                         {ex.title}
                                     </h3>
-                                    <p style={{ fontSize: '14px', lineHeight: '1.6', color: colors.grey500 }}>
+                                    <p style={{ fontSize: '13px', lineHeight: '1.6', color: colors.grey500 }}>
                                         {ex.desc}
                                     </p>
                                 </div>
                             </div>
                         ))}
 
-                        <div
-                            className="card"
-                            style={{ cursor: 'pointer', border: `2px solid ${colors.grey300}`, gridColumn: 'span 2' }}
-                            onClick={() => onLoad('blank')}
-                            role="button"
-                            tabIndex={0}
-                            onKeyDown={(e) => e.key === 'Enter' && onLoad('blank')}
-                            aria-label="Load blank template"
-                        >
-                            <div style={{ height: '4px', backgroundColor: colors.grey400 }} />
-                            <div style={{ padding: '20px' }}>
-                                <h3 style={{ fontSize: '18px', fontWeight: '600', color: colors.grey500, marginBottom: '8px' }}>
-                                    Blank Template
-                                </h3>
-                                <p style={{ fontSize: '14px', lineHeight: '1.6', color: colors.grey500 }}>
-                                    Start with a clean slate and build your own custom strategy framework from scratch.
-                                </p>
+                        {/* Blank template — always visible */}
+                        {(activeTab === 'all' || activeTab === 'generic') && (
+                            <div
+                                className="card"
+                                style={{ cursor: 'pointer', border: `2px solid ${colors.grey300}`, gridColumn: 'span 2' }}
+                                onClick={() => onLoad('blank')}
+                                role="button"
+                                tabIndex={0}
+                                onKeyDown={(e) => e.key === 'Enter' && onLoad('blank')}
+                                aria-label="Load blank template"
+                            >
+                                <div style={{ height: '4px', backgroundColor: colors.grey400 }} />
+                                <div style={{ padding: '20px' }}>
+                                    <h3 style={{ fontSize: '16px', fontWeight: '600', color: colors.grey500, marginBottom: '6px' }}>
+                                        Blank Template
+                                    </h3>
+                                    <p style={{ fontSize: '13px', lineHeight: '1.6', color: colors.grey500 }}>
+                                        Start with a clean slate and build your own custom strategy framework from scratch.
+                                    </p>
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </Modal>
             );
