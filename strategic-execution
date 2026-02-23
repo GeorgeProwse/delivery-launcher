@@ -9,7 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
+    <style id="app-styles">
         * {
             margin: 0;
             padding: 0;
@@ -102,8 +102,14 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState } = React;
+        const { useState, useEffect, useRef } = React;
 
+        // --- ID generator ---
+        // Starts at current timestamp to avoid conflicts with any persisted data.
+        let _idSeed = Date.now();
+        const nextId = () => ++_idSeed;
+
+        // --- Colour palette ---
         const colors = {
             orange100: '#FFE8D4',
             orange200: '#FFCDA8',
@@ -118,16 +124,64 @@
             black: '#000000',
         };
 
+        // Pillar accent colours cycle rather than capping at three.
+        const PILLAR_COLORS = [colors.orange500, colors.orange400, colors.orange300];
+        const getPillarColor = (index) => PILLAR_COLORS[index % PILLAR_COLORS.length];
+
+        // --- Download helper (fixes memory leak by revoking the object URL) ---
+        const downloadBlob = (content, mimeType, filename) => {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+
+        // --- CSV field escaping ---
+        const escapeCSV = (val) => `"${String(val).replace(/"/g, '""')}"`;
+
+        // --- Re-assign fresh IDs throughout an example so stored/new IDs never clash ---
+        const assignNewIds = (example) => ({
+            ...example,
+            pillars: example.pillars.map((p) => ({
+                ...p,
+                id: nextId(),
+                okrs: p.okrs.map((o) => ({
+                    ...o,
+                    id: nextId(),
+                    initiatives: o.initiatives.map((i) => ({
+                        ...i,
+                        id: nextId(),
+                    })),
+                })),
+            })),
+        });
+
+        // --- Example strategies ---
         const examples = {
             blank: {
                 title: 'Strategy Execution Builder',
                 subtitle: 'PwC Strategy Framework | 2025',
                 mission: 'Connecting strategy to execution',
                 pillars: [
-                    { id: 1, title: 'Strategic pillars', okrs: [{ id: 1, title: 'Define objectives', initiatives: [{ id: 1, title: 'Launch initiatives', activities: ['Execute activities'] }] }] },
-                    { id: 2, title: 'Strategic pillars', okrs: [{ id: 1, title: 'Define objectives', initiatives: [{ id: 1, title: 'Launch initiatives', activities: ['Execute activities'] }] }] },
-                    { id: 3, title: 'Strategic pillars', okrs: [{ id: 1, title: 'Define objectives', initiatives: [{ id: 1, title: 'Launch initiatives', activities: ['Execute activities'] }] }] }
-                ]
+                    {
+                        id: 1,
+                        title: 'Strategic pillars',
+                        okrs: [{ id: 1, title: 'Define objectives', initiatives: [{ id: 1, title: 'Launch initiatives', activities: ['Execute activities'] }] }],
+                    },
+                    {
+                        id: 2,
+                        title: 'Strategic pillars',
+                        okrs: [{ id: 2, title: 'Define objectives', initiatives: [{ id: 2, title: 'Launch initiatives', activities: ['Execute activities'] }] }],
+                    },
+                    {
+                        id: 3,
+                        title: 'Strategic pillars',
+                        okrs: [{ id: 3, title: 'Define objectives', initiatives: [{ id: 3, title: 'Launch initiatives', activities: ['Execute activities'] }] }],
+                    },
+                ],
             },
             digitalTransformation: {
                 title: 'Digital Transformation Strategy',
@@ -135,33 +189,38 @@
                 mission: 'Drive digital transformation to become a customer-centric organization',
                 pillars: [
                     {
-                        id: 1, title: 'Enhance customer experience',
+                        id: 1,
+                        title: 'Enhance customer experience',
                         okrs: [{
-                            id: 1, title: 'Increase customer satisfaction score to 4.5/5',
+                            id: 1,
+                            title: 'Increase customer satisfaction score to 4.5/5',
                             initiatives: [
                                 { id: 1, title: 'Launch mobile app', activities: ['Design UX/UI', 'Develop iOS & Android apps', 'Conduct beta testing with 1000 users', 'Submit app store launch'] },
-                                { id: 2, title: 'Implement chatbot support', activities: ['Select AI platform', 'Train chatbot on FAQs', 'Integrate with CRM', 'Monitor and optimize performance'] }
-                            ]
-                        }]
+                                { id: 2, title: 'Implement chatbot support', activities: ['Select AI platform', 'Train chatbot on FAQs', 'Integrate with CRM', 'Monitor and optimize performance'] },
+                            ],
+                        }],
                     },
                     {
-                        id: 2, title: 'Achieve operational excellence',
+                        id: 2,
+                        title: 'Achieve operational excellence',
                         okrs: [
-                            { id: 1, title: 'Reduce process time by 30%', initiatives: [{ id: 1, title: 'Automate manual workflows', activities: ['Map current processes', 'Identify automation opportunities', 'Implement RPA tools', 'Train staff on new systems'] }] },
-                            { id: 2, title: 'Achieve 99.9% system uptime', initiatives: [{ id: 1, title: 'Migrate to cloud infrastructure', activities: ['Complete assessment and planning', 'Migrate infrastructure to cloud', 'Set up monitoring dashboards', 'Test disaster recovery procedures'] }] }
-                        ]
+                            { id: 2, title: 'Reduce process time by 30%', initiatives: [{ id: 3, title: 'Automate manual workflows', activities: ['Map current processes', 'Identify automation opportunities', 'Implement RPA tools', 'Train staff on new systems'] }] },
+                            { id: 3, title: 'Achieve 99.9% system uptime', initiatives: [{ id: 4, title: 'Migrate to cloud infrastructure', activities: ['Complete assessment and planning', 'Migrate infrastructure to cloud', 'Set up monitoring dashboards', 'Test disaster recovery procedures'] }] },
+                        ],
                     },
                     {
-                        id: 3, title: 'Foster innovation culture',
+                        id: 3,
+                        title: 'Foster innovation culture',
                         okrs: [{
-                            id: 1, title: 'Launch 5 new digital products',
+                            id: 4,
+                            title: 'Launch 5 new digital products',
                             initiatives: [
-                                { id: 1, title: 'Establish innovation lab program', activities: ['Build innovation team', 'Facilitate ideation workshops', 'Create rapid prototypes', 'Conduct pilot testing'] },
-                                { id: 2, title: 'Build partner ecosystem', activities: ['Identify tech partners', 'Organize co-creation workshops', 'Develop joint go-to-market strategy'] }
-                            ]
-                        }]
-                    }
-                ]
+                                { id: 5, title: 'Establish innovation lab program', activities: ['Build innovation team', 'Facilitate ideation workshops', 'Create rapid prototypes', 'Conduct pilot testing'] },
+                                { id: 6, title: 'Build partner ecosystem', activities: ['Identify tech partners', 'Organize co-creation workshops', 'Develop joint go-to-market strategy'] },
+                            ],
+                        }],
+                    },
+                ],
             },
             salesGrowth: {
                 title: 'Sales Growth Strategy',
@@ -169,33 +228,38 @@
                 mission: 'Accelerate revenue growth and market expansion',
                 pillars: [
                     {
-                        id: 1, title: 'Expand market presence',
+                        id: 1,
+                        title: 'Expand market presence',
                         okrs: [
                             { id: 1, title: 'Enter 3 new geographic markets', initiatives: [{ id: 1, title: 'Develop market entry strategy', activities: ['Conduct market analysis', 'Identify target segments', 'Create go-to-market plan', 'Hire local teams'] }] },
-                            { id: 2, title: 'Grow market share by 15%', initiatives: [{ id: 1, title: 'Strengthen competitive positioning', activities: ['Analyze competitive landscape', 'Refine value proposition', 'Launch brand awareness campaign', 'Develop partner channels'] }] }
-                        ]
+                            { id: 2, title: 'Grow market share by 15%', initiatives: [{ id: 2, title: 'Strengthen competitive positioning', activities: ['Analyze competitive landscape', 'Refine value proposition', 'Launch brand awareness campaign', 'Develop partner channels'] }] },
+                        ],
                     },
                     {
-                        id: 2, title: 'Drive sales excellence',
+                        id: 2,
+                        title: 'Drive sales excellence',
                         okrs: [{
-                            id: 1, title: 'Increase win rate to 35%',
+                            id: 3,
+                            title: 'Increase win rate to 35%',
                             initiatives: [
-                                { id: 1, title: 'Implement sales enablement program', activities: ['Create sales playbooks', 'Deploy CRM system', 'Deliver sales training workshops', 'Build performance dashboards'] },
-                                { id: 2, title: 'Optimize lead generation', activities: ['Implement marketing automation', 'Execute content strategy', 'Build lead scoring model', 'Align sales and marketing teams'] }
-                            ]
-                        }]
+                                { id: 3, title: 'Implement sales enablement program', activities: ['Create sales playbooks', 'Deploy CRM system', 'Deliver sales training workshops', 'Build performance dashboards'] },
+                                { id: 4, title: 'Optimize lead generation', activities: ['Implement marketing automation', 'Execute content strategy', 'Build lead scoring model', 'Align sales and marketing teams'] },
+                            ],
+                        }],
                     },
                     {
-                        id: 3, title: 'Maximize customer success',
+                        id: 3,
+                        title: 'Maximize customer success',
                         okrs: [{
-                            id: 1, title: 'Achieve 90% customer retention',
+                            id: 4,
+                            title: 'Achieve 90% customer retention',
                             initiatives: [
-                                { id: 1, title: 'Launch customer success program', activities: ['Design onboarding process', 'Conduct quarterly business reviews', 'Monitor health scores', 'Provide proactive support'] },
-                                { id: 2, title: 'Drive upsell & cross-sell', activities: ['Segment customer base', 'Create product bundles', 'Develop account expansion playbook', 'Share success stories'] }
-                            ]
-                        }]
-                    }
-                ]
+                                { id: 5, title: 'Launch customer success program', activities: ['Design onboarding process', 'Conduct quarterly business reviews', 'Monitor health scores', 'Provide proactive support'] },
+                                { id: 6, title: 'Drive upsell & cross-sell', activities: ['Segment customer base', 'Create product bundles', 'Develop account expansion playbook', 'Share success stories'] },
+                            ],
+                        }],
+                    },
+                ],
             },
             sustainability: {
                 title: 'Sustainability Strategy',
@@ -203,33 +267,38 @@
                 mission: 'Build a sustainable and responsible business for future generations',
                 pillars: [
                     {
-                        id: 1, title: 'Reduce environmental impact',
+                        id: 1,
+                        title: 'Reduce environmental impact',
                         okrs: [{
-                            id: 1, title: 'Achieve carbon neutrality by 2025',
+                            id: 1,
+                            title: 'Achieve carbon neutrality by 2025',
                             initiatives: [
                                 { id: 1, title: 'Implement emissions reduction program', activities: ['Assess carbon footprint', 'Upgrade energy efficiency', 'Transition to renewable energy', 'Invest in carbon offsets'] },
-                                { id: 2, title: 'Launch waste reduction initiative', activities: ['Conduct waste audit', 'Adopt circular economy practices', 'Implement zero-waste packaging', 'Establish recycling programs'] }
-                            ]
-                        }]
+                                { id: 2, title: 'Launch waste reduction initiative', activities: ['Conduct waste audit', 'Adopt circular economy practices', 'Implement zero-waste packaging', 'Establish recycling programs'] },
+                            ],
+                        }],
                     },
                     {
-                        id: 2, title: 'Advance social responsibility',
+                        id: 2,
+                        title: 'Advance social responsibility',
                         okrs: [
-                            { id: 1, title: 'Achieve 50% diverse leadership', initiatives: [{ id: 1, title: 'Execute DEI program', activities: ['Implement inclusive hiring practices', 'Develop leadership programs', 'Create mentorship opportunities', 'Conduct pay equity analysis'] }] },
-                            { id: 2, title: 'Support 10,000 community members', initiatives: [{ id: 1, title: 'Engage local communities', activities: ['Build local partnerships', 'Organize volunteer programs', 'Provide skills training', 'Contribute charitable giving'] }] }
-                        ]
+                            { id: 2, title: 'Achieve 50% diverse leadership', initiatives: [{ id: 3, title: 'Execute DEI program', activities: ['Implement inclusive hiring practices', 'Develop leadership programs', 'Create mentorship opportunities', 'Conduct pay equity analysis'] }] },
+                            { id: 3, title: 'Support 10,000 community members', initiatives: [{ id: 4, title: 'Engage local communities', activities: ['Build local partnerships', 'Organize volunteer programs', 'Provide skills training', 'Contribute charitable giving'] }] },
+                        ],
                     },
                     {
-                        id: 3, title: 'Strengthen governance & ethics',
+                        id: 3,
+                        title: 'Strengthen governance & ethics',
                         okrs: [{
-                            id: 1, title: 'Achieve 100% supplier compliance',
+                            id: 4,
+                            title: 'Achieve 100% supplier compliance',
                             initiatives: [
-                                { id: 1, title: 'Build ethical supply chain', activities: ['Establish supplier code of conduct', 'Conduct third-party audits', 'Perform risk assessments', 'Develop supplier capabilities'] },
-                                { id: 2, title: 'Enhance transparency reporting', activities: ['Implement ESG framework', 'Engage stakeholders regularly', 'Publish annual sustainability report', 'Obtain external verification'] }
-                            ]
-                        }]
-                    }
-                ]
+                                { id: 5, title: 'Build ethical supply chain', activities: ['Establish supplier code of conduct', 'Conduct third-party audits', 'Perform risk assessments', 'Develop supplier capabilities'] },
+                                { id: 6, title: 'Enhance transparency reporting', activities: ['Implement ESG framework', 'Engage stakeholders regularly', 'Publish annual sustainability report', 'Obtain external verification'] },
+                            ],
+                        }],
+                    },
+                ],
             },
             productDevelopment: {
                 title: 'Product Development Strategy',
@@ -237,82 +306,986 @@
                 mission: 'Deliver innovative products that delight customers',
                 pillars: [
                     {
-                        id: 1, title: 'Build innovation pipeline',
+                        id: 1,
+                        title: 'Build innovation pipeline',
                         okrs: [{
-                            id: 1, title: 'Launch 3 breakthrough products',
+                            id: 1,
+                            title: 'Launch 3 breakthrough products',
                             initiatives: [
                                 { id: 1, title: 'Conduct customer discovery', activities: ['Execute user research', 'Analyze pain points', 'Map competitive landscape', 'Calculate opportunity sizing'] },
-                                { id: 2, title: 'Enable rapid prototyping', activities: ['Facilitate design sprints', 'Develop MVP versions', 'Conduct user testing', 'Iterate and refine products'] }
-                            ]
-                        }]
+                                { id: 2, title: 'Enable rapid prototyping', activities: ['Facilitate design sprints', 'Develop MVP versions', 'Conduct user testing', 'Iterate and refine products'] },
+                            ],
+                        }],
                     },
                     {
-                        id: 2, title: 'Improve product quality',
+                        id: 2,
+                        title: 'Improve product quality',
                         okrs: [
-                            { id: 1, title: 'Reduce defects by 50%', initiatives: [{ id: 1, title: 'Strengthen quality assurance program', activities: ['Implement automated testing', 'Conduct code reviews', 'Expand QA team', 'Monitor performance metrics'] }] },
-                            { id: 2, title: 'Achieve 4.5 star rating', initiatives: [{ id: 1, title: 'Optimize user experience', activities: ['Perform usability testing', 'Execute A/B testing', 'Refine feature sets', 'Create support documentation'] }] }
-                        ]
+                            { id: 2, title: 'Reduce defects by 50%', initiatives: [{ id: 3, title: 'Strengthen quality assurance program', activities: ['Implement automated testing', 'Conduct code reviews', 'Expand QA team', 'Monitor performance metrics'] }] },
+                            { id: 3, title: 'Achieve 4.5 star rating', initiatives: [{ id: 4, title: 'Optimize user experience', activities: ['Perform usability testing', 'Execute A/B testing', 'Refine feature sets', 'Create support documentation'] }] },
+                        ],
                     },
                     {
-                        id: 3, title: 'Accelerate time to market',
+                        id: 3,
+                        title: 'Accelerate time to market',
                         okrs: [{
-                            id: 1, title: 'Reduce development cycle to 6 weeks',
+                            id: 4,
+                            title: 'Reduce development cycle to 6 weeks',
                             initiatives: [
-                                { id: 1, title: 'Drive agile transformation', activities: ['Adopt Scrum methodology', 'Conduct sprint planning', 'Hold daily standups', 'Facilitate retrospectives'] },
-                                { id: 2, title: 'Build DevOps pipeline', activities: ['Configure CI/CD tools', 'Implement infrastructure as code', 'Automate deployment process', 'Set up monitoring and alerts'] }
-                            ]
-                        }]
-                    }
-                ]
-            }
+                                { id: 5, title: 'Drive agile transformation', activities: ['Adopt Scrum methodology', 'Conduct sprint planning', 'Hold daily standups', 'Facilitate retrospectives'] },
+                                { id: 6, title: 'Build DevOps pipeline', activities: ['Configure CI/CD tools', 'Implement infrastructure as code', 'Automate deployment process', 'Set up monitoring and alerts'] },
+                            ],
+                        }],
+                    },
+                ],
+            },
         };
 
+        // --- SVG Icons ---
+        const EditIcon = () => (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+        );
+
+        const TrashIcon = () => (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+        );
+
+        const PlusIcon = () => (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+        );
+
+        const XIcon = () => (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        );
+
+        const BookIcon = () => (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+        );
+
+        const SettingsIcon = () => (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M12 1v6m0 6v6m5.2-14.2l-4.2 4.2m-2 2l-4.2 4.2M23 12h-6m-6 0H5m14.2 5.2l-4.2-4.2m-2-2l-4.2-4.2"/>
+            </svg>
+        );
+
+        const TrendingIcon = () => (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                <polyline points="17 6 23 6 23 12"/>
+            </svg>
+        );
+
+        const DownloadIcon = () => (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+        );
+
+        // --- Modal base: focus trap + Escape to close ---
+        function Modal({ onClose, children, width = '500px' }) {
+            const contentRef = useRef(null);
+
+            useEffect(() => {
+                // Focus first focusable element on open
+                const firstFocusable = contentRef.current?.querySelector(
+                    'button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
+                );
+                firstFocusable?.focus();
+            }, []);
+
+            useEffect(() => {
+                const handleKeyDown = (e) => {
+                    if (e.key === 'Escape') {
+                        onClose();
+                        return;
+                    }
+                    // Focus trap
+                    if (e.key === 'Tab' && contentRef.current) {
+                        const focusable = Array.from(
+                            contentRef.current.querySelectorAll(
+                                'button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
+                            )
+                        );
+                        const first = focusable[0];
+                        const last = focusable[focusable.length - 1];
+                        if (e.shiftKey && document.activeElement === first) {
+                            e.preventDefault();
+                            last?.focus();
+                        } else if (!e.shiftKey && document.activeElement === last) {
+                            e.preventDefault();
+                            first?.focus();
+                        }
+                    }
+                };
+                document.addEventListener('keydown', handleKeyDown);
+                return () => document.removeEventListener('keydown', handleKeyDown);
+            }, [onClose]);
+
+            return (
+                <div
+                    className="modal-overlay"
+                    onClick={onClose}
+                    role="dialog"
+                    aria-modal="true"
+                >
+                    <div
+                        className="modal-content"
+                        ref={contentRef}
+                        style={{ width, border: `1px solid ${colors.grey200}` }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {children}
+                    </div>
+                </div>
+            );
+        }
+
+        // --- Edit dialog ---
+        // Mission uses a textarea; all other fields use a single-line input.
+        // Enter submits for single-line fields.
+        const EDIT_LABELS = {
+            title: 'Title',
+            subtitle: 'Subtitle',
+            mission: 'Mission Statement',
+            pillar: 'Pillar',
+            okr: 'OKR',
+            initiative: 'Initiative',
+            activity: 'Activity',
+        };
+
+        function EditModal({ editDialog, onClose, onSave }) {
+            const [value, setValue] = useState(editDialog.value);
+            const isMultiline = editDialog.type === 'mission';
+            const label = EDIT_LABELS[editDialog.type] || editDialog.type;
+
+            const handleKeyDown = (e) => {
+                if (e.key === 'Enter' && !e.shiftKey && !isMultiline) {
+                    onSave(value);
+                }
+            };
+
+            return (
+                <Modal onClose={onClose} width="500px">
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: '24px',
+                    }}>
+                        <h2 style={{ fontSize: '20px', fontWeight: '600', color: colors.black }}>
+                            Edit {label}
+                        </h2>
+                        <button
+                            className="button"
+                            style={{ background: 'transparent', padding: '8px', borderRadius: '8px', color: colors.grey500 }}
+                            onClick={onClose}
+                            aria-label="Close dialog"
+                        >
+                            <XIcon />
+                        </button>
+                    </div>
+
+                    {isMultiline ? (
+                        <textarea
+                            className="input"
+                            value={value}
+                            onChange={(e) => setValue(e.target.value)}
+                            placeholder={`Enter ${label}`}
+                            autoFocus
+                            rows={4}
+                            style={{ marginBottom: '24px', resize: 'vertical' }}
+                        />
+                    ) : (
+                        <input
+                            className="input"
+                            value={value}
+                            onChange={(e) => setValue(e.target.value)}
+                            placeholder={`Enter ${label}`}
+                            autoFocus
+                            onKeyDown={handleKeyDown}
+                            style={{ marginBottom: '24px' }}
+                        />
+                    )}
+
+                    <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                        <button
+                            className="button"
+                            style={{
+                                border: `2px solid ${colors.grey300}`,
+                                backgroundColor: colors.white,
+                                color: colors.grey500,
+                                padding: '10px 16px',
+                                borderRadius: '8px',
+                            }}
+                            onClick={onClose}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            className="button"
+                            style={{
+                                backgroundColor: colors.orange500,
+                                color: colors.white,
+                                padding: '10px 16px',
+                                borderRadius: '8px',
+                            }}
+                            onClick={() => onSave(value)}
+                        >
+                            Save Changes
+                        </button>
+                    </div>
+                </Modal>
+            );
+        }
+
+        // --- Confirmation dialog ---
+        function ConfirmModal({ message, confirmLabel = 'Confirm', onConfirm, onCancel }) {
+            return (
+                <Modal onClose={onCancel} width="420px">
+                    <h2 style={{ fontSize: '20px', fontWeight: '600', color: colors.black, marginBottom: '16px' }}>
+                        Are you sure?
+                    </h2>
+                    <p style={{ fontSize: '14px', color: colors.grey500, lineHeight: '1.6', marginBottom: '24px' }}>
+                        {message}
+                    </p>
+                    <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                        <button
+                            className="button"
+                            style={{
+                                border: `2px solid ${colors.grey300}`,
+                                backgroundColor: colors.white,
+                                color: colors.grey500,
+                                padding: '10px 16px',
+                                borderRadius: '8px',
+                            }}
+                            onClick={onCancel}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            className="button"
+                            style={{
+                                backgroundColor: colors.orange500,
+                                color: colors.white,
+                                padding: '10px 16px',
+                                borderRadius: '8px',
+                            }}
+                            onClick={onConfirm}
+                        >
+                            {confirmLabel}
+                        </button>
+                    </div>
+                </Modal>
+            );
+        }
+
+        // --- Examples picker dialog ---
+        function ExamplesModal({ onClose, onLoad }) {
+            const exampleList = [
+                { key: 'digitalTransformation', title: 'Digital Transformation', color: colors.orange500, desc: 'Drive digital transformation with focus on customer experience, operational excellence, and innovation culture.' },
+                { key: 'salesGrowth', title: 'Sales Growth', color: colors.orange400, desc: 'Accelerate revenue growth through market expansion, sales excellence, and customer success initiatives.' },
+                { key: 'sustainability', title: 'Sustainability', color: colors.orange300, desc: 'Build a sustainable business with focus on environmental impact, social responsibility, and governance.' },
+                { key: 'productDevelopment', title: 'Product Development', color: colors.orange400, desc: 'Deliver innovative products through improved innovation pipeline, product quality, and faster time to market.' },
+            ];
+
+            return (
+                <Modal onClose={onClose} width="900px">
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
+                        <h2 style={{ fontSize: '24px', fontWeight: '600', color: colors.black }}>
+                            Load Example Strategy
+                        </h2>
+                        <button
+                            className="button"
+                            style={{ background: 'transparent', padding: '8px', borderRadius: '8px', color: colors.grey500 }}
+                            onClick={onClose}
+                            aria-label="Close dialog"
+                        >
+                            <XIcon />
+                        </button>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+                        {exampleList.map((ex) => (
+                            <div
+                                key={ex.key}
+                                className="card"
+                                style={{ cursor: 'pointer', border: `2px solid ${colors.orange200}` }}
+                                onClick={() => onLoad(ex.key)}
+                                role="button"
+                                tabIndex={0}
+                                onKeyDown={(e) => e.key === 'Enter' && onLoad(ex.key)}
+                                aria-label={`Load ${ex.title} example`}
+                            >
+                                <div style={{ height: '4px', backgroundColor: ex.color }} />
+                                <div style={{ padding: '20px' }}>
+                                    <h3 style={{ fontSize: '18px', fontWeight: '600', color: colors.orange500, marginBottom: '8px' }}>
+                                        {ex.title}
+                                    </h3>
+                                    <p style={{ fontSize: '14px', lineHeight: '1.6', color: colors.grey500 }}>
+                                        {ex.desc}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+
+                        <div
+                            className="card"
+                            style={{ cursor: 'pointer', border: `2px solid ${colors.grey300}`, gridColumn: 'span 2' }}
+                            onClick={() => onLoad('blank')}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => e.key === 'Enter' && onLoad('blank')}
+                            aria-label="Load blank template"
+                        >
+                            <div style={{ height: '4px', backgroundColor: colors.grey400 }} />
+                            <div style={{ padding: '20px' }}>
+                                <h3 style={{ fontSize: '18px', fontWeight: '600', color: colors.grey500, marginBottom: '8px' }}>
+                                    Blank Template
+                                </h3>
+                                <p style={{ fontSize: '14px', lineHeight: '1.6', color: colors.grey500 }}>
+                                    Start with a clean slate and build your own custom strategy framework from scratch.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </Modal>
+            );
+        }
+
+        // --- Export format picker dialog ---
+        function ExportModal({ onClose, onExport }) {
+            const formats = [
+                { format: 'PDF', icon: '📄', key: 'pdf', desc: 'High-quality PDF document' },
+                { format: 'PNG', icon: '🖼️', key: 'png', desc: 'Image file for presentations' },
+                { format: 'HTML', icon: '🌐', key: 'html', desc: 'Standalone web page' },
+                { format: 'Markdown', icon: '📝', key: 'markdown', desc: 'Plain text with formatting' },
+                { format: 'CSV', icon: '📊', key: 'csv', desc: 'Spreadsheet-compatible format', span: true },
+            ];
+
+            return (
+                <Modal onClose={onClose} width="600px">
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
+                        <h2 style={{ fontSize: '24px', fontWeight: '600', color: colors.black }}>
+                            Export Strategy
+                        </h2>
+                        <button
+                            className="button"
+                            style={{ background: 'transparent', padding: '8px', borderRadius: '8px', color: colors.grey500 }}
+                            onClick={onClose}
+                            aria-label="Close dialog"
+                        >
+                            <XIcon />
+                        </button>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+                        {formats.map((exp) => (
+                            <button
+                                key={exp.key}
+                                className="button card"
+                                style={{
+                                    padding: '24px',
+                                    border: `2px solid ${colors.orange200}`,
+                                    textAlign: 'left',
+                                    cursor: 'pointer',
+                                    gridColumn: exp.span ? 'span 2' : 'auto',
+                                }}
+                                onClick={() => onExport(exp.key)}
+                                aria-label={`Export as ${exp.format}`}
+                            >
+                                <div style={{ fontSize: '32px', marginBottom: '8px' }}>{exp.icon}</div>
+                                <h3 style={{ fontSize: '18px', fontWeight: '600', color: colors.orange500, marginBottom: '4px' }}>
+                                    Export as {exp.format}
+                                </h3>
+                                <p style={{ fontSize: '14px', color: colors.grey500 }}>{exp.desc}</p>
+                            </button>
+                        ))}
+                    </div>
+                </Modal>
+            );
+        }
+
+        // --- Activity row ---
+        function ActivityItem({ activity, editMode, onEdit, onDelete }) {
+            return (
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '8px 12px',
+                    marginBottom: '8px',
+                    borderRadius: '8px',
+                    backgroundColor: colors.orange400,
+                    color: colors.white,
+                    fontSize: '12px',
+                    fontWeight: '500',
+                }}>
+                    <span>{activity}</span>
+                    {editMode && (
+                        <div style={{ display: 'flex', gap: '4px' }}>
+                            <button
+                                className="button"
+                                style={{ background: 'transparent', padding: '6px', borderRadius: '8px', color: colors.white }}
+                                onClick={onEdit}
+                                aria-label={`Edit activity: ${activity}`}
+                            >
+                                <EditIcon />
+                            </button>
+                            <button
+                                className="button"
+                                style={{ background: 'transparent', padding: '6px', borderRadius: '8px', color: colors.white }}
+                                onClick={onDelete}
+                                aria-label={`Delete activity: ${activity}`}
+                            >
+                                <TrashIcon />
+                            </button>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // --- Initiative block ---
+        function InitiativeBlock({ initiative, editMode, onEdit, onDelete, onAddActivity, onEditActivity, onDeleteActivity }) {
+            return (
+                <div style={{
+                    marginBottom: '12px',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    backgroundColor: colors.orange200,
+                    border: `1px solid ${colors.orange300}`,
+                }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                        <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: '11px', fontWeight: '600', color: colors.orange500, textTransform: 'uppercase', marginBottom: '4px' }}>
+                                Initiative
+                            </div>
+                            <div style={{ fontSize: '13px', fontWeight: '600', color: colors.black }}>
+                                {initiative.title}
+                            </div>
+                        </div>
+                        {editMode && (
+                            <div style={{ display: 'flex', gap: '4px', marginLeft: '8px' }}>
+                                <button
+                                    className="button"
+                                    style={{ background: 'transparent', padding: '6px', borderRadius: '8px', color: colors.orange400 }}
+                                    onClick={onEdit}
+                                    aria-label={`Edit initiative: ${initiative.title}`}
+                                >
+                                    <EditIcon />
+                                </button>
+                                <button
+                                    className="button"
+                                    style={{ background: 'transparent', padding: '6px', borderRadius: '8px', color: colors.orange500 }}
+                                    onClick={onDelete}
+                                    aria-label={`Delete initiative: ${initiative.title}`}
+                                >
+                                    <TrashIcon />
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    {initiative.activities.map((activity, idx) => (
+                        <ActivityItem
+                            key={idx}
+                            activity={activity}
+                            editMode={editMode}
+                            onEdit={() => onEditActivity(idx)}
+                            onDelete={() => onDeleteActivity(idx)}
+                        />
+                    ))}
+
+                    {editMode && (
+                        <button
+                            className="button"
+                            style={{
+                                width: '100%',
+                                marginTop: '8px',
+                                padding: '8px',
+                                background: 'transparent',
+                                borderRadius: '8px',
+                                color: colors.orange500,
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '4px',
+                            }}
+                            onClick={onAddActivity}
+                            aria-label="Add activity"
+                        >
+                            <PlusIcon /> Add Activity
+                        </button>
+                    )}
+                </div>
+            );
+        }
+
+        // --- OKR block ---
+        function OKRBlock({ okr, pillarId, editMode, onEdit, onDelete, onAddInitiative, onEditInitiative, onDeleteInitiative, onAddActivity, onEditActivity, onDeleteActivity }) {
+            return (
+                <div style={{
+                    marginBottom: '16px',
+                    padding: '16px',
+                    borderRadius: '8px',
+                    backgroundColor: colors.orange100,
+                    border: `1px solid ${colors.orange200}`,
+                }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                        <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: '11px', fontWeight: '600', color: colors.orange500, textTransform: 'uppercase', marginBottom: '4px' }}>
+                                OKR
+                            </div>
+                            <div style={{ fontSize: '14px', fontWeight: '600', color: colors.black }}>
+                                {okr.title}
+                            </div>
+                        </div>
+                        {editMode && (
+                            <div style={{ display: 'flex', gap: '4px', marginLeft: '8px' }}>
+                                <button
+                                    className="button"
+                                    style={{ background: 'transparent', padding: '6px', borderRadius: '8px', color: colors.orange400 }}
+                                    onClick={onEdit}
+                                    aria-label={`Edit OKR: ${okr.title}`}
+                                >
+                                    <EditIcon />
+                                </button>
+                                <button
+                                    className="button"
+                                    style={{ background: 'transparent', padding: '6px', borderRadius: '8px', color: colors.orange500 }}
+                                    onClick={onDelete}
+                                    aria-label={`Delete OKR: ${okr.title}`}
+                                >
+                                    <TrashIcon />
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    {okr.initiatives.map((initiative) => (
+                        <InitiativeBlock
+                            key={initiative.id}
+                            initiative={initiative}
+                            pillarId={pillarId}
+                            okrId={okr.id}
+                            editMode={editMode}
+                            onEdit={() => onEditInitiative(initiative.id)}
+                            onDelete={() => onDeleteInitiative(initiative.id)}
+                            onAddActivity={() => onAddActivity(initiative.id)}
+                            onEditActivity={(idx) => onEditActivity(initiative.id, idx)}
+                            onDeleteActivity={(idx) => onDeleteActivity(initiative.id, idx)}
+                        />
+                    ))}
+
+                    {editMode && (
+                        <button
+                            className="button"
+                            style={{
+                                width: '100%',
+                                padding: '8px',
+                                background: 'transparent',
+                                borderRadius: '8px',
+                                color: colors.orange500,
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '4px',
+                            }}
+                            onClick={onAddInitiative}
+                            aria-label="Add initiative"
+                        >
+                            <PlusIcon /> Add Initiative
+                        </button>
+                    )}
+                </div>
+            );
+        }
+
+        // --- Pillar card ---
+        function PillarCard({ pillar, pillarIndex, editMode, onEdit, onDelete, onAddOKR, onEditOKR, onDeleteOKR, onAddInitiative, onEditInitiative, onDeleteInitiative, onAddActivity, onEditActivity, onDeleteActivity }) {
+            return (
+                <div className="card" style={{ border: `1px solid ${colors.grey200}` }}>
+                    <div style={{ height: '4px', backgroundColor: getPillarColor(pillarIndex) }} />
+                    <div style={{ padding: '20px' }}>
+                        <div style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between', marginBottom: '16px' }}>
+                            <div style={{ flex: 1 }}>
+                                <div style={{ fontSize: '11px', fontWeight: '600', marginBottom: '8px', color: colors.grey500, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                    Pillar {pillarIndex + 1}
+                                </div>
+                                <h3 style={{ fontSize: '18px', fontWeight: '600', color: colors.black }}>
+                                    {pillar.title}
+                                </h3>
+                            </div>
+                            {editMode && (
+                                <div style={{ display: 'flex', gap: '4px' }}>
+                                    <button
+                                        className="button"
+                                        style={{ background: 'transparent', padding: '8px', borderRadius: '8px', color: colors.grey400 }}
+                                        onClick={onEdit}
+                                        aria-label={`Edit pillar: ${pillar.title}`}
+                                    >
+                                        <EditIcon />
+                                    </button>
+                                    <button
+                                        className="button"
+                                        style={{ background: 'transparent', padding: '8px', borderRadius: '8px', color: colors.orange500 }}
+                                        onClick={onDelete}
+                                        aria-label={`Delete pillar: ${pillar.title}`}
+                                    >
+                                        <TrashIcon />
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        {pillar.okrs.map((okr) => (
+                            <OKRBlock
+                                key={okr.id}
+                                okr={okr}
+                                pillarId={pillar.id}
+                                editMode={editMode}
+                                onEdit={() => onEditOKR(okr.id)}
+                                onDelete={() => onDeleteOKR(okr.id)}
+                                onAddInitiative={() => onAddInitiative(okr.id)}
+                                onEditInitiative={(initId) => onEditInitiative(okr.id, initId)}
+                                onDeleteInitiative={(initId) => onDeleteInitiative(okr.id, initId)}
+                                onAddActivity={(initId) => onAddActivity(okr.id, initId)}
+                                onEditActivity={(initId, idx) => onEditActivity(okr.id, initId, idx)}
+                                onDeleteActivity={(initId, idx) => onDeleteActivity(okr.id, initId, idx)}
+                            />
+                        ))}
+
+                        {editMode && (
+                            <button
+                                className="button"
+                                style={{
+                                    width: '100%',
+                                    padding: '8px',
+                                    backgroundColor: colors.orange100,
+                                    border: `1px solid ${colors.orange200}`,
+                                    borderRadius: '8px',
+                                    color: colors.orange500,
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '4px',
+                                }}
+                                onClick={onAddOKR}
+                                aria-label="Add OKR"
+                            >
+                                <PlusIcon /> Add OKR
+                            </button>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        // --- Main app ---
         function App() {
-            const [title, setTitle] = useState(examples.blank.title);
-            const [subtitle, setSubtitle] = useState(examples.blank.subtitle);
-            const [mission, setMission] = useState(examples.blank.mission);
-            const [pillars, setPillars] = useState(examples.blank.pillars);
+            const [title, setTitle] = useState('Strategy Execution Builder');
+            const [subtitle, setSubtitle] = useState('PwC Strategy Framework | 2025');
+            const [mission, setMission] = useState('Connecting strategy to execution');
+            const [pillars, setPillars] = useState([]);
             const [editDialog, setEditDialog] = useState({ open: false, type: '', value: '', path: null });
+            const [confirmDialog, setConfirmDialog] = useState({ open: false, message: '', onConfirm: null });
             const [examplesDialog, setExamplesDialog] = useState(false);
             const [exportDialog, setExportDialog] = useState(false);
             const [editMode, setEditMode] = useState(true);
+            const [loaded, setLoaded] = useState(false);
 
-            const loadExample = (exampleKey) => {
-                const example = examples[exampleKey];
-                setTitle(example.title);
-                setSubtitle(example.subtitle);
-                setMission(example.mission);
-                setPillars(example.pillars);
+            // Load from localStorage on mount
+            useEffect(() => {
+                try {
+                    const saved = localStorage.getItem('strategy-execution');
+                    if (saved) {
+                        const data = JSON.parse(saved);
+                        if (data.title) setTitle(data.title);
+                        if (data.subtitle) setSubtitle(data.subtitle);
+                        if (data.mission) setMission(data.mission);
+                        if (data.pillars) setPillars(data.pillars);
+                    } else {
+                        setPillars(assignNewIds(examples.blank).pillars);
+                    }
+                } catch (e) {
+                    setPillars(assignNewIds(examples.blank).pillars);
+                }
+                setLoaded(true);
+            }, []);
+
+            // Persist to localStorage whenever content changes
+            useEffect(() => {
+                if (!loaded) return;
+                try {
+                    localStorage.setItem('strategy-execution', JSON.stringify({ title, subtitle, mission, pillars }));
+                } catch (e) {}
+            }, [title, subtitle, mission, pillars, loaded]);
+
+            // Keep browser tab title in sync
+            useEffect(() => {
+                document.title = title || 'Strategy Execution Builder';
+            }, [title]);
+
+            // --- Helpers ---
+            const openConfirm = (message, onConfirm) => {
+                setConfirmDialog({ open: true, message, onConfirm });
+            };
+
+            const closeConfirm = () => setConfirmDialog({ open: false, message: '', onConfirm: null });
+
+            const openEdit = (type, value, path = null) => {
+                setEditDialog({ open: true, type, value, path });
+            };
+
+            const closeEdit = () => setEditDialog({ open: false, type: '', value: '', path: null });
+
+            // --- Load example (with overwrite warning if content exists) ---
+            const applyExample = (exampleKey) => {
+                const fresh = assignNewIds(examples[exampleKey]);
+                setTitle(fresh.title);
+                setSubtitle(fresh.subtitle);
+                setMission(fresh.mission);
+                setPillars(fresh.pillars);
                 setExamplesDialog(false);
+            };
+
+            const handleLoadExample = (exampleKey) => {
+                const hasContent = pillars.some((p) => p.okrs.length > 0 || p.title);
+                if (hasContent) {
+                    setExamplesDialog(false);
+                    openConfirm(
+                        'Loading an example will replace your current strategy. This cannot be undone.',
+                        () => {
+                            applyExample(exampleKey);
+                            closeConfirm();
+                        }
+                    );
+                } else {
+                    applyExample(exampleKey);
+                }
+            };
+
+            // --- State mutations ---
+            const addPillar = () => {
+                const id = nextId();
+                setPillars((prev) => [...prev, { id, title: '', okrs: [] }]);
+                // Open edit immediately so the user can name the new pillar
+                setTimeout(() => openEdit('pillar', '', { pillarId: id }), 0);
+            };
+
+            const addOKR = (pillarId) => {
+                const id = nextId();
+                setPillars((prev) => prev.map((p) =>
+                    p.id === pillarId
+                        ? { ...p, okrs: [...p.okrs, { id, title: '', initiatives: [] }] }
+                        : p
+                ));
+                setTimeout(() => openEdit('okr', '', { pillarId, okrId: id }), 0);
+            };
+
+            const addInitiative = (pillarId, okrId) => {
+                const id = nextId();
+                setPillars((prev) => prev.map((p) =>
+                    p.id === pillarId
+                        ? {
+                            ...p,
+                            okrs: p.okrs.map((o) =>
+                                o.id === okrId
+                                    ? { ...o, initiatives: [...o.initiatives, { id, title: '', activities: [] }] }
+                                    : o
+                            ),
+                        }
+                        : p
+                ));
+                setTimeout(() => openEdit('initiative', '', { pillarId, okrId, initiativeId: id }), 0);
+            };
+
+            const addActivity = (pillarId, okrId, initiativeId) => {
+                const newIdx = (() => {
+                    const p = pillars.find((p) => p.id === pillarId);
+                    const o = p?.okrs.find((o) => o.id === okrId);
+                    const i = o?.initiatives.find((i) => i.id === initiativeId);
+                    return i ? i.activities.length : 0;
+                })();
+                setPillars((prev) => prev.map((p) =>
+                    p.id === pillarId
+                        ? {
+                            ...p,
+                            okrs: p.okrs.map((o) =>
+                                o.id === okrId
+                                    ? {
+                                        ...o,
+                                        initiatives: o.initiatives.map((i) =>
+                                            i.id === initiativeId
+                                                ? { ...i, activities: [...i.activities, ''] }
+                                                : i
+                                        ),
+                                    }
+                                    : o
+                            ),
+                        }
+                        : p
+                ));
+                setTimeout(() => openEdit('activity', '', { pillarId, okrId, initiativeId, activityIdx: newIdx }), 0);
+            };
+
+            const deletePillar = (pillarId) => {
+                const pillar = pillars.find((p) => p.id === pillarId);
+                openConfirm(
+                    `Delete "${pillar?.title || 'this pillar'}" and all its OKRs, initiatives, and activities? This cannot be undone.`,
+                    () => {
+                        setPillars((prev) => prev.filter((p) => p.id !== pillarId));
+                        closeConfirm();
+                    }
+                );
+            };
+
+            const deleteOKR = (pillarId, okrId) => {
+                setPillars((prev) => prev.map((p) =>
+                    p.id === pillarId ? { ...p, okrs: p.okrs.filter((o) => o.id !== okrId) } : p
+                ));
+            };
+
+            const deleteInitiative = (pillarId, okrId, initiativeId) => {
+                setPillars((prev) => prev.map((p) =>
+                    p.id === pillarId
+                        ? {
+                            ...p,
+                            okrs: p.okrs.map((o) =>
+                                o.id === okrId
+                                    ? { ...o, initiatives: o.initiatives.filter((i) => i.id !== initiativeId) }
+                                    : o
+                            ),
+                        }
+                        : p
+                ));
+            };
+
+            const deleteActivity = (pillarId, okrId, initiativeId, activityIdx) => {
+                setPillars((prev) => prev.map((p) =>
+                    p.id === pillarId
+                        ? {
+                            ...p,
+                            okrs: p.okrs.map((o) =>
+                                o.id === okrId
+                                    ? {
+                                        ...o,
+                                        initiatives: o.initiatives.map((i) =>
+                                            i.id === initiativeId
+                                                ? { ...i, activities: i.activities.filter((_, idx) => idx !== activityIdx) }
+                                                : i
+                                        ),
+                                    }
+                                    : o
+                            ),
+                        }
+                        : p
+                ));
+            };
+
+            const saveEdit = (value) => {
+                const { type, path } = editDialog;
+                if (type === 'title') {
+                    setTitle(value);
+                } else if (type === 'subtitle') {
+                    setSubtitle(value);
+                } else if (type === 'mission') {
+                    setMission(value);
+                } else if (type === 'pillar') {
+                    setPillars((prev) => prev.map((p) =>
+                        p.id === path.pillarId ? { ...p, title: value } : p
+                    ));
+                } else if (type === 'okr') {
+                    setPillars((prev) => prev.map((p) =>
+                        p.id === path.pillarId
+                            ? { ...p, okrs: p.okrs.map((o) => o.id === path.okrId ? { ...o, title: value } : o) }
+                            : p
+                    ));
+                } else if (type === 'initiative') {
+                    setPillars((prev) => prev.map((p) =>
+                        p.id === path.pillarId
+                            ? {
+                                ...p,
+                                okrs: p.okrs.map((o) =>
+                                    o.id === path.okrId
+                                        ? { ...o, initiatives: o.initiatives.map((i) => i.id === path.initiativeId ? { ...i, title: value } : i) }
+                                        : o
+                                ),
+                            }
+                            : p
+                    ));
+                } else if (type === 'activity') {
+                    setPillars((prev) => prev.map((p) =>
+                        p.id === path.pillarId
+                            ? {
+                                ...p,
+                                okrs: p.okrs.map((o) =>
+                                    o.id === path.okrId
+                                        ? {
+                                            ...o,
+                                            initiatives: o.initiatives.map((i) =>
+                                                i.id === path.initiativeId
+                                                    ? { ...i, activities: i.activities.map((a, idx) => idx === path.activityIdx ? value : a) }
+                                                    : i
+                                            ),
+                                        }
+                                        : o
+                                ),
+                            }
+                            : p
+                    ));
+                }
+                closeEdit();
+            };
+
+            // --- Export handlers ---
+            const getAppCSS = () => {
+                const el = document.getElementById('app-styles');
+                return el ? el.textContent : '';
             };
 
             const exportAsHTML = () => {
                 setExportDialog(false);
                 setTimeout(() => {
-                    const content = document.getElementById('root').cloneNode(true);
-                    const buttons = content.querySelectorAll('button');
-                    buttons.forEach(btn => btn.remove());
-                    
+                    const content = document.getElementById('strategy-view').cloneNode(true);
+                    // Remove all interactive controls from the static snapshot
+                    content.querySelectorAll('button').forEach((el) => el.remove());
                     const html = `<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>${title}</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #F7F8FA; margin: 0; }
-    </style>
+    <style>${getAppCSS()}</style>
 </head>
 <body>
-    ${content.innerHTML}
+    ${content.outerHTML}
 </body>
 </html>`;
-                    
-                    const blob = new Blob([html], { type: 'text/html' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'strategy-execution.html';
-                    a.click();
+                    downloadBlob(html, 'text/html', 'strategy-execution.html');
                 }, 100);
             };
 
@@ -322,14 +1295,12 @@
                     let md = `# ${title}\n\n${subtitle}\n\n`;
                     md += `## Mission Statement\n\n${mission}\n\n`;
                     md += `## Strategic Framework\n\n`;
-                    
                     pillars.forEach((pillar, pIdx) => {
                         md += `### ${pIdx + 1}. ${pillar.title}\n\n`;
                         pillar.okrs.forEach((okr, oIdx) => {
                             md += `#### OKR ${oIdx + 1}: ${okr.title}\n\n`;
                             okr.initiatives.forEach((initiative, iIdx) => {
-                                md += `**Initiative ${iIdx + 1}:** ${initiative.title}\n\n`;
-                                md += `Activities:\n`;
+                                md += `**Initiative ${iIdx + 1}:** ${initiative.title}\n\nActivities:\n`;
                                 initiative.activities.forEach((activity) => {
                                     md += `- ${activity}\n`;
                                 });
@@ -337,13 +1308,7 @@
                             });
                         });
                     });
-                    
-                    const blob = new Blob([md], { type: 'text/markdown' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'strategy-execution.md';
-                    a.click();
+                    downloadBlob(md, 'text/markdown', 'strategy-execution.md');
                 }, 100);
             };
 
@@ -351,47 +1316,31 @@
                 setExportDialog(false);
                 setTimeout(() => {
                     let csv = 'Pillar,OKR,Initiative,Activity\n';
-                    
-                    pillars.forEach(pillar => {
-                        pillar.okrs.forEach(okr => {
-                            okr.initiatives.forEach(initiative => {
-                                initiative.activities.forEach(activity => {
-                                    csv += `"${pillar.title}","${okr.title}","${initiative.title}","${activity}"\n`;
+                    pillars.forEach((pillar) => {
+                        pillar.okrs.forEach((okr) => {
+                            okr.initiatives.forEach((initiative) => {
+                                initiative.activities.forEach((activity) => {
+                                    csv += `${escapeCSV(pillar.title)},${escapeCSV(okr.title)},${escapeCSV(initiative.title)},${escapeCSV(activity)}\n`;
                                 });
                             });
                         });
                     });
-                    
-                    const blob = new Blob([csv], { type: 'text/csv' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'strategy-execution.csv';
-                    a.click();
+                    downloadBlob(csv, 'text/csv', 'strategy-execution.csv');
                 }, 100);
             };
 
             const exportAsPDF = () => {
                 setExportDialog(false);
                 setTimeout(async () => {
-                    const element = document.getElementById('root');
-                    const canvas = await html2canvas(element, { 
-                        scale: 2,
-                        backgroundColor: '#F7F8FA',
-                        logging: false
-                    });
-                    
+                    const element = document.getElementById('strategy-view');
+                    const canvas = await html2canvas(element, { scale: 2, backgroundColor: '#F7F8FA', logging: false });
                     const imgData = canvas.toDataURL('image/png');
                     const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
                     const pdfWidth = pdf.internal.pageSize.getWidth();
                     const pdfHeight = pdf.internal.pageSize.getHeight();
-                    const imgWidth = canvas.width;
-                    const imgHeight = canvas.height;
-                    const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-                    const imgX = (pdfWidth - imgWidth * ratio) / 2;
-                    const imgY = 0;
-                    
-                    pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+                    const ratio = Math.min(pdfWidth / canvas.width, pdfHeight / canvas.height);
+                    const imgX = (pdfWidth - canvas.width * ratio) / 2;
+                    pdf.addImage(imgData, 'PNG', imgX, 0, canvas.width * ratio, canvas.height * ratio);
                     pdf.save('strategy-execution.pdf');
                 }, 300);
             };
@@ -399,44 +1348,25 @@
             const exportAsPNG = () => {
                 setExportDialog(false);
                 setTimeout(async () => {
-                    const element = document.getElementById('root');
-                    const canvas = await html2canvas(element, { 
-                        scale: 2,
-                        backgroundColor: '#F7F8FA',
-                        logging: false
-                    });
-                    
-                    canvas.toBlob(blob => {
+                    const element = document.getElementById('strategy-view');
+                    const canvas = await html2canvas(element, { scale: 2, backgroundColor: '#F7F8FA', logging: false });
+                    canvas.toBlob((blob) => {
                         const url = URL.createObjectURL(blob);
                         const a = document.createElement('a');
                         a.href = url;
                         a.download = 'strategy-execution.png';
                         a.click();
+                        URL.revokeObjectURL(url);
                     });
                 }, 300);
             };
 
-            const addPillar = () => setPillars([...pillars, { id: Date.now(), title: 'Strategic pillars', okrs: [] }]);
-            const addOKR = (pillarId) => setPillars(pillars.map(p => p.id === pillarId ? { ...p, okrs: [...p.okrs, { id: Date.now(), title: 'Define objectives', initiatives: [] }] } : p));
-            const addInitiative = (pillarId, okrId) => setPillars(pillars.map(p => p.id === pillarId ? { ...p, okrs: p.okrs.map(o => o.id === okrId ? { ...o, initiatives: [...o.initiatives, { id: Date.now(), title: 'Launch initiatives', activities: [] }] } : o) } : p));
-            const addActivity = (pillarId, okrId, initiativeId) => setPillars(pillars.map(p => p.id === pillarId ? { ...p, okrs: p.okrs.map(o => o.id === okrId ? { ...o, initiatives: o.initiatives.map(i => i.id === initiativeId ? { ...i, activities: [...i.activities, 'Execute activities'] } : i) } : o) } : p));
-            const deletePillar = (pillarId) => setPillars(pillars.filter(p => p.id !== pillarId));
-            const deleteOKR = (pillarId, okrId) => setPillars(pillars.map(p => p.id === pillarId ? { ...p, okrs: p.okrs.filter(o => o.id !== okrId) } : p));
-            const deleteInitiative = (pillarId, okrId, initiativeId) => setPillars(pillars.map(p => p.id === pillarId ? { ...p, okrs: p.okrs.map(o => o.id === okrId ? { ...o, initiatives: o.initiatives.filter(i => i.id !== initiativeId) } : o) } : p));
-            const deleteActivity = (pillarId, okrId, initiativeId, activityIdx) => setPillars(pillars.map(p => p.id === pillarId ? { ...p, okrs: p.okrs.map(o => o.id === okrId ? { ...o, initiatives: o.initiatives.map(i => i.id === initiativeId ? { ...i, activities: i.activities.filter((a, idx) => idx !== activityIdx) } : i) } : o) } : p));
-
-            const updateItem = (value) => {
-                const { type, path } = editDialog;
-                if (type === 'title') setTitle(value);
-                else if (type === 'subtitle') setSubtitle(value);
-                else if (type === 'mission') setMission(value);
-                else if (type === 'pillar') setPillars(pillars.map(p => p.id === path.pillarId ? { ...p, title: value } : p));
-                else if (type === 'okr') setPillars(pillars.map(p => p.id === path.pillarId ? { ...p, okrs: p.okrs.map(o => o.id === path.okrId ? { ...o, title: value } : o) } : p));
-                else if (type === 'initiative') setPillars(pillars.map(p => p.id === path.pillarId ? { ...p, okrs: p.okrs.map(o => o.id === path.okrId ? { ...o, initiatives: o.initiatives.map(i => i.id === path.initiativeId ? { ...i, title: value } : i) } : o) } : p));
-                else if (type === 'activity') setPillars(pillars.map(p => p.id === path.pillarId ? { ...p, okrs: p.okrs.map(o => o.id === path.okrId ? { ...o, initiatives: o.initiatives.map(i => i.id === path.initiativeId ? { ...i, activities: i.activities.map((a, idx) => idx === path.activityIdx ? value : a) } : i) } : o) } : p));
-                setEditDialog({ open: false, type: '', value: '', path: null });
+            const handleExport = (format) => {
+                const handlers = { pdf: exportAsPDF, png: exportAsPNG, html: exportAsHTML, markdown: exportAsMarkdown, csv: exportAsCSV };
+                handlers[format]?.();
             };
 
+            // --- Stats ---
             const getTotalCount = (type) => {
                 if (type === 'pillars') return pillars.length;
                 if (type === 'okrs') return pillars.reduce((acc, p) => acc + p.okrs.length, 0);
@@ -445,147 +1375,271 @@
                 return 0;
             };
 
-            const EditIcon = () => (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>);
-            const TrashIcon = () => (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>);
-            const PlusIcon = () => (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>);
-            const XIcon = () => (<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>);
-            const BookIcon = () => (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>);
-            const SettingsIcon = () => (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m5.2-14.2l-4.2 4.2m-2 2l-4.2 4.2M23 12h-6m-6 0H5m14.2 5.2l-4.2-4.2m-2-2l-4.2-4.2"/></svg>);
-            const TrendingIcon = () => (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>);
-            const DownloadIcon = () => (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>);
+            if (!loaded) return null;
 
             return (
-                <div style={{ minHeight: '100vh', backgroundColor: '#F7F8FA' }}>
+                <div id="strategy-view" style={{ minHeight: '100vh', backgroundColor: '#F7F8FA' }}>
+
+                    {/* ── Header ── */}
                     <div style={{ backgroundColor: colors.white, borderBottom: `1px solid ${colors.grey200}` }}>
                         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '24px 32px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                 <div>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                        <h1 style={{ fontSize: '30px', fontWeight: 'bold', color: colors.black }}>{title}</h1>
-                                        {editMode && (<button className="button" style={{ background: 'transparent', padding: '8px', borderRadius: '8px', color: colors.grey500 }} onClick={() => setEditDialog({ open: true, type: 'title', value: title, path: null })}><EditIcon /></button>)}
+                                        <h1 style={{ fontSize: '30px', fontWeight: 'bold', color: colors.black }}>
+                                            {title}
+                                        </h1>
+                                        {editMode && (
+                                            <button
+                                                className="button"
+                                                style={{ background: 'transparent', padding: '8px', borderRadius: '8px', color: colors.grey500 }}
+                                                onClick={() => openEdit('title', title)}
+                                                aria-label="Edit title"
+                                            >
+                                                <EditIcon />
+                                            </button>
+                                        )}
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '4px' }}>
                                         <p style={{ fontSize: '14px', color: colors.grey500 }}>{subtitle}</p>
-                                        {editMode && (<button className="button" style={{ background: 'transparent', padding: '4px', borderRadius: '8px', color: colors.grey400 }} onClick={() => setEditDialog({ open: true, type: 'subtitle', value: subtitle, path: null })}><EditIcon /></button>)}
+                                        {editMode && (
+                                            <button
+                                                className="button"
+                                                style={{ background: 'transparent', padding: '4px', borderRadius: '8px', color: colors.grey400 }}
+                                                onClick={() => openEdit('subtitle', subtitle)}
+                                                aria-label="Edit subtitle"
+                                            >
+                                                <EditIcon />
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
+
                                 <div style={{ display: 'flex', gap: '12px' }}>
-                                    <button className="button" style={{ backgroundColor: editMode ? colors.orange500 : colors.white, color: editMode ? colors.white : colors.grey500, border: `2px solid ${editMode ? colors.orange500 : colors.grey300}`, padding: '12px 24px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={() => setEditMode(!editMode)}><SettingsIcon /> {editMode ? 'Edit Mode On' : 'Edit Mode Off'}</button>
-                                    <button className="button" style={{ backgroundColor: colors.orange500, color: colors.white, padding: '12px 24px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={() => setExamplesDialog(true)}><BookIcon /> Load Example</button>
+                                    <button
+                                        className="button"
+                                        style={{
+                                            backgroundColor: editMode ? colors.orange500 : colors.white,
+                                            color: editMode ? colors.white : colors.grey500,
+                                            border: `2px solid ${editMode ? colors.orange500 : colors.grey300}`,
+                                            padding: '12px 24px',
+                                            borderRadius: '8px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px',
+                                        }}
+                                        onClick={() => setEditMode(!editMode)}
+                                        aria-label={editMode ? 'Turn off edit mode' : 'Turn on edit mode'}
+                                    >
+                                        <SettingsIcon /> {editMode ? 'Edit Mode On' : 'Edit Mode Off'}
+                                    </button>
+
+                                    <button
+                                        className="button"
+                                        style={{
+                                            backgroundColor: colors.orange500,
+                                            color: colors.white,
+                                            padding: '12px 24px',
+                                            borderRadius: '8px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px',
+                                        }}
+                                        onClick={() => setExamplesDialog(true)}
+                                        aria-label="Load example strategy"
+                                    >
+                                        <BookIcon /> Load Example
+                                    </button>
+
                                     <div className="tooltip-container">
                                         {editMode && <div className="tooltip">Turn off Edit Mode to export</div>}
-                                        <button className="button" style={{ backgroundColor: editMode ? colors.grey300 : colors.orange500, color: editMode ? colors.grey500 : colors.white, padding: '12px 24px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', cursor: editMode ? 'not-allowed' : 'pointer' }} onClick={() => !editMode && setExportDialog(true)} disabled={editMode}><DownloadIcon /> Export</button>
+                                        <button
+                                            className="button"
+                                            style={{
+                                                backgroundColor: editMode ? colors.grey300 : colors.orange500,
+                                                color: editMode ? colors.grey500 : colors.white,
+                                                padding: '12px 24px',
+                                                borderRadius: '8px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '8px',
+                                                cursor: editMode ? 'not-allowed' : 'pointer',
+                                            }}
+                                            onClick={() => !editMode && setExportDialog(true)}
+                                            disabled={editMode}
+                                            aria-label="Export strategy"
+                                        >
+                                            <DownloadIcon /> Export
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    {/* ── Stats bar ── */}
                     <div style={{ backgroundColor: colors.white, borderBottom: `1px solid ${colors.grey200}` }}>
                         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '24px 32px' }}>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '32px' }}>
-                                <div><div style={{ fontSize: '11px', fontWeight: '600', marginBottom: '8px', color: colors.grey500, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Strategic Pillars</div><div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}><div style={{ fontSize: '36px', fontWeight: 'bold', color: colors.black }}>{getTotalCount('pillars')}</div><TrendingIcon /></div></div>
-                                <div><div style={{ fontSize: '11px', fontWeight: '600', marginBottom: '8px', color: colors.grey500, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total OKRs</div><div style={{ fontSize: '36px', fontWeight: 'bold', color: colors.orange500 }}>{getTotalCount('okrs')}</div></div>
-                                <div><div style={{ fontSize: '11px', fontWeight: '600', marginBottom: '8px', color: colors.grey500, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Initiatives</div><div style={{ fontSize: '36px', fontWeight: 'bold', color: colors.orange400 }}>{getTotalCount('initiatives')}</div></div>
-                                <div><div style={{ fontSize: '11px', fontWeight: '600', marginBottom: '8px', color: colors.grey500, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Activities</div><div style={{ fontSize: '36px', fontWeight: 'bold', color: colors.orange300 }}>{getTotalCount('activities')}</div></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '32px' }}>
-                        <div style={{ marginBottom: '32px', padding: '24px', borderRadius: '12px', border: `1px solid ${colors.grey200}`, backgroundColor: colors.white }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <div style={{ flex: 1 }}><div style={{ fontSize: '11px', fontWeight: '600', marginBottom: '8px', color: colors.orange500, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Mission Statement</div><h2 style={{ fontSize: '24px', fontWeight: '600', color: colors.black }}>{mission}</h2></div>
-                                {editMode && (<button className="button" style={{ background: 'transparent', padding: '10px', borderRadius: '8px', color: colors.grey500 }} onClick={() => setEditDialog({ open: true, type: 'mission', value: mission, path: null })}><EditIcon /></button>)}
-                            </div>
-                        </div>
-
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px', marginBottom: '32px' }}>
-                            {pillars.map((pillar, pillarIndex) => (
-                                <div key={pillar.id} className="card" style={{ border: `1px solid ${colors.grey200}` }}>
-                                    <div style={{ height: '4px', backgroundColor: pillarIndex === 0 ? colors.orange500 : pillarIndex === 1 ? colors.orange400 : colors.orange300 }} />
-                                    <div style={{ padding: '20px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between', marginBottom: '16px' }}>
-                                            <div style={{ flex: 1 }}><div style={{ fontSize: '11px', fontWeight: '600', marginBottom: '8px', color: colors.grey500, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Pillar {pillarIndex + 1}</div><h3 style={{ fontSize: '18px', fontWeight: '600', color: colors.black }}>{pillar.title}</h3></div>
-                                            {editMode && (<div style={{ display: 'flex', gap: '4px' }}><button className="button" style={{ background: 'transparent', padding: '8px', borderRadius: '8px', color: colors.grey400 }} onClick={() => setEditDialog({ open: true, type: 'pillar', value: pillar.title, path: { pillarId: pillar.id } })}><EditIcon /></button><button className="button" style={{ background: 'transparent', padding: '8px', borderRadius: '8px', color: colors.orange500 }} onClick={() => deletePillar(pillar.id)}><TrashIcon /></button></div>)}
+                                <div>
+                                    <div style={{ fontSize: '11px', fontWeight: '600', marginBottom: '8px', color: colors.grey500, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                        Strategic Pillars
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                                        <div style={{ fontSize: '36px', fontWeight: 'bold', color: colors.black }}>
+                                            {getTotalCount('pillars')}
                                         </div>
-                                        {pillar.okrs.map(okr => (
-                                            <div key={okr.id} style={{ marginBottom: '16px', padding: '16px', borderRadius: '8px', backgroundColor: colors.orange100, border: `1px solid ${colors.orange200}` }}>
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                                                    <div style={{ flex: 1 }}><div style={{ fontSize: '11px', fontWeight: '600', color: colors.orange500, textTransform: 'uppercase', marginBottom: '4px' }}>OKR</div><div style={{ fontSize: '14px', fontWeight: '600', color: colors.black }}>{okr.title}</div></div>
-                                                    {editMode && (<div style={{ display: 'flex', gap: '4px', marginLeft: '8px' }}><button className="button" style={{ background: 'transparent', padding: '6px', borderRadius: '8px', color: colors.orange400 }} onClick={() => setEditDialog({ open: true, type: 'okr', value: okr.title, path: { pillarId: pillar.id, okrId: okr.id } })}><EditIcon /></button><button className="button" style={{ background: 'transparent', padding: '6px', borderRadius: '8px', color: colors.orange500 }} onClick={() => deleteOKR(pillar.id, okr.id)}><TrashIcon /></button></div>)}
-                                                </div>
-                                                {okr.initiatives.map(initiative => (
-                                                    <div key={initiative.id} style={{ marginBottom: '12px', padding: '12px', borderRadius: '8px', backgroundColor: colors.orange200, border: `1px solid ${colors.orange300}` }}>
-                                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                                                            <div style={{ flex: 1 }}><div style={{ fontSize: '11px', fontWeight: '600', color: colors.orange500, textTransform: 'uppercase', marginBottom: '4px' }}>Initiative</div><div style={{ fontSize: '13px', fontWeight: '600', color: colors.black }}>{initiative.title}</div></div>
-                                                            {editMode && (<div style={{ display: 'flex', gap: '4px', marginLeft: '8px' }}><button className="button" style={{ background: 'transparent', padding: '6px', borderRadius: '8px', color: colors.orange400 }} onClick={() => setEditDialog({ open: true, type: 'initiative', value: initiative.title, path: { pillarId: pillar.id, okrId: okr.id, initiativeId: initiative.id } })}><EditIcon /></button><button className="button" style={{ background: 'transparent', padding: '6px', borderRadius: '8px', color: colors.orange500 }} onClick={() => deleteInitiative(pillar.id, okr.id, initiative.id)}><TrashIcon /></button></div>)}
-                                                        </div>
-                                                        {initiative.activities.map((activity, idx) => (
-                                                            <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', marginBottom: '8px', borderRadius: '8px', backgroundColor: colors.orange400, color: colors.white, fontSize: '12px', fontWeight: '500' }}>
-                                                                <span>{activity}</span>
-                                                                {editMode && (<div style={{ display: 'flex', gap: '4px' }}><button className="button" style={{ background: 'transparent', padding: '6px', borderRadius: '8px', color: colors.white }} onClick={() => setEditDialog({ open: true, type: 'activity', value: activity, path: { pillarId: pillar.id, okrId: okr.id, initiativeId: initiative.id, activityIdx: idx } })}><EditIcon /></button><button className="button" style={{ background: 'transparent', padding: '6px', borderRadius: '8px', color: colors.white }} onClick={() => deleteActivity(pillar.id, okr.id, initiative.id, idx)}><TrashIcon /></button></div>)}
-                                                            </div>
-                                                        ))}
-                                                        {editMode && (<button className="button" style={{ width: '100%', marginTop: '8px', padding: '8px', background: 'transparent', borderRadius: '8px', color: colors.orange500, fontSize: '12px', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }} onClick={() => addActivity(pillar.id, okr.id, initiative.id)}><PlusIcon /> Add Activity</button>)}
-                                                    </div>
-                                                ))}
-                                                {editMode && (<button className="button" style={{ width: '100%', padding: '8px', background: 'transparent', borderRadius: '8px', color: colors.orange500, fontSize: '12px', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }} onClick={() => addInitiative(pillar.id, okr.id)}><PlusIcon /> Add Initiative</button>)}
-                                            </div>
-                                        ))}
-                                        {editMode && (<button className="button" style={{ width: '100%', padding: '8px', backgroundColor: colors.orange100, border: `1px solid ${colors.orange200}`, borderRadius: '8px', color: colors.orange500, fontSize: '14px', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }} onClick={() => addOKR(pillar.id)}><PlusIcon /> Add OKR</button>)}
+                                        <TrendingIcon />
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                        {editMode && (<div style={{ display: 'flex', justifyContent: 'center' }}><button className="button" style={{ backgroundColor: colors.orange500, color: colors.white, padding: '12px 32px', borderRadius: '8px', fontSize: '16px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={addPillar}><PlusIcon /> Add Strategic Pillar</button></div>)}
-                    </div>
-
-                    {editDialog.open && (
-                        <div className="modal-overlay" onClick={() => setEditDialog({ open: false, type: '', value: '', path: null })}>
-                            <div className="modal-content" style={{ width: '500px', border: `1px solid ${colors.grey200}` }} onClick={(e) => e.stopPropagation()}>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}><h2 style={{ fontSize: '20px', fontWeight: '600', color: colors.black }}>Edit {editDialog.type}</h2><button className="button" style={{ background: 'transparent', padding: '8px', borderRadius: '8px', color: colors.grey500 }} onClick={() => setEditDialog({ open: false, type: '', value: '', path: null })}><XIcon /></button></div>
-                                <input className="input" value={editDialog.value} onChange={(e) => setEditDialog({ ...editDialog, value: e.target.value })} placeholder={`Enter ${editDialog.type} name`} autoFocus style={{ marginBottom: '24px' }} />
-                                <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}><button className="button" style={{ border: `2px solid ${colors.grey300}`, backgroundColor: colors.white, color: colors.grey500, padding: '10px 16px', borderRadius: '8px', fontWeight: '600' }} onClick={() => setEditDialog({ open: false, type: '', value: '', path: null })}>Cancel</button><button className="button" style={{ backgroundColor: colors.orange500, color: colors.white, padding: '10px 16px', borderRadius: '8px', fontWeight: '600' }} onClick={() => updateItem(editDialog.value)}>Save Changes</button></div>
+                                <div>
+                                    <div style={{ fontSize: '11px', fontWeight: '600', marginBottom: '8px', color: colors.grey500, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                        Total OKRs
+                                    </div>
+                                    <div style={{ fontSize: '36px', fontWeight: 'bold', color: colors.orange500 }}>
+                                        {getTotalCount('okrs')}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '11px', fontWeight: '600', marginBottom: '8px', color: colors.grey500, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                        Initiatives
+                                    </div>
+                                    <div style={{ fontSize: '36px', fontWeight: 'bold', color: colors.orange400 }}>
+                                        {getTotalCount('initiatives')}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '11px', fontWeight: '600', marginBottom: '8px', color: colors.grey500, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                        Activities
+                                    </div>
+                                    <div style={{ fontSize: '36px', fontWeight: 'bold', color: colors.orange300 }}>
+                                        {getTotalCount('activities')}
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </div>
+
+                    {/* ── Main content ── */}
+                    <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '32px' }}>
+
+                        {/* Mission statement */}
+                        <div style={{
+                            marginBottom: '32px',
+                            padding: '24px',
+                            borderRadius: '12px',
+                            border: `1px solid ${colors.grey200}`,
+                            backgroundColor: colors.white,
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ fontSize: '11px', fontWeight: '600', marginBottom: '8px', color: colors.orange500, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                        Mission Statement
+                                    </div>
+                                    <h2 style={{ fontSize: '24px', fontWeight: '600', color: colors.black }}>
+                                        {mission}
+                                    </h2>
+                                </div>
+                                {editMode && (
+                                    <button
+                                        className="button"
+                                        style={{ background: 'transparent', padding: '10px', borderRadius: '8px', color: colors.grey500 }}
+                                        onClick={() => openEdit('mission', mission)}
+                                        aria-label="Edit mission statement"
+                                    >
+                                        <EditIcon />
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Pillar grid */}
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                            gap: '24px',
+                            marginBottom: '32px',
+                        }}>
+                            {pillars.map((pillar, pillarIndex) => (
+                                <PillarCard
+                                    key={pillar.id}
+                                    pillar={pillar}
+                                    pillarIndex={pillarIndex}
+                                    editMode={editMode}
+                                    onEdit={() => openEdit('pillar', pillar.title, { pillarId: pillar.id })}
+                                    onDelete={() => deletePillar(pillar.id)}
+                                    onAddOKR={() => addOKR(pillar.id)}
+                                    onEditOKR={(okrId) => {
+                                        const okr = pillar.okrs.find((o) => o.id === okrId);
+                                        openEdit('okr', okr?.title || '', { pillarId: pillar.id, okrId });
+                                    }}
+                                    onDeleteOKR={(okrId) => deleteOKR(pillar.id, okrId)}
+                                    onAddInitiative={(okrId) => addInitiative(pillar.id, okrId)}
+                                    onEditInitiative={(okrId, initId) => {
+                                        const initiative = pillar.okrs.find((o) => o.id === okrId)?.initiatives.find((i) => i.id === initId);
+                                        openEdit('initiative', initiative?.title || '', { pillarId: pillar.id, okrId, initiativeId: initId });
+                                    }}
+                                    onDeleteInitiative={(okrId, initId) => deleteInitiative(pillar.id, okrId, initId)}
+                                    onAddActivity={(okrId, initId) => addActivity(pillar.id, okrId, initId)}
+                                    onEditActivity={(okrId, initId, idx) => {
+                                        const activity = pillar.okrs.find((o) => o.id === okrId)?.initiatives.find((i) => i.id === initId)?.activities[idx];
+                                        openEdit('activity', activity || '', { pillarId: pillar.id, okrId, initiativeId: initId, activityIdx: idx });
+                                    }}
+                                    onDeleteActivity={(okrId, initId, idx) => deleteActivity(pillar.id, okrId, initId, idx)}
+                                />
+                            ))}
+                        </div>
+
+                        {editMode && (
+                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                <button
+                                    className="button"
+                                    style={{
+                                        backgroundColor: colors.orange500,
+                                        color: colors.white,
+                                        padding: '12px 32px',
+                                        borderRadius: '8px',
+                                        fontSize: '16px',
+                                        fontWeight: '600',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                    }}
+                                    onClick={addPillar}
+                                    aria-label="Add strategic pillar"
+                                >
+                                    <PlusIcon /> Add Strategic Pillar
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* ── Modals ── */}
+                    {editDialog.open && (
+                        <EditModal editDialog={editDialog} onClose={closeEdit} onSave={saveEdit} />
+                    )}
+
+                    {confirmDialog.open && (
+                        <ConfirmModal
+                            message={confirmDialog.message}
+                            onConfirm={confirmDialog.onConfirm}
+                            onCancel={closeConfirm}
+                        />
                     )}
 
                     {examplesDialog && (
-                        <div className="modal-overlay" onClick={() => setExamplesDialog(false)}>
-                            <div className="modal-content" style={{ width: '900px', border: `1px solid ${colors.grey200}` }} onClick={(e) => e.stopPropagation()}>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}><h2 style={{ fontSize: '24px', fontWeight: '600', color: colors.black }}>Load Example Strategy</h2><button className="button" style={{ background: 'transparent', padding: '8px', borderRadius: '8px', color: colors.grey500 }} onClick={() => setExamplesDialog(false)}><XIcon /></button></div>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
-                                    {[                                        { key: 'digitalTransformation', title: 'Digital Transformation', color: colors.orange500, desc: 'Drive digital transformation with focus on customer experience, operational excellence, and innovation culture.' },                                        { key: 'salesGrowth', title: 'Sales Growth', color: colors.orange400, desc: 'Accelerate revenue growth through market expansion, sales excellence, and customer success initiatives.' },                                        { key: 'sustainability', title: 'Sustainability', color: colors.orange300, desc: 'Build a sustainable business with focus on environmental impact, social responsibility, and governance.' },                                        { key: 'productDevelopment', title: 'Product Development', color: colors.orange400, desc: 'Deliver innovative products through improved innovation pipeline, product quality, and faster time to market.' }                                    ].map(ex => (
-                                        <div key={ex.key} className="card" style={{ cursor: 'pointer', border: `2px solid ${colors.orange200}` }} onClick={() => loadExample(ex.key)}><div style={{ height: '4px', backgroundColor: ex.color }} /><div style={{ padding: '20px' }}><h3 style={{ fontSize: '18px', fontWeight: '600', color: colors.orange500, marginBottom: '8px' }}>{ex.title}</h3><p style={{ fontSize: '14px', lineHeight: '1.6', color: colors.grey500 }}>{ex.desc}</p></div></div>
-                                    ))}
-                                    <div className="card" style={{ cursor: 'pointer', border: `2px solid ${colors.grey300}`, gridColumn: 'span 2' }} onClick={() => loadExample('blank')}><div style={{ height: '4px', backgroundColor: colors.grey400 }} /><div style={{ padding: '20px' }}><h3 style={{ fontSize: '18px', fontWeight: '600', color: colors.grey500, marginBottom: '8px' }}>Blank Template</h3><p style={{ fontSize: '14px', lineHeight: '1.6', color: colors.grey500 }}>Start with a clean slate and build your own custom strategy framework from scratch.</p></div></div>
-                                </div>
-                            </div>
-                        </div>
+                        <ExamplesModal onClose={() => setExamplesDialog(false)} onLoad={handleLoadExample} />
                     )}
 
                     {exportDialog && (
-                        <div className="modal-overlay" onClick={() => setExportDialog(false)}>
-                            <div className="modal-content" style={{ width: '600px', border: `1px solid ${colors.grey200}` }} onClick={(e) => e.stopPropagation()}>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}><h2 style={{ fontSize: '24px', fontWeight: '600', color: colors.black }}>Export Strategy</h2><button className="button" style={{ background: 'transparent', padding: '8px', borderRadius: '8px', color: colors.grey500 }} onClick={() => setExportDialog(false)}><XIcon /></button></div>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
-                                    {[                                        { format: 'PDF', icon: '📄', action: exportAsPDF, desc: 'High-quality PDF document' },                                        { format: 'PNG', icon: '🖼️', action: exportAsPNG, desc: 'Image file for presentations' },                                        { format: 'HTML', icon: '🌐', action: exportAsHTML, desc: 'Standalone web page' },                                        { format: 'Markdown', icon: '📝', action: exportAsMarkdown, desc: 'Plain text with formatting' },                                        { format: 'CSV', icon: '📊', action: exportAsCSV, desc: 'Spreadsheet-compatible format', span: true }                                    ].map((exp, idx) => (
-                                        <button key={idx} className="button card" style={{ padding: '24px', border: `2px solid ${colors.orange200}`, textAlign: 'left', cursor: 'pointer', gridColumn: exp.span ? 'span 2' : 'auto' }} onClick={exp.action}>
-                                            <div style={{ fontSize: '32px', marginBottom: '8px' }}>{exp.icon}</div>
-                                            <h3 style={{ fontSize: '18px', fontWeight: '600', color: colors.orange500, marginBottom: '4px' }}>Export as {exp.format}</h3>
-                                            <p style={{ fontSize: '14px', color: colors.grey500 }}>{exp.desc}</p>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
+                        <ExportModal onClose={() => setExportDialog(false)} onExport={handleExport} />
                     )}
                 </div>
             );
         }
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        // React 18 createRoot API (replaces the deprecated ReactDOM.render)
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
 </body>
 </html>
