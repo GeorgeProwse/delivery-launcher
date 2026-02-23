@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPM / PMO Tool Selector</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --orange500: #FD5108;
+  --orange300: #FFAA72;
+  --orange100: #FFE8D4;
+  --black: #000000;
+  --white: #FFFFFF;
+  --grey100: #EEEFF1;
+  --grey200: #DFE3E6;
+  --grey300: #CBD1D6;
+  --grey400: #B5BCC4;
+  --grey500: #A1A8B3;
+  --success: #22C55E;
+  --successBg: #DCFCE7;
+  --warning: #EAB308;
+  --warningBg: #FEF3C7;
+  --error: #EF4444;
+  --errorBg: #FEE2E2;
+  --info: #3B82F6;
+  --infoBg: #DBEAFE;
+  --cardBg: #FFFFFF;
+  --textColor: #000000;
+  --secondaryText: #A1A8B3;
+  --borderColor: #DFE3E6;
+  --surfaceColor: #EEEFF1;
+}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+body{font-family:system-ui,sans-serif;background:var(--grey100);color:var(--textColor);min-height:100vh;font-size:14px;line-height:1.6;}
+
+header{background:var(--white);border-bottom:1px solid var(--borderColor);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;}
+.header-left{display:flex;align-items:center;gap:20px;}
+.header-divider{width:1px;height:32px;background:var(--borderColor);}
+.header-title{font-size:16px;font-weight:600;}
+.header-subtitle{font-size:12px;color:var(--secondaryText);margin-top:1px;}
+.header-badge{padding:4px 12px;background:var(--orange100);color:var(--orange500);font-size:11px;font-weight:500;}
+.pwc-logo-wrap svg{height:34px;width:auto;}
+
+.nav-wrap{background:var(--white);border-bottom:1px solid var(--borderColor);padding:0 32px;display:flex;overflow-x:auto;scrollbar-width:none;}
+.nav-wrap::-webkit-scrollbar{display:none;}
+.nav-tab{padding:16px 20px;color:var(--secondaryText);cursor:pointer;font-size:14px;font-weight:400;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s ease;display:flex;align-items:center;gap:8px;border-top:none;border-left:none;border-right:none;background:none;font-family:system-ui,sans-serif;}
+.nav-tab:hover{color:var(--textColor);}
+.nav-tab.active{color:var(--orange500);border-bottom-color:var(--orange500);font-weight:600;}
+.nav-tab.active svg{stroke:var(--orange500);}
+
+.content{max-width:1100px;margin:0 auto;padding:28px 24px;}
+.panel{display:none;animation:fadeIn .2s ease;}
+.panel.active{display:block;}
+
+.section-heading{margin-bottom:20px;}
+.section-heading h2{font-size:24px;font-weight:600;margin-bottom:4px;}
+.section-heading p{font-size:14px;color:var(--secondaryText);}
+
+.card{background:var(--cardBg);border:1px solid var(--borderColor);padding:24px;margin-bottom:20px;}
+.card-header{padding:14px 20px;border-bottom:1px solid var(--borderColor);display:flex;justify-content:space-between;align-items:flex-start;}
+.card-title{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.card-body{padding:16px 20px;}
+
+.alert{display:flex;gap:12px;padding:14px 18px;border-left:4px solid var(--orange500);background:var(--orange100);margin-bottom:20px;font-size:13px;line-height:1.6;}
+.alert-icon{color:var(--orange500);flex-shrink:0;margin-top:2px;}
+.alert-info{border-left-color:var(--info);background:var(--infoBg);}
+.alert-info .alert-icon{color:var(--info);}
+.alert-error{border-left-color:var(--error);background:var(--errorBg);}
+.alert-error .alert-icon{color:var(--error);}
+
+.dim-section{margin-bottom:22px;}
+.dim-label{font-size:13px;font-weight:600;color:var(--textColor);margin-bottom:2px;}
+.dim-sublabel{font-size:12px;color:var(--secondaryText);margin-bottom:10px;}
+.dim-divider{border:none;border-top:1px solid var(--borderColor);margin:20px 0;}
+
+.chip-row{display:flex;flex-wrap:wrap;gap:8px;}
+.tooltip-wrap{position:relative;display:inline-flex;}
+.chip{position:relative;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--borderColor);font-size:13px;font-weight:500;cursor:pointer;background:var(--white);color:var(--textColor);transition:all .15s ease;user-select:none;font-family:system-ui,sans-serif;}
+.chip:hover{border-color:var(--orange300);background:#fffaf7;}
+.chip.selected{border-color:var(--orange500);background:var(--orange100);color:var(--orange500);font-weight:600;}
+.chip-check{display:none;color:var(--orange500);}
+.chip.selected .chip-check{display:inline-flex;}
+.chip-info{width:14px;height:14px;border-radius:50%;border:1px solid var(--grey400);display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--grey500);flex-shrink:0;cursor:help;}
+.chip-info:hover{border-color:var(--orange500);color:var(--orange500);}
+.tooltip-box{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--black);color:var(--white);font-size:12px;padding:8px 12px;border-radius:4px;white-space:normal;width:220px;line-height:1.5;z-index:200;pointer-events:none;opacity:0;transition:opacity .15s ease;}
+.tooltip-box::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--black);}
+.tooltip-wrap:hover .tooltip-box{opacity:1;}
+
+.filter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;}
+.filter-item{display:flex;flex-direction:column;gap:4px;}
+.filter-item-label{font-size:13px;font-weight:600;}
+.filter-item-sub{font-size:11px;color:var(--secondaryText);}
+.filter-select{width:100%;padding:9px 12px;border:1px solid var(--borderColor);border-radius:4px;font-size:13px;font-family:system-ui,sans-serif;background:var(--white);color:var(--textColor);outline:none;transition:border-color .2s ease;cursor:pointer;}
+.filter-select:focus{border-color:var(--orange500);}
+
+.weight-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;}
+.weight-item{display:flex;flex-direction:column;gap:5px;}
+.weight-label-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:500;}
+.weight-val{background:var(--orange500);color:var(--white);padding:2px 9px;font-size:11px;font-weight:600;min-width:38px;text-align:center;}
+.weight-sub{font-size:11px;color:var(--secondaryText);}
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;background:var(--grey200);outline:none;border-radius:4px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--orange500);cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .2s ease;font-family:system-ui,sans-serif;}
+.btn-primary{background:var(--orange300);color:var(--black);}
+.btn-primary:hover{background:var(--orange500);color:var(--white);}
+.btn-secondary{background:transparent;color:var(--textColor);border:1px solid var(--borderColor);}
+.btn-secondary:hover{background:var(--surfaceColor);}
+
+.view-toggle{display:flex;border:1px solid var(--borderColor);overflow:hidden;}
+.view-toggle-btn{padding:7px 14px;font-size:12px;font-weight:500;cursor:pointer;background:var(--white);border:none;color:var(--secondaryText);transition:all .15s ease;display:flex;align-items:center;gap:5px;font-family:system-ui,sans-serif;}
+.view-toggle-btn:first-child{border-right:1px solid var(--borderColor);}
+.view-toggle-btn.active{background:var(--orange500);color:var(--white);}
+.view-toggle-btn:hover:not(.active){background:var(--surfaceColor);color:var(--textColor);}
+
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.filter-bar-label{font-size:11px;font-weight:600;color:var(--secondaryText);text-transform:uppercase;letter-spacing:.5px;}
+.filter-btn{padding:6px 14px;font-size:12px;font-weight:400;background:var(--cardBg);border:1px solid var(--borderColor);cursor:pointer;color:var(--textColor);font-family:system-ui,sans-serif;transition:all .15s ease;}
+.filter-btn:hover{border-color:var(--orange300);}
+.filter-btn.active{background:var(--orange500);color:var(--white);border-color:var(--orange500);}
+
+.results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;}
+.tool-card{background:var(--cardBg);border:1px solid var(--borderColor);transition:transform .2s ease,box-shadow .2s ease;animation:slideUp .25s ease forwards;}
+.tool-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.07);}
+.tool-card.rank-1{border-top:3px solid var(--warning);}
+.tool-card.rank-2{border-top:3px solid var(--grey300);}
+.tool-card.rank-3{border-top:3px solid #cd7f32;}
+.tool-card-header{padding:14px 16px 10px;border-bottom:1px solid var(--borderColor);display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.tool-name{font-size:15px;font-weight:700;}
+.tier-badge{font-size:11px;font-weight:500;padding:3px 10px;white-space:nowrap;}
+.tb-1{background:var(--infoBg);color:#1e40af;}
+.tb-2{background:var(--successBg);color:#166534;}
+.tb-3{background:#EDE9FE;color:#5b21b6;}
+.tb-4{background:var(--errorBg);color:#991b1b;}
+.tool-card-body{padding:12px 16px;}
+.rank-label{font-size:11px;font-weight:600;color:var(--orange500);margin-bottom:5px;display:flex;align-items:center;gap:5px;}
+.score-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.score-bar-track{flex:1;height:6px;background:var(--grey200);border-radius:4px;overflow:hidden;}
+.score-bar-fill{height:100%;border-radius:4px;transition:width .6s ease;}
+.score-num{font-size:19px;font-weight:700;min-width:36px;text-align:right;}
+.tool-card-footer{padding:10px 16px;border-top:1px solid var(--borderColor);display:flex;gap:8px;}
+
+.data-table{width:100%;border-collapse:collapse;font-size:13px;}
+.data-table th{background:var(--surfaceColor);color:var(--secondaryText);padding:10px 14px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--borderColor);}
+.data-table td{padding:12px 14px;border-bottom:1px solid var(--borderColor);vertical-align:middle;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:var(--grey100);}
+.tbl-score-bar{display:flex;align-items:center;gap:8px;}
+.tbl-bar-track{width:72px;height:5px;background:var(--grey200);border-radius:4px;overflow:hidden;flex-shrink:0;}
+.tbl-bar-fill{height:100%;border-radius:4px;}
+
+/* pricing note badge */
+.price-note{font-size:10px;color:var(--secondaryText);font-style:italic;display:block;margin-top:2px;}
+.price-est{font-size:10px;background:var(--warningBg);color:#854d0e;padding:1px 6px;border-radius:3px;display:inline-block;margin-top:2px;}
+
+.matrix-wrap{overflow-x:auto;}
+.matrix-table{width:100%;border-collapse:collapse;font-size:12px;min-width:700px;}
+.matrix-table th{background:var(--surfaceColor);color:var(--secondaryText);padding:10px 8px;text-align:center;font-size:11px;font-weight:600;white-space:nowrap;border-bottom:2px solid var(--borderColor);}
+.matrix-table th:first-child{text-align:left;padding-left:14px;min-width:160px;}
+.matrix-table td{padding:9px 8px;text-align:center;border-bottom:1px solid var(--borderColor);}
+.matrix-table td:first-child{text-align:left;padding-left:14px;font-weight:600;font-size:13px;}
+.matrix-table tr:hover td{background:var(--surfaceColor);}
+.dot{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-weight:700;font-size:11px;color:white;}
+.dot-5{background:#22c55e}.dot-4{background:#86efac;color:#166534}.dot-3{background:#EAB308}.dot-2{background:#f97316}.dot-1{background:var(--error)}
+
+.tier-legend{display:flex;flex-wrap:wrap;gap:8px;}
+.tier-pill{display:flex;align-items:center;gap:7px;padding:7px 14px;border:1px solid var(--borderColor);font-size:12px;font-weight:400;cursor:pointer;background:var(--cardBg);transition:all .15s ease;font-family:system-ui,sans-serif;}
+.tier-pill.active{background:var(--orange500);color:var(--white);border-color:var(--orange500);}
+.tier-dot{width:7px;height:7px;border-radius:50%;}
+
+.signals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;}
+.signal-card{background:var(--cardBg);border:1px solid var(--borderColor);padding:18px;}
+.signal-tool-name{font-size:14px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:5px;}
+.signal-row{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--grey100);font-size:13px;gap:10px;}
+.signal-row:last-child{border-bottom:none;}
+.signal-key{color:var(--secondaryText);font-weight:500;flex-shrink:0;}
+.signal-val{text-align:right;font-weight:500;}
+
+.decision-table{width:100%;border-collapse:collapse;font-size:13px;}
+.decision-table th{background:var(--surfaceColor);color:var(--secondaryText);padding:10px 14px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--borderColor);}
+.decision-table td{padding:12px 14px;border-bottom:1px solid var(--borderColor);vertical-align:top;}
+.decision-table tr:hover td{background:var(--grey100);}
+.decision-table tr:last-child td{border-bottom:none;}
+.hl{font-weight:700;}
+
+.checklist-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;}
+.checklist-card{padding:14px;border:1px solid var(--borderColor);background:var(--cardBg);}
+.checklist-num{width:26px;height:26px;background:var(--orange500);color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;margin-bottom:8px;}
+.checklist-title{font-weight:600;font-size:13px;margin-bottom:4px;}
+.checklist-desc{font-size:12px;color:var(--secondaryText);line-height:1.5;}
+
+.weight-preview-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.weight-chip{padding:3px 10px;background:var(--white);border:1px solid var(--borderColor);font-size:11px;font-weight:500;}
+.weight-chip.high{background:var(--orange100);border-color:var(--orange300);color:var(--orange500);}
+.disq-pill{padding:2px 8px;background:var(--errorBg);color:var(--error);font-size:10px;font-weight:600;border-radius:10px;}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--cardBg);width:580px;max-width:92vw;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,.18);animation:slideDown .2s ease;}
+.modal-header{padding:18px 24px;border-bottom:1px solid var(--borderColor);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--cardBg);z-index:1;}
+.modal-header-title{font-size:17px;font-weight:600;display:flex;align-items:center;gap:10px;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--secondaryText);padding:4px;transition:color .15s ease;display:flex;align-items:center;}
+.modal-close:hover{color:var(--textColor);}
+.modal-body{padding:24px;}
+.modal-section{margin-bottom:18px;}
+.modal-section-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--secondaryText);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.modal-section-title::after{content:'';flex:1;height:1px;background:var(--borderColor);}
+.modal-list{list-style:none;display:flex;flex-direction:column;gap:7px;}
+.modal-list li{font-size:13px;display:flex;align-items:flex-start;gap:8px;line-height:1.5;}
+.modal-list-icon{color:var(--orange500);flex-shrink:0;margin-top:2px;}
+.modal-pricing{font-size:13px;background:var(--surfaceColor);padding:11px 14px;margin-bottom:18px;border-left:3px solid var(--orange500);display:flex;align-items:flex-start;gap:9px;}
+.pricing-icon{color:var(--orange500);flex-shrink:0;margin-top:1px;}
+.breakdown-table{width:100%;border-collapse:collapse;font-size:13px;}
+.breakdown-table th{text-align:left;padding:9px 12px;background:var(--surfaceColor);font-size:11px;font-weight:600;color:var(--secondaryText);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--borderColor);}
+.breakdown-table td{padding:9px 12px;border-bottom:1px solid var(--grey100);}
+.breakdown-table tfoot td{background:var(--surfaceColor);font-weight:700;}
+
+footer{text-align:center;padding:24px;font-size:12px;color:var(--secondaryText);border-top:1px solid var(--borderColor);background:var(--cardBg);margin-top:48px;}
+@media(max-width:640px){.content{padding:16px 12px}header{padding:0 16px}.nav-wrap{padding:0 12px}.header-subtitle{display:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="pwc-logo-wrap">
+      <svg viewBox="0 0 104 67" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#000" d="M69.26,30.74c-2.53.41-3.83,2.28-3.83,5.57s1.73,5.53,4.37,5.53c1.23,0,2.35-.41,4.7-1.56v2.68c-2.82,1.29-4.48,1.69-6.76,1.69-2.46,0-4.19-.65-5.61-2.09-1.45-1.45-2.17-3.36-2.17-5.5,0-4.74,3.51-7.95,8.64-7.95,3.41,0,5.75,1.56,5.75,3.84,0,1.47-1.09,2.48-2.71,2.48-.83,0-1.51-.22-2.39-.72v-3.98ZM56.76,37.06c2.27-2.86,3.07-4.02,3.07-5.42s-1.11-2.53-2.6-2.53c-.91,0-1.74.43-2.14.88v5.83l-3.72,4.96v-11.31h-3.54l-5.88,9.75v-9.75h-2.03l-5.34,1.3v1.36l2.91.3v11.96h3.76l5.64-9.27v9.27h4.12l5.74-7.34ZM23.34,32.52c.87-.11,1.29-.15,1.7-.15,2.45,0,3.78,1.63,3.78,4.7,0,3.62-1.63,5.51-4.66,5.51-.25,0-.43,0-.83-.02v-10.04ZM23.34,44.25c.98.11,1.93.15,2.5.15,5.04,0,8.24-3.23,8.24-8.03,0-4.15-2.4-7.15-5.65-7.15-1.41,0-2.35.29-5.09,1.92v-2h-1.52l-5.86,1.78v1.43h2.43v16.73l-2.18.54v1.39h9.58v-1.39s-2.44-.54-2.44-.54v-4.84Z"/>
+        <path fill="#fd5108" d="M66.54,24.97h-15.98l2.72-4.51h15.98l-2.72,4.51ZM87.96,15.94h-15.98l-2.72,4.51h15.98l2.72-4.51Z"/>
+      </svg>
+    </div>
+    <div class="header-divider"></div>
+    <div>
+      <div class="header-title">PPM / PMO Tool Selector</div>
+      <div class="header-subtitle">Three-layer evaluation framework for portfolio and program management platforms</div>
+    </div>
+  </div>
+  <div class="header-badge">Advisory Tool</div>
+</header>
+
+<div class="nav-wrap">
+  <button class="nav-tab active" onclick="showPanel('context')">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Configure
+  </button>
+  <button class="nav-tab" onclick="showPanel('weights')">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Capability Weights
+  </button>
+  <button class="nav-tab" onclick="showPanel('results')">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Scored Results
+  </button>
+  <button class="nav-tab" onclick="showPanel('matrix')">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Feature Matrix
+  </button>
+  <button class="nav-tab" onclick="showPanel('commercial')">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Pricing &amp; Ratings
+  </button>
+  <button class="nav-tab" onclick="showPanel('guide')">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Decision Guide
+  </button>
+</div>
+
+<div class="content">
+
+<!-- CONFIGURE -->
+<div id="panel-context" class="panel active">
+  <div class="section-heading">
+    <h2>Configure</h2>
+    <p>Select your context and set hard eligibility constraints. Hover the <strong>i</strong> on any option for details.</p>
+  </div>
+  <div class="card">
+    <div class="dim-section">
+      <div class="dim-label">Program Scope &amp; Governance Type</div>
+      <div class="dim-sublabel">What type of program management function are you establishing or supporting?</div>
+      <div class="chip-row" id="dim1-chips"></div>
+    </div>
+    <hr class="dim-divider">
+    <div class="dim-section">
+      <div class="dim-label">Organisational Maturity &amp; IT Availability</div>
+      <div class="dim-sublabel">How much PMO and IT capability exists to support deployment?</div>
+      <div class="chip-row" id="dim2-chips"></div>
+    </div>
+    <hr class="dim-divider">
+    <div class="dim-section">
+      <div class="dim-label">Technology Ecosystem</div>
+      <div class="dim-sublabel">What is the client's existing technology landscape?</div>
+      <div class="chip-row" id="dim3-chips"></div>
+    </div>
+    <hr class="dim-divider">
+    <div class="dim-section">
+      <div class="dim-label">Primary User Profile</div>
+      <div class="dim-sublabel">Who will primarily be entering and managing data day-to-day?</div>
+      <div class="chip-row" id="dim4-chips"></div>
+    </div>
+    <hr class="dim-divider">
+    <div class="dim-section" style="margin-bottom:0">
+      <div class="dim-label">Eligibility Filters</div>
+      <div class="dim-sublabel">Hard constraints -- tools that fail any filter are disqualified before scoring.</div>
+      <div class="filter-grid" id="filter-grid"></div>
+    </div>
+  </div>
+
+  <div id="config-summary" style="display:none;margin-bottom:16px">
+    <div class="alert alert-info" style="margin-bottom:0">
+      <div class="alert-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div id="config-summary-text" style="font-size:13px"></div>
+    </div>
+  </div>
+  <div id="disq-preview" style="display:none;margin-bottom:16px"></div>
+
+  <div style="display:flex;justify-content:flex-end">
+    <button class="btn btn-primary" onclick="showPanel('weights')">Capability Weights <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+  </div>
+</div>
+
+<!-- WEIGHTS -->
+<div id="panel-weights" class="panel">
+  <div class="section-heading"><h2>Capability Weights</h2><p>Adjust the importance of each functional capability. Sliders auto-normalise to 100%.</p></div>
+  <div class="alert"><div class="alert-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div>Cost, deployment speed and ecosystem constraints are handled in the Configure tab. This panel covers functional capability only.</div></div>
+  <div class="card">
+    <div class="weight-grid" id="weight-grid"></div>
+    <div style="margin-top:18px;padding:10px 14px;background:var(--successBg);color:#166534;border-left:4px solid var(--success);font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Weights always total 100% and auto-normalise as you adjust
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <button class="btn btn-secondary" onclick="resetWeights()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>Reset to Defaults</button>
+    <button class="btn btn-primary" onclick="showPanel('results')">View Scored Results <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="panel-results" class="panel">
+  <div class="section-heading"><h2>Scored Results</h2><p>Tools ranked by weighted capability score. Disqualified tools are hidden.</p></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+    <div class="filter-bar">
+      <span class="filter-bar-label">Tier</span>
+      <button class="filter-btn active" onclick="filterResultTier(this,'all')">All</button>
+      <button class="filter-btn" onclick="filterResultTier(this,'1')">Lightweight</button>
+      <button class="filter-btn" onclick="filterResultTier(this,'2')">Work Management</button>
+      <button class="filter-btn" onclick="filterResultTier(this,'3')">Dedicated PPM</button>
+      <button class="filter-btn" onclick="filterResultTier(this,'4')">Enterprise</button>
+    </div>
+    <div class="view-toggle">
+      <button class="view-toggle-btn active" id="res-card-btn" onclick="setView('result','card')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Cards</button>
+      <button class="view-toggle-btn" id="res-table-btn" onclick="setView('result','table')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Table</button>
+    </div>
+  </div>
+  <div id="result-disq-banner" style="display:none;margin-bottom:14px"></div>
+  <div id="result-card-view"></div>
+  <div id="result-table-view" style="display:none"><div class="card" style="padding:0;overflow:hidden"><table class="data-table" id="result-table"></table></div></div>
+</div>
+
+<!-- MATRIX -->
+<div id="panel-matrix" class="panel">
+  <div class="section-heading"><h2>Feature Matrix</h2><p>Raw capability scores (1-5) across all tools and criteria.</p></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+    <div class="tier-legend">
+      <button class="tier-pill active" onclick="toggleMatrixTier(this,'1')"><span class="tier-dot" style="background:#3b82f6"></span>Lightweight</button>
+      <button class="tier-pill active" onclick="toggleMatrixTier(this,'2')"><span class="tier-dot" style="background:#22c55e"></span>Work Management</button>
+      <button class="tier-pill active" onclick="toggleMatrixTier(this,'3')"><span class="tier-dot" style="background:#7c3aed"></span>Dedicated PPM</button>
+      <button class="tier-pill active" onclick="toggleMatrixTier(this,'4')"><span class="tier-dot" style="background:#ef4444"></span>Enterprise</button>
+    </div>
+    <div class="view-toggle">
+      <button class="view-toggle-btn active" id="mat-grid-btn" onclick="setView('matrix','grid')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Matrix</button>
+      <button class="view-toggle-btn" id="mat-table-btn" onclick="setView('matrix','table')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Table</button>
+    </div>
+  </div>
+  <div id="matrix-grid-view"><div class="card" style="padding:10px"><div class="matrix-wrap"><table class="matrix-table" id="matrix-table"></table></div></div></div>
+  <div id="matrix-table-view" style="display:none"><div class="card" style="padding:0;overflow:hidden"><table class="data-table" id="matrix-list-table"></table></div></div>
+  <div class="alert" style="margin-top:0"><div class="alert-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div>5 = Fully meets out-of-the-box &nbsp;|&nbsp; 4 = Mostly meets, minor config &nbsp;|&nbsp; 3 = Partially meets, workarounds needed &nbsp;|&nbsp; 2 = Weak, add-ons required &nbsp;|&nbsp; 1 = Does not meet requirement</div></div>
+</div>
+
+<!-- COMMERCIAL -->
+<div id="panel-commercial" class="panel">
+  <div class="section-heading"><h2>Pricing &amp; Ratings</h2><p>Pricing, deployment timeline and analyst recognition. Shown as reference only -- these do not affect capability scores.</p></div>
+  <div class="alert"><div class="alert-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div>Enterprise tools do not publish list pricing. Indicative figures are marked with <span class="price-est" style="display:inline">est.</span> and are based on disclosed contract data, analyst research and vendor comparisons as at 2025. Always obtain a formal quote.</div></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+    <div class="filter-bar">
+      <span class="filter-bar-label">Tier</span>
+      <button class="filter-btn active" onclick="filterCommTier(this,'all')">All</button>
+      <button class="filter-btn" onclick="filterCommTier(this,'1')">Lightweight</button>
+      <button class="filter-btn" onclick="filterCommTier(this,'2')">Work Management</button>
+      <button class="filter-btn" onclick="filterCommTier(this,'3')">Dedicated PPM</button>
+      <button class="filter-btn" onclick="filterCommTier(this,'4')">Enterprise</button>
+    </div>
+    <div class="view-toggle">
+      <button class="view-toggle-btn active" id="com-card-btn" onclick="setView('commercial','card')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Cards</button>
+      <button class="view-toggle-btn" id="com-table-btn" onclick="setView('commercial','table')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Table</button>
+    </div>
+  </div>
+  <div id="comm-card-view"></div>
+  <div id="comm-table-view" style="display:none"><div class="card" style="padding:0;overflow:hidden"><div style="overflow-x:auto"><table class="data-table" id="comm-table"></table></div></div></div>
+</div>
+
+<!-- GUIDE -->
+<div id="panel-guide" class="panel">
+  <div class="section-heading"><h2>Decision Guide</h2><p>Quick-reference for matching tool to context. Use alongside scored results.</p></div>
+  <div class="alert"><div class="alert-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div>"It depends" is honest -- but not helpful. Use this guide to give a confident, structured recommendation, then validate with a 2-week proof of concept before committing.</div></div>
+  <div class="card" style="padding:0;margin-bottom:20px">
+    <div class="card-header"><div class="card-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FD5108" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Context to Tool Recommendation</div></div>
+    <div style="overflow-x:auto"><table class="decision-table"><thead><tr><th>Context</th><th>Primary</th><th>Alternative</th><th>Avoid</th></tr></thead><tbody>
+      <tr><td>New PMO / standing start, fast deployment</td><td class="hl">Smartsheet</td><td>monday.com</td><td>Planview, ServiceNow</td></tr>
+      <tr><td>Cost-out or transformation program, benefits focus</td><td class="hl">Smartsheet</td><td>Bubble PPM</td><td>Trello, ClickUp</td></tr>
+      <tr><td>Non-PM users, visual simplicity needed</td><td class="hl">monday.com</td><td>Asana</td><td>Wrike, MS Project</td></tr>
+      <tr><td>Complex inter-initiative dependencies</td><td class="hl">Wrike</td><td>Smartsheet</td><td>Trello, Notion</td></tr>
+      <tr><td>M365 committed, no budget for new tools</td><td class="hl">MS Project + Power BI</td><td>Smartsheet</td><td>monday.com, Airtable</td></tr>
+      <tr><td>Large enterprise, mature PMO, long runway</td><td class="hl">Planview</td><td>Planisware</td><td>Trello, ClickUp</td></tr>
+      <tr><td>IT-led transformation, ServiceNow in-house</td><td class="hl">ServiceNow SPM</td><td>Planview</td><td>monday.com, Asana</td></tr>
+      <tr><td>Agile or development-heavy program</td><td class="hl">Jira Align</td><td>ClickUp</td><td>MS Project, Trello</td></tr>
+      <tr><td>Multi-client or professional services</td><td class="hl">Teamwork.com</td><td>Wrike</td><td>Notion, Airtable</td></tr>
+      <tr><td>Adobe / Creative Cloud ecosystem</td><td class="hl">Adobe Workfront</td><td>Smartsheet</td><td>Jira Align, ServiceNow</td></tr>
+    </tbody></table></div>
+  </div>
+  <div class="card" style="padding:0">
+    <div class="card-header"><div class="card-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FD5108" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>5 Questions Before Recommending Any Tool</div></div>
+    <div class="card-body"><div class="checklist-grid">
+      <div class="checklist-card"><div class="checklist-num">1</div><div class="checklist-title">Existing Tech Stack</div><div class="checklist-desc">M365, Google Workspace or Salesforce? Determines ecosystem lock-in and can eliminate tools immediately.</div></div>
+      <div class="checklist-card"><div class="checklist-num">2</div><div class="checklist-title">IT Involvement</div><div class="checklist-desc">Is IT available to support deployment? If not, Tier 3-4 tools are almost always out.</div></div>
+      <div class="checklist-card"><div class="checklist-num">3</div><div class="checklist-title">User Profile</div><div class="checklist-desc">Professional PMs or business-side owners? Non-PM users need Tier 1-2 tools with minimal training.</div></div>
+      <div class="checklist-card"><div class="checklist-num">4</div><div class="checklist-title">Budget</div><div class="checklist-desc">Tier 3-4 tools typically cost $30-$80/user/month or $50k-$250k+ annually. Tier 2 is $9-$30/user/month.</div></div>
+      <div class="checklist-card"><div class="checklist-num">5</div><div class="checklist-title">Timeline</div><div class="checklist-desc">PMO live in 4 weeks? Tier 3-4 tools are almost always out -- they typically require months to deploy.</div></div>
+    </div></div>
+  </div>
+</div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FD5108" stroke-width="2"><rect x="2" y="3" width="20" height="14"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span id="modal-title">Tool Details</span></div>
+      <button class="modal-close" onclick="closeModal()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<footer>PwC PPM / PMO Tool Selector &nbsp;|&nbsp; Scores based on published feature sets and Gartner/Forrester analyst data as at 2025. Indicative enterprise pricing based on disclosed contract data -- always obtain a formal vendor quote. &nbsp;|&nbsp; For internal advisory use only.</footer>
+
+<script>
+// ================================================================
+// DATA
+// ================================================================
+const criteria = [
+  { id:'portfolio', label:'Portfolio & Initiative Management', sub:'Initiative register, RAG status, strategic alignment, roll-up' },
+  { id:'benefits',  label:'Benefits & Financial Tracking',    sub:'Forecast vs actual savings, cost tracking, benefits realisation' },
+  { id:'planning',  label:'Planning & Scheduling',            sub:'Gantt, milestones, dependencies, critical path, WBS' },
+  { id:'resource',  label:'Resource Management',              sub:'Capacity planning, allocation, demand vs supply' },
+  { id:'risk',      label:'Risk, Issues & RAID',              sub:'Risk registers, RAID log, escalation, dependency flags' },
+  { id:'reporting', label:'Reporting & Dashboards',           sub:'Exec views, portfolio analytics, steering pack generation' },
+  { id:'adoption',  label:'Ease of Use & Adoption',          sub:'Non-PM usability, onboarding friction, admin burden' },
+  { id:'ai',        label:'AI & Automation',                  sub:'Workflow automation, predictive analytics, AI insights' },
+];
+const baseWeights = [25,20,12,10,8,12,8,5];
+
+const dimensions = [
+  { id:'dim1', options:[
+    { id:'tmo',      label:'Strategic Portfolio / PMO',           desc:'Managing a portfolio of transformation or strategic initiatives. Benefits tracking and portfolio roll-up are critical.' },
+    { id:'delivery', label:'Project Delivery PMO',                desc:'Governing individual project delivery -- schedule, budget, resources and risk across a defined set of projects.' },
+    { id:'agile',    label:'Agile / Product Portfolio',           desc:'Managing a digital or product portfolio using agile delivery. Sprint tracking, backlog and OKR alignment are priorities.' },
+    { id:'agency',   label:'Multi-Client / Professional Services', desc:'Managing multiple client programs simultaneously. Billing, time tracking and client portals are key requirements.' },
+  ]},
+  { id:'dim2', options:[
+    { id:'low',  label:'Low Maturity / Standing Start', desc:'No existing PPM tooling. Speed to value is critical. Dedicated PM resource and IT support may be limited.' },
+    { id:'mid',  label:'Established PMO, Maturing',     desc:'PMO exists but is growing. Some PM resource available. IT can assist but is not leading implementation.' },
+    { id:'high', label:'Mature Enterprise PMO',         desc:'PMO is well established. Dedicated IT resource available. Longer deployment timelines are acceptable if capability is strong.' },
+  ]},
+  { id:'dim3', options:[
+    { id:'microsoft',  label:'Microsoft 365',          desc:'Teams, SharePoint, Power BI and/or Azure are the primary stack. Native M365 integration is a strong preference.' },
+    { id:'google',     label:'Google Workspace',       desc:'Gmail, Drive and Google Calendar are the primary collaboration stack.' },
+    { id:'salesforce', label:'Salesforce / Mixed CRM', desc:'Salesforce is a key platform or the organisation uses a mix of tools with no single dominant ecosystem.' },
+    { id:'agnostic',   label:'No Strong Preference',   desc:'No dominant existing ecosystem. Best-of-breed selection is welcome.' },
+  ]},
+  { id:'dim4', options:[
+    { id:'pm',       label:'Professional PMs / PMO Staff',     desc:'Trained project managers and PMO analysts are primary users. Complexity and configuration are manageable.' },
+    { id:'mixed',    label:'Mixed -- PMs and Initiative Leads',desc:'A mix of professional PMs and business-side owners. Ease of use is important across the board.' },
+    { id:'business', label:'Business / Initiative Owners Only',desc:'Non-PM business users are the primary audience. Simplicity and minimal training overhead are essential.' },
+  ]},
+];
+
+const weightMods = {
+  tmo:[3,4,0,0,1,2,-2,0], delivery:[0,0,4,2,2,1,-2,-1], agile:[-2,-2,2,1,1,1,1,3], agency:[1,1,1,1,0,1,0,0],
+  low:[-1,-1,-1,-1,-1,0,4,0], mid:[0,0,0,0,0,1,1,0], high:[2,2,1,2,1,2,-3,1],
+  microsoft:[0,0,1,0,0,1,0,-1], google:[0,0,0,0,0,0,1,0], salesforce:[0,0,0,0,0,1,0,0], agnostic:[0,0,0,0,0,0,0,0],
+  pm:[1,1,2,2,1,1,-2,1], mixed:[0,0,0,0,0,0,1,0], business:[-1,-1,-1,-1,-1,0,4,-1],
+};
+
+const tiers = {
+  1:{label:'Lightweight',badge:'tb-1'},
+  2:{label:'Work Management',badge:'tb-2'},
+  3:{label:'Dedicated PPM',badge:'tb-3'},
+  4:{label:'Enterprise',badge:'tb-4'}
+};
+
+// pricePerUser: the clean $/user/month value shown in the column
+// priceNote: optional footnote (e.g. "est." for enterprise tools)
+// priceIsEst: true = show amber "est." badge
+const tools = [
+  {
+    id:'smartsheet', name:'Smartsheet', tier:2, url:'https://www.smartsheet.com',
+    pricing:'Pro $9, Business $19, Enterprise on request. Billed annually.',
+    pricePerUser:'$9 – $19', priceIsEst:false, priceNote:'Free trial available',
+    deployWeeks:'1-2 weeks',
+    analystRating:'Gartner Peer Insights 4.4/5 (726 reviews). Gartner APMR Visionary 2024.',
+    bestFor:'New PMO, benefits tracking, portfolio roll-up, fast deployment',
+    pros:['Best-in-class portfolio roll-up dashboards with real-time aggregation','Benefits tracking via formula logic -- highly configurable','Operational in 1-2 weeks with no IT dependency','Native integrations with Power BI, Teams, Salesforce and Jira'],
+    cons:['Resource capacity planning limited vs dedicated PPM tools','AI and predictive analytics are basic relative to Tier 3','Complex financial benefits models require configuration effort'],
+    verdict:'recommended', verdictText:'Top Recommendation -- Best all-round for new PMOs',
+    scores:[5,5,4,3,4,4,4,3]
+  },
+  {
+    id:'monday', name:'monday.com', tier:2, url:'https://monday.com',
+    pricing:'Basic $9, Standard $12, Pro $19, Enterprise on request. Billed annually.',
+    pricePerUser:'$9 – $19', priceIsEst:false, priceNote:'Free plan available',
+    deployWeeks:'< 1 week',
+    analystRating:'Gartner Peer Insights 4.5/5 (261 reviews). Gartner APMR Leader 2024.',
+    bestFor:'Non-PM stakeholders, visual dashboards, workflow automation',
+    pros:['Gartner APMR Leader 2024 -- highest ease-of-use ratings','Excellent visual dashboards; RAG views need zero configuration','Strong automation builder with 200+ recipe templates','AI work assistant on higher tiers'],
+    cons:['Gantt and dependency management less powerful than Wrike or Smartsheet','Benefits realisation and financial tracking require manual configuration','Resource capacity planning limited without add-ons'],
+    verdict:'strong', verdictText:'Strong -- Best for business-led teams and fast adoption',
+    scores:[4,3,3,2,3,5,5,4]
+  },
+  {
+    id:'wrike', name:'Wrike', tier:2, url:'https://www.wrike.com',
+    pricing:'Team $10, Business $24.80, Enterprise on request. Billed annually.',
+    pricePerUser:'$10 – $25', priceIsEst:false, priceNote:'Free plan available',
+    deployWeeks:'2-4 weeks',
+    analystRating:'Gartner Peer Insights 4.5/5 (379 reviews). Gartner APMR Visionary 2024.',
+    bestFor:'Complex planning, strong reporting, programs with dependencies',
+    pros:['Enterprise-grade Gantt charts, critical path and dependency management','Advanced multi-step workflow and approval automation','Excellent analytics and reporting','Supports Agile, Waterfall and hybrid delivery natively'],
+    cons:['Steeper learning curve than monday.com -- requires structured onboarding','Benefits and financial tracking require configuration','Resource capacity planning weaker than dedicated PPM tools'],
+    verdict:'strong', verdictText:'Strong -- Best for complex delivery programs',
+    scores:[4,3,5,3,4,5,3,3]
+  },
+  {
+    id:'asana', name:'Asana', tier:1, url:'https://asana.com',
+    pricing:'Starter $10.99, Advanced $24.99, Enterprise on request. Billed annually.',
+    pricePerUser:'$11 – $25', priceIsEst:false, priceNote:'Free plan available',
+    deployWeeks:'< 1 week',
+    analystRating:'Gartner Peer Insights 4.4/5 (200+ reviews). Gartner APMR Leader 2024.',
+    bestFor:'Cross-functional team coordination, workflow automation',
+    pros:['Gartner APMR Leader 2024','Clean, intuitive interface with low onboarding friction','4,000+ integrations -- widest ecosystem of any work management tool','Strong timeline views and OKR tracking on higher tiers'],
+    cons:['Portfolio management and benefits tracking limited to Enterprise tier','No native financial or cost tracking','Resource capacity planning is basic'],
+    verdict:'conditional', verdictText:'Conditional -- Strong for team coordination, weaker for PMO governance',
+    scores:[3,2,4,2,3,3,5,3]
+  },
+  {
+    id:'clickup', name:'ClickUp', tier:1, url:'https://clickup.com',
+    pricing:'Unlimited $7, Business $12, Business Plus $19. Billed annually.',
+    pricePerUser:'$7 – $19', priceIsEst:false, priceNote:'Free plan available',
+    deployWeeks:'1-2 weeks',
+    analystRating:'G2 4.7/5 (9,000+ reviews). Not in Gartner APMR Magic Quadrant.',
+    bestFor:'Replacing multiple tools, all-in-one hub, budget-conscious teams',
+    pros:['Highly customisable -- tasks, docs, whiteboards and goals in one place','Very competitive pricing; generous free plan','ClickUp AI available on paid plans'],
+    cons:['Significant setup required for portfolio-level governance','Feature breadth creates a steep learning curve','Resource capacity planning and financial tracking require workarounds'],
+    verdict:'conditional', verdictText:'Conditional -- Good value, weaker portfolio governance',
+    scores:[3,2,4,2,3,3,4,3]
+  },
+  {
+    id:'trello', name:'Trello', tier:1, url:'https://trello.com',
+    pricing:'Standard $5, Premium $10, Enterprise from $17.50. Billed annually.',
+    pricePerUser:'$5 – $10', priceIsEst:false, priceNote:'Free plan available',
+    deployWeeks:'< 1 week',
+    analystRating:'Gartner Peer Insights 4.4/5 (200+ reviews). Positioned as lightweight task management.',
+    bestFor:'Simple task tracking, Kanban boards, very small teams',
+    pros:['Extremely fast to set up','Generous free plan; lowest cost in the market','Excellent for simple Kanban workflows'],
+    cons:['No portfolio management capability','No benefits, financial or resource tracking','Not suitable for programs managing 10+ initiatives'],
+    verdict:'caution', verdictText:'Not Recommended -- Insufficient for program-level governance',
+    scores:[1,1,2,1,1,1,5,1]
+  },
+  {
+    id:'notion', name:'Notion', tier:1, url:'https://www.notion.so',
+    pricing:'Plus $8, Business $15, Enterprise on request. Billed annually.',
+    pricePerUser:'$8 – $15', priceIsEst:false, priceNote:'Free plan available',
+    deployWeeks:'< 1 week',
+    analystRating:'Not in Gartner PPM Magic Quadrant. Rated as a knowledge management tool.',
+    bestFor:'Knowledge management, documentation, lightweight tracking',
+    pros:['Highly flexible database and page structure','Good for knowledge management alongside project tracking','Notion AI available on paid plans'],
+    cons:['Not built for portfolio or program management','No native Gantt, benefits tracking or resource management','Reporting is entirely manual'],
+    verdict:'caution', verdictText:'Not Recommended for PMO -- Better as a knowledge base',
+    scores:[2,1,2,1,2,2,5,2]
+  },
+  {
+    id:'airtable', name:'Airtable', tier:2, url:'https://airtable.com',
+    pricing:'Team $10, Business $20, Enterprise on request. Billed annually.',
+    pricePerUser:'$10 – $20', priceIsEst:false, priceNote:'Free plan available',
+    deployWeeks:'1-2 weeks',
+    analystRating:'Not in Gartner PPM Magic Quadrant. Strong as a database and workflow tool.',
+    bestFor:'Database-driven tracking, flexible data models, intake management',
+    pros:['Very flexible schema -- bespoke data models without coding','Multiple views: grid, gallery, calendar, Gantt and kanban','Strong API-first architecture'],
+    cons:['Not built for portfolio management out-of-the-box','Benefits tracking and resource management require significant custom build','No exec-ready dashboards without connecting a BI tool'],
+    verdict:'conditional', verdictText:'Conditional -- Good for data capture, weak on PMO governance',
+    scores:[3,2,3,2,2,3,3,2]
+  },
+  {
+    id:'planview', name:'Planview', tier:3, url:'https://www.planview.com',
+    pricing:'LeanKit from $29/user/month. Portfolios and higher tiers are enterprise-negotiated, typically $50k-$250k/year.',
+    pricePerUser:'$29 – $59', priceIsEst:true, priceNote:'Indicative -- formal quote required',
+    deployWeeks:'12-26 weeks',
+    analystRating:'Gartner APMR Leader 2024. Forrester SPM Leader 2024.',
+    bestFor:'Large enterprise PMO, strategic portfolio management, resource capacity planning at scale',
+    pros:['Gartner APMR Leader 2024 and Forrester SPM Leader 2024','Full strategic portfolio management -- strategy to execution','Advanced resource capacity planning and scenario modelling','Deep ERP/CRM/BI integrations: SAP, Oracle, Salesforce, Power BI','AI-powered portfolio analytics and investment prioritisation'],
+    cons:['Requires 3-6 months of IT resource to deploy correctly','Not suitable without existing PMO maturity','Steep learning curve; requires dedicated administrators'],
+    verdict:'conditional', verdictText:'Enterprise Only -- Powerful but requires significant maturity',
+    scores:[5,5,5,5,5,5,2,4]
+  },
+  {
+    id:'planisware', name:'Planisware', tier:3, url:'https://planisware.com',
+    pricing:'Orchestra (mid-market) from approx $25-$35/user/month. Enterprise tier negotiated; indicatively $40-$80/user/month based on disclosed contracts.',
+    pricePerUser:'$25 – $80', priceIsEst:true, priceNote:'Indicative -- formal quote required',
+    deployWeeks:'16-30 weeks',
+    analystRating:'Gartner APMR Leader 2024. Forrester SPM Leader 2024. Peer Insights 4.6/5, Customers Choice 2024. Top 2 in 18 analyst studies.',
+    bestFor:'Enterprise R&D and product portfolio management, life sciences, financial services',
+    pros:['Top 2 globally across all PPM/SPM analyst studies','AI-powered portfolio analytics (Oscar AI) and predictive scenario planning','Dual product: Orchestra (mid-market) and Enterprise','Industry-specific templates for R&D, manufacturing and financial services'],
+    cons:['Long deployment timelines -- unsuitable for fast-moving programs','Requires dedicated IT and PPM administrators','Significant change management investment required'],
+    verdict:'conditional', verdictText:'Enterprise Only -- Best for R&D or product-heavy portfolios',
+    scores:[5,5,5,5,5,5,2,5]
+  },
+  {
+    id:'workfront', name:'Adobe Workfront', tier:3, url:'https://business.adobe.com/products/workfront/main.html',
+    pricing:'Select approx $30, Prime approx $40, Ultimate approx $45+ per user/month based on disclosed pricing benchmarks.',
+    pricePerUser:'$30 – $45', priceIsEst:true, priceNote:'Indicative -- formal quote required',
+    deployWeeks:'8-16 weeks',
+    analystRating:'Gartner Peer Insights 4.2/5 (165 reviews). Gartner APMR Leader 2024.',
+    bestFor:'Adobe and Creative Cloud environments, customisable templates, creative workflow governance',
+    pros:['Gartner APMR Leader 2024','Strong integration within Adobe and Creative Cloud','Customisable project templates and approval workflows','Supports Agile, Kanban and Waterfall natively'],
+    cons:['Less suited to pure finance or cost-out PMO use cases','AI capabilities less advanced than Planview or Planisware','Enterprise-level cost -- not suitable for smaller organisations'],
+    verdict:'conditional', verdictText:'Enterprise -- Best if already in Adobe ecosystem',
+    scores:[4,4,5,4,4,4,3,3]
+  },
+  {
+    id:'bubble', name:'Bubble PPM', tier:3, url:'https://www.bubblegroup.com',
+    pricing:'Team from $17, Professional $28, Enterprise $40+ per user/month. Billed annually.',
+    pricePerUser:'$17 – $40', priceIsEst:false, priceNote:'14-day free trial',
+    deployWeeks:'4-8 weeks',
+    analystRating:'Not in Gartner Magic Quadrant. Strong niche ratings for mid-market PMO use cases.',
+    bestFor:'Mid-market PMOs, portfolio management with strategic alignment scoring',
+    pros:['Purpose-built for portfolio and program management','Strategic Alignment Score feature built-in','400+ native integrations including SAP, Jira and Power BI','Modular -- configurable without IT dependency'],
+    cons:['Less brand recognition than Tier 2 or top Tier 3 tools','Smaller user community and fewer online resources','AI capabilities limited vs larger vendors'],
+    verdict:'conditional', verdictText:'Good PMO fit -- worth considering for mid-market',
+    scores:[5,5,4,4,4,4,3,2]
+  },
+  {
+    id:'servicenow', name:'ServiceNow SPM', tier:4, url:'https://www.servicenow.com/products/strategic-portfolio-management.html',
+    pricing:'SPM module typically $25-$50/user/month when bundled with existing ServiceNow. Standalone licensing is prohibitive ($100+/user/month equivalent).',
+    pricePerUser:'$25 – $50', priceIsEst:true, priceNote:'Requires ServiceNow foundation licence',
+    deployWeeks:'16-30 weeks',
+    analystRating:'Gartner Peer Insights 4.3/5 (163 reviews). Forrester SPM Wave Leader 2024.',
+    bestFor:'IT-led transformation programs, organisations with ServiceNow deployed',
+    pros:['Forrester SPM Wave Leader 2024','Best-in-class when ServiceNow is already the enterprise platform','Strong ITSM integration -- single pane of glass for IT and delivery','Scenario planning, portfolio analytics and demand management'],
+    cons:['Requires ServiceNow as foundation -- standalone cost is prohibitive','High IT involvement required to deploy and administer','Not suitable for business-led PMO functions'],
+    verdict:'caution', verdictText:'IT-led only -- only viable if ServiceNow already exists',
+    scores:[5,4,4,4,5,5,1,4]
+  },
+  {
+    id:'msproject', name:'MS Project + Power BI', tier:4, url:'https://www.microsoft.com/en-au/microsoft-365/project/project-management-software',
+    pricing:'Project Plan 1 $10, Plan 3 $30, Plan 5 $55. Power BI Pro $9.99. May be $0 with existing M365 E3/E5 licences.',
+    pricePerUser:'$10 – $55', priceIsEst:false, priceNote:'May be included in M365 licence',
+    deployWeeks:'4-8 weeks',
+    analystRating:'Gartner Peer Insights 4.3/5 (432 reviews). Most reviewed PPM tool on Gartner platform.',
+    bestFor:'M365 committed organisations with no budget for new tools',
+    pros:['Most-reviewed PPM tool on Gartner Peer Insights','Zero incremental cost if M365 licence exists','Strong project planning -- Gantt, WBS, resource views','Power BI enables highly customisable portfolio dashboards'],
+    cons:['Weak portfolio management out-of-the-box -- requires significant Power BI build','Benefits tracking requires custom Power BI/Excel work','Steep learning curve; MS Project is complex for non-PMs'],
+    verdict:'conditional', verdictText:'M365 clients only -- viable when no budget exists for new tools',
+    scores:[3,3,5,3,2,3,2,2]
+  },
+  {
+    id:'jira', name:'Jira Align', tier:4, url:'https://www.atlassian.com/software/jira/align',
+    pricing:'Essential approx $29/user/month (based on $17,500/year for 50 users). Premium tier approx $49/user/month. Enterprise negotiated.',
+    pricePerUser:'$29 – $49', priceIsEst:true, priceNote:'Minimum ~$17,500/year',
+    deployWeeks:'12-20 weeks',
+    analystRating:'Not in Gartner PPM or SPM Magic Quadrant. Strong for agile-at-scale use cases.',
+    bestFor:'Large-scale agile transformation, SAFe / PI Planning, development-heavy programs',
+    pros:['Best-in-class for agile at scale using SAFe framework','Native integration with Jira Software for delivery teams','Program Increment (PI) planning capabilities','OKR and value stream tracking built-in'],
+    cons:['Designed for agile IT delivery -- not cost-out or financial PMOs','Requires Jira Software ecosystem to already be in place','Poor adoption outside engineering and product teams'],
+    verdict:'caution', verdictText:'Development teams only -- not suitable for business-led PMO',
+    scores:[3,2,4,3,3,3,2,2]
+  },
+  {
+    id:'teamwork', name:'Teamwork.com', tier:2, url:'https://www.teamwork.com',
+    pricing:'Starter $10.99, Deliver $19.99, Grow $54.99. Billed annually.',
+    pricePerUser:'$11 – $55', priceIsEst:false, priceNote:'30-day free trial',
+    deployWeeks:'1-2 weeks',
+    analystRating:'Gartner Peer Insights 4.4/5 (196 reviews). Purpose-built for professional services.',
+    bestFor:'Professional services firms, multi-client management, agency delivery',
+    pros:['Gartner Peer Insights 4.4/5 (196 reviews)','Purpose-built for client-facing project delivery','Native billing, invoicing and time tracking','Client portal for external stakeholder collaboration'],
+    cons:['Less suited to internal transformation programs','Benefits realisation tracking is limited','Resource capacity planning weaker than dedicated PPM tools'],
+    verdict:'conditional', verdictText:'Best for professional services -- not ideal for internal PMO',
+    scores:[3,3,4,3,3,3,4,2]
+  },
+];
+
+const filterDefs = [
+  { id:'budget',    label:'Budget per User / Month',  sub:'Tools above this ceiling are disqualified', options:[{val:'any',label:'No limit'},{val:'free',label:'Free only'},{val:'10',label:'Up to $10'},{val:'20',label:'Up to $20'},{val:'30',label:'Up to $30'},{val:'55',label:'Up to $55'},{val:'enterprise',label:'No limit (enterprise)'}] },
+  { id:'deploy',    label:'Deployment Timeline',      sub:'Tools requiring longer are disqualified',   options:[{val:'any',label:'No limit'},{val:'1',label:'Within 1 week'},{val:'2',label:'Within 2 weeks'},{val:'4',label:'Within 4 weeks'},{val:'8',label:'Within 8 weeks'},{val:'26',label:'Up to 6 months'}] },
+  { id:'ecosystem', label:'Ecosystem Requirement',    sub:'Hard integration requirement',              options:[{val:'any',label:'No constraint'},{val:'microsoft',label:'Must integrate with M365'},{val:'google',label:'Must integrate with Google Workspace'},{val:'servicenow',label:'Must integrate with ServiceNow'},{val:'atlassian',label:'Must integrate with Atlassian'}] },
+  { id:'itavail',   label:'IT Availability',          sub:'Support available for deployment',          options:[{val:'any',label:'No constraint'},{val:'selfserve',label:'Self-serve only -- no IT'},{val:'limited',label:'Limited IT support'},{val:'full',label:'Full IT support available'}] },
+];
+
+const toolMeta = {
+  smartsheet:{budgetTier:20,deployWeeksNum:2,ecosystems:['microsoft','google','salesforce'],itRequired:'selfserve'},
+  monday:{budgetTier:19,deployWeeksNum:1,ecosystems:['microsoft','google','salesforce'],itRequired:'selfserve'},
+  wrike:{budgetTier:25,deployWeeksNum:3,ecosystems:['microsoft','google','salesforce'],itRequired:'selfserve'},
+  asana:{budgetTier:25,deployWeeksNum:1,ecosystems:['microsoft','google','salesforce'],itRequired:'selfserve'},
+  clickup:{budgetTier:19,deployWeeksNum:2,ecosystems:['microsoft','google','salesforce'],itRequired:'selfserve'},
+  trello:{budgetTier:10,deployWeeksNum:1,ecosystems:['microsoft','google'],itRequired:'selfserve'},
+  notion:{budgetTier:15,deployWeeksNum:1,ecosystems:['microsoft','google'],itRequired:'selfserve'},
+  airtable:{budgetTier:20,deployWeeksNum:2,ecosystems:['microsoft','google','salesforce'],itRequired:'selfserve'},
+  planview:{budgetTier:59,deployWeeksNum:20,ecosystems:['microsoft','salesforce'],itRequired:'full'},
+  planisware:{budgetTier:80,deployWeeksNum:24,ecosystems:['microsoft','salesforce'],itRequired:'full'},
+  workfront:{budgetTier:45,deployWeeksNum:12,ecosystems:['microsoft','salesforce'],itRequired:'full'},
+  bubble:{budgetTier:40,deployWeeksNum:6,ecosystems:['microsoft','salesforce'],itRequired:'limited'},
+  servicenow:{budgetTier:50,deployWeeksNum:24,ecosystems:['servicenow','microsoft'],itRequired:'full'},
+  msproject:{budgetTier:55,deployWeeksNum:6,ecosystems:['microsoft'],itRequired:'limited'},
+  jira:{budgetTier:49,deployWeeksNum:16,ecosystems:['atlassian','microsoft'],itRequired:'full'},
+  teamwork:{budgetTier:55,deployWeeksNum:2,ecosystems:['microsoft','google','salesforce'],itRequired:'selfserve'},
+};
+
+// ================================================================
+// STATE
+// ================================================================
+let currentWeights=[...baseWeights];
+let selectedDims={dim1:null,dim2:null,dim3:null,dim4:null};
+let filterValues={budget:'any',deploy:'any',ecosystem:'any',itavail:'any'};
+let resultTierFilter='all', commTierFilter='all', matrixTierFilter=['1','2','3','4'];
+let viewState={result:'card',matrix:'grid',commercial:'card'};
+
+// ================================================================
+// ELIGIBILITY
+// ================================================================
+function isDisqualified(tool){
+  const m=toolMeta[tool.id]; if(!m) return false; const f=filterValues;
+  if(f.budget!=='any'&&f.budget!=='enterprise'){
+    if(f.budget==='free'&&m.budgetTier>0) return true;
+    if(m.budgetTier>parseInt(f.budget)) return true;
+  }
+  if(f.deploy!=='any'&&m.deployWeeksNum>parseInt(f.deploy)) return true;
+  if(f.ecosystem!=='any'&&!m.ecosystems.includes(f.ecosystem)) return true;
+  if(f.itavail==='selfserve'&&m.itRequired!=='selfserve') return true;
+  return false;
+}
+
+// ================================================================
+// SCORING
+// ================================================================
+function calcScore(tool){ return Math.round(criteria.reduce((t,c,i)=>t+(tool.scores[i]*currentWeights[i])/100,0)*100)/100; }
+function scoreColor(s){ return s>=4.0?'#22C55E':s>=3.0?'#EAB308':'#EF4444'; }
+
+// ================================================================
+// WEIGHTS
+// ================================================================
+function normaliseWeights(idx,val){
+  const v=Math.max(1,Math.min(50,parseInt(val)));
+  const others=criteria.map((_,i)=>i).filter(i=>i!==idx);
+  const otherSum=others.reduce((s,i)=>s+currentWeights[i],0);
+  currentWeights[idx]=v;
+  let remaining=100-v,distributed=0;
+  others.forEach((oi,j)=>{
+    if(j===others.length-1){ currentWeights[oi]=Math.max(1,remaining-distributed); }
+    else{ const share=Math.round((currentWeights[oi]/otherSum)*remaining); currentWeights[oi]=Math.max(1,share); distributed+=currentWeights[oi]; }
+  });
+  const sum=currentWeights.reduce((a,b)=>a+b,0); if(sum!==100) currentWeights[0]+=(100-sum);
+}
+function renderWeights(){
+  const g=document.getElementById('weight-grid'); if(!g) return; g.innerHTML='';
+  criteria.forEach((c,i)=>{ const d=document.createElement('div'); d.className='weight-item'; d.innerHTML=`<div class="weight-label-row"><span>${c.label}</span><span class="weight-val" id="wv-${i}">${currentWeights[i]}%</span></div><div class="weight-sub">${c.sub}</div><input type="range" min="1" max="50" value="${currentWeights[i]}" id="wslider-${i}" oninput="normaliseWeights(${i},this.value);syncWeightUI()">`; g.appendChild(d); });
+}
+function syncWeightUI(){
+  criteria.forEach((_,i)=>{ const w=document.getElementById('wv-'+i),s=document.getElementById('wslider-'+i); if(w) w.textContent=currentWeights[i]+'%'; if(s) s.value=currentWeights[i]; });
+}
+function recalcWeightsFromDims(){
+  const w=[...baseWeights];
+  Object.values(selectedDims).forEach(sel=>{ if(sel&&weightMods[sel]) weightMods[sel].forEach((d,i)=>{w[i]=Math.max(1,w[i]+d);}); });
+  const total=w.reduce((a,b)=>a+b,0);
+  w.forEach((v,i)=>{ currentWeights[i]=Math.round(v*100/total); });
+  const diff=100-currentWeights.reduce((a,b)=>a+b,0); currentWeights[0]+=diff;
+}
+function resetWeights(){ recalcWeightsFromDims(); renderWeights(); syncWeightUI(); }
+
+// ================================================================
+// CONFIGURE
+// ================================================================
+function renderDimensions(){
+  dimensions.forEach(dim=>{
+    const row=document.getElementById(`${dim.id}-chips`); if(!row) return; row.innerHTML='';
+    dim.options.forEach(opt=>{
+      const wrap=document.createElement('div'); wrap.className='tooltip-wrap';
+      const chip=document.createElement('button');
+      chip.className='chip'+(selectedDims[dim.id]===opt.id?' selected':'');
+      chip.innerHTML=`<svg class="chip-check" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>${opt.label}<span class="chip-info">i</span>`;
+      chip.onclick=()=>{
+        row.querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));
+        chip.classList.add('selected'); selectedDims[dim.id]=opt.id;
+        recalcWeightsFromDims(); syncWeightUI(); updateConfigSummary();
+      };
+      const tip=document.createElement('div'); tip.className='tooltip-box'; tip.textContent=opt.desc;
+      wrap.appendChild(chip); wrap.appendChild(tip); row.appendChild(wrap);
+    });
+  });
+}
+function renderFilters(){
+  const g=document.getElementById('filter-grid'); if(!g) return; g.innerHTML='';
+  filterDefs.forEach(fd=>{
+    const d=document.createElement('div'); d.className='filter-item';
+    d.innerHTML=`<div class="filter-item-label">${fd.label}</div><div class="filter-item-sub">${fd.sub}</div><select class="filter-select" onchange="filterValues['${fd.id}']=this.value;updateConfigSummary()">${fd.options.map(o=>`<option value="${o.val}"${filterValues[fd.id]===o.val?' selected':''}>${o.label}</option>`).join('')}</select>`;
+    g.appendChild(d);
+  });
+}
+function updateConfigSummary(){
+  const box=document.getElementById('config-summary'),text=document.getElementById('config-summary-text');
+  const disqBox=document.getElementById('disq-preview');
+  const anyDim=Object.values(selectedDims).some(v=>v!==null);
+  const disqList=tools.filter(t=>isDisqualified(t));
+  if(anyDim){
+    box.style.display='block';
+    const labels=[]; dimensions.forEach(dim=>{ if(selectedDims[dim.id]){ const o=dim.options.find(x=>x.id===selectedDims[dim.id]); if(o) labels.push(`<strong>${o.label}</strong>`); } });
+    text.innerHTML=`Context: ${labels.join(' &bull; ')}. Weights adjusted automatically.`;
+  } else box.style.display='none';
+  if(disqList.length){
+    disqBox.style.display='block';
+    disqBox.innerHTML=`<div class="alert alert-error" style="margin-bottom:0"><div class="alert-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></div><div><strong>${disqList.length} tool${disqList.length>1?'s':''} disqualified</strong> by eligibility filters: ${disqList.map(t=>`<strong>${t.name}</strong>`).join(', ')}.</div></div>`;
+  } else disqBox.style.display='none';
+}
+
+// ================================================================
+// RESULTS
+// ================================================================
+function renderResults(){
+  const scored=tools.map(t=>({...t,totalScore:calcScore(t),disq:isDisqualified(t)})).filter(t=>!t.disq).sort((a,b)=>b.totalScore-a.totalScore);
+  const disqList=tools.filter(t=>isDisqualified(t));
+  const banner=document.getElementById('result-disq-banner');
+  if(disqList.length){ banner.style.display='block'; banner.innerHTML=`<div class="alert alert-error" style="margin-bottom:0"><div class="alert-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></div><div><strong>${disqList.length} tool${disqList.length>1?'s':''} disqualified</strong>: ${disqList.map(t=>`<strong>${t.name}</strong>`).join(', ')}.</div></div>`; }
+  else banner.style.display='none';
+
+  // CARDS
+  const cv=document.getElementById('result-card-view'); cv.innerHTML='';
+  const grid=document.createElement('div'); grid.className='results-grid'; cv.appendChild(grid);
+  const rl=['1st','2nd','3rd']; let rank=0;
+  scored.forEach(tool=>{
+    if(resultTierFilter!=='all'&&String(tool.tier)!==resultTierFilter) return;
+    rank++;
+    const card=document.createElement('div');
+    card.className=`tool-card${rank<=3?' rank-'+rank:''}`;
+    const pct=(tool.totalScore/5)*100, bc=scoreColor(tool.totalScore);
+    card.innerHTML=`
+      <div class="tool-card-header">
+        <div>${rank<=3?`<div class="rank-label"><svg width="10" height="10" viewBox="0 0 24 24" fill="#FD5108" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>${rl[rank-1]} ranked</div>`:''}<div class="tool-name">${tool.name}</div><div style="font-size:11px;color:var(--secondaryText);margin-top:1px">${tiers[tool.tier].label}</div></div>
+        <div class="tier-badge ${tiers[tool.tier].badge}">Tier ${tool.tier}</div>
+      </div>
+      <div class="tool-card-body">
+        <div class="score-row"><div class="score-bar-track"><div class="score-bar-fill" style="width:${pct}%;background:${bc}"></div></div><div class="score-num" style="color:${bc}">${tool.totalScore}</div></div>
+        <div style="font-size:12px;color:var(--secondaryText);line-height:1.5">${tool.bestFor}</div>
+      </div>
+      <div class="tool-card-footer">
+        <button class="btn btn-primary" style="padding:7px 14px;font-size:12px" onclick="openModal('${tool.id}')">View Details</button>
+        <a href="${tool.url}" target="_blank" rel="noopener" style="padding:7px 14px;font-size:12px;font-weight:600;color:var(--orange500);border:1px solid var(--orange500);text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:background .2s" onmouseover="this.style.background='var(--orange100)'" onmouseout="this.style.background='transparent'">Website <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  // TABLE
+  const tbl=document.getElementById('result-table');
+  let html=`<thead><tr><th>#</th><th>Tool</th><th>Tier</th><th>Score</th><th>Best For</th><th></th></tr></thead><tbody>`;
+  let r=0;
+  scored.forEach(tool=>{
+    if(resultTierFilter!=='all'&&String(tool.tier)!==resultTierFilter) return;
+    r++; const pct=(tool.totalScore/5)*100, bc=scoreColor(tool.totalScore);
+    html+=`<tr><td style="font-size:11px;font-weight:600;color:var(--secondaryText)">${r}</td><td><strong style="font-size:14px">${tool.name}</strong><div style="font-size:11px;color:var(--secondaryText)">${tiers[tool.tier].label}</div></td><td><span class="tier-badge ${tiers[tool.tier].badge}">Tier ${tool.tier}</span></td><td><div class="tbl-score-bar"><div class="tbl-bar-track"><div class="tbl-bar-fill" style="width:${pct}%;background:${bc}"></div></div><span style="font-size:13px;font-weight:700;color:${bc}">${tool.totalScore}</span></div></td><td style="font-size:12px;color:var(--secondaryText);max-width:200px">${tool.bestFor}</td><td><button class="btn btn-primary" style="padding:6px 12px;font-size:12px;white-space:nowrap" onclick="openModal('${tool.id}')">Details</button></td></tr>`;
+  });
+  tbl.innerHTML=html+'</tbody>';
+}
+function filterResultTier(btn,tier){
+  document.querySelectorAll('#panel-results .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); resultTierFilter=tier; renderResults();
+}
+
+// ================================================================
+// MATRIX
+// ================================================================
+function renderMatrix(){
+  const visible=tools.filter(t=>matrixTierFilter.includes(String(t.tier)));
+  const tbl=document.getElementById('matrix-table'); if(!tbl) return;
+  let html=`<thead><tr><th>Criterion / Weight</th>${visible.map(t=>`<th style="${isDisqualified(t)?'opacity:.35':''}">${t.name}${isDisqualified(t)?' x':''}</th>`).join('')}</tr></thead><tbody>`;
+  criteria.forEach((c,i)=>{
+    html+=`<tr><td><div style="font-weight:600;font-size:13px">${c.label}</div><div style="font-size:11px;color:var(--secondaryText)">${currentWeights[i]}%</div></td>`;
+    visible.forEach(t=>{ html+=`<td style="${isDisqualified(t)?'opacity:.35':''}"><div class="dot dot-${t.scores[i]}">${t.scores[i]}</div></td>`; });
+    html+=`</tr>`;
+  });
+  html+=`<tr style="background:var(--grey100)"><td style="font-weight:700;font-size:13px;border-bottom:none">Weighted Score</td>${visible.map(t=>{const s=calcScore(t),d=isDisqualified(t);return`<td style="font-weight:700;font-size:13px;color:${scoreColor(s)};border-bottom:none;${d?'opacity:.35':''}">${d?'--':s}</td>`;}).join('')}</tr></tbody>`;
+  tbl.innerHTML=html;
+
+  const lt=document.getElementById('matrix-list-table'); if(!lt) return;
+  const vt=visible.filter(t=>!isDisqualified(t)).sort((a,b)=>calcScore(b)-calcScore(a));
+  let lh=`<thead><tr><th>Tool</th><th>Tier</th>${criteria.map(c=>`<th style="font-size:10px">${c.label.split(' ').slice(0,2).join(' ')}</th>`).join('')}<th>Score</th></tr></thead><tbody>`;
+  vt.forEach(t=>{ const s=calcScore(t); lh+=`<tr><td><strong>${t.name}</strong></td><td><span class="tier-badge ${tiers[t.tier].badge}">Tier ${t.tier}</span></td>${t.scores.map(sc=>`<td><div class="dot dot-${sc}" style="width:20px;height:20px;font-size:10px">${sc}</div></td>`).join('')}<td style="font-weight:700;color:${scoreColor(s)}">${s}</td></tr>`; });
+  lt.innerHTML=lh+'</tbody>';
+}
+function toggleMatrixTier(btn,tier){
+  btn.classList.toggle('active');
+  matrixTierFilter=btn.classList.contains('active')?[...new Set([...matrixTierFilter,tier])]:matrixTierFilter.filter(t=>t!==tier);
+  renderMatrix();
+}
+
+// ================================================================
+// COMMERCIAL / PRICING
+// ================================================================
+function priceCellHtml(tool){
+  const est=tool.priceIsEst?`<span class="price-est">est.</span>`:'';
+  const note=tool.priceNote?`<span class="price-note">${tool.priceNote}</span>`:'';
+  return `<strong>${tool.pricePerUser}</strong>${est}${note}`;
+}
+
+function renderCommercial(){
+  const filtered=tools.filter(t=>commTierFilter==='all'||String(t.tier)===commTierFilter);
+
+  // CARDS
+  const cv=document.getElementById('comm-card-view'); cv.innerHTML='';
+  const g=document.createElement('div'); g.className='signals-grid'; cv.appendChild(g);
+  filtered.forEach(t=>{
+    const disq=isDisqualified(t); const card=document.createElement('div'); card.className='signal-card'; if(disq) card.style.opacity='.4';
+    card.innerHTML=`
+      <div class="signal-tool-name">${t.name}<span class="tier-badge ${tiers[t.tier].badge}">${tiers[t.tier].label}</span>${disq?'<span class="disq-pill">DISQUALIFIED</span>':''}</div>
+      <div class="signal-row"><span class="signal-key">$/user/month</span><span class="signal-val">${priceCellHtml(t)}</span></div>
+      <div class="signal-row"><span class="signal-key">Deploy time</span><span class="signal-val">${t.deployWeeks}</span></div>
+      <div class="signal-row"><span class="signal-key">Analyst / ratings</span><span class="signal-val" style="font-size:11px;color:var(--secondaryText);text-align:right">${t.analystRating}</span></div>
+      <div style="margin-top:10px"><a href="${t.url}" target="_blank" rel="noopener" style="font-size:12px;font-weight:600;color:var(--orange500);text-decoration:none;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--orange500);padding:5px 10px;transition:background .2s" onmouseover="this.style.background='var(--orange100)'" onmouseout="this.style.background='transparent'">Website <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>`;
+    g.appendChild(card);
+  });
+
+  // TABLE
+  const st=document.getElementById('comm-table'); if(!st) return;
+  let html=`<thead><tr><th>Tool</th><th>Tier</th><th>$/user/month</th><th>Deploy Time</th><th>Analyst / Ratings</th><th></th></tr></thead><tbody>`;
+  filtered.forEach(t=>{
+    const disq=isDisqualified(t);
+    html+=`<tr style="${disq?'opacity:.4':''}">
+      <td><strong>${t.name}</strong>${disq?' <span class="disq-pill">DISQ</span>':''}</td>
+      <td><span class="tier-badge ${tiers[t.tier].badge}">Tier ${t.tier}</span></td>
+      <td style="min-width:120px">${priceCellHtml(t)}</td>
+      <td style="font-size:12px;white-space:nowrap">${t.deployWeeks}</td>
+      <td style="font-size:11px;color:var(--secondaryText);max-width:260px">${t.analystRating}</td>
+      <td><a href="${t.url}" target="_blank" rel="noopener" style="font-size:12px;font-weight:600;color:var(--orange500);text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:3px">Website <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></td>
+    </tr>`;
+  });
+  st.innerHTML=html+'</tbody>';
+}
+function filterCommTier(btn,tier){
+  document.querySelectorAll('#panel-commercial .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); commTierFilter=tier; renderCommercial();
+}
+
+// ================================================================
+// VIEW TOGGLE
+// ================================================================
+function setView(panel,mode){
+  viewState[panel]=mode;
+  if(panel==='result'){
+    document.getElementById('result-card-view').style.display=mode==='card'?'block':'none';
+    document.getElementById('result-table-view').style.display=mode==='table'?'block':'none';
+    document.getElementById('res-card-btn').classList.toggle('active',mode==='card');
+    document.getElementById('res-table-btn').classList.toggle('active',mode==='table');
+  } else if(panel==='matrix'){
+    document.getElementById('matrix-grid-view').style.display=mode==='grid'?'block':'none';
+    document.getElementById('matrix-table-view').style.display=mode==='table'?'block':'none';
+    document.getElementById('mat-grid-btn').classList.toggle('active',mode==='grid');
+    document.getElementById('mat-table-btn').classList.toggle('active',mode==='table');
+  } else if(panel==='commercial'){
+    document.getElementById('comm-card-view').style.display=mode==='card'?'block':'none';
+    document.getElementById('comm-table-view').style.display=mode==='table'?'block':'none';
+    document.getElementById('com-card-btn').classList.toggle('active',mode==='card');
+    document.getElementById('com-table-btn').classList.toggle('active',mode==='table');
+  }
+}
+
+// ================================================================
+// MODAL
+// ================================================================
+function openModal(toolId){
+  const tool=tools.find(t=>t.id===toolId); if(!tool) return;
+  document.getElementById('modal-title').textContent=tool.name;
+  const s=calcScore(tool);
+  const breakdown=criteria.map((c,i)=>`<tr><td style="font-size:13px">${c.label}</td><td style="text-align:center"><div class="dot dot-${tool.scores[i]}">${tool.scores[i]}</div></td><td style="text-align:right;font-weight:700;font-size:13px">${((tool.scores[i]*currentWeights[i])/100).toFixed(2)}</td></tr>`).join('');
+  document.getElementById('modal-body').innerHTML=`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap"><span class="tier-badge ${tiers[tool.tier].badge}">${tiers[tool.tier].label}</span><span style="font-size:12px;color:var(--secondaryText);padding:3px 10px;background:var(--surfaceColor)">${tool.verdictText}</span></div>
+    <div class="modal-pricing"><div class="pricing-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FD5108" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div><strong>Pricing:</strong> ${tool.pricing}<br><strong>Deployment:</strong> ${tool.deployWeeks}</div></div>
+    <div class="modal-section"><div class="modal-section-title">Strengths</div><ul class="modal-list">${tool.pros.map(p=>`<li><span class="modal-list-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FD5108" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></span>${p}</li>`).join('')}</ul></div>
+    <div class="modal-section"><div class="modal-section-title">Limitations</div><ul class="modal-list">${tool.cons.map(c=>`<li><span class="modal-list-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FD5108" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg></span>${c}</li>`).join('')}</ul></div>
+    <div class="modal-section"><div class="modal-section-title">Score Breakdown</div><table class="breakdown-table"><thead><tr><th>Criterion</th><th style="text-align:center">Score</th><th style="text-align:right">Weighted</th></tr></thead><tbody>${breakdown}</tbody><tfoot><tr><td colspan="2" style="font-weight:700">Total</td><td style="text-align:right;font-size:17px;font-weight:700;color:${scoreColor(s)}">${s}</td></tr></tfoot></table></div>
+    <a href="${tool.url}" target="_blank" rel="noopener" style="font-size:13px;font-weight:600;color:var(--orange500);text-decoration:none;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--orange500);padding:8px 14px;transition:background .2s" onmouseover="this.style.background='var(--orange100)'" onmouseout="this.style.background='transparent'">Visit ${tool.name} <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(e){
+  if(!e||e.target===document.getElementById('modal-overlay')) document.getElementById('modal-overlay').classList.remove('open');
+}
+
+// ================================================================
+// NAV
+// ================================================================
+function showPanel(name){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  const panels=['context','weights','results','matrix','commercial','guide'];
+  document.getElementById('panel-'+name).classList.add('active');
+  document.querySelectorAll('.nav-tab')[panels.indexOf(name)].classList.add('active');
+  if(name==='results') renderResults();
+  if(name==='matrix') renderMatrix();
+  if(name==='weights') renderWeights();
+  if(name==='commercial') renderCommercial();
+}
+
+// INIT
+renderDimensions(); renderFilters(); renderWeights();
+</script>
+</body>
+</html>
