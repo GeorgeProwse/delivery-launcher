@@ -6,772 +6,525 @@
   <title>PwC Dashboard Pattern Library</title>
   <link rel="icon" href="data:,">
 <style>
+
 /* =============================================
    RESET & DESIGN TOKENS
 ============================================= */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --orange500: #fd5108;
-  --orange400: #e8530e;
-  --orange300: #ffaa72;
-  --orange100: #ffe8d4;
-  --orange50:  #fff5f0;
-
-  --black:   #000000;
-  --grey900: #111111;
-  --grey700: #374151;
-  --grey600: #4b5563;
-  --grey500: #a1a8b3;
-  --grey400: #b5bcc4;
-  --grey300: #cbd1d6;
-  --grey200: #dfe3e6;
-  --grey100: #eeeff1;
-  --white:   #ffffff;
-
-  --success:   #22c55e;
-  --successBg: #dcfce7;
-  --warning:   #eab308;
-  --warningBg: #fef3c7;
-  --danger:    #ef4444;
-  --dangerBg:  #fee2e2;
-  --info:      #3b82f6;
-  --infoBg:    #dbeafe;
-
-  --bgColor:      #eeeff1;
-  --cardBg:       #ffffff;
-  --textColor:    #000000;
-  --secondaryText:#a1a8b3;
-  --borderColor:  #dfe3e6;
-  --surfaceColor: #eeeff1;
-
-  --cat-executive: #7c3aed;
-  --cat-finance:   #0ea5e9;
-  --cat-risk:      #ef4444;
-  --cat-cyber:     #f97316;
-  --cat-operations:#10b981;
-  --cat-customer:  #ec4899;
-  --cat-workforce: #8b5cf6;
-  --cat-pmo:       #f59e0b;
-  --cat-esg:       #06b6d4;
-
+  --orange500: #fd5108; --orange400: #e8530e;
+  --orange300: #ffaa72; --orange100: #ffe8d4; --orange50: #fff5f0;
+  --black: #000; --grey900: #111; --grey700: #374151; --grey600: #4b5563;
+  --grey500: #a1a8b3; --grey400: #b5bcc4; --grey300: #cbd1d6;
+  --grey200: #dfe3e6; --grey100: #eeeff1; --white: #fff;
+  --success: #22c55e; --successBg: #dcfce7;
+  --warning: #eab308; --warningBg: #fef3c7;
+  --danger: #ef4444; --dangerBg: #fee2e2;
+  --info: #3b82f6; --infoBg: #dbeafe;
+  --bgColor: #eeeff1; --cardBg: #fff; --textColor: #000;
+  --secondaryText: #a1a8b3; --borderColor: #dfe3e6;
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
   --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
-  --shadow-lg: 0 8px 24px rgba(0,0,0,0.14);
-
-  --radius-sm:   6px;
-  --radius-md:  10px;
-  --radius-lg:  16px;
-  --radius-pill:100px;
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.15);
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-pill: 100px;
 }
 
-/* =============================================
-   GLOBALS
-============================================= */
 html { height: 100%; }
 body {
   font-family: system-ui, -apple-system, sans-serif;
-  background: var(--bgColor);
-  color: var(--textColor);
-  font-size: 14px;
-  line-height: 1.6;
-  min-height: 100vh;
+  background: var(--bgColor); color: var(--textColor);
+  font-size: 14px; line-height: 1.6; min-height: 100vh;
 }
-button  { cursor: pointer; font-family: inherit; }
+button { cursor: pointer; font-family: inherit; }
 input, select { font-family: inherit; }
+h1,h2,h3,h4 { letter-spacing: -0.01em; }
 
-@keyframes fadeIn  { from { opacity:0 } to { opacity:1 } }
-@keyframes slideUp { from { opacity:0; transform:translateY(10px) } to { opacity:1; transform:translateY(0) } }
+@keyframes fadeIn  { from { opacity: 0 } to { opacity: 1 } }
+@keyframes slideUp { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:translateY(0) } }
 
 /* =============================================
    HEADER
 ============================================= */
 #app-header {
   position: fixed; top:0; left:0; right:0; z-index:300;
-  height: 52px;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 24px;
-  background: var(--cardBg);
-  border-bottom: 1px solid var(--borderColor);
+  height: 52px; display: flex; align-items: center;
+  justify-content: space-between; padding: 0 24px;
+  background: var(--cardBg); border-bottom: 1px solid var(--borderColor);
 }
 .header-brand { display:flex; align-items:center; gap:12px; }
 .header-logo {
-  width:30px; height:30px; border-radius:7px;
-  background: var(--orange500);
+  width:30px; height:30px; border-radius:7px; background:var(--orange500);
   display:flex; align-items:center; justify-content:center;
-  color:#fff; font-size:13px; font-weight:700; letter-spacing:-0.02em;
-  flex-shrink:0;
+  color:#fff; font-size:13px; font-weight:700; flex-shrink:0;
 }
-.header-title   { font-size:15px; font-weight:600; letter-spacing:-0.01em; }
+.header-title   { font-size:15px; font-weight:600; }
 .header-subtitle{ font-size:11px; color:var(--secondaryText); }
 .header-divider { width:1px; height:20px; background:var(--borderColor); }
-
-.header-nav { display:flex; align-items:center; gap:2px; }
+.header-nav     { display:flex; align-items:center; gap:2px; }
 .nav-btn {
-  padding:6px 14px;
-  font-size:12.5px; font-weight:500;
-  color:var(--secondaryText);
-  background:transparent; border:none;
-  border-radius:var(--radius-pill);
-  transition:all 150ms;
-  white-space:nowrap;
+  padding:6px 14px; font-size:12.5px; font-weight:500;
+  color:var(--secondaryText); background:transparent; border:none;
+  border-radius:var(--radius-pill); transition:all 140ms; white-space:nowrap;
+  position:relative;
 }
 .nav-btn:hover  { background:var(--grey100); color:var(--textColor); }
 .nav-btn.active { background:var(--orange50); color:var(--orange400); font-weight:600; }
-
+.compare-badge {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:16px; height:16px; border-radius:50%; margin-left:4px;
+  background:var(--orange500); color:#fff; font-size:9px; font-weight:700;
+}
 .header-actions { display:flex; align-items:center; gap:6px; }
 .btn-icon {
-  width:34px; height:34px;
-  display:flex; align-items:center; justify-content:center;
-  border:none; background:transparent;
-  border-radius:var(--radius-sm);
-  color:var(--secondaryText); font-size:15px;
-  transition:all 150ms;
+  width:34px; height:34px; display:flex; align-items:center; justify-content:center;
+  border:none; background:transparent; border-radius:var(--radius-sm);
+  color:var(--secondaryText); font-size:15px; transition:all 140ms;
 }
-.btn-icon:hover { background:var(--grey100); color:var(--textColor); }
+.btn-icon.active, .btn-icon:hover { background:var(--grey100); color:var(--textColor); }
 
 /* =============================================
-   MAIN BODY
+   VIEW CONTAINERS
 ============================================= */
 #app-body { margin-top:52px; min-height:calc(100vh - 52px); }
-
-.view { display:none; }
-.view.active { display:block; animation:fadeIn 180ms ease; }
+div[data-view]         { display:none; animation:fadeIn 180ms ease; }
+div[data-view].active  { display:block; }
+#view-gallery.active   { display:block; }
 
 /* =============================================
-   GALLERY VIEW
+   SHARED BUTTONS
 ============================================= */
-#gallery-view { display:none; flex-direction:row; }
-#gallery-view.active { display:flex; }
-
-/* — Filter Rail — */
-#filter-rail {
-  width:216px; flex-shrink:0;
-  position:sticky; top:52px;
-  height:calc(100vh - 52px);
-  overflow-y:auto;
-  padding:18px 14px;
-  border-right:1px solid var(--borderColor);
-  background:var(--cardBg);
+.btn {
+  padding:7px 16px; font-size:12.5px; font-weight:500;
+  border:1px solid var(--borderColor); border-radius:var(--radius-pill);
+  background:var(--cardBg); color:var(--textColor);
+  transition:all 140ms; cursor:pointer;
 }
-#filter-rail::-webkit-scrollbar { width:4px; }
-#filter-rail::-webkit-scrollbar-thumb { background:var(--grey200); border-radius:2px; }
-
-.filter-section { margin-bottom:22px; }
-.filter-label {
-  display:block; margin-bottom:8px;
-  font-size:10px; font-weight:700;
-  letter-spacing:0.08em; text-transform:uppercase;
-  color:var(--secondaryText);
+.btn:hover          { background:var(--grey100); }
+.btn:disabled       { opacity:.4; cursor:not-allowed; }
+.btn.btn-primary    {
+  background:var(--orange500); color:#fff; border-color:var(--orange500);
+  font-weight:600; box-shadow:0 2px 8px rgba(253,81,8,.28);
 }
-.filter-search {
-  width:100%; padding:7px 10px;
+.btn.btn-primary:hover  { background:var(--orange400); border-color:var(--orange400); }
+.btn.btn-compare        { background:var(--cardBg); color:var(--textColor); }
+.btn.btn-compare.active {
+  background:var(--orange50); color:var(--orange400); border-color:var(--orange300);
+}
+.btn-sm {
+  padding:5px 12px; font-size:11.5px; font-weight:500;
   border:1px solid var(--borderColor); border-radius:var(--radius-sm);
-  font-size:12.5px; background:var(--bgColor); color:var(--textColor);
-  outline:none; transition:border-color 150ms;
+  background:var(--cardBg); color:var(--textColor); transition:all 130ms; cursor:pointer;
 }
-.filter-search:focus { border-color:var(--orange400); }
-.filter-search::placeholder { color:var(--grey400); }
+.btn-sm:hover { background:var(--grey100); }
 
-.filter-option {
-  display:flex; align-items:center; gap:8px;
-  width:100%; padding:5px 8px;
-  border:none; background:transparent;
-  border-radius:var(--radius-sm);
-  font-size:12.5px; color:var(--grey600);
-  cursor:pointer; transition:all 130ms;
-  text-align:left;
+/* =============================================
+   GALLERY: FILTER RAIL
+============================================= */
+.filter-rail {
+  display:flex; flex-wrap:wrap; align-items:flex-end; gap:12px;
+  padding:16px 24px; background:var(--cardBg);
+  border-bottom:1px solid var(--borderColor);
 }
-.filter-option:hover   { background:var(--grey100); }
-.filter-option.selected{ background:var(--orange50); color:var(--orange400); font-weight:600; }
-
-.cat-dot {
-  width:7px; height:7px; border-radius:50%; flex-shrink:0;
+.filter-group { display:flex; flex-direction:column; gap:4px; }
+.filter-group label {
+  font-size:10px; font-weight:700; letter-spacing:.07em;
+  text-transform:uppercase; color:var(--secondaryText);
 }
-.filter-count { margin-left:auto; font-size:10.5px; color:var(--grey400); }
-.filter-divider { height:1px; background:var(--borderColor); margin:6px 0; }
-
-/* — Gallery Content — */
-#gallery-content { flex:1; padding:20px 24px; min-width:0; }
-
-.gallery-toolbar {
-  display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:18px; gap:12px; flex-wrap:wrap;
+.filter-group select,
+.filter-group input[type="text"] {
+  padding:6px 10px; border:1px solid var(--borderColor);
+  border-radius:var(--radius-sm); font-size:12.5px;
+  background:var(--bgColor); color:var(--textColor);
+  outline:none; cursor:pointer; transition:border-color 140ms;
+  min-width:140px;
 }
-.gallery-count   { font-size:12.5px; color:var(--secondaryText); }
-.gallery-toolbar-right { display:flex; align-items:center; gap:8px; }
-
-.sort-select {
-  padding:6px 10px;
-  border:1px solid var(--borderColor); border-radius:var(--radius-sm);
-  font-size:12px; background:var(--cardBg); color:var(--textColor);
-  outline:none; cursor:pointer;
+.filter-group select:focus,
+.filter-group input[type="text"]:focus { border-color:var(--orange400); }
+.filter-group.search-group input { min-width:200px; }
+.filter-group.view-toggle {
+  flex-direction:row; align-items:flex-end; gap:2px;
+  border:1px solid var(--borderColor); border-radius:var(--radius-sm); overflow:hidden;
 }
-.view-toggle {
-  display:flex; border:1px solid var(--borderColor);
-  border-radius:var(--radius-sm); overflow:hidden;
-}
-.view-toggle-btn {
-  padding:6px 10px; border:none;
-  background:var(--cardBg); color:var(--secondaryText);
-  font-size:14px; transition:all 130ms;
-}
-.view-toggle-btn.active { background:var(--grey100); color:var(--textColor); }
-
-#card-grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(272px,1fr));
-  gap:14px;
-}
-#card-grid.list-mode {
-  grid-template-columns:1fr;
+.filter-group.view-toggle .btn-icon {
+  width:32px; height:32px; border-radius:0; border:none;
 }
 
-/* — Pattern Card — */
+/* =============================================
+   GALLERY: RESULTS COUNT & GRID
+============================================= */
+.results-count {
+  font-size:12.5px; color:var(--secondaryText);
+  padding:12px 24px 0;
+}
+.card-grid {
+  display:grid; gap:14px; padding:14px 24px 24px;
+}
+.card-grid.grid-mode {
+  grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+}
+.card-grid.list-mode { grid-template-columns: 1fr; }
+
+/* =============================================
+   PATTERN CARD
+============================================= */
 .pattern-card {
-  background:var(--cardBg);
-  border:1px solid var(--borderColor);
-  border-radius:var(--radius-lg);
-  overflow:hidden; cursor:pointer;
-  transition:all 200ms ease;
-  box-shadow:var(--shadow-sm);
-  animation:slideUp 280ms ease;
+  background:var(--cardBg); border:1px solid var(--borderColor);
+  border-radius:var(--radius-lg); overflow:hidden; cursor:pointer;
+  transition:all 200ms ease; box-shadow:var(--shadow-sm);
+  animation:slideUp 260ms ease; display:flex; flex-direction:column;
 }
 .pattern-card:hover {
-  transform:translateY(-2px);
-  box-shadow:var(--shadow-md);
+  transform:translateY(-2px); box-shadow:var(--shadow-md);
   border-color:var(--grey300);
 }
+.card-grid.list-mode .pattern-card {
+  flex-direction:row;
+}
+.card-grid.list-mode .card-preview {
+  width:200px; flex-shrink:0; height:auto;
+}
 .card-preview {
-  height:136px; overflow:hidden; position:relative;
+  height:134px; overflow:hidden; flex-shrink:0;
 }
 .card-preview svg { display:block; width:100%; height:100%; }
-
-.card-meta   { padding:13px 15px 12px; }
-.card-category {
-  display:inline-flex; align-items:center; gap:5px;
-  font-size:10px; font-weight:700;
-  letter-spacing:0.06em; text-transform:uppercase;
-  margin-bottom:5px;
+.card-body { padding:13px 15px 11px; flex:1; }
+.card-meta { display:flex; align-items:center; gap:6px; margin-bottom:7px; flex-wrap:wrap; }
+.category-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  padding:2px 8px; border-radius:var(--radius-pill);
+  font-size:10px; font-weight:700; letter-spacing:.04em;
 }
-.card-name {
-  font-size:13.5px; font-weight:600;
-  letter-spacing:-0.01em; line-height:1.3;
-  margin-bottom:5px;
-}
-.card-desc {
-  font-size:12px; color:var(--secondaryText);
-  line-height:1.5; margin-bottom:9px;
-  display:-webkit-box; -webkit-line-clamp:2;
-  -webkit-box-orient:vertical; overflow:hidden;
-}
-.card-tags { display:flex; flex-wrap:wrap; gap:4px; }
-.tag {
-  padding:2px 7px; border-radius:var(--radius-pill);
-  font-size:10px; font-weight:500;
-  background:var(--grey100); color:var(--grey600);
-}
-
-.card-footer {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:9px 15px;
-  border-top:1px solid var(--borderColor);
-  background:var(--bgColor);
-}
-.card-audience { font-size:11px; color:var(--secondaryText); }
-.card-actions  { display:flex; gap:4px; }
-.card-action-btn {
-  padding:4px 9px; font-size:11px; font-weight:500;
-  border:1px solid var(--borderColor); border-radius:var(--radius-sm);
-  background:var(--cardBg); color:var(--textColor);
-  transition:all 130ms;
-}
-.card-action-btn:hover        { background:var(--grey100); }
-.card-action-btn.compare-active {
-  background:var(--orange50);
-  border-color:var(--orange300);
-  color:var(--orange400);
-}
-
 .maturity-badge {
-  display:inline-flex; align-items:center; gap:3px;
-  font-size:10px; font-weight:600;
+  display:inline-flex; align-items:center;
   padding:2px 7px; border-radius:var(--radius-pill);
+  font-size:10px; font-weight:600;
 }
 .maturity-foundational { background:var(--infoBg);    color:var(--info); }
 .maturity-advanced     { background:var(--warningBg); color:#b45309; }
 .maturity-strategic    { background:var(--successBg); color:#166534; }
-
-/* list mode */
-#card-grid.list-mode .pattern-card { display:flex; flex-direction:row; }
-#card-grid.list-mode .card-preview { width:180px; height:auto; flex-shrink:0; }
-#card-grid.list-mode .card-main   { flex:1; display:flex; flex-direction:column; }
-#card-grid.list-mode .card-meta   { flex:1; }
-
-.no-results {
-  grid-column:1/-1;
-  padding:60px 20px; text-align:center;
-  color:var(--secondaryText);
+.maturity-starter      { background:var(--infoBg);    color:var(--info); }
+.maturity-intermediate { background:var(--warningBg); color:#b45309; }
+.card-title  { font-size:13.5px; font-weight:600; margin-bottom:5px; line-height:1.3; }
+.card-desc   {
+  font-size:12px; color:var(--secondaryText); line-height:1.5;
+  margin-bottom:8px; display:-webkit-box; -webkit-line-clamp:2;
+  -webkit-box-orient:vertical; overflow:hidden;
 }
-.no-results-icon  { font-size:40px; opacity:.4; margin-bottom:12px; }
-.no-results-title { font-size:15px; font-weight:600; color:var(--textColor); margin-bottom:6px; }
+.card-tags   { display:flex; flex-wrap:wrap; gap:4px; }
+.tag {
+  padding:2px 7px; border-radius:var(--radius-pill);
+  font-size:10px; font-weight:500; background:var(--grey100); color:var(--grey600);
+}
+.card-footer {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:9px 15px; border-top:1px solid var(--borderColor);
+  background:var(--bgColor); gap:6px; margin-top:auto;
+}
+.no-results {
+  grid-column:1/-1; padding:60px 20px; text-align:center;
+  color:var(--secondaryText); font-size:13px;
+}
+.no-results button { margin-top:12px; }
 
 /* =============================================
    FINDER WIZARD
 ============================================= */
-#finder-view {
-  max-width:700px; margin:0 auto;
-  padding:40px 24px;
+#view-finder { max-width:700px; margin:0 auto; padding:40px 24px; }
+.wizard-container { animation:fadeIn 180ms ease; }
+.wizard-header { margin-bottom:28px; }
+.wizard-header h2 { font-size:22px; font-weight:700; margin-bottom:6px; }
+.wizard-header p  { font-size:13.5px; color:var(--secondaryText); }
+.wizard-progress-bar {
+  height:4px; background:var(--grey200); border-radius:2px; margin:14px 0 6px;
 }
-.wizard-header { text-align:center; margin-bottom:36px; }
-.wizard-title  { font-size:22px; font-weight:700; letter-spacing:-0.02em; margin-bottom:6px; }
-.wizard-sub    { font-size:13.5px; color:var(--secondaryText); }
-
-.wizard-progress { display:flex; align-items:center; gap:6px; margin-bottom:32px; }
-.progress-step   {
-  flex:1; height:3px;
-  background:var(--grey200); border-radius:2px;
-  transition:background 280ms;
+.wizard-progress-fill {
+  height:100%; background:var(--orange400); border-radius:2px; transition:width 300ms ease;
 }
-.progress-step.done   { background:var(--orange400); }
-.progress-step.current{ background:var(--orange300); }
-
-.wizard-step-num  {
-  font-size:10px; font-weight:700; letter-spacing:0.08em;
-  text-transform:uppercase; color:var(--secondaryText); margin-bottom:6px;
-}
-.wizard-question  { font-size:17px; font-weight:600; letter-spacing:-0.01em; margin-bottom:18px; }
-
+.wizard-step-count { font-size:11px; color:var(--secondaryText); }
+.wizard-question h3 { font-size:16px; font-weight:600; margin-bottom:16px; }
 .wizard-options {
-  display:grid; grid-template-columns:1fr 1fr;
-  gap:10px; margin-bottom:24px;
+  display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:24px;
 }
-.wizard-options.cols-3 { grid-template-columns:repeat(3,1fr); }
 .wizard-option {
-  padding:14px 16px;
-  border:1.5px solid var(--borderColor);
-  border-radius:var(--radius-md);
-  background:var(--cardBg);
-  cursor:pointer; transition:all 140ms; text-align:left;
+  padding:14px 16px; text-align:left; font-size:13px;
+  border:1.5px solid var(--borderColor); border-radius:var(--radius-md);
+  background:var(--cardBg); transition:all 140ms; cursor:pointer;
 }
 .wizard-option:hover   { border-color:var(--orange300); background:var(--orange50); }
-.wizard-option.selected{ border-color:var(--orange400); background:var(--orange50); }
-.wizard-option-icon    { font-size:18px; margin-bottom:6px; }
-.wizard-option-label   { font-size:12.5px; font-weight:600; margin-bottom:3px; }
-.wizard-option-desc    { font-size:11px; color:var(--secondaryText); }
-
+.wizard-option.selected{ border-color:var(--orange400); background:var(--orange50); font-weight:600; }
 .wizard-nav { display:flex; justify-content:space-between; align-items:center; }
-.wizard-step-text { font-size:12px; color:var(--secondaryText); }
 
-.wizard-results { animation:fadeIn 280ms ease; }
-.results-header { margin-bottom:20px; }
-.results-title  { font-size:17px; font-weight:700; margin-bottom:4px; }
-.results-sub    { font-size:12.5px; color:var(--secondaryText); }
-
-.result-card {
-  display:flex; align-items:flex-start; gap:12px;
-  padding:14px 16px; margin-bottom:10px;
-  background:var(--cardBg);
+/* Finder results */
+.finder-results { display:flex; flex-direction:column; gap:12px; margin-bottom:24px; }
+.finder-result-card {
+  display:flex; align-items:flex-start; gap:14px;
+  padding:14px 16px; background:var(--cardBg);
   border:1px solid var(--borderColor); border-radius:var(--radius-md);
   cursor:pointer; transition:all 140ms;
 }
-.result-card:hover { border-color:var(--orange300); box-shadow:var(--shadow-sm); }
+.finder-result-card:hover { border-color:var(--orange300); box-shadow:var(--shadow-sm); }
 .result-rank {
-  width:28px; height:28px; border-radius:50%;
-  background:var(--orange500); color:#fff;
+  width:30px; height:30px; border-radius:50%; background:var(--orange500); color:#fff;
   display:flex; align-items:center; justify-content:center;
   font-size:13px; font-weight:700; flex-shrink:0;
 }
-.result-rank.r2 { background:var(--grey400); }
-.result-rank.r3 { background:#cd7f32; }
-.result-info    { flex:1; }
-.result-name    { font-size:13.5px; font-weight:600; margin-bottom:3px; }
-.result-why     { font-size:11.5px; color:var(--secondaryText); margin-bottom:6px; }
-.result-score-row { display:flex; align-items:center; gap:8px; font-size:11px; color:var(--secondaryText); }
-.score-bar   { flex:1; max-width:100px; height:4px; background:var(--grey200); border-radius:2px; }
-.score-fill  { height:100%; border-radius:2px; background:var(--orange400); }
+.result-preview { width:120px; flex-shrink:0; border-radius:var(--radius-sm); overflow:hidden; }
+.result-info    { flex:1; min-width:0; }
+.result-info h3 { font-size:13.5px; font-weight:600; margin-bottom:4px; }
+.result-info p  { font-size:12px; color:var(--secondaryText); margin-bottom:8px; }
+.result-score   { display:flex; align-items:center; gap:8px; font-size:11px; color:var(--secondaryText); }
+.score-bar      { flex:1; max-width:120px; height:4px; background:var(--grey200); border-radius:2px; }
+.score-fill     { height:100%; border-radius:2px; background:var(--orange400); }
+.result-actions { display:flex; flex-direction:column; gap:6px; flex-shrink:0; }
 
 /* =============================================
    COMPARE VIEW
 ============================================= */
-#compare-view { padding:24px; }
-
+#view-compare { padding:24px; }
+.compare-empty {
+  max-width:500px; margin:80px auto; text-align:center;
+  color:var(--secondaryText);
+}
+.compare-empty h2 { font-size:18px; font-weight:700; color:var(--textColor); margin-bottom:8px; }
+.compare-empty p  { font-size:13px; margin-bottom:20px; }
 .compare-header {
   display:flex; align-items:center; justify-content:space-between;
   margin-bottom:20px;
 }
-.compare-title { font-size:17px; font-weight:700; letter-spacing:-0.01em; }
-
+.compare-header h2 { font-size:17px; font-weight:700; }
 .compare-table-wrap {
   border:1px solid var(--borderColor); border-radius:var(--radius-lg);
   overflow:hidden; box-shadow:var(--shadow-sm);
 }
 .compare-table { width:100%; border-collapse:collapse; }
 .compare-table th, .compare-table td {
-  padding:12px 16px;
-  border-bottom:1px solid var(--borderColor);
-  text-align:left; font-size:12.5px;
+  padding:11px 16px; border-bottom:1px solid var(--borderColor);
+  text-align:left; font-size:12.5px; vertical-align:top;
 }
 .compare-table tr:last-child td,
 .compare-table tr:last-child th { border-bottom:none; }
-
-.compare-table .label-th {
-  width:160px; background:var(--bgColor);
-  font-size:10.5px; font-weight:700;
-  letter-spacing:0.06em; text-transform:uppercase;
-  color:var(--secondaryText); vertical-align:middle;
+.compare-table thead tr th:first-child,
+.compare-label {
+  background:var(--bgColor); font-size:10.5px; font-weight:700;
+  letter-spacing:.06em; text-transform:uppercase; color:var(--secondaryText);
+  white-space:nowrap; vertical-align:middle !important;
+  width:140px;
 }
-.compare-table .header-th {
-  background:var(--cardBg); min-width:220px;
-}
-.compare-slot-name { font-size:13.5px; font-weight:600; margin-bottom:4px; }
-.compare-slot-cat  { font-size:10px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; }
-.compare-remove {
-  float:right; background:none; border:none;
-  color:var(--grey400); font-size:16px; cursor:pointer;
-  padding:0; line-height:1; margin-top:2px;
-}
-.compare-remove:hover { color:var(--danger); }
-.compare-table td { background:var(--cardBg); vertical-align:top; }
+.compare-table thead th { background:var(--cardBg); }
+.compare-table tbody td { background:var(--cardBg); }
 .compare-table tbody tr:nth-child(even) td { background:var(--bgColor); }
-
-.add-slot-cell {
-  text-align:center; padding:20px !important;
-  color:var(--secondaryText); font-size:12px;
-}
-.add-slot-link {
-  color:var(--orange400); font-weight:600; cursor:pointer; background:none; border:none; font-size:12px;
-}
-.add-slot-link:hover { text-decoration:underline; }
-
-.empty-compare {
-  text-align:center; padding:80px 40px; color:var(--secondaryText);
-}
-.empty-icon  { font-size:44px; opacity:.35; margin-bottom:14px; }
-.empty-title { font-size:15px; font-weight:600; color:var(--textColor); margin-bottom:6px; }
-.empty-desc  { font-size:13px; margin-bottom:20px; }
+.compare-hint { font-size:12px; color:var(--secondaryText); margin-top:12px; }
 
 /* =============================================
    DETAIL VIEW
 ============================================= */
-#detail-view { max-width:1000px; margin:0 auto; padding:24px; }
-
-.detail-back {
-  display:inline-flex; align-items:center; gap:5px;
-  font-size:12.5px; color:var(--secondaryText);
-  background:none; border:none; padding:0; margin-bottom:18px; cursor:pointer;
-  transition:color 150ms;
-}
-.detail-back:hover { color:var(--orange400); }
-
-.detail-hero {
-  background:var(--cardBg);
-  border:1px solid var(--borderColor); border-radius:var(--radius-lg);
-  overflow:hidden; margin-bottom:18px; box-shadow:var(--shadow-sm);
-}
-.detail-hero-preview { height:220px; overflow:hidden; }
-.detail-hero-preview svg { display:block; width:100%; height:100%; }
-
-.detail-hero-meta { padding:18px 22px; }
-.detail-hero-top  { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
-.detail-name { font-size:20px; font-weight:700; letter-spacing:-0.02em; margin-bottom:5px; }
-.detail-desc { font-size:13.5px; color:var(--secondaryText); max-width:600px; line-height:1.55; }
-.detail-badges { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
-.detail-actions { display:flex; gap:8px; flex-shrink:0; }
-
-/* Tabs */
-.detail-tabs {
-  display:flex; gap:2px;
+#view-detail { max-width:1000px; margin:0 auto; padding:24px; }
+.detail-header {
+  display:flex; align-items:flex-start; gap:16px;
   background:var(--cardBg); border:1px solid var(--borderColor);
-  border-radius:var(--radius-md); padding:4px;
+  border-radius:var(--radius-lg); padding:20px 22px;
   margin-bottom:18px; box-shadow:var(--shadow-sm);
-  overflow-x:auto;
+}
+.detail-title-block { flex:1; min-width:0; }
+.detail-title-block .category-badge { margin-bottom:8px; display:inline-flex; }
+.detail-title-block h1 {
+  font-size:20px; font-weight:700; margin-bottom:6px; line-height:1.2;
+}
+.detail-title-block p { font-size:13.5px; color:var(--secondaryText); }
+.detail-actions { display:flex; gap:8px; flex-shrink:0; }
+.detail-tabs {
+  display:flex; gap:2px; padding:4px;
+  background:var(--cardBg); border:1px solid var(--borderColor);
+  border-radius:var(--radius-md); margin-bottom:18px;
+  box-shadow:var(--shadow-sm); overflow-x:auto;
 }
 .detail-tabs::-webkit-scrollbar { display:none; }
-
 .tab-btn {
   flex:1; min-width:max-content;
-  padding:7px 14px;
-  font-size:12px; font-weight:500;
+  padding:7px 14px; font-size:12px; font-weight:500;
   border:none; border-radius:var(--radius-sm);
-  background:transparent; color:var(--secondaryText);
-  transition:all 140ms; white-space:nowrap;
+  background:transparent; color:var(--secondaryText); transition:all 140ms;
 }
 .tab-btn:hover  { background:var(--grey100); color:var(--textColor); }
 .tab-btn.active { background:var(--orange500); color:#fff; font-weight:600; }
-
-.tab-content        { display:none; animation:fadeIn 180ms ease; }
-.tab-content.active { display:block; }
-
-.detail-panel {
+.tab-panel              { display:none; animation:fadeIn 180ms ease; }
+.tab-panel.active       { display:block; }
+.detail-panels > .tab-panel {
   background:var(--cardBg); border:1px solid var(--borderColor);
   border-radius:var(--radius-lg); padding:22px; box-shadow:var(--shadow-sm);
 }
-.panel-section { margin-bottom:26px; }
-.panel-section:last-child { margin-bottom:0; }
-.panel-section-title {
-  font-size:10.5px; font-weight:700;
-  letter-spacing:0.08em; text-transform:uppercase;
-  color:var(--secondaryText); margin-bottom:12px;
+/* Overview */
+.overview-grid {
+  display:grid; grid-template-columns:240px 1fr; gap:20px;
 }
-
-/* Overview stats */
-.overview-stats {
-  display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px;
+.overview-preview { border-radius:var(--radius-md); overflow:hidden; }
+.overview-meta    { }
+.meta-table { width:100%; border-collapse:collapse; margin-bottom:16px; }
+.meta-table th, .meta-table td {
+  padding:7px 10px; text-align:left; font-size:12.5px;
+  border-bottom:1px solid var(--borderColor);
 }
-.stat-card {
+.meta-table tr:last-child td,
+.meta-table tr:last-child th { border-bottom:none; }
+.meta-table th { width:110px; font-weight:600; color:var(--secondaryText); background:var(--bgColor); }
+.overview-when h4 { font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--secondaryText); margin-bottom:6px; }
+.overview-when p  { font-size:13px; color:var(--grey700); line-height:1.65; }
+/* Layouts */
+.layouts-section h3 { font-size:14px; font-weight:600; margin-bottom:14px; }
+.layouts-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.layout-card { border:1px solid var(--borderColor); border-radius:var(--radius-md); overflow:hidden; }
+.layout-thumb { border-bottom:1px solid var(--borderColor); }
+.layout-name { padding:10px 12px; font-size:12.5px; font-weight:600; }
+/* KPIs */
+.kpis-section h3 { font-size:14px; font-weight:600; margin-bottom:14px; }
+.kpi-table { width:100%; border-collapse:collapse; }
+.kpi-table th, .kpi-table td {
+  padding:9px 12px; text-align:left; font-size:12.5px;
+  border-bottom:1px solid var(--borderColor);
+}
+.kpi-table th { background:var(--bgColor); font-weight:600; color:var(--secondaryText); font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; }
+.kpi-table tr:last-child td { border-bottom:none; }
+/* Data & Gov */
+.datagov-section h3 { font-size:14px; font-weight:600; margin-bottom:14px; }
+.datagov-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.datagov-block {
   padding:14px; background:var(--bgColor);
   border:1px solid var(--borderColor); border-radius:var(--radius-md);
-  text-align:center;
 }
-.stat-value { font-size:22px; font-weight:700; letter-spacing:-0.02em; margin-bottom:2px; }
-.stat-label { font-size:10.5px; color:var(--secondaryText); text-transform:uppercase; letter-spacing:0.05em; font-weight:600; }
-
-.key-questions { list-style:none; }
-.key-questions li {
-  display:flex; align-items:flex-start; gap:9px;
-  padding:8px 0; border-bottom:1px solid var(--borderColor);
-  font-size:13px;
-}
-.key-questions li:last-child { border-bottom:none; }
-.key-questions li::before { content:"→"; color:var(--orange400); flex-shrink:0; margin-top:1px; font-weight:700; }
-
-/* KPI grid */
-.kpi-grid {
-  display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:10px;
-}
-.kpi-card {
-  padding:14px 16px;
-  background:var(--bgColor);
-  border:1px solid var(--borderColor); border-radius:var(--radius-md);
-}
-.kpi-name    { font-size:12.5px; font-weight:600; margin-bottom:4px; }
-.kpi-formula { font-size:10.5px; color:var(--secondaryText); margin-bottom:6px; font-family:monospace; line-height:1.4; }
-.kpi-tags    { display:flex; gap:4px; flex-wrap:wrap; }
-.kpi-tag     {
-  padding:2px 7px; border-radius:var(--radius-pill);
-  font-size:10px; font-weight:500;
-  background:var(--infoBg); color:var(--info);
-}
-
-/* Layout cards */
-.layout-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.layout-card {
-  padding:14px 16px;
-  background:var(--bgColor);
-  border:1px solid var(--borderColor); border-radius:var(--radius-md);
-}
-.layout-name { font-size:13px; font-weight:600; margin-bottom:4px; }
-.layout-desc { font-size:12px; color:var(--secondaryText); margin-bottom:8px; }
-.chart-types { display:flex; gap:4px; flex-wrap:wrap; }
-.chart-type-pill {
-  padding:2px 8px; border-radius:var(--radius-pill);
-  font-size:10px; font-weight:500;
-  background:var(--grey100); color:var(--grey700);
-}
-
-/* Data sources */
-.ds-list { list-style:none; }
-.ds-list li {
-  display:flex; align-items:center; gap:10px;
-  padding:9px 0; border-bottom:1px solid var(--borderColor);
-  font-size:12.5px;
-}
-.ds-list li:last-child { border-bottom:none; }
-.ds-icon   { font-size:17px; flex-shrink:0; }
-.ds-label  { flex:1; }
-.ds-system { font-size:11px; color:var(--secondaryText); }
-.ds-type   {
-  padding:2px 7px; border-radius:var(--radius-pill);
-  font-size:10px; font-weight:600; letter-spacing:0.03em;
-  text-transform:uppercase;
-}
-.ds-type-API      { background:var(--infoBg);    color:var(--info); }
-.ds-type-SQL      { background:var(--warningBg); color:#92400e; }
-.ds-type-Manual   { background:var(--grey100);   color:var(--grey700); }
-.ds-type-CSV      { background:var(--successBg); color:#14532d; }
-.ds-type-Realtime { background:var(--dangerBg);  color:var(--danger); }
-
+.datagov-block h4 { font-size:10.5px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--secondaryText); margin-bottom:6px; }
+.datagov-block ul { list-style:none; }
+.datagov-block ul li { font-size:12.5px; padding:3px 0; display:flex; gap:6px; }
+.datagov-block ul li::before { content:"•"; color:var(--orange400); }
+.datagov-block p  { font-size:12.5px; color:var(--grey700); line-height:1.55; }
 /* Customize */
-.custom-param {
-  display:flex; align-items:flex-start; gap:14px;
-  padding:11px 0; border-bottom:1px solid var(--borderColor);
+.customize-section h3 { font-size:14px; font-weight:600; margin-bottom:14px; }
+.customize-list { display:flex; flex-direction:column; gap:0; }
+.customize-item {
+  padding:14px 0; border-bottom:1px solid var(--borderColor);
 }
-.custom-param:last-child { border-bottom:none; }
-.custom-param-info  { flex:1; }
-.custom-param-label { font-size:12.5px; font-weight:600; margin-bottom:2px; }
-.custom-param-desc  { font-size:11px; color:var(--secondaryText); }
-.custom-select {
-  padding:6px 10px;
-  border:1px solid var(--borderColor); border-radius:var(--radius-sm);
-  font-size:12px; background:var(--cardBg); color:var(--textColor);
-  outline:none; cursor:pointer; min-width:150px;
+.customize-item:last-child { border-bottom:none; }
+.customize-item h4 { font-size:12.5px; font-weight:600; margin-bottom:4px; }
+.customize-item p  { font-size:12px; color:var(--secondaryText); line-height:1.55; }
+/* Export (in detail) */
+.export-section h3 { font-size:14px; font-weight:600; margin-bottom:14px; }
+.export-options { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+.export-option {
+  padding:16px; background:var(--bgColor);
+  border:1px solid var(--borderColor); border-radius:var(--radius-md);
 }
-.custom-select:focus { border-color:var(--orange400); }
+.export-option h4 { font-size:12.5px; font-weight:600; margin-bottom:6px; }
+.export-option p  { font-size:11.5px; color:var(--secondaryText); margin-bottom:12px; line-height:1.5; }
 
 /* =============================================
    EXPORTS VIEW
 ============================================= */
-#exports-view { max-width:760px; margin:0 auto; padding:40px 24px; }
-
+#view-exports { max-width:800px; margin:0 auto; padding:40px 24px; }
 .exports-header { margin-bottom:28px; }
-.exports-title  { font-size:21px; font-weight:700; letter-spacing:-0.02em; margin-bottom:5px; }
-.exports-sub    { font-size:13.5px; color:var(--secondaryText); }
-
-.export-section {
+.exports-header h2 { font-size:22px; font-weight:700; margin-bottom:6px; }
+.exports-header p  { font-size:13.5px; color:var(--secondaryText); }
+.exports-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.export-card {
   background:var(--cardBg); border:1px solid var(--borderColor);
-  border-radius:var(--radius-lg); overflow:hidden;
-  margin-bottom:14px; box-shadow:var(--shadow-sm);
+  border-radius:var(--radius-lg); padding:22px; box-shadow:var(--shadow-sm);
 }
-.export-section-hd {
-  display:flex; align-items:flex-start; gap:12px;
-  padding:14px 18px; border-bottom:1px solid var(--borderColor);
-}
-.export-icon     { font-size:20px; flex-shrink:0; }
-.export-hd-text  { flex:1; }
-.export-hd-title { font-size:13.5px; font-weight:600; }
-.export-hd-desc  { font-size:11.5px; color:var(--secondaryText); }
-
-.export-section-body { padding:12px 18px; }
-.export-row {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:9px 0; border-bottom:1px solid var(--borderColor);
-}
-.export-row:last-child { border-bottom:none; }
-.export-row-name { font-size:12.5px; font-weight:500; }
-.export-row-desc { font-size:11px; color:var(--secondaryText); }
-.export-btn {
-  padding:6px 14px; font-size:11.5px; font-weight:600;
-  border:1.5px solid var(--orange300); border-radius:var(--radius-pill);
-  background:var(--orange50); color:var(--orange400);
-  transition:all 140ms; flex-shrink:0;
-}
-.export-btn:hover { background:var(--orange500); color:#fff; border-color:var(--orange500); }
+.export-icon { font-size:28px; margin-bottom:12px; display:block; }
+.export-card h3 { font-size:14px; font-weight:600; margin-bottom:8px; }
+.export-card p  { font-size:12.5px; color:var(--secondaryText); margin-bottom:10px; line-height:1.55; }
+.export-card ul { list-style:none; margin-bottom:16px; }
+.export-card ul li { font-size:12px; color:var(--secondaryText); padding:2px 0; display:flex; gap:6px; }
+.export-card ul li::before { content:"✓"; color:var(--success); }
+.export-compare-actions { display:flex; gap:6px; }
+.hint { font-size:11.5px; color:var(--secondaryText); margin-top:8px; }
 
 /* =============================================
    ABOUT VIEW
 ============================================= */
-#about-view { max-width:720px; margin:0 auto; padding:40px 24px; }
-
-.about-hero {
+#view-about { max-width:720px; margin:0 auto; padding:40px 24px; }
+.about-header { margin-bottom:28px; }
+.about-header h2 { font-size:22px; font-weight:700; margin-bottom:6px; }
+.about-header p  { font-size:13.5px; color:var(--secondaryText); }
+.about-stats {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px;
+}
+.stat-card {
   background:var(--cardBg); border:1px solid var(--borderColor);
-  border-radius:var(--radius-lg); padding:40px;
-  text-align:center; margin-bottom:20px; box-shadow:var(--shadow-sm);
+  border-radius:var(--radius-md); padding:16px; text-align:center;
 }
-.about-logo {
-  width:60px; height:60px; border-radius:14px;
-  background:var(--orange500);
-  display:inline-flex; align-items:center; justify-content:center;
-  font-size:22px; font-weight:700; color:#fff;
-  margin-bottom:18px;
-}
-.about-title   { font-size:22px; font-weight:700; letter-spacing:-0.02em; margin-bottom:6px; }
-.about-badge   {
-  display:inline-block; margin-bottom:14px;
-  font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
-  background:var(--orange50); color:var(--orange400);
-  padding:4px 12px; border-radius:var(--radius-pill);
-}
-.about-desc { font-size:13.5px; color:var(--secondaryText); line-height:1.7; max-width:500px; margin:0 auto; }
-
-.schema-card {
+.stat-num   { font-size:26px; font-weight:700; letter-spacing:-0.02em; color:var(--orange500); }
+.stat-label { font-size:10.5px; color:var(--secondaryText); text-transform:uppercase; letter-spacing:.06em; font-weight:600; }
+.about-schema-check {
   background:var(--cardBg); border:1px solid var(--borderColor);
-  border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-sm);
+  border-radius:var(--radius-lg); padding:20px; margin-bottom:20px; box-shadow:var(--shadow-sm);
 }
-.schema-card-hd {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:14px 18px; border-bottom:1px solid var(--borderColor);
+.about-schema-check h3 { font-size:14px; font-weight:600; margin-bottom:14px; }
+.check-pass { color:var(--success); font-weight:600; }
+.check-fail { color:var(--danger);  font-weight:600; }
+.schema-table { width:100%; border-collapse:collapse; }
+.schema-table th, .schema-table td {
+  padding:8px 12px; text-align:left; font-size:12.5px;
+  border-bottom:1px solid var(--borderColor);
 }
-.schema-card-title { font-size:13.5px; font-weight:600; }
-.schema-row {
-  display:flex; align-items:center; gap:10px;
-  padding:9px 18px; border-bottom:1px solid var(--borderColor);
-  font-size:12.5px;
+.schema-table th { background:var(--bgColor); font-weight:600; color:var(--secondaryText); font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; }
+.schema-table tr:last-child td { border-bottom:none; }
+.about-coverage {
+  background:var(--cardBg); border:1px solid var(--borderColor);
+  border-radius:var(--radius-lg); padding:20px; margin-bottom:20px; box-shadow:var(--shadow-sm);
 }
-.schema-row:last-child { border-bottom:none; }
-.schema-icon  { font-size:14px; }
-.schema-label { flex:1; }
-.schema-value { color:var(--secondaryText); font-size:12px; }
-
-/* =============================================
-   BUTTONS (shared)
-============================================= */
-.btn-primary {
-  padding:9px 20px; font-size:13px; font-weight:600;
-  border:none; border-radius:var(--radius-pill);
-  background:var(--orange500); color:#fff;
-  transition:all 140ms;
-  box-shadow:0 2px 8px rgba(253,81,8,.28);
+.about-coverage h3 { font-size:14px; font-weight:600; margin-bottom:14px; }
+.coverage-grid { display:flex; flex-direction:column; gap:8px; }
+.coverage-item { display:flex; align-items:center; gap:10px; font-size:12.5px; }
+.coverage-item > span:first-child { width:120px; flex-shrink:0; }
+.coverage-bar  { flex:1; height:8px; background:var(--grey200); border-radius:4px; overflow:hidden; }
+.coverage-fill { height:100%; border-radius:4px; transition:width 600ms ease; }
+.coverage-count{ width:24px; text-align:right; color:var(--secondaryText); font-weight:600; flex-shrink:0; }
+.about-categories {
+  background:var(--cardBg); border:1px solid var(--borderColor);
+  border-radius:var(--radius-lg); padding:20px; box-shadow:var(--shadow-sm);
 }
-.btn-primary:hover    { background:var(--orange400); }
-.btn-primary:disabled { opacity:.4; cursor:not-allowed; }
-
-.btn-secondary {
-  padding:9px 20px; font-size:13px; font-weight:500;
-  border:1px solid var(--borderColor); border-radius:var(--radius-pill);
-  background:var(--cardBg); color:var(--textColor);
-  transition:all 140ms;
+.about-categories h3 { font-size:14px; font-weight:600; margin-bottom:14px; }
+.cat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.cat-card {
+  display:flex; align-items:center; gap:8px;
+  padding:10px 14px; background:var(--bgColor);
+  border-left:3px solid; border-radius:var(--radius-sm);
 }
-.btn-secondary:hover { background:var(--grey100); }
-
-.btn-sm {
-  padding:6px 14px; font-size:12px; font-weight:500;
-  border:1px solid var(--borderColor); border-radius:var(--radius-sm);
-  background:var(--cardBg); color:var(--textColor);
-  transition:all 130ms;
-}
-.btn-sm:hover { background:var(--grey100); }
-.btn-sm.btn-orange {
-  background:var(--orange50); color:var(--orange400);
-  border-color:var(--orange300);
-}
-.btn-sm.btn-orange:hover { background:var(--orange500); color:#fff; border-color:var(--orange500); }
+.cat-icon { font-size:16px; }
+.cat-name { font-size:12.5px; font-weight:500; }
 
 /* =============================================
    TOAST
 ============================================= */
 #toast {
-  position:fixed; bottom:24px; right:24px; z-index:999;
+  position:fixed; bottom:24px; right:24px; z-index:9999;
   max-width:320px; padding:11px 18px;
   background:var(--grey900); color:#fff;
-  border-radius:var(--radius-md);
-  font-size:13px; font-weight:500;
-  box-shadow:var(--shadow-lg);
-  opacity:0; transform:translateY(6px);
-  transition:all 220ms; pointer-events:none;
+  border-radius:var(--radius-md); font-size:13px; font-weight:500;
+  box-shadow:var(--shadow-lg); pointer-events:none;
+  opacity:0; transition:opacity 250ms ease;
 }
-#toast.show { opacity:1; transform:translateY(0); }
 
 /* =============================================
    PRINT
 ============================================= */
 @media print {
-  #app-header, #filter-rail, .card-actions, .detail-actions,
-  .detail-back, .detail-tabs, .header-actions,
-  .btn-primary, .btn-secondary, .btn-sm, #toast { display:none !important; }
+  #app-header, .header-actions, .filter-rail, .card-actions,
+  .detail-actions, .detail-tabs, .btn, .btn-sm, #toast { display:none !important; }
   body { background:#fff; font-size:12px; }
   #app-body { margin-top:0; }
   .pattern-card { break-inside:avoid; box-shadow:none; border:1px solid #ccc; }
-  #card-grid    { grid-template-columns:repeat(3,1fr); gap:8px; }
-  .detail-panel { box-shadow:none; border:1px solid #ccc; }
+  .card-grid { grid-template-columns:repeat(3,1fr) !important; gap:8px !important; }
 }
 
 /* =============================================
    UTILITIES
 ============================================= */
-.flex          { display:flex; }
-.items-center  { align-items:center; }
-.gap-8         { gap:8px; }
-.mt-12         { margin-top:12px; }
-.fw-600        { font-weight:600; }
-.color-secondary{ color:var(--secondaryText); }
+code { font-family:monospace; font-size:12px; background:var(--grey100); padding:1px 4px; border-radius:3px; }
+
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════
-     APP HEADER
-════════════════════════════════════════ -->
 <header id="app-header">
   <div class="header-brand">
     <div class="header-logo">DL</div>
@@ -780,133 +533,32 @@ input, select { font-family: inherit; }
       <div class="header-subtitle">PwC Delivery Launchpad</div>
     </div>
   </div>
-
   <nav class="header-nav" aria-label="Main navigation">
-    <button class="nav-btn active" data-view="gallery"  onclick="navigate('gallery')">Gallery</button>
-    <button class="nav-btn"        data-view="finder"   onclick="navigate('finder')">Finder</button>
-    <button class="nav-btn"        data-view="compare"  onclick="navigate('compare')">Compare <span id="compare-badge" style="display:none;"></span></button>
-    <button class="nav-btn"        data-view="exports"  onclick="navigate('exports')">Exports</button>
-    <button class="nav-btn"        data-view="about"    onclick="navigate('about')">About</button>
+    <button class="nav-btn" data-view="gallery"  onclick="navigate('gallery')">Gallery</button>
+    <button class="nav-btn" data-view="finder"   onclick="navigate('finder')">Finder</button>
+    <button class="nav-btn" data-view="compare"  onclick="navigate('compare')">
+      Compare <span id="compare-count" class="compare-badge" style="display:none"></span>
+    </button>
+    <button class="nav-btn" data-view="exports"  onclick="navigate('exports')">Exports</button>
+    <button class="nav-btn" data-view="about"    onclick="navigate('about')">About</button>
   </nav>
-
   <div class="header-actions">
     <button class="btn-icon" title="Print" onclick="window.print()">🖨️</button>
     <button class="btn-icon" title="Back to Launchpad" onclick="window.location.href='index.html'">🏠</button>
   </div>
 </header>
 
-<!-- ═══════════════════════════════════════
-     APP BODY
-════════════════════════════════════════ -->
 <main id="app-body">
-
-  <!-- ── GALLERY VIEW ── -->
-  <div id="gallery-view" class="view">
-    <!-- Filter Rail -->
-    <aside id="filter-rail" aria-label="Filters">
-      <div class="filter-section">
-        <label class="filter-label" for="filter-search">Search</label>
-        <input id="filter-search" class="filter-search" type="search" placeholder="Pattern name, tag…" autocomplete="off" />
-      </div>
-
-      <div class="filter-section">
-        <span class="filter-label">Category</span>
-        <div id="category-filters"></div>
-      </div>
-
-      <div class="filter-divider"></div>
-
-      <div class="filter-section">
-        <span class="filter-label">Maturity</span>
-        <div id="maturity-filters">
-          <button class="filter-option selected" data-filter="maturity" data-value="all">All</button>
-          <button class="filter-option" data-filter="maturity" data-value="foundational">Foundational</button>
-          <button class="filter-option" data-filter="maturity" data-value="advanced">Advanced</button>
-          <button class="filter-option" data-filter="maturity" data-value="strategic">Strategic</button>
-        </div>
-      </div>
-
-      <div class="filter-section">
-        <span class="filter-label">Cadence</span>
-        <div id="cadence-filters">
-          <button class="filter-option selected" data-filter="cadence" data-value="all">All</button>
-          <button class="filter-option" data-filter="cadence" data-value="real-time">Real-time</button>
-          <button class="filter-option" data-filter="cadence" data-value="daily">Daily</button>
-          <button class="filter-option" data-filter="cadence" data-value="weekly">Weekly</button>
-          <button class="filter-option" data-filter="cadence" data-value="monthly">Monthly</button>
-          <button class="filter-option" data-filter="cadence" data-value="quarterly">Quarterly</button>
-        </div>
-      </div>
-    </aside>
-
-    <!-- Gallery Content -->
-    <div id="gallery-content">
-      <div class="gallery-toolbar">
-        <span id="gallery-count" class="gallery-count">30 patterns</span>
-        <div class="gallery-toolbar-right">
-          <select id="sort-select" class="sort-select" onchange="sortChanged()">
-            <option value="default">Sort: Default</option>
-            <option value="name-az">Name A→Z</option>
-            <option value="name-za">Name Z→A</option>
-            <option value="maturity">Maturity</option>
-            <option value="cadence">Cadence</option>
-          </select>
-          <div class="view-toggle">
-            <button class="view-toggle-btn active" data-mode="grid" title="Grid view" onclick="setViewMode('grid')">▦</button>
-            <button class="view-toggle-btn" data-mode="list" title="List view" onclick="setViewMode('list')">☰</button>
-          </div>
-        </div>
-      </div>
-      <div id="card-grid"></div>
-    </div>
-  </div>
-
-  <!-- ── FINDER VIEW ── -->
-  <div id="finder-view" class="view">
-    <div class="wizard-header">
-      <div class="wizard-title">Dashboard Finder</div>
-      <div class="wizard-sub">Answer a few questions to get personalised pattern recommendations.</div>
-    </div>
-    <div class="wizard-progress" id="wizard-progress"></div>
-    <div id="wizard-body"></div>
-  </div>
-
-  <!-- ── COMPARE VIEW ── -->
-  <div id="compare-view" class="view">
-    <div class="compare-header">
-      <div class="compare-title">Compare Patterns</div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn-sm" onclick="navigate('gallery')">+ Add from Gallery</button>
-        <button class="btn-sm" onclick="clearCompare()">Clear All</button>
-      </div>
-    </div>
-    <div id="compare-body"></div>
-  </div>
-
-  <!-- ── DETAIL VIEW ── -->
-  <div id="detail-view" class="view">
-    <button class="detail-back" onclick="history.back()">← Back</button>
-    <div id="detail-body"></div>
-  </div>
-
-  <!-- ── EXPORTS VIEW ── -->
-  <div id="exports-view" class="view">
-    <div id="exports-body"></div>
-  </div>
-
-  <!-- ── ABOUT VIEW ── -->
-  <div id="about-view" class="view">
-    <div id="about-body"></div>
-  </div>
-
+  <div id="view-gallery" data-view="gallery"></div>
+  <div id="view-finder"  data-view="finder"></div>
+  <div id="view-compare" data-view="compare"></div>
+  <div id="view-detail"  data-view="detail"></div>
+  <div id="view-exports" data-view="exports"></div>
+  <div id="view-about"   data-view="about"></div>
 </main>
 
-<!-- Toast -->
 <div id="toast" role="status" aria-live="polite"></div>
 
-<!-- ═══════════════════════════════════════
-     PATTERN DATA  (injected by build step)
-════════════════════════════════════════ -->
 <script>
 const PATTERNS = [
   {
@@ -2353,1061 +2005,1033 @@ const PATTERNS = [
 
 </script>
 
-<!-- ═══════════════════════════════════════
-     APPLICATION LOGIC (injected by build step)
-════════════════════════════════════════ -->
 <script>
-/* =============================================
-   CATEGORIES
-============================================= */
-const CATEGORIES = {
-  executive:  { name: 'Executive',   color: '#7c3aed', icon: '🎯' },
-  finance:    { name: 'Finance',     color: '#0ea5e9', icon: '💰' },
-  risk:       { name: 'Risk',        color: '#ef4444', icon: '⚠️' },
-  cyber:      { name: 'Cyber',       color: '#f97316', icon: '🛡️' },
-  operations: { name: 'Operations',  color: '#10b981', icon: '⚙️' },
-  customer:   { name: 'Customer',    color: '#ec4899', icon: '💎' },
-  workforce:  { name: 'Workforce',   color: '#8b5cf6', icon: '👥' },
-  pmo:        { name: 'PMO',         color: '#f59e0b', icon: '📋' },
-  esg:        { name: 'ESG',         color: '#06b6d4', icon: '🌿' },
-};
-
-const MATURITY_ORDER = { foundational: 0, advanced: 1, strategic: 2 };
-const CADENCE_ORDER  = { 'real-time': 0, daily: 1, weekly: 2, monthly: 3, quarterly: 4 };
-
-/* =============================================
-   APP STATE
-============================================= */
-const state = {
-  view:        'gallery',
-  filters:     { category: 'all', maturity: null, cadence: null, search: '' },
-  compareList: [],
-  detailId:    null,
-  wizard:      { step: 0, answers: {}, results: [] },
-  viewMode:    'grid',
-  detailTab:   0,
-  sort:        'default',
-};
-
-/* =============================================
-   ROUTER
-============================================= */
-function router() {
-  const hash = window.location.hash.slice(1) || 'gallery';
-  if (hash.startsWith('detail/')) {
-    const id = hash.slice(7);
-    showView('detail');
-    renderDetail(id);
-  } else if (['gallery','finder','compare','exports','about'].includes(hash)) {
-    showView(hash);
-    if      (hash === 'gallery') renderGallery();
-    else if (hash === 'finder')  renderFinder();
-    else if (hash === 'compare') renderCompare();
-    else if (hash === 'exports') renderExports();
-    else if (hash === 'about')   renderAbout();
-  } else {
-    window.location.hash = 'gallery';
-  }
-  // Update nav
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    const v = btn.dataset.view;
-    btn.classList.toggle('active', hash === v || (hash.startsWith('detail') && v === 'gallery'));
+// Compatibility shim: map desc/longDesc -> description
+if (typeof PATTERNS !== 'undefined') {
+  PATTERNS.forEach(function(p) {
+    if (!p.description) p.description = p.longDesc || p.desc || '';
   });
-  updateCompareBadge();
 }
+</script>
 
-function showView(name) {
-  state.view = name;
-  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-  const el = document.getElementById(name + '-view');
-  if (el) el.classList.add('active');
-}
+<script>
+// ============================================================
+// CATEGORIES
+// ============================================================
+const CATEGORIES = {
+  executive:  { name: 'Executive',  color: '#7c3aed', icon: '🎯' },
+  finance:    { name: 'Finance',    color: '#0ea5e9', icon: '💰' },
+  risk:       { name: 'Risk',       color: '#ef4444', icon: '⚠️' },
+  cyber:      { name: 'Cyber',      color: '#f97316', icon: '🛡️' },
+  operations: { name: 'Operations', color: '#10b981', icon: '⚙️' },
+  customer:   { name: 'Customer',   color: '#ec4899', icon: '💎' },
+  workforce:  { name: 'Workforce',  color: '#8b5cf6', icon: '👥' },
+  pmo:        { name: 'PMO',        color: '#f59e0b', icon: '📋' },
+  esg:        { name: 'ESG',        color: '#06b6d4', icon: '🌿' },
+};
 
-function navigate(view, params) {
-  if (view === 'detail' && params && params.id) {
-    window.location.hash = 'detail/' + params.id;
+// ============================================================
+// STATE
+// ============================================================
+const state = {
+  view: 'gallery',
+  filters: { category: 'all', audience: null, maturity: null, cadence: null, search: '' },
+  compareList: [],
+  detailId: null,
+  wizard: { step: 0, answers: {}, results: [] },
+  viewMode: 'grid',
+  detailTab: 0,
+};
+
+// ============================================================
+// ROUTER
+// ============================================================
+function router() {
+  const hash = window.location.hash || '#gallery';
+  if (hash.startsWith('#detail/')) {
+    const id = hash.slice('#detail/'.length);
+    state.view = 'detail';
+    state.detailId = id;
+    renderDetail(id);
+  } else if (hash === '#finder') {
+    state.view = 'finder';
+    renderFinder();
+  } else if (hash === '#compare') {
+    state.view = 'compare';
+    renderCompare();
+  } else if (hash === '#exports') {
+    state.view = 'exports';
+    renderExports();
+  } else if (hash === '#about') {
+    state.view = 'about';
+    renderAbout();
   } else {
-    window.location.hash = view;
+    state.view = 'gallery';
+    renderGallery();
+  }
+  // Show/hide sections
+  document.querySelectorAll('[data-view]').forEach(el => {
+    el.classList.toggle('active', el.dataset.view === state.view);
+  });
+}
+
+function navigate(view, params = {}) {
+  if (view === 'detail' && params.id) {
+    window.location.hash = '#detail/' + params.id;
+  } else {
+    window.location.hash = '#' + view;
   }
 }
 
-/* =============================================
-   SVG PREVIEW GENERATOR
-============================================= */
+// ============================================================
+// SVG PREVIEWS
+// ============================================================
 function getPreviewSVG(pattern) {
-  const cat  = CATEGORIES[pattern.category];
-  const col  = cat ? cat.color : '#888';
-  const bg   = col + '14'; // ~8% opacity hex
-  const mid  = col + '40';
+  const cat = pattern.category || 'executive';
+  const color = (CATEGORIES[cat] && CATEGORIES[cat].color) || '#7c3aed';
 
-  const svgs = {
-    executive: `
-      <rect width="100%" height="100%" fill="${bg}"/>
-      <rect x="8" y="10" width="88" height="52" rx="5" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <rect x="8" y="10" width="88" height="14" rx="5" fill="${col}" opacity=".15"/>
-      <rect x="104" y="10" width="88" height="52" rx="5" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <rect x="104" y="10" width="88" height="14" rx="5" fill="${col}" opacity=".15"/>
-      <rect x="8" y="70" width="88" height="52" rx="5" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <rect x="104" y="70" width="88" height="52" rx="5" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <text x="52" y="33" text-anchor="middle" font-size="9" fill="${col}" font-weight="600">Revenue</text>
-      <text x="52" y="47" text-anchor="middle" font-size="14" fill="#111" font-weight="700">98.4%</text>
-      <text x="148" y="33" text-anchor="middle" font-size="9" fill="${col}" font-weight="600">EBITDA</text>
-      <text x="148" y="47" text-anchor="middle" font-size="14" fill="#111" font-weight="700">21.2%</text>
-      <text x="52" y="93" text-anchor="middle" font-size="9" fill="${col}" font-weight="600">NPS</text>
-      <text x="52" y="107" text-anchor="middle" font-size="14" fill="#111" font-weight="700">+42</text>
-      <text x="148" y="93" text-anchor="middle" font-size="9" fill="${col}" font-weight="600">Headcount</text>
-      <text x="148" y="107" text-anchor="middle" font-size="14" fill="#111" font-weight="700">3,412</text>
-      <polyline points="14,128 28,122 42,125 56,118 70,120 84,112 98,115" fill="none" stroke="${col}" stroke-width="2"/>
-      <polyline points="110,130 124,118 138,124 152,112 166,115 180,108 194,110" fill="none" stroke="${col}" stroke-width="2" opacity=".6"/>`,
-
-    finance: `
-      <rect width="100%" height="100%" fill="${bg}"/>
-      <rect x="8" y="8" width="120" height="124" rx="5" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <rect x="136" y="8" width="64" height="60" rx="5" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <rect x="136" y="76" width="64" height="56" rx="5" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <rect x="16" y="16" width="14" height="80" rx="2" fill="${col}" opacity=".8"/>
-      <rect x="34" y="30" width="14" height="66" rx="2" fill="${col}" opacity=".6"/>
-      <rect x="52" y="22" width="14" height="74" rx="2" fill="${col}" opacity=".8"/>
-      <rect x="70" y="38" width="14" height="58" rx="2" fill="${col}" opacity=".5"/>
-      <rect x="88" y="18" width="14" height="78" rx="2" fill="${col}" opacity=".9"/>
-      <rect x="106" y="28" width="14" height="68" rx="2" fill="${col}" opacity=".7"/>
-      <line x1="16" y1="96" x2="120" y2="96" stroke="${col}" stroke-width="1" opacity=".3"/>
-      <polyline points="16,108 34,105 52,107 70,103 88,100 106,98 120,96" fill="none" stroke="${col}" stroke-width="1.5"/>
-      <text x="168" y="26" text-anchor="middle" font-size="8" fill="${col}" font-weight="600">Revenue</text>
-      <text x="168" y="40" text-anchor="middle" font-size="12" fill="#111" font-weight="700">£142M</text>
-      <text x="168" y="56" text-anchor="middle" font-size="8" fill="#22c55e">▲ 8.3%</text>
-      <text x="168" y="90" text-anchor="middle" font-size="8" fill="${col}" font-weight="600">Margin</text>
-      <text x="168" y="104" text-anchor="middle" font-size="12" fill="#111" font-weight="700">18.4%</text>
-      <text x="168" y="118" text-anchor="middle" font-size="8" fill="#eab308">▼ 0.8%</text>`,
-
-    risk: `
-      <rect width="100%" height="100%" fill="${bg}"/>
-      <text x="100" y="22" text-anchor="middle" font-size="10" fill="${col}" font-weight="700">Risk Heat Map</text>
-      ${[0,1,2,3,4].map(row => [0,1,2,3,4].map(col2 => {
-        const colors = ['#dcfce7','#dcfce7','#fef3c7','#fef3c7','#fee2e2'];
-        const c = colors[Math.floor(Math.random()*5)];
-        const x = 16 + col2*36; const y = 30 + row*20;
-        return `<rect x="${x}" y="${y}" width="30" height="16" rx="3" fill="${c}" stroke="white" stroke-width="1"/>`;
-      }).join('')).join('')}
-      <text x="16" y="138" font-size="8" fill="#166534">Low</text>
-      <text x="80" y="138" font-size="8" fill="#92400e">Medium</text>
-      <text x="148" y="138" font-size="8" fill="#991b1b">High</text>
-      <rect x="14" y="130" width="20" height="6" rx="1" fill="#dcfce7"/>
-      <rect x="74" y="130" width="20" height="6" rx="1" fill="#fef3c7"/>
-      <rect x="140" y="130" width="20" height="6" rx="1" fill="#fee2e2"/>`,
-
-    cyber: `
-      <rect width="100%" height="100%" fill="${bg}"/>
-      <circle cx="55" cy="72" r="44" fill="none" stroke="${col}" stroke-width="2" opacity=".2"/>
-      <circle cx="55" cy="72" r="44" fill="none" stroke="${col}" stroke-width="8" stroke-dasharray="207 69" stroke-dashoffset="0" stroke-linecap="round" opacity=".9"/>
-      <text x="55" y="68" text-anchor="middle" font-size="16" fill="#111" font-weight="700">75%</text>
-      <text x="55" y="82" text-anchor="middle" font-size="8" fill="${col}">Secure</text>
-      <rect x="108" y="12" width="88" height="16" rx="4" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <rect x="108" y="12" width="60" height="16" rx="4" fill="${col}" opacity=".7"/>
-      <text x="200" y="23" text-anchor="end" font-size="8" fill="#111">68% patched</text>
-      <rect x="108" y="34" width="88" height="16" rx="4" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <rect x="108" y="34" width="80" height="16" rx="4" fill="${col}" opacity=".5"/>
-      <text x="200" y="45" text-anchor="end" font-size="8" fill="#111">91% uptime</text>
-      <rect x="108" y="56" width="88" height="16" rx="4" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <rect x="108" y="56" width="35" height="16" rx="4" fill="#ef4444" opacity=".7"/>
-      <text x="200" y="67" text-anchor="end" font-size="8" fill="#111">40% resolved</text>
-      <rect x="108" y="88" width="40" height="40" rx="5" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <rect x="154" y="88" width="40" height="40" rx="5" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <text x="128" y="104" text-anchor="middle" font-size="8" fill="${col}">Critical</text>
-      <text x="128" y="118" text-anchor="middle" font-size="13" fill="#ef4444" font-weight="700">12</text>
-      <text x="174" y="104" text-anchor="middle" font-size="8" fill="${col}">MTTR</text>
-      <text x="174" y="118" text-anchor="middle" font-size="13" fill="#111" font-weight="700">4.2h</text>`,
-
-    operations: `
-      <rect width="100%" height="100%" fill="${bg}"/>
-      <rect x="8" y="16" width="44" height="28" rx="5" fill="white" stroke="${col}" stroke-width="1.5" opacity=".9"/>
-      <rect x="66" y="16" width="44" height="28" rx="5" fill="white" stroke="${col}" stroke-width="1.5" opacity=".9"/>
-      <rect x="124" y="16" width="44" height="28" rx="5" fill="white" stroke="${col}" stroke-width="1.5" opacity=".9"/>
-      <rect x="168" y="27" width="24" height="6" rx="2" fill="${col}" opacity=".4"/>
-      <rect x="52" y="27" width="14" height="6" rx="2" fill="${col}" opacity=".4"/>
-      <rect x="110" y="27" width="14" height="6" rx="2" fill="${col}" opacity=".4"/>
-      <text x="30" y="27" text-anchor="middle" font-size="7" fill="${col}" font-weight="700">INPUT</text>
-      <text x="30" y="37" text-anchor="middle" font-size="9" fill="#111" font-weight="600">2,140</text>
-      <text x="88" y="27" text-anchor="middle" font-size="7" fill="${col}" font-weight="700">PROCESS</text>
-      <text x="88" y="37" text-anchor="middle" font-size="9" fill="#111" font-weight="600">94.2%</text>
-      <text x="146" y="27" text-anchor="middle" font-size="7" fill="${col}" font-weight="700">OUTPUT</text>
-      <text x="146" y="37" text-anchor="middle" font-size="9" fill="#111" font-weight="600">2,012</text>
-      <rect x="8" y="56" width="96" height="76" rx="5" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <rect x="112" y="56" width="88" height="76" rx="5" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <rect x="16" y="76" width="12" height="44" rx="2" fill="${col}" opacity=".9"/>
-      <rect x="32" y="84" width="12" height="36" rx="2" fill="${col}" opacity=".7"/>
-      <rect x="48" y="70" width="12" height="50" rx="2" fill="${col}" opacity=".8"/>
-      <rect x="64" y="80" width="12" height="40" rx="2" fill="${col}" opacity=".6"/>
-      <rect x="80" y="66" width="12" height="54" rx="2" fill="${col}" opacity=".9"/>
-      <polyline points="120,100 136,88 152,92 168,84 184,86 200,80" fill="none" stroke="${col}" stroke-width="2"/>`,
-
-    customer: `
-      <rect width="100%" height="100%" fill="${bg}"/>
-      <circle cx="66" cy="72" r="50" fill="none" stroke="${bg}" stroke-width="1"/>
-      <circle cx="66" cy="72" r="50" fill="none" stroke="${col}" stroke-width="18" stroke-dasharray="196 62" opacity=".9"/>
-      <circle cx="66" cy="72" r="50" fill="none" stroke="${col}" stroke-width="18" stroke-dasharray="0 258" opacity=".2"/>
-      <circle cx="66" cy="72" r="32" fill="white"/>
-      <text x="66" y="68" text-anchor="middle" font-size="16" fill="#111" font-weight="700">+52</text>
-      <text x="66" y="82" text-anchor="middle" font-size="8" fill="${col}" font-weight="600">NPS Score</text>
-      <rect x="128" y="8" width="72" height="124" rx="5" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <text x="164" y="22" text-anchor="middle" font-size="8" fill="${col}" font-weight="700">Satisfaction</text>
-      ${[{l:'CSAT',v:87,y:36},{l:'CES',v:72,y:56},{l:'FCR',v:91,y:76},{l:'RT',v:63,y:96}].map(r=>`
-        <text x="135" y="${r.y+8}" font-size="8" fill="#666">${r.l}</text>
-        <rect x="155" y="${r.y}" width="${r.v*0.6}" height="10" rx="2" fill="${col}" opacity=".7"/>
-        <text x="${155+r.v*0.6+3}" y="${r.y+8}" font-size="8" fill="#111">${r.v}%</text>`).join('')}`,
-
-    workforce: `
-      <rect width="100%" height="100%" fill="${bg}"/>
-      <rect x="8" y="8" width="140" height="124" rx="5" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <rect x="156" y="8" width="40" height="56" rx="5" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <rect x="156" y="72" width="40" height="60" rx="5" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      ${[{l:'Q1',a:80,b:12,c:8,y:30},{l:'Q2',a:75,b:15,c:10,y:52},{l:'Q3',a:78,b:13,c:9,y:74},{l:'Q4',a:72,b:17,c:11,y:96}].map(r=>`
-        <text x="16" y="${r.y+8}" font-size="8" fill="#666">${r.l}</text>
-        <rect x="30" y="${r.y}" width="${r.a}" height="14" rx="2" fill="${col}" opacity=".8"/>
-        <rect x="${30+r.a}" y="${r.y}" width="${r.b}" height="14" rx="2" fill="${col}" opacity=".5"/>
-        <rect x="${30+r.a+r.b}" y="${r.y}" width="${r.c}" height="14" rx="2" fill="${col}" opacity=".3"/>
-      `).join('')}
-      <text x="176" y="24" text-anchor="middle" font-size="8" fill="${col}">Attrition</text>
-      <text x="176" y="38" text-anchor="middle" font-size="14" fill="#111" font-weight="700">8.2%</text>
-      <text x="176" y="84" text-anchor="middle" font-size="8" fill="${col}">Engage</text>
-      <text x="176" y="98" text-anchor="middle" font-size="14" fill="#111" font-weight="700">74%</text>`,
-
-    pmo: `
-      <rect width="100%" height="100%" fill="${bg}"/>
-      <rect x="8" y="8" width="192" height="20" rx="4" fill="white" stroke="${col}" stroke-width="1" opacity=".8"/>
-      ${[{y:36,w:140,c:'#22c55e'},{y:60,w:100,c:'#eab308'},{y:84,w:160,c:'#22c55e'},{y:108,w:80,c:'#ef4444'}].map(r=>`
-        <rect x="8" y="${r.y}" width="192" height="16" rx="3" fill="white" stroke="${col}" stroke-width=".5" opacity=".7"/>
-        <rect x="8" y="${r.y}" width="${r.w}" height="16" rx="3" fill="${r.c}" opacity=".25"/>
-        <circle cx="${8+r.w}" cy="${r.y+8}" r="6" fill="${r.c}" opacity=".9"/>
-      `).join('')}
-      <text x="100" y="21" text-anchor="middle" font-size="8" fill="${col}" font-weight="700">Programme Delivery</text>
-      <text x="100" y="47" font-size="8" fill="#111">Workstream Alpha</text>
-      <text x="100" y="71" font-size="8" fill="#111">Workstream Beta</text>
-      <text x="100" y="95" font-size="8" fill="#111">Workstream Gamma</text>
-      <text x="100" y="119" font-size="8" fill="#111">Workstream Delta</text>`,
-
-    esg: `
-      <rect width="100%" height="100%" fill="${bg}"/>
-      <rect x="12" y="8" width="52" height="124" rx="6" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <rect x="76" y="8" width="52" height="124" rx="6" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <rect x="140" y="8" width="60" height="124" rx="6" fill="white" stroke="${col}" stroke-width="1" opacity=".9"/>
-      <rect x="16" y="${8+124*0.4}" width="44" height="${124*0.6}" rx="4" fill="#10b981" opacity=".7"/>
-      <rect x="80" y="${8+124*0.3}" width="44" height="${124*0.7}" rx="4" fill="#8b5cf6" opacity=".7"/>
-      <rect x="144" y="${8+124*0.2}" width="52" height="${124*0.8}" rx="4" fill="${col}" opacity=".7"/>
-      <text x="38" y="22" text-anchor="middle" font-size="10" fill="#10b981" font-weight="700">E</text>
-      <text x="38" y="118" text-anchor="middle" font-size="8" fill="#111">60%</text>
-      <text x="102" y="22" text-anchor="middle" font-size="10" fill="#8b5cf6" font-weight="700">S</text>
-      <text x="102" y="118" text-anchor="middle" font-size="8" fill="#111">70%</text>
-      <text x="170" y="22" text-anchor="middle" font-size="10" fill="${col}" font-weight="700">G</text>
-      <text x="170" y="118" text-anchor="middle" font-size="8" fill="#111">80%</text>`,
-  };
-
-  const svgBody = svgs[pattern.category] || svgs.executive;
-  return `<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg">${svgBody}</svg>`;
-}
-
-/* =============================================
-   GALLERY
-============================================= */
-function renderGallery() {
-  const filtered = applyFilters();
-  const grid = document.getElementById('card-grid');
-  const count = document.getElementById('gallery-count');
-  if (!grid) return;
-
-  grid.className = 'card-grid' + (state.viewMode === 'list' ? ' list-mode' : '');
-  grid.id = 'card-grid';
-
-  if (filtered.length === 0) {
-    grid.innerHTML = `<div class="no-results">
-      <div class="no-results-icon">🔍</div>
-      <div class="no-results-title">No patterns match your filters</div>
-      <div style="font-size:12px;color:var(--secondaryText)">Try adjusting the category, maturity, or search term</div>
-    </div>`;
-    if (count) count.textContent = '0 patterns';
-    return;
+  if (cat === 'executive') {
+    return `<svg width="100%" height="140" viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
+      <rect width="280" height="140" fill="#f8f7ff"/>
+      <rect x="10" y="10" width="58" height="40" rx="4" fill="${color}" opacity="0.15"/>
+      <rect x="10" y="10" width="58" height="6" rx="2" fill="${color}"/>
+      <text x="39" y="40" text-anchor="middle" font-size="11" fill="${color}" font-weight="bold">94%</text>
+      <rect x="76" y="10" width="58" height="40" rx="4" fill="${color}" opacity="0.15"/>
+      <rect x="76" y="10" width="58" height="6" rx="2" fill="${color}"/>
+      <text x="105" y="40" text-anchor="middle" font-size="11" fill="${color}" font-weight="bold">$2.1M</text>
+      <rect x="142" y="10" width="58" height="40" rx="4" fill="${color}" opacity="0.15"/>
+      <rect x="142" y="10" width="58" height="6" rx="2" fill="${color}"/>
+      <text x="171" y="40" text-anchor="middle" font-size="11" fill="${color}" font-weight="bold">↑12%</text>
+      <rect x="208" y="10" width="58" height="40" rx="4" fill="${color}" opacity="0.15"/>
+      <rect x="208" y="10" width="58" height="6" rx="2" fill="${color}"/>
+      <text x="237" y="40" text-anchor="middle" font-size="11" fill="${color}" font-weight="bold">4.8★</text>
+      <polyline points="10,120 50,100 90,110 130,85 170,90 210,70 250,75" fill="none" stroke="${color}" stroke-width="2"/>
+      <polyline points="10,125 50,115 90,120 130,105 170,108 210,95 250,98" fill="none" stroke="${color}" stroke-width="1.5" opacity="0.5"/>
+    </svg>`;
   }
 
-  if (count) count.textContent = `${filtered.length} pattern${filtered.length !== 1 ? 's' : ''}`;
-  grid.innerHTML = filtered.map(p => renderCard(p)).join('');
+  if (cat === 'finance') {
+    return `<svg width="100%" height="140" viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
+      <rect width="280" height="140" fill="#f0f9ff"/>
+      <rect x="20" y="90" width="24" height="40" fill="${color}" opacity="0.8"/>
+      <rect x="52" y="70" width="24" height="60" fill="${color}" opacity="0.8"/>
+      <rect x="84" y="80" width="24" height="50" fill="${color}" opacity="0.8"/>
+      <rect x="116" y="55" width="24" height="75" fill="${color}" opacity="0.8"/>
+      <rect x="148" y="65" width="24" height="65" fill="${color}" opacity="0.8"/>
+      <rect x="180" y="45" width="24" height="85" fill="${color}" opacity="0.8"/>
+      <rect x="212" y="35" width="24" height="95" fill="${color}" opacity="0.8"/>
+      <polyline points="20,85 52,65 84,75 116,50 148,60 180,40 212,30 244,25" fill="none" stroke="#f59e0b" stroke-width="2"/>
+      <line x1="10" y1="130" x2="270" y2="130" stroke="#ccc" stroke-width="1"/>
+    </svg>`;
+  }
 
-  // Update compare button states
-  updateCompareButtons();
+  if (cat === 'risk') {
+    return `<svg width="100%" height="140" viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
+      <rect width="280" height="140" fill="#fff5f5"/>
+      <rect x="20" y="20" width="55" height="45" rx="2" fill="#10b981" opacity="0.7"/>
+      <rect x="80" y="20" width="55" height="45" rx="2" fill="#f59e0b" opacity="0.7"/>
+      <rect x="140" y="20" width="55" height="45" rx="2" fill="${color}" opacity="0.7"/>
+      <rect x="20" y="70" width="55" height="45" rx="2" fill="#f59e0b" opacity="0.7"/>
+      <rect x="80" y="70" width="55" height="45" rx="2" fill="${color}" opacity="0.7"/>
+      <rect x="140" y="70" width="55" height="45" rx="2" fill="${color}" opacity="0.9"/>
+      <text x="47" y="47" text-anchor="middle" font-size="9" fill="white" font-weight="bold">LOW</text>
+      <text x="107" y="47" text-anchor="middle" font-size="9" fill="white" font-weight="bold">MED</text>
+      <text x="167" y="47" text-anchor="middle" font-size="9" fill="white" font-weight="bold">HIGH</text>
+      <text x="47" y="97" text-anchor="middle" font-size="9" fill="white" font-weight="bold">MED</text>
+      <text x="107" y="97" text-anchor="middle" font-size="9" fill="white" font-weight="bold">HIGH</text>
+      <text x="167" y="97" text-anchor="middle" font-size="9" fill="white" font-weight="bold">CRIT</text>
+    </svg>`;
+  }
+
+  if (cat === 'cyber') {
+    return `<svg width="100%" height="140" viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
+      <rect width="280" height="140" fill="#fff7ed"/>
+      <circle cx="70" cy="75" r="45" fill="none" stroke="#e5e7eb" stroke-width="8"/>
+      <circle cx="70" cy="75" r="45" fill="none" stroke="${color}" stroke-width="8"
+        stroke-dasharray="212" stroke-dashoffset="53" transform="rotate(-90 70 75)"/>
+      <text x="70" y="79" text-anchor="middle" font-size="13" fill="${color}" font-weight="bold">75%</text>
+      <circle cx="180" cy="75" r="35" fill="none" stroke="#e5e7eb" stroke-width="7"/>
+      <circle cx="180" cy="75" r="35" fill="none" stroke="#10b981" stroke-width="7"
+        stroke-dasharray="220" stroke-dashoffset="66" transform="rotate(-90 180 75)"/>
+      <text x="180" y="79" text-anchor="middle" font-size="11" fill="#10b981" font-weight="bold">70%</text>
+      <circle cx="245" cy="75" r="22" fill="none" stroke="#e5e7eb" stroke-width="5"/>
+      <circle cx="245" cy="75" r="22" fill="none" stroke="#7c3aed" stroke-width="5"
+        stroke-dasharray="138" stroke-dashoffset="41" transform="rotate(-90 245 75)"/>
+      <text x="245" y="79" text-anchor="middle" font-size="9" fill="#7c3aed" font-weight="bold">70%</text>
+    </svg>`;
+  }
+
+  if (cat === 'operations') {
+    return `<svg width="100%" height="140" viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
+      <rect width="280" height="140" fill="#f0fdf4"/>
+      <rect x="10" y="55" width="50" height="30" rx="4" fill="${color}" opacity="0.8"/>
+      <text x="35" y="74" text-anchor="middle" font-size="9" fill="white">Intake</text>
+      <line x1="60" y1="70" x2="80" y2="70" stroke="${color}" stroke-width="2" marker-end="url(#arr)"/>
+      <rect x="80" y="55" width="50" height="30" rx="4" fill="${color}" opacity="0.8"/>
+      <text x="105" y="74" text-anchor="middle" font-size="9" fill="white">Process</text>
+      <line x1="130" y1="70" x2="150" y2="70" stroke="${color}" stroke-width="2" marker-end="url(#arr)"/>
+      <rect x="150" y="55" width="50" height="30" rx="4" fill="${color}" opacity="0.8"/>
+      <text x="175" y="74" text-anchor="middle" font-size="9" fill="white">Review</text>
+      <line x1="200" y1="70" x2="220" y2="70" stroke="${color}" stroke-width="2" marker-end="url(#arr)"/>
+      <rect x="220" y="55" width="50" height="30" rx="4" fill="${color}" opacity="0.8"/>
+      <text x="245" y="74" text-anchor="middle" font-size="9" fill="white">Output</text>
+      <text x="35" y="110" text-anchor="middle" font-size="8" fill="#666">98.2%</text>
+      <text x="105" y="110" text-anchor="middle" font-size="8" fill="#666">4.2h</text>
+      <text x="175" y="110" text-anchor="middle" font-size="8" fill="#666">99.1%</text>
+      <text x="245" y="110" text-anchor="middle" font-size="8" fill="#666">SLA:OK</text>
+    </svg>`;
+  }
+
+  if (cat === 'customer') {
+    return `<svg width="100%" height="140" viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
+      <rect width="280" height="140" fill="#fdf2f8"/>
+      <circle cx="75" cy="70" r="50" fill="none" stroke="#e5e7eb" stroke-width="14"/>
+      <circle cx="75" cy="70" r="50" fill="none" stroke="${color}" stroke-width="14"
+        stroke-dasharray="188" stroke-dashoffset="56" transform="rotate(-90 75 70)"/>
+      <circle cx="75" cy="70" r="50" fill="none" stroke="#f59e0b" stroke-width="14"
+        stroke-dasharray="188" stroke-dashoffset="141" transform="rotate(30 75 70)"/>
+      <text x="75" y="74" text-anchor="middle" font-size="12" fill="${color}" font-weight="bold">NPS</text>
+      <rect x="160" y="20" width="110" height="100" rx="4" fill="white" stroke="#e5e7eb"/>
+      <text x="215" y="38" text-anchor="middle" font-size="9" fill="#666">NPS SCORE</text>
+      <text x="215" y="58" text-anchor="middle" font-size="20" fill="${color}" font-weight="bold">+67</text>
+      <text x="215" y="75" text-anchor="middle" font-size="8" fill="#10b981">▲ 5 pts vs last</text>
+      <line x1="170" y1="90" x2="260" y2="90" stroke="#e5e7eb"/>
+      <text x="215" y="105" text-anchor="middle" font-size="8" fill="#666">CSAT: 4.6/5</text>
+    </svg>`;
+  }
+
+  if (cat === 'workforce') {
+    return `<svg width="100%" height="140" viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
+      <rect width="280" height="140" fill="#faf5ff"/>
+      <rect x="20" y="40" width="30" height="80" rx="2" fill="${color}" opacity="0.3"/>
+      <rect x="20" y="80" width="30" height="40" rx="2" fill="${color}" opacity="0.9"/>
+      <rect x="58" y="30" width="30" height="90" rx="2" fill="${color}" opacity="0.3"/>
+      <rect x="58" y="60" width="30" height="60" rx="2" fill="${color}" opacity="0.9"/>
+      <rect x="96" y="50" width="30" height="70" rx="2" fill="${color}" opacity="0.3"/>
+      <rect x="96" y="75" width="30" height="45" rx="2" fill="${color}" opacity="0.9"/>
+      <rect x="134" y="25" width="30" height="95" rx="2" fill="${color}" opacity="0.3"/>
+      <rect x="134" y="55" width="30" height="65" rx="2" fill="${color}" opacity="0.9"/>
+      <rect x="172" y="35" width="30" height="85" rx="2" fill="${color}" opacity="0.3"/>
+      <rect x="172" y="65" width="30" height="55" rx="2" fill="${color}" opacity="0.9"/>
+      <rect x="210" y="45" width="30" height="75" rx="2" fill="${color}" opacity="0.3"/>
+      <rect x="210" y="70" width="30" height="50" rx="2" fill="${color}" opacity="0.9"/>
+    </svg>`;
+  }
+
+  if (cat === 'pmo') {
+    return `<svg width="100%" height="140" viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
+      <rect width="280" height="140" fill="#fffbeb"/>
+      <text x="10" y="28" font-size="8" fill="#666">Design</text>
+      <rect x="60" y="18" width="80" height="14" rx="2" fill="${color}" opacity="0.8"/>
+      <text x="10" y="50" font-size="8" fill="#666">Dev</text>
+      <rect x="80" y="40" width="110" height="14" rx="2" fill="${color}" opacity="0.8"/>
+      <text x="10" y="72" font-size="8" fill="#666">QA</text>
+      <rect x="150" y="62" width="70" height="14" rx="2" fill="${color}" opacity="0.8"/>
+      <text x="10" y="94" font-size="8" fill="#666">UAT</text>
+      <rect x="180" y="84" width="60" height="14" rx="2" fill="${color}" opacity="0.8"/>
+      <text x="10" y="116" font-size="8" fill="#666">Deploy</text>
+      <rect x="210" y="106" width="50" height="14" rx="2" fill="#10b981" opacity="0.8"/>
+      <line x1="60" y1="130" x2="260" y2="130" stroke="#e5e7eb"/>
+    </svg>`;
+  }
+
+  if (cat === 'esg') {
+    return `<svg width="100%" height="140" viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
+      <rect width="280" height="140" fill="#f0fdfa"/>
+      <text x="65" y="18" text-anchor="middle" font-size="9" fill="#10b981" font-weight="bold">E</text>
+      <rect x="55" y="20" width="20" height="100" rx="3" fill="#e5e7eb"/>
+      <rect x="55" y="50" width="20" height="70" rx="3" fill="#10b981" opacity="0.8"/>
+      <text x="65" y="130" text-anchor="middle" font-size="7" fill="#666">72%</text>
+      <text x="140" y="18" text-anchor="middle" font-size="9" fill="#0ea5e9" font-weight="bold">S</text>
+      <rect x="130" y="20" width="20" height="100" rx="3" fill="#e5e7eb"/>
+      <rect x="130" y="35" width="20" height="85" rx="3" fill="#0ea5e9" opacity="0.8"/>
+      <text x="140" y="130" text-anchor="middle" font-size="7" fill="#666">85%</text>
+      <text x="215" y="18" text-anchor="middle" font-size="9" fill="#7c3aed" font-weight="bold">G</text>
+      <rect x="205" y="20" width="20" height="100" rx="3" fill="#e5e7eb"/>
+      <rect x="205" y="60" width="20" height="60" rx="3" fill="#7c3aed" opacity="0.8"/>
+      <text x="215" y="130" text-anchor="middle" font-size="7" fill="#666">60%</text>
+    </svg>`;
+  }
+
+  // default fallback
+  return `<svg width="100%" height="140" viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
+    <rect width="280" height="140" fill="#f9fafb"/>
+    <rect x="20" y="30" width="60" height="80" rx="4" fill="${color}" opacity="0.2"/>
+    <rect x="100" y="50" width="60" height="60" rx="4" fill="${color}" opacity="0.4"/>
+    <rect x="180" y="20" width="60" height="90" rx="4" fill="${color}" opacity="0.6"/>
+  </svg>`;
+}
+// ============================================================
+// GALLERY
+// ============================================================
+function renderGallery() {
+  const container = document.getElementById('view-gallery');
+  if (!container) return;
+  const filtered = applyFilters();
+  const isGrid = state.viewMode === 'grid';
+
+  container.innerHTML = `
+    <div class="filter-rail">
+      <div class="filter-group">
+        <label>Category</label>
+        <select id="filter-category">
+          <option value="all">All Categories</option>
+          ${Object.entries(CATEGORIES).map(([k, v]) =>
+            `<option value="${k}" ${state.filters.category === k ? 'selected' : ''}>${v.icon} ${v.name}</option>`
+          ).join('')}
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Audience</label>
+        <select id="filter-audience">
+          <option value="">Any</option>
+          <option value="board" ${state.filters.audience === 'board' ? 'selected' : ''}>Board</option>
+          <option value="c-suite" ${state.filters.audience === 'c-suite' ? 'selected' : ''}>C-Suite</option>
+          <option value="vp" ${state.filters.audience === 'vp' ? 'selected' : ''}>VP/Director</option>
+          <option value="manager" ${state.filters.audience === 'manager' ? 'selected' : ''}>Manager</option>
+          <option value="analyst" ${state.filters.audience === 'analyst' ? 'selected' : ''}>Analyst</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Maturity</label>
+        <select id="filter-maturity">
+          <option value="">Any</option>
+          <option value="starter" ${state.filters.maturity === 'starter' ? 'selected' : ''}>Starter</option>
+          <option value="intermediate" ${state.filters.maturity === 'intermediate' ? 'selected' : ''}>Intermediate</option>
+          <option value="advanced" ${state.filters.maturity === 'advanced' ? 'selected' : ''}>Advanced</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Cadence</label>
+        <select id="filter-cadence">
+          <option value="">Any</option>
+          <option value="real-time" ${state.filters.cadence === 'real-time' ? 'selected' : ''}>Real-time</option>
+          <option value="daily" ${state.filters.cadence === 'daily' ? 'selected' : ''}>Daily</option>
+          <option value="weekly" ${state.filters.cadence === 'weekly' ? 'selected' : ''}>Weekly</option>
+          <option value="monthly" ${state.filters.cadence === 'monthly' ? 'selected' : ''}>Monthly</option>
+          <option value="quarterly" ${state.filters.cadence === 'quarterly' ? 'selected' : ''}>Quarterly</option>
+        </select>
+      </div>
+      <div class="filter-group search-group">
+        <label>Search</label>
+        <input type="text" id="filter-search" placeholder="Search patterns..." value="${state.filters.search}"/>
+      </div>
+      <div class="filter-group view-toggle">
+        <button class="btn-icon ${isGrid ? 'active' : ''}" data-viewmode="grid" title="Grid view">⊞</button>
+        <button class="btn-icon ${!isGrid ? 'active' : ''}" data-viewmode="list" title="List view">☰</button>
+      </div>
+    </div>
+    <div class="results-count">${filtered.length} pattern${filtered.length !== 1 ? 's' : ''} found</div>
+    <div class="card-grid ${isGrid ? 'grid-mode' : 'list-mode'}">
+      ${filtered.length ? filtered.map(p => renderCard(p)).join('') : '<div class="no-results">No patterns match your filters. <button onclick="clearFilters()">Clear filters</button></div>'}
+    </div>
+  `;
 }
 
 function applyFilters() {
-  let arr = [...PATTERNS];
-
-  if (state.filters.category && state.filters.category !== 'all') {
-    arr = arr.filter(p => p.category === state.filters.category);
-  }
-  if (state.filters.maturity) {
-    arr = arr.filter(p => p.maturity === state.filters.maturity);
-  }
-  if (state.filters.cadence) {
-    arr = arr.filter(p => p.cadence === state.filters.cadence);
-  }
-  if (state.filters.search) {
-    const q = state.filters.search.toLowerCase();
-    arr = arr.filter(p =>
-      p.name.toLowerCase().includes(q) ||
-      p.desc.toLowerCase().includes(q) ||
-      (p.tags || []).some(t => t.toLowerCase().includes(q)) ||
-      p.category.toLowerCase().includes(q)
-    );
-  }
-
-  // Sort
-  if (state.sort === 'name-az') arr.sort((a,b) => a.name.localeCompare(b.name));
-  else if (state.sort === 'name-za') arr.sort((a,b) => b.name.localeCompare(a.name));
-  else if (state.sort === 'maturity') arr.sort((a,b) => MATURITY_ORDER[a.maturity] - MATURITY_ORDER[b.maturity]);
-  else if (state.sort === 'cadence') arr.sort((a,b) => CADENCE_ORDER[a.cadence] - CADENCE_ORDER[b.cadence]);
-
-  return arr;
-}
-
-function renderCard(pattern) {
-  const cat = CATEGORIES[pattern.category] || {};
-  const inCompare = state.compareList.includes(pattern.id);
-  const maturityClass = 'maturity-' + pattern.maturity;
-  const maturityLabel = { foundational: 'Foundational', advanced: 'Advanced', strategic: 'Strategic' }[pattern.maturity] || pattern.maturity;
-  const tags = (pattern.tags || []).slice(0,3).map(t => `<span class="tag">${t}</span>`).join('');
-
-  const listWrapStart = state.viewMode === 'list' ? '<div class="card-main">' : '';
-  const listWrapEnd  = state.viewMode === 'list' ? '</div>' : '';
-
-  return `<div class="pattern-card" data-id="${pattern.id}" onclick="navigate('detail',{id:'${pattern.id}'})">
-    <div class="card-preview">${getPreviewSVG(pattern)}</div>
-    ${listWrapStart}
-    <div class="card-meta">
-      <div class="card-category" style="color:${cat.color}">${cat.icon || ''} ${cat.name}</div>
-      <div class="card-name">${pattern.name}</div>
-      <div class="card-desc">${pattern.desc}</div>
-      <div class="card-tags">${tags}</div>
-    </div>
-    <div class="card-footer">
-      <span class="maturity-badge ${maturityClass}">${maturityLabel}</span>
-      <div class="card-actions">
-        <button class="card-action-btn ${inCompare ? 'compare-active' : ''}" data-compare="${pattern.id}"
-          onclick="event.stopPropagation();toggleCompare('${pattern.id}')">
-          ${inCompare ? '✓ Comparing' : '+ Compare'}
-        </button>
-      </div>
-    </div>
-    ${listWrapEnd}
-  </div>`;
-}
-
-function updateCompareButtons() {
-  document.querySelectorAll('[data-compare]').forEach(btn => {
-    const id = btn.dataset.compare;
-    const active = state.compareList.includes(id);
-    btn.classList.toggle('compare-active', active);
-    btn.textContent = active ? '✓ Comparing' : '+ Compare';
+  return (typeof PATTERNS !== 'undefined' ? PATTERNS : []).filter(p => {
+    if (state.filters.category !== 'all' && p.category !== state.filters.category) return false;
+    if (state.filters.audience && p.audience && !p.audience.includes(state.filters.audience)) return false;
+    if (state.filters.maturity && p.maturity !== state.filters.maturity) return false;
+    if (state.filters.cadence && p.cadence !== state.filters.cadence) return false;
+    if (state.filters.search) {
+      const s = state.filters.search.toLowerCase();
+      const haystack = [p.name, p.description, p.category, ...(p.tags || [])].join(' ').toLowerCase();
+      if (!haystack.includes(s)) return false;
+    }
+    return true;
   });
 }
 
-function updateCompareBadge() {
-  const badge = document.getElementById('compare-badge');
-  const compareBtn = document.querySelector('[data-view="compare"]');
-  if (!badge || !compareBtn) return;
-  if (state.compareList.length > 0) {
-    badge.style.display = 'inline-flex';
-    badge.style.cssText = `
-      display:inline-flex;align-items:center;justify-content:center;
-      width:16px;height:16px;border-radius:50%;
-      background:var(--orange500);color:white;
-      font-size:9px;font-weight:700;margin-left:4px;
-    `;
-    badge.textContent = state.compareList.length;
-    compareBtn.innerHTML = `Compare ${badge.outerHTML}`;
-  } else {
-    compareBtn.textContent = 'Compare';
-  }
+function clearFilters() {
+  state.filters = { category: 'all', audience: null, maturity: null, cadence: null, search: '' };
+  renderGallery();
 }
 
-/* =============================================
-   FINDER WIZARD
-============================================= */
+function renderCard(pattern) {
+  const cat = CATEGORIES[pattern.category] || { name: pattern.category, color: '#666', icon: '📊' };
+  const inCompare = state.compareList.includes(pattern.id);
+  const tags = (pattern.tags || []).slice(0, 3).map(t => `<span class="tag">${t}</span>`).join('');
+  return `
+    <div class="pattern-card" data-id="${pattern.id}">
+      <div class="card-preview" style="border-top: 3px solid ${cat.color}">
+        ${getPreviewSVG(pattern)}
+      </div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="category-badge" style="background:${cat.color}22;color:${cat.color}">${cat.icon} ${cat.name}</span>
+          <span class="maturity-badge maturity-${pattern.maturity}">${pattern.maturity || ''}</span>
+        </div>
+        <h3 class="card-title">${pattern.name}</h3>
+        <p class="card-desc">${(pattern.description || '').slice(0, 100)}${pattern.description && pattern.description.length > 100 ? '…' : ''}</p>
+        <div class="card-tags">${tags}</div>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-compare ${inCompare ? 'active' : ''}" data-action="compare" data-id="${pattern.id}">
+          ${inCompare ? '✓ Comparing' : '+ Compare'}
+        </button>
+        <button class="btn btn-primary" data-action="view" data-id="${pattern.id}">View →</button>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// FINDER WIZARD
+// ============================================================
 const WIZARD_STEPS = [
   {
-    label: 'Objective',
-    question: 'What is your primary objective?',
+    id: 'objective',
+    question: 'What is the primary objective of your dashboard?',
     options: [
-      { icon:'📈', label:'Monitor performance', desc:'Track KPIs against targets continuously', value:'monitor' },
-      { icon:'🛡️', label:'Manage risk',         desc:'Identify, assess and mitigate risks',    value:'risk' },
-      { icon:'🎯', label:'Drive decisions',      desc:'Provide data to inform strategy',        value:'decisions' },
-      { icon:'📋', label:'Report to stakeholders',desc:'Create structured management reports', value:'report' },
-    ],
+      { value: 'performance', label: 'Track performance vs goals' },
+      { value: 'risk', label: 'Monitor risks and exceptions' },
+      { value: 'operations', label: 'Manage operations in real time' },
+      { value: 'insight', label: 'Gain strategic insight' },
+      { value: 'reporting', label: 'Produce stakeholder reports' },
+      { value: 'compliance', label: 'Ensure compliance and governance' },
+    ]
   },
   {
-    label: 'Audience',
+    id: 'audience',
     question: 'Who is the primary audience?',
     options: [
-      { icon:'🏛️', label:'C-Suite & Board',     desc:'Executive leadership and governance', value:'csuite' },
-      { icon:'🏢', label:'Department heads',    desc:'Functional and business unit leaders', value:'dept' },
-      { icon:'⚙️', label:'Operations team',     desc:'Frontline managers and analysts',     value:'ops' },
-      { icon:'🌐', label:'External stakeholders',desc:'Investors, regulators, partners',    value:'external' },
-    ],
+      { value: 'board', label: 'Board of Directors' },
+      { value: 'c-suite', label: 'C-Suite / Executives' },
+      { value: 'vp', label: 'VP / Director' },
+      { value: 'manager', label: 'Manager / Team Lead' },
+      { value: 'analyst', label: 'Analyst / Individual contributor' },
+    ]
   },
   {
-    label: 'Maturity',
-    question: 'How mature is your data infrastructure?',
+    id: 'maturity',
+    question: 'What is your analytics maturity level?',
     options: [
-      { icon:'🔰', label:'Foundational',  desc:'Manual processes, spreadsheets, basic BI',        value:'foundational' },
-      { icon:'⚡', label:'Advanced',      desc:'Integrated data warehouse, automated pipelines',   value:'advanced' },
-      { icon:'🚀', label:'Strategic',     desc:'Real-time data fabric, ML/AI, predictive insights',value:'strategic' },
-    ],
+      { value: 'starter', label: 'Starter — just beginning with dashboards' },
+      { value: 'intermediate', label: 'Intermediate — some dashboards in production' },
+      { value: 'advanced', label: 'Advanced — mature data platform and culture' },
+    ]
   },
   {
-    label: 'Cadence',
-    question: 'What update cadence do you need?',
+    id: 'cadence',
+    question: 'How often will this dashboard be reviewed?',
     options: [
-      { icon:'⚡', label:'Real-time',         desc:'Live feeds, sub-minute refresh',          value:'real-time' },
-      { icon:'🌅', label:'Daily',             desc:'Overnight ETL, morning refresh',           value:'daily' },
-      { icon:'📅', label:'Weekly',            desc:'Weekly digest and operational review',     value:'weekly' },
-      { icon:'📆', label:'Monthly / Quarterly',desc:'Management reporting cycle',             value:'monthly' },
-    ],
+      { value: 'real-time', label: 'Real-time / continuous monitoring' },
+      { value: 'daily', label: 'Daily' },
+      { value: 'weekly', label: 'Weekly' },
+      { value: 'monthly', label: 'Monthly' },
+      { value: 'quarterly', label: 'Quarterly' },
+    ]
   },
   {
-    label: 'Domain',
-    question: 'Which domain best fits your need?',
-    options: [
-      { icon:'🎯', label:'Executive',   desc:'Cross-business strategic oversight', value:'executive', cols:3 },
-      { icon:'💰', label:'Finance',     desc:'Financial performance & control',    value:'finance',   cols:3 },
-      { icon:'⚠️', label:'Risk',        desc:'Risk & compliance management',       value:'risk',      cols:3 },
-      { icon:'🛡️', label:'Cyber',       desc:'Cyber security & threat operations', value:'cyber',     cols:3 },
-      { icon:'⚙️', label:'Operations',  desc:'Operational efficiency & quality',   value:'operations',cols:3 },
-      { icon:'💎', label:'Customer',    desc:'Customer experience & sales',        value:'customer',  cols:3 },
-      { icon:'👥', label:'Workforce',   desc:'People analytics & HR',             value:'workforce', cols:3 },
-      { icon:'📋', label:'PMO',         desc:'Portfolio & programme management',   value:'pmo',       cols:3 },
-      { icon:'🌿', label:'ESG',         desc:'Environmental & sustainability',     value:'esg',       cols:3 },
-    ],
+    id: 'category',
+    question: 'Which domain best fits your use case?',
+    options: Object.entries(CATEGORIES).map(([k, v]) => ({ value: k, label: `${v.icon} ${v.name}` }))
   },
   {
-    label: 'KPI Count',
-    question: 'How many KPIs will you track?',
+    id: 'interactivity',
+    question: 'How much interactivity do you need?',
     options: [
-      { icon:'🎯', label:'1 – 5 (Focused)',       desc:'Essential metrics only, high signal', value:'1-5' },
-      { icon:'📊', label:'6 – 15 (Comprehensive)',desc:'Full functional scorecard',            value:'6-15' },
-      { icon:'🏢', label:'16 – 30 (Enterprise)',  desc:'Cross-functional enterprise view',    value:'16-30' },
-      { icon:'🌐', label:'30+ (Full suite)',       desc:'Organisation-wide metric catalogue',  value:'30+' },
-    ],
+      { value: 'static', label: 'Static — printed or PDF reports' },
+      { value: 'basic', label: 'Basic — simple filters' },
+      { value: 'interactive', label: 'Interactive — drill-downs and cross-filters' },
+      { value: 'embedded', label: 'Embedded — in an application or portal' },
+    ]
   },
   {
-    label: 'Chart Style',
-    question: 'What chart style do you prefer?',
+    id: 'data_sources',
+    question: 'How many data sources will feed this dashboard?',
     options: [
-      { icon:'🔢', label:'KPI tiles & scorecards', desc:'Numbers first, visual simplicity',   value:'tiles' },
-      { icon:'📊', label:'Bar & line charts',       desc:'Trend analysis and comparisons',     value:'bar-line' },
-      { icon:'🔥', label:'Heat maps & matrices',    desc:'Multi-dimensional risk or quality',  value:'heatmap' },
-      { icon:'🕹️', label:'Gauges & dials',          desc:'Status at a glance, live dashboards',value:'gauges' },
-    ],
+      { value: 'one', label: '1 — single source of truth' },
+      { value: 'few', label: '2–4 sources' },
+      { value: 'many', label: '5+ sources' },
+    ]
   },
   {
-    label: 'Export',
-    question: 'Do you need export capabilities?',
+    id: 'timeline',
+    question: 'What is your delivery timeline?',
     options: [
-      { icon:'📦', label:'Full export pack',   desc:'Markdown, JSON spec, KPI CSV, workshop notes', value:'full' },
-      { icon:'📄', label:'Basic export',       desc:'Summary PDF or CSV only',                       value:'basic' },
-      { icon:'🚫', label:'No exports needed',  desc:'View only, live dashboard consumption',         value:'none' },
-    ],
+      { value: 'immediate', label: 'Immediate — within a week' },
+      { value: 'short', label: 'Short — 1–4 weeks' },
+      { value: 'medium', label: 'Medium — 1–3 months' },
+      { value: 'long', label: 'Long — 3+ months' },
+    ]
   },
 ];
 
 function renderFinder() {
-  const progress = document.getElementById('wizard-progress');
-  const body     = document.getElementById('wizard-body');
-  if (!progress || !body) return;
+  const container = document.getElementById('view-finder');
+  if (!container) return;
+  const { step, answers, results } = state.wizard;
 
-  const total = WIZARD_STEPS.length;
-  const step  = state.wizard.step;
-
-  // Progress bar
-  progress.innerHTML = WIZARD_STEPS.map((_,i) =>
-    `<div class="progress-step ${i < step ? 'done' : i === step ? 'current' : ''}"></div>`
-  ).join('');
-
-  if (step >= total) {
+  if (results && results.length && step >= WIZARD_STEPS.length) {
     renderFinderResults();
     return;
   }
 
-  const s = WIZARD_STEPS[step];
-  const isNineCols = s.options.some(o => o.cols === 3);
-  const answer = state.wizard.answers[step];
-
-  body.innerHTML = `
-    <div class="wizard-step-num">Step ${step+1} of ${total} · ${s.label}</div>
-    <div class="wizard-question">${s.question}</div>
-    <div class="wizard-options ${isNineCols ? 'cols-3' : ''}">
-      ${s.options.map(opt => `
-        <button class="wizard-option ${answer === opt.value ? 'selected' : ''}"
-          onclick="wizardSelect(${step},'${opt.value}')">
-          <div class="wizard-option-icon">${opt.icon}</div>
-          <div class="wizard-option-label">${opt.label}</div>
-          <div class="wizard-option-desc">${opt.desc}</div>
-        </button>`).join('')}
-    </div>
-    <div class="wizard-nav">
-      <button class="btn-secondary" onclick="wizardBack()" ${step === 0 ? 'disabled style="opacity:.4"' : ''}>← Back</button>
-      <span class="wizard-step-text">${step + 1} / ${total}</span>
-      <button class="btn-primary" id="wizard-next" onclick="wizardNext()" ${!answer ? 'disabled' : ''}>
-        ${step === total-1 ? 'See Recommendations →' : 'Next →'}
-      </button>
-    </div>`;
-}
-
-function wizardSelect(step, value) {
-  state.wizard.answers[step] = value;
-  // Highlight selected
-  document.querySelectorAll('.wizard-option').forEach(opt => opt.classList.remove('selected'));
-  event.currentTarget.classList.add('selected');
-  // Enable next
-  const nextBtn = document.getElementById('wizard-next');
-  if (nextBtn) nextBtn.disabled = false;
-}
-
-function wizardNext() {
-  if (!state.wizard.answers[state.wizard.step]) return;
-  state.wizard.step++;
-  renderFinder();
-}
-
-function wizardBack() {
-  if (state.wizard.step > 0) {
-    state.wizard.step--;
-    renderFinder();
+  if (step >= WIZARD_STEPS.length) {
+    state.wizard.results = scoreAllPatterns(answers);
+    renderFinderResults();
+    return;
   }
+
+  const ws = WIZARD_STEPS[step];
+  const progress = Math.round((step / WIZARD_STEPS.length) * 100);
+
+  container.innerHTML = `
+    <div class="wizard-container">
+      <div class="wizard-header">
+        <h2>Pattern Finder</h2>
+        <div class="wizard-progress-bar"><div class="wizard-progress-fill" style="width:${progress}%"></div></div>
+        <div class="wizard-step-count">Step ${step + 1} of ${WIZARD_STEPS.length}</div>
+      </div>
+      <div class="wizard-question">
+        <h3>${ws.question}</h3>
+        <div class="wizard-options">
+          ${ws.options.map(opt => `
+            <button class="wizard-option ${answers[ws.id] === opt.value ? 'selected' : ''}"
+              data-step="${step}" data-value="${opt.value}">${opt.label}</button>
+          `).join('')}
+        </div>
+      </div>
+      <div class="wizard-nav">
+        ${step > 0 ? `<button class="btn" data-action="wizard-back">← Back</button>` : '<span></span>'}
+        <button class="btn btn-primary" data-action="wizard-next" ${!answers[ws.id] ? 'disabled' : ''}>
+          ${step === WIZARD_STEPS.length - 1 ? 'Find Patterns →' : 'Next →'}
+        </button>
+      </div>
+    </div>
+  `;
 }
 
 function scorePattern(pattern, answers) {
   let score = 0;
-
-  // Step 0: objective
-  const obj = answers[0];
-  if (obj === 'monitor' && ['operations','finance','workforce'].includes(pattern.category))  score += 20;
-  if (obj === 'risk'    && ['risk','cyber'].includes(pattern.category))                      score += 20;
-  if (obj === 'decisions' && ['executive','finance','pmo'].includes(pattern.category))       score += 20;
-  if (obj === 'report'  && ['executive','esg','pmo'].includes(pattern.category))             score += 20;
-
-  // Step 1: audience
-  const aud = answers[1];
-  if (aud === 'csuite'   && ['executive'].includes(pattern.category))                        score += 18;
-  if (aud === 'dept'     && ['finance','workforce','customer','pmo'].includes(pattern.category)) score += 14;
-  if (aud === 'ops'      && ['operations','cyber','risk'].includes(pattern.category))        score += 14;
-  if (aud === 'external' && ['esg','executive'].includes(pattern.category))                  score += 14;
-
-  // Step 2: maturity
-  const mat = answers[2];
-  if (mat && mat === pattern.maturity)           score += 22;
-  else if (mat === 'advanced' && pattern.maturity === 'foundational') score += 8;
-  else if (mat === 'strategic' && pattern.maturity === 'advanced')    score += 8;
-
-  // Step 3: cadence
-  const cad = answers[3];
-  const mapCad = { 'real-time':'real-time', daily:'daily', weekly:'weekly', monthly:'monthly' };
-  const wantedCad = mapCad[cad] || cad;
-  if (wantedCad === pattern.cadence)            score += 18;
-  else if (Math.abs(CADENCE_ORDER[wantedCad] - CADENCE_ORDER[pattern.cadence]) === 1) score += 8;
-
-  // Step 4: domain/category
-  const dom = answers[4];
-  if (dom && dom === pattern.category)           score += 28;
-
-  // Step 5: KPI count → maturity proxy
-  const kpiCount = answers[5];
-  if (kpiCount === '1-5'  && pattern.maturity === 'foundational') score += 10;
-  if (kpiCount === '6-15' && pattern.maturity === 'advanced')     score += 10;
-  if (kpiCount === '16-30'&& pattern.maturity === 'strategic')    score += 10;
-  if (kpiCount === '30+'  && pattern.maturity === 'strategic')    score += 10;
-
-  // Step 6: chart style
-  const chart = answers[6];
-  const layouts = (pattern.layouts || []).flatMap(l => l.chartTypes || []).join(' ');
-  if (chart === 'tiles'    && layouts.includes('kpi-tile'))  score += 8;
-  if (chart === 'bar-line' && (layouts.includes('bar') || layouts.includes('line'))) score += 8;
-  if (chart === 'heatmap'  && layouts.includes('heatmap'))   score += 8;
-  if (chart === 'gauges'   && layouts.includes('gauge'))     score += 8;
-
+  // Category exact match: +30
+  if (answers.category && pattern.category === answers.category) score += 30;
+  // Maturity exact match: +25
+  if (answers.maturity && pattern.maturity === answers.maturity) score += 25;
+  // Cadence exact match: +20
+  if (answers.cadence && pattern.cadence === answers.cadence) score += 20;
+  // Audience match: +15
+  if (answers.audience && pattern.audience && pattern.audience.includes(answers.audience)) score += 15;
+  // Objective match via tags/keywords: +20
+  if (answers.objective) {
+    const haystack = [pattern.name, pattern.description, ...(pattern.tags || [])].join(' ').toLowerCase();
+    if (haystack.includes(answers.objective)) score += 20;
+  }
+  // Interactivity: +10
+  if (answers.interactivity && pattern.interactivity === answers.interactivity) score += 10;
+  // Timeline: +10
+  if (answers.timeline) {
+    const complexMap = { immediate: 'starter', short: 'starter', medium: 'intermediate', long: 'advanced' };
+    if (pattern.maturity === complexMap[answers.timeline]) score += 10;
+  }
   return Math.min(100, score);
 }
 
+function scoreAllPatterns(answers) {
+  const patterns = typeof PATTERNS !== 'undefined' ? PATTERNS : [];
+  return patterns
+    .map(p => ({ pattern: p, score: scorePattern(p, answers) }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5);
+}
+
 function renderFinderResults() {
-  const body = document.getElementById('wizard-body');
-  if (!body) return;
+  const container = document.getElementById('view-finder');
+  if (!container) return;
+  const results = state.wizard.results;
 
-  const scored = PATTERNS.map(p => ({
-    pattern: p,
-    score: scorePattern(p, state.wizard.answers),
-  })).sort((a,b) => b.score - a.score).slice(0,5);
-
-  const reasons = {
-    executive:'Aligns with executive reporting & strategic oversight objectives',
-    finance:'Matches financial performance monitoring and reporting needs',
-    risk:'Targets risk identification and compliance management',
-    cyber:'Fits cyber security operations and threat monitoring',
-    operations:'Suits operational efficiency and process monitoring goals',
-    customer:'Designed for customer experience and sales pipeline insight',
-    workforce:'Covers people analytics and workforce management',
-    pmo:'Built for portfolio and programme delivery oversight',
-    esg:'Addresses sustainability and ESG reporting requirements',
-  };
-
-  body.innerHTML = `
-    <div class="wizard-results">
-      <div class="results-header">
-        <div class="results-title">Your top recommendations</div>
-        <div class="results-sub">Based on your answers — click any pattern to explore it in detail.</div>
+  container.innerHTML = `
+    <div class="wizard-container">
+      <div class="wizard-header">
+        <h2>Recommended Patterns</h2>
+        <p>Based on your answers, here are the best matches:</p>
       </div>
-      ${scored.map((item, i) => {
-        const cat = CATEGORIES[item.pattern.category] || {};
-        const rankClass = i === 1 ? 'r2' : i === 2 ? 'r3' : '';
-        return `<div class="result-card" onclick="navigate('detail',{id:'${item.pattern.id}'})">
-          <div class="result-rank ${rankClass}">${i+1}</div>
-          <div class="result-info">
-            <div class="result-name">${cat.icon||''} ${item.pattern.name}</div>
-            <div class="result-why">${reasons[item.pattern.category] || item.pattern.desc}</div>
-            <div class="result-score-row">
-              <span>Match</span>
-              <div class="score-bar"><div class="score-fill" style="width:${item.score}%"></div></div>
-              <span>${item.score}%</span>
+      <div class="finder-results">
+        ${results.length ? results.map((r, i) => `
+          <div class="finder-result-card">
+            <div class="result-rank">#${i + 1}</div>
+            <div class="result-preview">${getPreviewSVG(r.pattern)}</div>
+            <div class="result-info">
+              <h3>${r.pattern.name}</h3>
+              <p>${(r.pattern.description || '').slice(0, 120)}…</p>
+              <div class="result-score">
+                <div class="score-bar"><div class="score-fill" style="width:${r.score}%"></div></div>
+                <span>${r.score}% match</span>
+              </div>
+            </div>
+            <div class="result-actions">
+              <button class="btn btn-primary" data-action="view" data-id="${r.pattern.id}">View →</button>
+              <button class="btn" data-action="compare" data-id="${r.pattern.id}">+ Compare</button>
             </div>
           </div>
-        </div>`;
-      }).join('')}
-      <div style="margin-top:20px;display:flex;gap:10px;">
-        <button class="btn-secondary" onclick="state.wizard={step:0,answers:{},results:[]};renderFinder()">↺ Start Over</button>
-        <button class="btn-primary" onclick="navigate('gallery')">Browse Gallery →</button>
+        `).join('') : '<p>No patterns found. Try adjusting your answers.</p>'}
       </div>
-    </div>`;
+      <div class="wizard-nav">
+        <button class="btn" data-action="wizard-restart">Start Over</button>
+      </div>
+    </div>
+  `;
 }
-
-/* =============================================
-   COMPARE VIEW
-============================================= */
-function toggleCompare(id) {
-  if (state.compareList.includes(id)) {
-    state.compareList = state.compareList.filter(x => x !== id);
-    showToast('Removed from comparison');
-  } else {
-    if (state.compareList.length >= 3) {
-      showToast('Compare supports up to 3 patterns — remove one first');
-      return;
-    }
-    state.compareList.push(id);
-    showToast('Added to comparison — navigate to Compare view to see it');
-  }
-  updateCompareButtons();
-  updateCompareBadge();
-}
-
-function clearCompare() {
-  state.compareList = [];
-  updateCompareButtons();
-  updateCompareBadge();
-  renderCompare();
-  showToast('Comparison cleared');
-}
-
+// ============================================================
+// COMPARE
+// ============================================================
 function renderCompare() {
-  const body = document.getElementById('compare-body');
-  if (!body) return;
+  const container = document.getElementById('view-compare');
+  if (!container) return;
+  const ids = state.compareList;
+  const patterns = (typeof PATTERNS !== 'undefined' ? PATTERNS : []).filter(p => ids.includes(p.id));
 
-  if (state.compareList.length === 0) {
-    body.innerHTML = `<div class="empty-compare">
-      <div class="empty-icon">⚖️</div>
-      <div class="empty-title">Nothing to compare yet</div>
-      <div class="empty-desc">Go to the Gallery and click "+ Compare" on up to 3 patterns</div>
-      <button class="btn-primary" onclick="navigate('gallery')">Browse Gallery</button>
-    </div>`;
+  if (!patterns.length) {
+    container.innerHTML = `
+      <div class="compare-empty">
+        <h2>Compare Patterns</h2>
+        <p>Add 2–3 patterns to compare them side by side. Use the <strong>+ Compare</strong> button on any card.</p>
+        <button class="btn btn-primary" onclick="navigate('gallery')">Browse Patterns</button>
+      </div>`;
     return;
   }
 
-  const patterns = state.compareList.map(id => PATTERNS.find(p => p.id === id)).filter(Boolean);
-  const colCount  = patterns.length + 1; // label col + pattern cols
-
-  const ROWS = [
-    { label:'Category',     fn: p => { const c=CATEGORIES[p.category]||{}; return `<span style="color:${c.color||'#888'};font-weight:600;">${c.icon||''} ${c.name}</span>`; } },
-    { label:'Audience',     fn: p => (p.audience||[]).join(', ') },
-    { label:'Purpose',      fn: p => p.purpose||'—' },
-    { label:'Maturity',     fn: p => `<span class="maturity-badge maturity-${p.maturity}">${p.maturity}</span>` },
-    { label:'Update Cadence',fn:p => p.cadence||'—' },
-    { label:'KPIs (count)', fn: p => (p.kpis||[]).length },
-    { label:'Top KPIs',     fn: p => (p.kpis||[]).slice(0,3).map(k=>`<div style="font-size:11px;margin-bottom:2px;">• ${k.name}</div>`).join('') },
-    { label:'Layouts',      fn: p => (p.layouts||[]).map(l=>`<div style="font-size:11px;margin-bottom:2px;">• ${l.name}</div>`).join('') },
-    { label:'Data Sources', fn: p => (p.dataSources||[]).slice(0,2).map(d=>`<div style="font-size:11px;margin-bottom:2px;">• ${d.name}</div>`).join('') },
+  const fields = [
+    { label: 'Preview', key: 'preview' },
+    { label: 'Category', key: 'category' },
+    { label: 'Maturity', key: 'maturity' },
+    { label: 'Cadence', key: 'cadence' },
+    { label: 'Audience', key: 'audience' },
+    { label: 'Description', key: 'description' },
+    { label: 'KPIs', key: 'kpis' },
+    { label: 'Tags', key: 'tags' },
   ];
 
-  body.innerHTML = `
+  container.innerHTML = `
+    <div class="compare-header">
+      <h2>Compare Patterns (${patterns.length})</h2>
+      <button class="btn" onclick="state.compareList=[];renderCompare()">Clear All</button>
+    </div>
     <div class="compare-table-wrap">
       <table class="compare-table">
         <thead>
           <tr>
-            <th class="label-th"></th>
-            ${patterns.map(p => {
-              const cat = CATEGORIES[p.category]||{};
-              return `<th class="header-th">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                  <div>
-                    <div class="compare-slot-name">${p.name}</div>
-                    <div class="compare-slot-cat" style="color:${cat.color||'#888'}">${cat.icon||''} ${cat.name}</div>
-                  </div>
-                  <button class="compare-remove" onclick="toggleCompare('${p.id}');renderCompare()" title="Remove">✕</button>
-                </div>
-              </th>`;
-            }).join('')}
-            ${patterns.length < 3 ? `<th class="header-th">
-              <div class="add-slot-cell">
-                <button class="add-slot-link" onclick="navigate('gallery')">+ Add pattern</button>
-              </div>
-            </th>` : ''}
+            <th>Attribute</th>
+            ${patterns.map(p => `<th>
+              <div>${p.name}</div>
+              <button class="btn-sm" data-action="remove-compare" data-id="${p.id}">✕ Remove</button>
+            </th>`).join('')}
           </tr>
         </thead>
         <tbody>
-          ${ROWS.map(row => `<tr>
-            <th class="label-th">${row.label}</th>
-            ${patterns.map(p => `<td>${row.fn(p)}</td>`).join('')}
-            ${patterns.length < 3 ? '<td style="background:var(--bgColor)"></td>' : ''}
-          </tr>`).join('')}
+          ${fields.map(f => `
+            <tr>
+              <td class="compare-label">${f.label}</td>
+              ${patterns.map(p => `<td>${formatCompareCell(p, f.key)}</td>`).join('')}
+            </tr>
+          `).join('')}
+          <tr>
+            <td class="compare-label">Actions</td>
+            ${patterns.map(p => `<td>
+              <button class="btn btn-primary" data-action="view" data-id="${p.id}">View Detail</button>
+            </td>`).join('')}
+          </tr>
         </tbody>
       </table>
     </div>
-    <div style="margin-top:16px;display:flex;gap:8px;">
-      <button class="btn-sm btn-orange" onclick="exportCompareMarkdown()">Export Comparison as Markdown</button>
-      <button class="btn-sm" onclick="navigate('gallery')">+ Add More</button>
-    </div>`;
+    ${ids.length < 3 ? `<div class="compare-hint">You can add ${3 - ids.length} more pattern${3 - ids.length !== 1 ? 's' : ''} to compare.</div>` : ''}
+  `;
 }
 
-/* =============================================
-   DETAIL VIEW
-============================================= */
+function formatCompareCell(pattern, key) {
+  if (key === 'preview') {
+    return `<div style="width:160px">${getPreviewSVG(pattern)}</div>`;
+  }
+  if (key === 'category') {
+    const cat = CATEGORIES[pattern.category] || {};
+    return `<span>${cat.icon || ''} ${cat.name || pattern.category}</span>`;
+  }
+  if (key === 'audience' || key === 'kpis' || key === 'tags') {
+    const val = pattern[key];
+    if (Array.isArray(val)) return val.map(v => `<span class="tag">${v}</span>`).join(' ');
+    return val || '—';
+  }
+  if (key === 'description') {
+    return (pattern[key] || '—').slice(0, 150);
+  }
+  return pattern[key] || '—';
+}
+
+// ============================================================
+// DETAIL VIEW
+// ============================================================
 function renderDetail(id) {
-  const pattern = PATTERNS.find(p => p.id === id);
-  const body    = document.getElementById('detail-body');
-  if (!pattern || !body) return;
+  const container = document.getElementById('view-detail');
+  if (!container) return;
+  const pattern = (typeof PATTERNS !== 'undefined' ? PATTERNS : []).find(p => p.id === id);
 
-  state.detailId  = id;
-  state.detailTab = 0;
-  const cat       = CATEGORIES[pattern.category] || {};
+  if (!pattern) {
+    container.innerHTML = `<div class="detail-error"><h2>Pattern not found</h2><button class="btn" onclick="navigate('gallery')">← Back to Gallery</button></div>`;
+    return;
+  }
 
-  body.innerHTML = `
-    <!-- Hero -->
-    <div class="detail-hero">
-      <div class="detail-hero-preview">${getPreviewSVG(pattern)}</div>
-      <div class="detail-hero-meta">
-        <div class="detail-hero-top">
-          <div>
-            <div class="detail-name">${pattern.name}</div>
-            <div class="detail-desc">${pattern.desc}</div>
-          </div>
-          <div class="detail-actions">
-            <button class="btn-sm ${state.compareList.includes(id)?'btn-orange':''}"
-              onclick="toggleCompare('${id}');this.className='btn-sm '+(state.compareList.includes('${id}')?'btn-orange':'');this.textContent=state.compareList.includes('${id}')?'✓ In Compare':'+ Compare'">
-              ${state.compareList.includes(id)?'✓ In Compare':'+ Compare'}
-            </button>
-            <button class="btn-sm" onclick="window.print()">🖨️ Print</button>
-          </div>
+  const cat = CATEGORIES[pattern.category] || { name: pattern.category, color: '#666', icon: '📊' };
+  const tabs = ['Overview', 'Layouts', 'KPIs', 'Data & Gov', 'Customize', 'Export'];
+
+  container.innerHTML = `
+    <div class="detail-header" style="border-left: 4px solid ${cat.color}">
+      <button class="btn" onclick="navigate('gallery')">← Back</button>
+      <div class="detail-title-block">
+        <span class="category-badge" style="background:${cat.color}22;color:${cat.color}">${cat.icon} ${cat.name}</span>
+        <h1>${pattern.name}</h1>
+        <p>${pattern.description || ''}</p>
+      </div>
+      <div class="detail-actions">
+        <button class="btn btn-primary" data-action="export-one" data-id="${pattern.id}">Export</button>
+        <button class="btn ${state.compareList.includes(pattern.id) ? 'active' : ''}" data-action="compare" data-id="${pattern.id}">
+          ${state.compareList.includes(pattern.id) ? '✓ In Compare' : '+ Compare'}
+        </button>
+      </div>
+    </div>
+    <div class="detail-tabs">
+      ${tabs.map((t, i) => `<button class="tab-btn ${state.detailTab === i ? 'active' : ''}" data-tab="${i}">${t}</button>`).join('')}
+    </div>
+    <div class="detail-panels">
+      ${tabs.map((t, i) => `
+        <div class="tab-panel ${state.detailTab === i ? 'active' : ''}" data-panel="${i}">
+          ${renderDetailPanel(pattern, i)}
         </div>
-        <div class="detail-badges">
-          <span class="tag" style="background:${cat.color}20;color:${cat.color}">${cat.icon||''} ${cat.name}</span>
-          <span class="maturity-badge maturity-${pattern.maturity}">${pattern.maturity}</span>
-          <span class="tag">⏱ ${pattern.cadence}</span>
-          ${(pattern.audience||[]).slice(0,2).map(a=>`<span class="tag">${a}</span>`).join('')}
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderDetailPanel(pattern, tabIndex) {
+  switch (tabIndex) {
+    case 0: return renderDetailOverview(pattern);
+    case 1: return renderDetailLayouts(pattern);
+    case 2: return renderDetailKPIs(pattern);
+    case 3: return renderDetailDataGov(pattern);
+    case 4: return renderDetailCustomize(pattern);
+    case 5: return renderDetailExport(pattern);
+    default: return '';
+  }
+}
+
+function renderDetailOverview(p) {
+  const cat = CATEGORIES[p.category] || {};
+  return `
+    <div class="overview-grid">
+      <div class="overview-preview">${getPreviewSVG(p)}</div>
+      <div class="overview-meta">
+        <table class="meta-table">
+          <tr><th>Category</th><td>${cat.icon || ''} ${cat.name || p.category}</td></tr>
+          <tr><th>Maturity</th><td><span class="maturity-badge maturity-${p.maturity}">${p.maturity || '—'}</span></td></tr>
+          <tr><th>Cadence</th><td>${p.cadence || '—'}</td></tr>
+          <tr><th>Audience</th><td>${Array.isArray(p.audience) ? p.audience.join(', ') : (p.audience || '—')}</td></tr>
+          <tr><th>Tags</th><td>${(p.tags || []).map(t => `<span class="tag">${t}</span>`).join(' ')}</td></tr>
+        </table>
+        <div class="overview-when">
+          <h4>When to Use</h4>
+          <p>${p.whenToUse || p.description || '—'}</p>
         </div>
       </div>
     </div>
+  `;
+}
 
-    <!-- Tabs -->
-    <div class="detail-tabs" role="tablist">
-      ${['Overview','Layouts','KPIs','Data & Gov','Customize','Export'].map((t,i) =>
-        `<button class="tab-btn ${i===0?'active':''}" role="tab" onclick="switchTab(${i})" data-tab="${i}">${t}</button>`
-      ).join('')}
-    </div>
-
-    <!-- Tab Panels -->
-    <div id="tab-0" class="tab-content active">
-      <div class="detail-panel">
-        <div class="overview-stats">
-          <div class="stat-card">
-            <div class="stat-value" style="color:${cat.color}">${(pattern.kpis||[]).length}</div>
-            <div class="stat-label">KPIs</div>
+function renderDetailLayouts(p) {
+  const layouts = p.layouts || ['Single-page summary', 'Multi-section drill-down', 'Tabbed navigation'];
+  return `
+    <div class="layouts-section">
+      <h3>Available Layouts</h3>
+      <div class="layouts-grid">
+        ${layouts.map((l, i) => `
+          <div class="layout-card">
+            <div class="layout-thumb">${getPreviewSVG(p)}</div>
+            <div class="layout-name">Layout ${i + 1}: ${typeof l === 'string' ? l : (l.name || '')}</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-value" style="color:${cat.color}">${(pattern.layouts||[]).length}</div>
-            <div class="stat-label">Layouts</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" style="color:${cat.color};font-size:14px;margin-top:4px">${pattern.maturity}</div>
-            <div class="stat-label">Maturity</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" style="color:${cat.color};font-size:14px;margin-top:4px">${pattern.cadence}</div>
-            <div class="stat-label">Cadence</div>
-          </div>
-        </div>
-        <div class="panel-section">
-          <div class="panel-section-title">About this pattern</div>
-          <p style="font-size:13.5px;line-height:1.7;color:var(--grey700)">${pattern.longDesc || pattern.desc}</p>
-        </div>
-        <div class="panel-section">
-          <div class="panel-section-title">Key questions answered</div>
-          <ul class="key-questions">
-            ${(pattern.keyQuestions||[]).map(q=>`<li>${q}</li>`).join('')}
-          </ul>
-        </div>
-        ${pattern.workshopNotes ? `<div class="panel-section">
-          <div class="panel-section-title">Workshop facilitation notes</div>
-          <p style="font-size:12.5px;line-height:1.7;color:var(--grey600);background:var(--bgColor);padding:14px;border-radius:var(--radius-md);border:1px solid var(--borderColor)">${pattern.workshopNotes}</p>
-        </div>` : ''}
+        `).join('')}
       </div>
     </div>
+  `;
+}
 
-    <div id="tab-1" class="tab-content">
-      <div class="detail-panel">
-        <div class="panel-section-title">Layout variants</div>
-        <div class="layout-grid">
-          ${(pattern.layouts||[]).map(l=>`<div class="layout-card">
-            <div class="layout-name">${l.name}</div>
-            <div class="layout-desc">${l.desc}</div>
-            <div class="chart-types">
-              ${(l.chartTypes||[]).map(ct=>`<span class="chart-type-pill">${ct}</span>`).join('')}
-            </div>
-          </div>`).join('')}
-        </div>
-      </div>
-    </div>
-
-    <div id="tab-2" class="tab-content">
-      <div class="detail-panel">
-        <div class="panel-section-title">${(pattern.kpis||[]).length} key performance indicators</div>
-        <div class="kpi-grid">
-          ${(pattern.kpis||[]).map(k=>`<div class="kpi-card">
-            <div class="kpi-name">${k.name}</div>
-            <div class="kpi-formula">${k.formula}</div>
-            <div class="kpi-tags">
-              <span class="kpi-tag">${k.unit||'—'}</span>
-              <span class="kpi-tag">${k.frequency||'—'}</span>
-              ${k.owner ? `<span class="kpi-tag" style="background:var(--orange50);color:var(--orange400)">${k.owner}</span>` : ''}
-            </div>
-          </div>`).join('')}
-        </div>
-      </div>
-    </div>
-
-    <div id="tab-3" class="tab-content">
-      <div class="detail-panel">
-        <div class="panel-section">
-          <div class="panel-section-title">Data sources</div>
-          <ul class="ds-list">
-            ${(pattern.dataSources||[]).map(d=>{
-              const icons = {API:'🔌',SQL:'🗄️',Manual:'📝',CSV:'📄','Real-time':'⚡'};
-              const typeClass = 'ds-type ds-type-' + (d.type||'Manual').replace('-','');
-              return `<li>
-                <span class="ds-icon">${icons[d.type]||'📊'}</span>
-                <span class="ds-label">${d.name}</span>
-                <span class="ds-system">${d.system||''}</span>
-                <span class="${typeClass}">${d.type||'Manual'}</span>
-              </li>`;
+function renderDetailKPIs(p) {
+  const kpis = p.kpis || [];
+  return `
+    <div class="kpis-section">
+      <h3>Key Performance Indicators</h3>
+      ${kpis.length ? `
+        <table class="kpi-table">
+          <thead><tr><th>KPI</th><th>Description</th><th>Target</th></tr></thead>
+          <tbody>
+            ${kpis.map(k => {
+              if (typeof k === 'string') {
+                return `<tr><td>${k}</td><td>—</td><td>—</td></tr>`;
+              }
+              return `<tr><td>${k.name || k}</td><td>${k.description || '—'}</td><td>${k.target || '—'}</td></tr>`;
             }).join('')}
-          </ul>
+          </tbody>
+        </table>
+      ` : '<p>No KPIs defined for this pattern.</p>'}
+    </div>
+  `;
+}
+
+function renderDetailDataGov(p) {
+  return `
+    <div class="datagov-section">
+      <h3>Data & Governance</h3>
+      <div class="datagov-grid">
+        <div class="datagov-block">
+          <h4>Data Sources</h4>
+          <ul>${(p.dataSources || ['Primary data system']).map(d => `<li>${d}</li>`).join('')}</ul>
         </div>
-        <div class="panel-section">
-          <div class="panel-section-title">Governance notes</div>
-          <div style="background:var(--bgColor);padding:14px;border-radius:var(--radius-md);border:1px solid var(--borderColor);font-size:12.5px;color:var(--grey600);line-height:1.7">
-            Establish a data steward for each source. Define refresh SLAs and lineage documentation.
-            Ensure data quality gates are in place before any metric is surfaced in the dashboard.
-            Review access controls quarterly and align with information security policy.
-          </div>
+        <div class="datagov-block">
+          <h4>Refresh Cadence</h4>
+          <p>${p.cadence || 'As defined by stakeholders'}</p>
+        </div>
+        <div class="datagov-block">
+          <h4>Data Owner</h4>
+          <p>${p.dataOwner || 'Business intelligence team'}</p>
+        </div>
+        <div class="datagov-block">
+          <h4>Access Control</h4>
+          <p>${p.accessControl || 'Role-based — contact your BI team'}</p>
+        </div>
+        <div class="datagov-block">
+          <h4>Compliance Notes</h4>
+          <p>${p.compliance || 'Follow your organization data governance policy.'}</p>
+        </div>
+        <div class="datagov-block">
+          <h4>SLA</h4>
+          <p>${p.sla || 'Defined per deployment'}</p>
         </div>
       </div>
     </div>
+  `;
+}
 
-    <div id="tab-4" class="tab-content">
-      <div class="detail-panel">
-        <div class="panel-section-title">Customisable parameters</div>
-        ${(pattern.customParams||[]).map(cp=>`<div class="custom-param">
-          <div class="custom-param-info">
-            <div class="custom-param-label">${cp.name}</div>
-            <div class="custom-param-desc">${cp.desc}</div>
-          </div>
-          <select class="custom-select">
-            ${(cp.options||[]).map(o=>`<option>${o}</option>`).join('')}
-          </select>
-        </div>`).join('')}
-      </div>
-    </div>
-
-    <div id="tab-5" class="tab-content">
-      <div class="detail-panel">
-        <div class="panel-section-title">Export this pattern</div>
-        <div class="export-section" style="border:none;box-shadow:none;padding:0;">
-          <div class="export-section-body" style="padding:0;">
-            <div class="export-row">
-              <div><div class="export-row-name">📄 Markdown Specification</div><div class="export-row-desc">Full pattern brief with KPIs, layouts, and workshop notes</div></div>
-              <button class="export-btn" onclick="exportPatternMarkdown('${id}')">Download .md</button>
-            </div>
-            <div class="export-row">
-              <div><div class="export-row-name">🔧 JSON Schema</div><div class="export-row-desc">Machine-readable pattern definition for tool integrations</div></div>
-              <button class="export-btn" onclick="exportPatternJSON('${id}')">Download .json</button>
-            </div>
-            <div class="export-row">
-              <div><div class="export-row-name">📊 KPI CSV</div><div class="export-row-desc">Spreadsheet of KPIs with formulas, units, and owners</div></div>
-              <button class="export-btn" onclick="exportPatternCSV('${id}')">Download .csv</button>
-            </div>
-          </div>
+function renderDetailCustomize(p) {
+  return `
+    <div class="customize-section">
+      <h3>Customization Guide</h3>
+      <div class="customize-list">
+        <div class="customize-item">
+          <h4>Colors & Branding</h4>
+          <p>Replace the default palette with your organization's brand colors. Ensure sufficient contrast ratios (WCAG AA: 4.5:1).</p>
+        </div>
+        <div class="customize-item">
+          <h4>KPI Selection</h4>
+          <p>Start with the recommended KPIs, then work with stakeholders to add domain-specific metrics relevant to ${p.name}.</p>
+        </div>
+        <div class="customize-item">
+          <h4>Layout Variants</h4>
+          <p>This pattern supports ${(p.layouts || ['single-page', 'tabbed']).length} layout variants. Choose based on your audience's preference for density vs. navigation.</p>
+        </div>
+        <div class="customize-item">
+          <h4>Data Connections</h4>
+          <p>Connect to your ${p.category} data systems. Ensure field mapping aligns with the KPI definitions.</p>
+        </div>
+        <div class="customize-item">
+          <h4>Filters & Controls</h4>
+          <p>Add date range pickers, region selectors, and entity filters based on your data dimensions.</p>
+        </div>
+        <div class="customize-item">
+          <h4>Mobile Responsiveness</h4>
+          <p>Test on tablet and mobile viewports. Consider simplified views for smaller screens.</p>
         </div>
       </div>
-    </div>`;
+    </div>
+  `;
 }
 
-function switchTab(index) {
-  state.detailTab = index;
-  document.querySelectorAll('.tab-btn').forEach((btn,i) => btn.classList.toggle('active', i===index));
-  document.querySelectorAll('.tab-content').forEach((panel,i) => panel.classList.toggle('active', i===index));
+function renderDetailExport(p) {
+  return `
+    <div class="export-section">
+      <h3>Export This Pattern</h3>
+      <div class="export-options">
+        <div class="export-option">
+          <h4>Markdown</h4>
+          <p>Documentation-ready markdown with all pattern details, suitable for wikis and README files.</p>
+          <button class="btn btn-primary" onclick="exportMarkdown(['${p.id}'])">Download .md</button>
+        </div>
+        <div class="export-option">
+          <h4>JSON</h4>
+          <p>Full pattern schema as JSON, suitable for programmatic use and integration.</p>
+          <button class="btn btn-primary" onclick="exportJSON(['${p.id}'])">Download .json</button>
+        </div>
+        <div class="export-option">
+          <h4>CSV</h4>
+          <p>Flat CSV export of pattern metadata for spreadsheet use.</p>
+          <button class="btn btn-primary" onclick="exportCSV(['${p.id}'])">Download .csv</button>
+        </div>
+      </div>
+    </div>
+  `;
 }
-
-/* =============================================
-   EXPORTS VIEW
-============================================= */
+// ============================================================
+// EXPORTS VIEW
+// ============================================================
 function renderExports() {
-  const body = document.getElementById('exports-body');
-  if (!body) return;
+  const container = document.getElementById('view-exports');
+  if (!container) return;
+  const allIds = (typeof PATTERNS !== 'undefined' ? PATTERNS : []).map(p => p.id);
 
-  body.innerHTML = `
+  container.innerHTML = `
     <div class="exports-header">
-      <div class="exports-title">Export & Workshop Pack</div>
-      <div class="exports-sub">Download pattern specifications, KPI references, and workshop materials for offline use.</div>
+      <h2>Exports</h2>
+      <p>Download pattern data in multiple formats for documentation, integration, or analysis.</p>
     </div>
-
-    <div class="export-section">
-      <div class="export-section-hd">
-        <span class="export-icon">📦</span>
-        <div class="export-hd-text">
-          <div class="export-hd-title">Pattern Collection</div>
-          <div class="export-hd-desc">Export the full library or your current filtered selection</div>
-        </div>
+    <div class="exports-grid">
+      <div class="export-card">
+        <div class="export-icon">📄</div>
+        <h3>All Patterns — Markdown</h3>
+        <p>Complete library documentation as a single Markdown file. Ideal for wikis, GitHub repos, and technical docs.</p>
+        <ul>
+          <li>Pattern names, descriptions, KPIs</li>
+          <li>Category, maturity, cadence metadata</li>
+          <li>Human-readable format</li>
+        </ul>
+        <button class="btn btn-primary" onclick="exportMarkdown(${JSON.stringify(allIds)})">Download All (.md)</button>
       </div>
-      <div class="export-section-body">
-        <div class="export-row">
-          <div><div class="export-row-name">All 30 Patterns — JSON</div><div class="export-row-desc">Complete machine-readable library</div></div>
-          <button class="export-btn" onclick="exportAllJSON()">Download .json</button>
+      <div class="export-card">
+        <div class="export-icon">{ }</div>
+        <h3>All Patterns — JSON</h3>
+        <p>Full structured schema for all patterns. Perfect for programmatic use, API integration, or seeding other tools.</p>
+        <ul>
+          <li>Complete pattern schema</li>
+          <li>All arrays and nested fields</li>
+          <li>Machine-readable format</li>
+        </ul>
+        <button class="btn btn-primary" onclick="exportJSON(${JSON.stringify(allIds)})">Download All (.json)</button>
+      </div>
+      <div class="export-card">
+        <div class="export-icon">📊</div>
+        <h3>All Patterns — CSV</h3>
+        <p>Flat tabular export of all pattern metadata. Great for spreadsheet analysis, pivot tables, and reporting.</p>
+        <ul>
+          <li>One row per pattern</li>
+          <li>Comma-separated values</li>
+          <li>Excel and Google Sheets compatible</li>
+        </ul>
+        <button class="btn btn-primary" onclick="exportCSV(${JSON.stringify(allIds)})">Download All (.csv)</button>
+      </div>
+      <div class="export-card">
+        <div class="export-icon">🔗</div>
+        <h3>Compare List</h3>
+        <p>Export only the patterns currently in your compare list (${state.compareList.length} selected).</p>
+        <ul>
+          <li>Side-by-side comparison</li>
+          <li>Filtered to your selection</li>
+          <li>Available in all formats</li>
+        </ul>
+        <div class="export-compare-actions">
+          <button class="btn" onclick="exportMarkdown(${JSON.stringify(state.compareList)})" ${!state.compareList.length ? 'disabled' : ''}>MD</button>
+          <button class="btn" onclick="exportJSON(${JSON.stringify(state.compareList)})" ${!state.compareList.length ? 'disabled' : ''}>JSON</button>
+          <button class="btn" onclick="exportCSV(${JSON.stringify(state.compareList)})" ${!state.compareList.length ? 'disabled' : ''}>CSV</button>
         </div>
-        <div class="export-row">
-          <div><div class="export-row-name">All 30 Patterns — Markdown</div><div class="export-row-desc">Human-readable briefing document</div></div>
-          <button class="export-btn" onclick="exportAllMarkdown()">Download .md</button>
-        </div>
+        ${!state.compareList.length ? '<p class="hint">Add patterns to your compare list first.</p>' : ''}
       </div>
     </div>
-
-    <div class="export-section">
-      <div class="export-section-hd">
-        <span class="export-icon">📊</span>
-        <div class="export-hd-text">
-          <div class="export-hd-title">KPI Reference</div>
-          <div class="export-hd-desc">Export all KPI definitions with formulas, units and owners</div>
-        </div>
-      </div>
-      <div class="export-section-body">
-        <div class="export-row">
-          <div><div class="export-row-name">Master KPI Catalogue — CSV</div><div class="export-row-desc">All KPIs across all 30 patterns (180+ metrics)</div></div>
-          <button class="export-btn" onclick="exportAllCSV()">Download .csv</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="export-section">
-      <div class="export-section-hd">
-        <span class="export-icon">🏗️</span>
-        <div class="export-hd-text">
-          <div class="export-hd-title">Workshop Materials</div>
-          <div class="export-hd-desc">Facilitation notes for PwC client workshops</div>
-        </div>
-      </div>
-      <div class="export-section-body">
-        <div class="export-row">
-          <div><div class="export-row-name">All Workshop Notes — Markdown</div><div class="export-row-desc">Compiled facilitation guide for all 30 patterns</div></div>
-          <button class="export-btn" onclick="exportWorkshopNotes()">Download .md</button>
-        </div>
-        <div class="export-row">
-          <div><div class="export-row-name">Compare View — Markdown</div><div class="export-row-desc">Export current comparison table (${state.compareList.length} patterns selected)</div></div>
-          <button class="export-btn" onclick="exportCompareMarkdown()" ${state.compareList.length===0?'disabled style="opacity:.5"':''}>Download .md</button>
-        </div>
-      </div>
-    </div>`;
+  `;
 }
 
-/* =============================================
-   ABOUT VIEW
-============================================= */
+// ============================================================
+// ABOUT VIEW
+// ============================================================
 function renderAbout() {
-  const body = document.getElementById('about-body');
-  if (!body) return;
+  const container = document.getElementById('view-about');
+  if (!container) return;
+  const patterns = typeof PATTERNS !== 'undefined' ? PATTERNS : [];
 
   // Schema self-check
-  const checks = [
-    { label:'Total patterns', value:`${PATTERNS.length} (expect 30)`, ok: PATTERNS.length === 30 },
-    { label:'No duplicate IDs', value: (() => {
-        const ids = PATTERNS.map(p=>p.id);
-        const dupes = ids.filter((id,i)=>ids.indexOf(id)!==i);
-        return dupes.length===0 ? 'All unique' : `Duplicates: ${dupes.join(', ')}`;
-      })(), ok: PATTERNS.map(p=>p.id).length === new Set(PATTERNS.map(p=>p.id)).size },
-    { label:'All patterns have KPIs (≥5)', value: `${PATTERNS.filter(p=>(p.kpis||[]).length>=5).length}/30 pass`, ok: PATTERNS.every(p=>(p.kpis||[]).length>=5) },
-    { label:'All patterns have layouts (≥2)', value: `${PATTERNS.filter(p=>(p.layouts||[]).length>=2).length}/30 pass`, ok: PATTERNS.every(p=>(p.layouts||[]).length>=2) },
-    { label:'All patterns have data sources', value: `${PATTERNS.filter(p=>(p.dataSources||[]).length>0).length}/30 pass`, ok: PATTERNS.every(p=>(p.dataSources||[]).length>0) },
-    { label:'Category distribution', value: Object.entries(
-        PATTERNS.reduce((acc,p)=>({...acc,[p.category]:(acc[p.category]||0)+1}),{}))
-        .map(([k,v])=>`${k}:${v}`).join(', '), ok: true },
-  ];
+  const requiredFields = ['id', 'name', 'category', 'description'];
+  const checks = requiredFields.map(field => {
+    const missing = patterns.filter(p => !p[field]);
+    return {
+      field,
+      total: patterns.length,
+      missing: missing.length,
+      ok: missing.length === 0,
+      missingIds: missing.map(p => p.id || '(no id)').slice(0, 5),
+    };
+  });
 
-  const catCounts = PATTERNS.reduce((acc,p)=>({...acc,[p.category]:(acc[p.category]||0)+1}),{});
+  // Category coverage check
+  const catCoverage = Object.keys(CATEGORIES).map(cat => ({
+    cat,
+    count: patterns.filter(p => p.category === cat).length,
+  }));
 
-  body.innerHTML = `
-    <div class="about-hero">
-      <div class="about-logo">DL</div>
-      <div class="about-title">Dashboard Pattern Library</div>
-      <div class="about-badge">v1.0.0 · PwC Delivery Launchpad</div>
-      <div class="about-desc">
-        A curated catalogue of 30 executive dashboard patterns across 9 domains —
-        each with KPI definitions, layout variants, data source guidance, and workshop facilitation notes.
-        Designed to accelerate PwC client delivery engagements.
+  const allOk = checks.every(c => c.ok);
+
+  container.innerHTML = `
+    <div class="about-header">
+      <h2>About This Library</h2>
+      <p>A curated collection of dashboard patterns for business intelligence and analytics teams.</p>
+    </div>
+    <div class="about-stats">
+      <div class="stat-card"><div class="stat-num">${patterns.length}</div><div class="stat-label">Total Patterns</div></div>
+      <div class="stat-card"><div class="stat-num">${Object.keys(CATEGORIES).length}</div><div class="stat-label">Categories</div></div>
+      <div class="stat-card"><div class="stat-num">${patterns.filter(p => p.maturity === 'starter').length}</div><div class="stat-label">Starter</div></div>
+      <div class="stat-card"><div class="stat-num">${patterns.filter(p => p.maturity === 'advanced').length}</div><div class="stat-label">Advanced</div></div>
+    </div>
+    <div class="about-schema-check">
+      <h3>Schema Validation ${allOk ? '<span class="check-pass">✓ All OK</span>' : '<span class="check-fail">⚠ Issues Found</span>'}</h3>
+      <table class="schema-table">
+        <thead><tr><th>Field</th><th>Patterns</th><th>Missing</th><th>Status</th></tr></thead>
+        <tbody>
+          ${checks.map(c => `
+            <tr>
+              <td><code>${c.field}</code></td>
+              <td>${c.total}</td>
+              <td>${c.missing}${c.missingIds.length ? ': ' + c.missingIds.join(', ') : ''}</td>
+              <td>${c.ok ? '<span class="check-pass">✓</span>' : '<span class="check-fail">✗</span>'}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="about-coverage">
+      <h3>Category Coverage</h3>
+      <div class="coverage-grid">
+        ${catCoverage.map(({ cat, count }) => {
+          const c = CATEGORIES[cat];
+          const pct = patterns.length ? Math.round((count / patterns.length) * 100) : 0;
+          return `
+            <div class="coverage-item">
+              <span>${c.icon} ${c.name}</span>
+              <div class="coverage-bar">
+                <div class="coverage-fill" style="width:${pct}%;background:${c.color}"></div>
+              </div>
+              <span class="coverage-count">${count}</span>
+            </div>
+          `;
+        }).join('')}
       </div>
     </div>
-
-    <div class="schema-card" style="margin-bottom:16px;">
-      <div class="schema-card-hd">
-        <div class="schema-card-title">Pattern Coverage</div>
+    <div class="about-categories">
+      <h3>Categories</h3>
+      <div class="cat-grid">
+        ${Object.entries(CATEGORIES).map(([k, v]) => `
+          <div class="cat-card" style="border-left:3px solid ${v.color}">
+            <span class="cat-icon">${v.icon}</span>
+            <span class="cat-name">${v.name}</span>
+          </div>
+        `).join('')}
       </div>
-      ${Object.entries(catCounts).map(([cat,count]) => {
-        const c = CATEGORIES[cat]||{};
-        return `<div class="schema-row">
-          <span class="schema-icon">${c.icon||'•'}</span>
-          <span class="schema-label" style="font-weight:500">${c.name}</span>
-          <span class="schema-value">${count} pattern${count!==1?'s':''}</span>
-        </div>`;
-      }).join('')}
     </div>
-
-    <div class="schema-card">
-      <div class="schema-card-hd">
-        <div class="schema-card-title">Schema Self-Check</div>
-        <span style="font-size:11px;color:var(--secondaryText)">Run on load</span>
-      </div>
-      ${checks.map(c=>`<div class="schema-row">
-        <span class="schema-icon">${c.ok?'✅':'❌'}</span>
-        <span class="schema-label">${c.label}</span>
-        <span class="schema-value">${c.value}</span>
-      </div>`).join('')}
-    </div>`;
+  `;
 }
 
-/* =============================================
-   EXPORT FUNCTIONS
-============================================= */
-function downloadFile(content, filename, mime) {
-  const blob = new Blob([content], { type: mime });
-  const url  = URL.createObjectURL(blob);
-  const a    = Object.assign(document.createElement('a'), { href:url, download:filename });
+// ============================================================
+// EXPORT FUNCTIONS
+// ============================================================
+function downloadFile(content, filename, mimeType) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -3415,196 +3039,239 @@ function downloadFile(content, filename, mime) {
   showToast(`Downloaded ${filename}`);
 }
 
-function patternToMarkdown(p) {
-  const cat = CATEGORIES[p.category]||{};
-  return [
-    `# ${p.name}`,
-    `**Category:** ${cat.name}  `,
-    `**Audience:** ${(p.audience||[]).join(', ')}  `,
-    `**Maturity:** ${p.maturity}  `,
-    `**Cadence:** ${p.cadence}  `,
-    `**Purpose:** ${p.purpose}`,
-    '',
-    `## About`,
-    p.longDesc || p.desc,
-    '',
-    `## Key Questions`,
-    (p.keyQuestions||[]).map(q=>`- ${q}`).join('\n'),
-    '',
-    `## KPIs`,
-    '| KPI | Formula | Unit | Frequency | Owner |',
-    '|-----|---------|------|-----------|-------|',
-    (p.kpis||[]).map(k=>`| ${k.name} | ${k.formula} | ${k.unit} | ${k.frequency} | ${k.owner||'—'} |`).join('\n'),
-    '',
-    `## Layouts`,
-    (p.layouts||[]).map(l=>`### ${l.name}\n${l.desc}\n**Charts:** ${(l.chartTypes||[]).join(', ')}`).join('\n\n'),
-    '',
-    `## Data Sources`,
-    (p.dataSources||[]).map(d=>`- **${d.name}** (${d.type}) — ${d.system||''}`).join('\n'),
-    '',
-    `## Customisation`,
-    (p.customParams||[]).map(cp=>`### ${cp.name}\n${cp.desc}\n**Options:** ${(cp.options||[]).join(' | ')}`).join('\n\n'),
-    '',
-    `## Workshop Notes`,
-    p.workshopNotes||'',
-    '',
-    '---',
-  ].join('\n');
+function exportMarkdown(ids) {
+  const patterns = (typeof PATTERNS !== 'undefined' ? PATTERNS : []).filter(p => ids.includes(p.id));
+  let md = '# Dashboard Pattern Library\n\n';
+  md += `_Exported ${new Date().toISOString().slice(0, 10)} — ${patterns.length} pattern(s)_\n\n---\n\n`;
+  patterns.forEach(p => {
+    const cat = CATEGORIES[p.category] || {};
+    md += `## ${p.name}\n\n`;
+    md += `**Category:** ${cat.icon || ''} ${cat.name || p.category}  \n`;
+    md += `**Maturity:** ${p.maturity || '—'}  \n`;
+    md += `**Cadence:** ${p.cadence || '—'}  \n`;
+    md += `**Audience:** ${Array.isArray(p.audience) ? p.audience.join(', ') : (p.audience || '—')}  \n\n`;
+    md += `### Description\n\n${p.description || '—'}\n\n`;
+    if (p.kpis && p.kpis.length) {
+      md += `### KPIs\n\n`;
+      p.kpis.forEach(k => {
+        md += `- ${typeof k === 'string' ? k : (k.name || k)}\n`;
+      });
+      md += '\n';
+    }
+    if (p.tags && p.tags.length) {
+      md += `**Tags:** ${p.tags.join(', ')}\n\n`;
+    }
+    md += '---\n\n';
+  });
+  downloadFile(md, 'dashboard-patterns.md', 'text/markdown');
 }
 
-function exportPatternMarkdown(id) {
-  const p = PATTERNS.find(x=>x.id===id);
-  if (!p) return;
-  downloadFile(patternToMarkdown(p), `${id}.md`, 'text/markdown');
+function exportJSON(ids) {
+  const patterns = (typeof PATTERNS !== 'undefined' ? PATTERNS : []).filter(p => ids.includes(p.id));
+  const output = {
+    exportedAt: new Date().toISOString(),
+    count: patterns.length,
+    patterns,
+  };
+  downloadFile(JSON.stringify(output, null, 2), 'dashboard-patterns.json', 'application/json');
 }
 
-function exportPatternJSON(id) {
-  const p = PATTERNS.find(x=>x.id===id);
-  if (!p) return;
-  downloadFile(JSON.stringify(p, null, 2), `${id}.json`, 'application/json');
+function exportCSV(ids) {
+  const patterns = (typeof PATTERNS !== 'undefined' ? PATTERNS : []).filter(p => ids.includes(p.id));
+  const headers = ['id', 'name', 'category', 'maturity', 'cadence', 'audience', 'description', 'tags'];
+  const escape = v => {
+    if (v === null || v === undefined) return '';
+    const s = Array.isArray(v) ? v.join('; ') : String(v);
+    if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+      return '"' + s.replace(/"/g, '""') + '"';
+    }
+    return s;
+  };
+  const rows = [headers.join(',')];
+  patterns.forEach(p => {
+    rows.push(headers.map(h => escape(p[h])).join(','));
+  });
+  downloadFile(rows.join('\n'), 'dashboard-patterns.csv', 'text/csv');
 }
 
-function exportPatternCSV(id) {
-  const p = PATTERNS.find(x=>x.id===id);
-  if (!p) return;
-  const rows = [['Pattern','KPI Name','Formula','Unit','Frequency','Owner']];
-  (p.kpis||[]).forEach(k=>rows.push([p.name, k.name, k.formula, k.unit, k.frequency, k.owner||'']));
-  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  downloadFile(csv, `${id}-kpis.csv`, 'text/csv');
+// ============================================================
+// COMPARE MANAGEMENT
+// ============================================================
+function addToCompare(id) {
+  if (state.compareList.includes(id)) return;
+  if (state.compareList.length >= 3) {
+    showToast('Compare list full (max 3). Remove one first.');
+    return;
+  }
+  state.compareList.push(id);
+  showToast('Added to compare list.');
+  updateCompareCount();
 }
 
-function exportAllJSON() {
-  downloadFile(JSON.stringify(PATTERNS, null, 2), 'dashboard-patterns.json', 'application/json');
+function removeFromCompare(id) {
+  state.compareList = state.compareList.filter(x => x !== id);
+  showToast('Removed from compare list.');
+  updateCompareCount();
 }
 
-function exportAllMarkdown() {
-  const md = PATTERNS.map(patternToMarkdown).join('\n\n');
-  downloadFile(`# PwC Dashboard Pattern Library\n\n${md}`, 'dashboard-patterns.md', 'text/markdown');
+function updateCompareCount() {
+  const badge = document.getElementById('compare-count');
+  if (badge) {
+    badge.textContent = state.compareList.length || '';
+    badge.style.display = state.compareList.length ? 'inline' : 'none';
+  }
 }
 
-function exportAllCSV() {
-  const rows = [['Pattern','Category','KPI Name','Formula','Unit','Frequency','Owner']];
-  PATTERNS.forEach(p=>(p.kpis||[]).forEach(k=>rows.push([p.name,p.category,k.name,k.formula,k.unit,k.frequency,k.owner||''])));
-  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  downloadFile(csv, 'kpi-catalogue.csv', 'text/csv');
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg, duration = 3000) {
+  let toast = document.getElementById('toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toast';
+    toast.style.cssText = [
+      'position:fixed', 'bottom:24px', 'right:24px', 'z-index:9999',
+      'background:#1e293b', 'color:white', 'padding:12px 20px',
+      'border-radius:8px', 'font-size:14px', 'box-shadow:0 4px 12px rgba(0,0,0,0.3)',
+      'transition:opacity 0.3s', 'opacity:0', 'pointer-events:none'
+    ].join(';');
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => { toast.style.opacity = '0'; }, duration);
 }
 
-function exportWorkshopNotes() {
-  const md = `# PwC Dashboard Pattern Library — Workshop Facilitation Notes\n\n` +
-    PATTERNS.map(p=>`## ${p.name}\n\n${p.workshopNotes||'No specific workshop notes available.'}`).join('\n\n---\n\n');
-  downloadFile(md, 'workshop-notes.md', 'text/markdown');
-}
-
-function exportCompareMarkdown() {
-  if (state.compareList.length === 0) { showToast('Add patterns to compare first'); return; }
-  const patterns = state.compareList.map(id=>PATTERNS.find(p=>p.id===id)).filter(Boolean);
-  const ROWS = ['Category','Audience','Maturity','Cadence','KPIs','Top KPIs'];
-  const md = [
-    '# Pattern Comparison',
-    '',
-    '| Attribute | ' + patterns.map(p=>p.name).join(' | ') + ' |',
-    '|-----------|' + patterns.map(()=>'---').join('|') + '|',
-    `| Category  | ${patterns.map(p=>CATEGORIES[p.category]?.name||p.category).join(' | ')} |`,
-    `| Audience  | ${patterns.map(p=>(p.audience||[]).join(', ')).join(' | ')} |`,
-    `| Maturity  | ${patterns.map(p=>p.maturity).join(' | ')} |`,
-    `| Cadence   | ${patterns.map(p=>p.cadence).join(' | ')} |`,
-    `| KPI Count | ${patterns.map(p=>(p.kpis||[]).length).join(' | ')} |`,
-  ].join('\n');
-  downloadFile(md, 'pattern-comparison.md', 'text/markdown');
-}
-
-/* =============================================
-   TOAST
-============================================= */
-let toastTimer;
-function showToast(msg, duration=3000) {
-  const t = document.getElementById('toast');
-  if (!t) return;
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>t.classList.remove('show'), duration);
-}
-
-/* =============================================
-   FILTER RAIL — INIT
-============================================= */
-function initFilterRail() {
-  const catContainer = document.getElementById('category-filters');
-  if (!catContainer) return;
-
-  const counts = PATTERNS.reduce((acc,p)=>({...acc,[p.category]:(acc[p.category]||0)+1}),{});
-
-  catContainer.innerHTML = `
-    <button class="filter-option selected" data-filter="category" data-value="all">
-      All <span class="filter-count">${PATTERNS.length}</span>
-    </button>
-    ${Object.entries(CATEGORIES).map(([key,cat])=>`
-      <button class="filter-option" data-filter="category" data-value="${key}">
-        <span class="cat-dot" style="background:${cat.color}"></span>
-        ${cat.name}
-        <span class="filter-count">${counts[key]||0}</span>
-      </button>`).join('')}`;
-}
-
-/* =============================================
-   EVENT LISTENERS
-============================================= */
-function setViewMode(mode) {
-  state.viewMode = mode;
-  document.querySelectorAll('.view-toggle-btn').forEach(btn =>
-    btn.classList.toggle('active', btn.dataset.mode === mode));
-  renderGallery();
-}
-
-function sortChanged() {
-  const sel = document.getElementById('sort-select');
-  state.sort = sel ? sel.value : 'default';
-  renderGallery();
-}
-
+// ============================================================
+// EVENT LISTENERS & INIT
+// ============================================================
 function setupEventListeners() {
-  // Filter rail click delegation
-  document.getElementById('filter-rail')?.addEventListener('click', e => {
-    const btn = e.target.closest('[data-filter]');
-    if (!btn) return;
-    const filter = btn.dataset.filter;
-    const value  = btn.dataset.value;
-
-    // Highlight
-    btn.closest('.filter-section')?.querySelectorAll('.filter-option').forEach(o=>o.classList.remove('selected'));
-    btn.classList.add('selected');
-
-    if (filter === 'category') state.filters.category = value;
-    if (filter === 'maturity') state.filters.maturity = value === 'all' ? null : value;
-    if (filter === 'cadence')  state.filters.cadence  = value === 'all' ? null : value;
-
-    renderGallery();
+  // Gallery filter changes
+  document.addEventListener('change', function (e) {
+    if (e.target.id === 'filter-category') {
+      state.filters.category = e.target.value;
+      renderGallery();
+    } else if (e.target.id === 'filter-audience') {
+      state.filters.audience = e.target.value || null;
+      renderGallery();
+    } else if (e.target.id === 'filter-maturity') {
+      state.filters.maturity = e.target.value || null;
+      renderGallery();
+    } else if (e.target.id === 'filter-cadence') {
+      state.filters.cadence = e.target.value || null;
+      renderGallery();
+    }
   });
 
-  // Search
-  document.getElementById('filter-search')?.addEventListener('input', e => {
-    state.filters.search = e.target.value.trim();
-    renderGallery();
+  // Search input
+  document.addEventListener('input', function (e) {
+    if (e.target.id === 'filter-search') {
+      clearTimeout(state._searchTimer);
+      state._searchTimer = setTimeout(() => {
+        state.filters.search = e.target.value;
+        renderGallery();
+      }, 250);
+    }
   });
 
-  // Keyboard: Escape goes back
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-      if (state.view === 'detail') history.back();
+  // Click delegation
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('[data-action]');
+    if (btn) {
+      const action = btn.dataset.action;
+      const id = btn.dataset.id;
+
+      if (action === 'view') {
+        navigate('detail', { id });
+      } else if (action === 'compare') {
+        if (state.compareList.includes(id)) {
+          removeFromCompare(id);
+        } else {
+          addToCompare(id);
+        }
+        // Re-render current view to update button state
+        if (state.view === 'gallery') renderGallery();
+        else if (state.view === 'detail') renderDetail(state.detailId);
+        else if (state.view === 'compare') renderCompare();
+      } else if (action === 'remove-compare') {
+        removeFromCompare(id);
+        renderCompare();
+      } else if (action === 'export-one') {
+        navigate('exports');
+      } else if (action === 'wizard-back') {
+        if (state.wizard.step > 0) {
+          state.wizard.step--;
+          renderFinder();
+        }
+      } else if (action === 'wizard-next') {
+        const ws = WIZARD_STEPS[state.wizard.step];
+        if (ws && state.wizard.answers[ws.id]) {
+          state.wizard.step++;
+          renderFinder();
+        }
+      } else if (action === 'wizard-restart') {
+        state.wizard = { step: 0, answers: {}, results: [] };
+        renderFinder();
+      }
+      return;
+    }
+
+    // Wizard option selection
+    const opt = e.target.closest('.wizard-option');
+    if (opt) {
+      const step = parseInt(opt.dataset.step, 10);
+      const value = opt.dataset.value;
+      if (!isNaN(step) && WIZARD_STEPS[step]) {
+        state.wizard.answers[WIZARD_STEPS[step].id] = value;
+        // Update option selection visually
+        opt.closest('.wizard-options').querySelectorAll('.wizard-option').forEach(o => {
+          o.classList.toggle('selected', o.dataset.value === value);
+        });
+        // Enable next button
+        const nextBtn = document.querySelector('[data-action="wizard-next"]');
+        if (nextBtn) nextBtn.removeAttribute('disabled');
+      }
+      return;
+    }
+
+    // Tab switching
+    const tabBtn = e.target.closest('.tab-btn');
+    if (tabBtn) {
+      const tabIdx = parseInt(tabBtn.dataset.tab, 10);
+      if (!isNaN(tabIdx)) {
+        state.detailTab = tabIdx;
+        document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === tabIdx));
+        document.querySelectorAll('.tab-panel').forEach((p, i) => p.classList.toggle('active', i === tabIdx));
+      }
+      return;
+    }
+
+    // View mode toggle
+    const viewModeBtn = e.target.closest('[data-viewmode]');
+    if (viewModeBtn) {
+      state.viewMode = viewModeBtn.dataset.viewmode;
+      renderGallery();
+      return;
     }
   });
 }
 
-/* =============================================
-   INIT
-============================================= */
-document.addEventListener('DOMContentLoaded', () => {
-  initFilterRail();
+// ============================================================
+// INIT
+// ============================================================
+function init() {
   setupEventListeners();
   window.addEventListener('hashchange', router);
   router();
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
 
 </script>
 
