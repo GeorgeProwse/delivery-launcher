@@ -10461,10 +10461,8 @@ function buildPromptText(prompt, promptJson, data) {
     return instruction.replace("{{PROMPT_DATA}}", dataBlock);
   }
 
-  // Fallback (should not be reached after Chunk 5 update)
-  return (
-    instruction + "\n\n---\n\n" + buildPromptDataBlock(pid, slice, sliceJson)
-  );
+  // No {{PROMPT_DATA}} placeholder — return instruction as-is
+  return instruction;
 }
 
 // Format the data block with a descriptive header so the AI gets clear context
