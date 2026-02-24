@@ -8886,7 +8886,7 @@ STK-### | OBJ-### | SC-### | KPI-### | BEN-### | WBS hierarchical numeric | MS-#
 
 ### 4.1 Engagement Context (brief-builder fields only)
 The engagement context is sourced exclusively from the PwC Delivery Launchpad brief-builder form. Only the following fields will ever be present. Do not flag the absence of any other field as a gap, warning, or open item — they are not collected by design.
-client_name (string, required) | engagement_name (string, required) | engagement_lead (string) | industry (string, required) | sector (string) | sub_sector (string) | delivery_methodology (enum) | fee_structure (enum) | start_date (date) | end_date (date) | total_budget (string) | engagement_description (string) | objectives (array, minimum 1 required) | service_offerings (array) | technology (array) | alliance_partners (array) | regulatory_profile (array) | risk_profile (array)
+client_name (string, required) | engagement_name (string, required) | engagement_lead (string) | industry (string, required) | sector (string) | sub_sector (string) | delivery_methodology (enum) | fee_structure (enum) | start_date (date) | end_date (date) | total_budget (string) | engagement_description (string)
 Required for chain to proceed: client_name, engagement_name, industry. All other fields are optional — if absent, set to null and do not raise an open item.
 
 ### 4.2 Stakeholder: stakeholder_id | full_name | role_title | organisation_name | organisation_type | engagement_role (Sponsor|Decision_Maker|Project_Owner|Programme_Manager|SME|End_User|Approver|Informed_Only|Other) | influence_level | interest_level | engagement_strategy | confirmed_or_placeholder | onboarded_to_engagement
@@ -9050,7 +9050,7 @@ If any are missing, output only a fenced P1_1_VALIDATION_ERRORS JSON block and S
 ## STEP 3 — CANONICAL CONTEXT OBJECT
 
 ### 3A) Engagement Context
-Populate all 16 brief-builder fields per DD-1 §4.1 into engagement_context_16. Set absent optional fields to null. Do not raise open items for absent optional fields — absence is expected by design.
+Populate all 10 brief-builder scalar fields per DD-1 §4.1 into engagement_context_16. Set absent optional fields to null. Do not raise open items for absent optional fields — absence is expected by design.
 
 ### 3B) Preserve nested array fields at full depth
 The following fields contain nested structures that must be carried into the handoff at full depth, not flattened:
@@ -9072,7 +9072,7 @@ Success — top-level key P1_1_CANONICAL_HANDOFF containing:
 - prompt_id: "P1.1"
 - generated_on: YYYY-MM-DD
 - standards_loaded: { ss_1: true, dd_1: true, we_1: true }
-- engagement_context_16: object with all 16 fields per DD-1 §4.1
+- engagement_context_16: object with all 10 scalar fields per DD-1 §4.1
 - nested_arrays: { objectives[], service_offerings[], technology[], alliance_partners[], regulatory_profile[], risk_profile[] } at full depth
 - deterministic_derivations: { duration_days, duration_weeks, total_budget_aud, fee_structure_normalised, delivery_methodology_normalised }
 - open_items: [{ id, area, description, source, priority }]
@@ -10064,7 +10064,7 @@ STK-### | OBJ-### | SC-### | KPI-### | BEN-### | WBS hierarchical numeric | MS-#
 
 ### 4.1 Engagement Context (brief-builder fields only)
 The engagement context is sourced exclusively from the PwC Delivery Launchpad brief-builder form. Only the following fields will ever be present. Do not flag the absence of any other field as a gap, warning, or open item — they are not collected by design.
-client_name (string, required) | engagement_name (string, required) | engagement_lead (string) | industry (string, required) | sector (string) | sub_sector (string) | delivery_methodology (enum) | fee_structure (enum) | start_date (date) | end_date (date) | total_budget (string) | engagement_description (string) | objectives (array, minimum 1 required) | service_offerings (array) | technology (array) | alliance_partners (array) | regulatory_profile (array) | risk_profile (array)
+client_name (string, required) | engagement_name (string, required) | engagement_lead (string) | industry (string, required) | sector (string) | sub_sector (string) | delivery_methodology (enum) | fee_structure (enum) | start_date (date) | end_date (date) | total_budget (string) | engagement_description (string)
 Required for chain to proceed: client_name, engagement_name, industry. All other fields are optional — if absent, set to null and do not raise an open item.
 
 ### 4.2 Stakeholder: stakeholder_id | full_name | role_title | organisation_name | organisation_type | engagement_role (Sponsor|Decision_Maker|Project_Owner|Programme_Manager|SME|End_User|Approver|Informed_Only|Other) | influence_level | interest_level | engagement_strategy | confirmed_or_placeholder | onboarded_to_engagement
