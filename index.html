@@ -9037,7 +9037,103 @@ Close with a brief message confirming outputs and inviting the user to request c
     prompt_name: "Resource Plan & RACI",
     artifact: "Resource & RACI Workbook",
     instruction:
-      `EXECUTION CONSTRAINTS — MANDATORY:\\nYou must follow these execution rules without exception before performing any task.\\n\\n1. Do all parsing, validation, reasoning, and content drafting in your response text only. Do not use code interpreter for any of these steps.\\n\\n2. Make exactly ONE code interpreter call. This call must contain the complete, final file generation script in its entirety. Do not split file generation across multiple calls.\\n\\n3. Do not use code interpreter to inspect, test, explore, or validate data, variables, or helper functions before the final generation call.\\n\\n4. Do not make iterative or exploratory code calls at any stage.\\n\\n5. If a code error occurs inside the single permitted call, handle it internally using try/except. Do not make a second code call to fix or retry it.\\n\\n6. Generate and save all required output files within the single permitted code call. Do not make additional code calls for each file format separately.\\n\\n7. Do not confirm, summarise, or test outputs with a code call. Confirm completion in your response text only.\\n\\n8. Do not present preview tables or confirmation gates mid-execution. Treat all proposed content as confirmed and proceed directly to file generation without waiting for user input.\\n\\n9. After delivering all output files, include a brief closing message confirming what was generated and inviting the user to request changes or proceed with the next prompt. Do not await a response — this message is terminal.\\n\\n---\\n\\n# P2.2 — Resource Plan & RACI (Chain Step)\n\n## PURPOSE\nProduce the canonical Resource Plan & RACI. Outputs:\n1) Real .xlsx — Resource & RACI Workbook (resource register, loading, capacity, seniority mix and RACI matrix)\n2) Canonical JSON handoff in-chat for downstream prompts\n\nDo not pause for user input. Where inputs are missing, apply DD-1 placeholder conventions and raise open_items.\n\n---\n\n## INPUTS\nParse the most recent in-chat JSON objects:\n- P1_1_CANONICAL_HANDOFF\n- P1_4_CANONICAL_HANDOFF\n- P1_5_CANONICAL_HANDOFF\n- P2_1_CANONICAL_HANDOFF\n\nSS-1, DD-1, WE-1 are loaded from P1.1. Apply them. Do not restate them.\n\n---\n\n## HARD PRECONDITIONS (FAIL-FAST)\nRequired:\n1) P2_1_CANONICAL_HANDOFF.wbs[] at least to deliverable or work package level\n2) P2_1_CANONICAL_HANDOFF: engagement_start_date, engagement_end_date, and at least one of milestones[] or deliverables[] (each with planned_start, planned_end)\n3) P2_1_CANONICAL_HANDOFF.schedule_bounds.methodology in {Waterfall, Agile, Hybrid}\n\nIf any missing — STOP:\nBLOCKED: Missing required upstream handoff(s) for Resource Plan. Require P2.1 WBS + P2.1 Schedule (engagement dates + milestones or deliverables with dates + methodology). Re-run upstream then re-run P2.2.\n\nAlso required for effort allocation:\n- P2_1 effort estimates OR deliverable/milestone durations derivable from planned_start/planned_end\nIf neither exists — STOP:\nBLOCKED: Resource Plan requires effort estimates or date ranges from P2.1 to derive allocations. Provide effort or date ranges in P2.1 then re-run P2.2.\n\n---\n\n## STEP 1 — DETERMINE RESOURCE MODEL\n- Waterfall/Hybrid: time-phased weekly plan derived from milestones[] and deliverables[] date ranges\n- Agile: sprint-phased plan if P2_1 sprints[] exists; otherwise weekly fallback (record assumption)\n\nDefault: 1.0 FTE = 5 business days/week. Availability = 100% unless upstream provides constraints.\n\n---\n\n## STEP 2 — DERIVE REQUIRED ROLES\nSources: P1.4/P1.5 engagement team roles; P2.1 WBS owner hints; P2.1 workstream tags; P2.1 critical items (if present).\n\nCreate Role Catalog at: Role_Title + Organisation_Type + Seniority_Level.\nDo not create named individuals unless confirmed upstream.\nSeniority inference (coarse only; mark TBC if uncertain):\n- Engagement leadership → Partner/Director/Senior_Manager\n- PMO/EM → Manager/Senior_Manager\n- Workstream lead → Manager/Senior_Manager\n- Delivery team → Associate/Senior_Associate/Analyst\n- Specialist → Specialist\n\n**Inference requirement:** If upstream role data is sparse, infer the standard resource roles for an engagement of this type, size, and methodology. A PwC engagement always requires at minimum: Engagement Partner/Lead, Engagement Manager, at least one Workstream Lead per L2 workstream, and appropriate delivery staff. Client-side roles must include at minimum: Client Sponsor, Client Project Owner, and a counterpart for each major workstream. Flag all inferred roles as \`source: Inferred\` and add open items to confirm with the engagement team.\n\n**Inference depth floors (not targets):**\n- Small engagement (<6 months): 6-10 roles minimum\n- Medium engagement (6-12 months): 10-18 roles minimum\n- Large engagement (12+ months): 18+ roles minimum\n\n---\n\n## STEP 3 — ALLOCATE EFFORT\nAllocation rules:\n- PMO/EM: spans whole engagement (steady load)\n- Workstream lead: spans workstream window\n- Delivery roles: within task windows\n- Distribute to weekly buckets proportionally across task span\n- Do not fabricate granular daily allocations\n\n## STEP 4 — BUILD DELIVERABLES\n\n### 4A) DOCX — Resource Plan\nGenerate a real .docx using python-docx. Apply SS-1 Word styling throughout.\n\nSections (no additions; use Word heading styles throughout for TOC):\n1) Document Control\n2) Purpose — what this plan is; linkage to P2.1 and P2.6\n3) Inputs and Assumptions — methodology; working week; availability assumptions; missing data flagged\n4) Resourcing Strategy — seniority mix strategy; specialist resourcing; client participation expectations\n5) Role Catalog — table: # | Role Title | Org | Seniority | Primary Workstream(s) | Start | End | Effort (days) | FTE (avg) | Named Individual | Status\n6) Time-Phased Resourcing Summary — table: Workstream | Start | End | Peak FTE | Avg FTE | Key Roles | Risk\n7) Critical Coverage — table: Critical Item | Window | Required Roles | Coverage Status | Mitigation; if P2.1 missing note "CPA not available — coverage assessed from schedule windows only"\n8) Resourcing Risks and Constraints\n9) Open Items\n10) Appendices — version history; references\n\nFile: P2.2_Resource_RACI_Workbook_{YYYY-MM-DD}_v1.0.docx → /mnt/data/\n\n---\n\n### 4B) XLSX — Resource Plan Workbook\nGenerate a real .xlsx using openpyxl. Apply SS-1 Excel + WE-1 throughout.\n\nSheets (exactly 6; exact names; stable):\n1) Resource_Register\n2) Loading_Weekly\n3) Capacity_vs_Demand\n4) Seniority_Mix\n5) RACI_Matrix\n6) Change_Log\n\n**Resource_Register**\nTab colour: primary per SS-1. SS-1 header block rows 1-2.\nExcel Table tbl_resources columns:\nResource_ID (DD-1) | Full_Name (blank unless confirmed) | Role_Title | Seniority (DD-1) | Organisation (PwC | Client | Alliance_Partner | Third_Party | Joint | TBC) | Primary_Workstream | Secondary_Workstream | Location | Start_Date | End_Date | Total_Effort_Days | Avg_FTE (formula) | Availability_Pct | Daily_Rate (TBC unless confirmed) | Confirmed_Status (Confirmed | Proposed | TBC) | Security_Clearance_Required | Notes\n\n**Loading_Weekly**\nTab colour: primary per SS-1.\nExcel Table tbl_loading.\nLeft fixed columns: Resource_ID | Role_Title | Organisation | Seniority | Total_Effort_Days | Avg_FTE\nThen one column per week commencing across engagement duration. Week column headers must use ISO date format YYYY-MM-DD (Monday of that week), e.g. "2024-10-07", "2024-10-14".\nWeekly_Sum_Check column: structured ref ensuring weekly allocations sum to Total_Effort_Days within 0.5 day tolerance.\n\n**Capacity_vs_Demand**\nTab colour: reference per SS-1.\nExcel Table tbl_capacity columns:\nWeek_Commencing | Total_Capacity_Days | Total_Demand_Days | Variance_Days | Utilisation_Pct | Status (Over-allocated | Near_Capacity | Optimal | Under-utilised) | PwC_Demand_Days | Client_Demand_Days | ThirdParty_Demand_Days | Notes\nAll values via structured references from tbl_loading and tbl_resources.\n\n**Seniority_Mix**\nTab colour: reference per SS-1.\nExcel Table tbl_seniority columns:\nSeniority | Organisation | Role_Count | Total_Effort_Days | Pct_of_Total_Effort | Avg_Daily_Rate | Indicative_Cost | Notes\n\n**RACI_Matrix**\nTab colour: reference per SS-1. SS-1 header block rows 1-2.\nStructure: rows = activities/deliverables (derived from P2_1_CANONICAL_HANDOFF.deliverables if available; else inferred from scope and workstreams); columns = roles (from Resource_Register).\nCell values: R (Responsible) | A (Accountable) | C (Consulted) | I (Informed) | blank.\nExcel Table tbl_raci with columns: Activity_ID (use deliverable_id from P2_1_CANONICAL_HANDOFF.deliverables[] for deliverable activities; use GOV-### for governance activities from P1_5) | Activity_Name | Workstream | Phase | then one column per role from tbl_resources.\nValidation: each activity must have exactly one A. Flag violations with conditional formatting (red cell).\nInclude Governance RACI sub-section: same structure applied to governance activities from P1_5_CANONICAL_HANDOFF.governance.bodies[].\nFilename prefix note: RACI content is embedded in P2.2_Resource_RACI_Workbook_{YYYY-MM-DD}_v1.0.xlsx.\n\n**Change_Log**\nTab colour: reference per SS-1.\nExcel Table tbl_changes (CHG-### per DD-1) — standard WE-1 structure.\nPre-populate one instruction row.\n\nFile: P2.2_Resource_RACI_Workbook_{YYYY-MM-DD}_v1.0.xlsx → /mnt/data/\n\n---\n\n## STEP 5 — JSON HANDOFF\nOutput the following fenced JSON in-chat (in response text — not via code) with top-level key P2_2_CANONICAL_HANDOFF:\n- prompt_id: "P2.2"\n- generated_on: YYYY-MM-DD\n- resource_model: weekly | sprint | weekly_fallback\n- roles: [{ resource_id, role_title, seniority, organisation, primary_workstream, start_date, end_date, total_effort_days, avg_fte, availability_pct, confirmed_status }]\n- weekly_loading: { week_commencing[], rows: [{ resource_id, allocations_days_by_week[] }] }\n- capacity_summary: [{ week_commencing, capacity_days, demand_days, utilisation_pct, status }]\n- seniority_mix: []\n- assumptions: []\n- open_items: [{ id, area, description, priority, owner_role }]\n- validation: { status: "PASS", notes: [] }\n\nDo not embed SS-1/DD-1/WE-1 in this JSON.\n\n---\n\n## QA\nDOCX: SS-1 styles applied; confidentiality footer every page; all 10 sections present; no raw bracket placeholders; role catalog totals consistent with workbook.\nXLSX: exactly 6 sheets; tbl_resources, tbl_loading, tbl_capacity, tbl_seniority, tbl_changes, tbl_raci all exist; freeze panes, filters, validations applied; no formula errors; weekly sum checks pass or flagged as open_items; capacity/demand totals align with loading totals.\n\nQA FAIL: output only — QA FAIL: followed by compact list of failures (Sheet + Table/Column).\n\n---\n\n## OUTPUT\n1) P2_2_CANONICAL_HANDOFF fenced JSON in-chat\n2) Download link: P2.2_Resource_RACI_Workbook_{YYYY-MM-DD}_v1.0.docx\n3) Download link: P2.2_Resource_RACI_Workbook_{YYYY-MM-DD}_v1.0.xlsx\nNo other narrative output.\n\nAfter delivering all files, include a brief closing message confirming what was generated and inviting the user to request changes or send the next prompt. Do not await a response — this message is terminal.`,
+      `EXECUTION RULES:
+1. Do all reasoning, parsing, and content drafting in response text only. This is preparatory work — it does not complete the task.
+2. You MUST make exactly one code interpreter call. A response that ends without a code interpreter call has failed.
+3. Output the JSON handoff and closing message only after the code call completes.
+4. Handle all errors with try/except internally. No second calls to fix errors.
+
+P2.2 — Resource Plan & RACI
+
+INPUTS
+Parse from context: P1_1_CANONICAL_HANDOFF, P1_4_CANONICAL_HANDOFF, P1_5_CANONICAL_HANDOFF, P2_1_CANONICAL_HANDOFF. SS-1, DD-1, WE-1 are loaded — treat as authoritative.
+
+HARD PRECONDITIONS
+Stop and output the message below if any of these are missing:
+* P2_1 wbs[] at deliverable or work package level
+* P2_1 engagement_start_date, engagement_end_date, and at least one of milestones[] or deliverables[] with planned_start/planned_end
+* P2_1 schedule_bounds.methodology in {Waterfall, Agile, Hybrid}
+BLOCKED: Missing required upstream handoff(s) for Resource Plan. Require P2.1 WBS + schedule (engagement dates + milestones or deliverables with dates + methodology). Re-run upstream then re-run P2.2.
+If effort estimates and date ranges are both absent from P2_1, stop and output:
+BLOCKED: Resource Plan requires effort estimates or date ranges from P2.1 to derive allocations. Provide effort or date ranges in P2.1 then re-run P2.2.
+
+STEP 1 — DETERMINE RESOURCE MODEL
+* Waterfall/Hybrid: time-phased weekly plan from milestones[] and deliverables[] date ranges
+* Agile: sprint-phased if P2_1 sprints[] exists; otherwise weekly fallback (record assumption)
+Default: 1.0 FTE = 5 business days/week. Availability = 100% unless upstream provides constraints.
+
+STEP 2 — DERIVE REQUIRED ROLES
+Sources: P1_4/P1_5 engagement team roles; P2_1 WBS owner hints; workstream tags.
+Build Role Catalog at: Role_Title + Organisation_Type + Seniority_Level. No named individuals unless confirmed upstream.
+Seniority inference (mark TBC if uncertain): engagement leadership → Partner/Director/Senior_Manager; PMO/EM → Manager/Senior_Manager; workstream lead → Manager/Senior_Manager; delivery team → Associate/Senior_Associate/Analyst; specialist → Specialist.
+If upstream role data is sparse, infer standard roles for this engagement type, size, and methodology.
+Minimum always required: Engagement Partner/Lead, Engagement Manager, one Workstream Lead per L2 workstream, appropriate delivery staff, Client Sponsor, Client Project Owner, client counterpart per major workstream.
+Flag all inferred roles as source: Inferred and add open items.
+Inference depth floors: small (<6 months) = 6–10 roles; medium (6–12 months) = 10–18 roles; large (12+ months) = 18+ roles.
+
+STEP 3 — ALLOCATE EFFORT
+* PMO/EM: spans whole engagement at steady load
+* Workstream lead: spans workstream window
+* Delivery roles: within task windows
+* Distribute to weekly buckets proportionally across task span
+* Do not fabricate granular daily allocations
+
+STEP 4 — BUILD DELIVERABLES
+
+4A) DOCX
+Use python-docx. Apply SS-1 Word styling. Use Word heading styles for TOC compatibility.
+Sections in this order, no additions:
+1. Document Control
+2. Purpose — linkage to P2.1 and P2.6
+3. Inputs and Assumptions — methodology, working week, availability assumptions, missing data flagged
+4. Resourcing Strategy — seniority mix, specialist resourcing, client participation expectations
+5. Role Catalog — table: # | Role Title | Org | Seniority | Primary Workstream(s) | Start | End | Effort (days) | FTE (avg) | Named Individual | Status
+6. Time-Phased Resourcing Summary — table: Workstream | Start | End | Peak FTE | Avg FTE | Key Roles | Risk
+7. Critical Coverage — table: Critical Item | Window | Required Roles | Coverage Status | Mitigation; if P2_1 CPA missing note "CPA not available — coverage assessed from schedule windows only"
+8. Resourcing Risks and Constraints
+9. Open Items
+10. Appendices — version history; references
+Save to: /mnt/data/P2.2_Resource_Plan_{YYYY-MM-DD}v1.0.docx
+
+4B) XLSX
+Use openpyxl. Apply SS-1 and WE-1 throughout. Exactly 6 sheets.
+
+Resource_Register — tab colour OR500
+SS-1 header block rows 1–2. Table tbl_resources columns: Resource_ID (DD-1) | Full_Name | Role_Title | Seniority (DD-1) | Organisation (dropdown: PwC|Client|Alliance_Partner|Third_Party|Joint|TBC) | Primary_Workstream | Secondary_Workstream | Location | Start_Date | End_Date | Total_Effort_Days | Avg_FTE (formula) | Availability_Pct | Daily_Rate | Confirmed_Status (dropdown: Confirmed|Proposed|TBC) | Security_Clearance_Required | Notes
+
+Loading_Weekly — tab colour OR500
+Table tbl_loading. Left fixed columns: Resource_ID | Role_Title | Organisation | Seniority | Total_Effort_Days | Avg_FTE. Then one column per week commencing (ISO YYYY-MM-DD, Monday) across engagement duration. Weekly_Sum_Check column: structured ref verifying weekly allocations sum to Total_Effort_Days within 0.5 day tolerance.
+
+Capacity_vs_Demand — tab colour GR100
+Table tbl_capacity columns: Week_Commencing | Total_Capacity_Days | Total_Demand_Days | Variance_Days | Utilisation_Pct | Status (dropdown: Over-allocated|Near_Capacity|Optimal|Under-utilised) | PwC_Demand_Days | Client_Demand_Days | ThirdParty_Demand_Days | Notes
+All values via structured references from tbl_loading and tbl_resources.
+
+Seniority_Mix — tab colour GR100
+Table tbl_seniority columns: Seniority | Organisation | Role_Count | Total_Effort_Days | Pct_of_Total_Effort | Avg_Daily_Rate | Indicative_Cost | Notes
+
+RACI_Matrix — tab colour GR100
+SS-1 header block rows 1–2. Table tbl_raci. Rows = activities/deliverables from P2_1 deliverables[] if available; else inferred from scope and workstreams. Columns: Activity_ID (deliverable_id from P2_1 for deliverables; GOV-### for governance activities from P1_5) | Activity_Name | Workstream | Phase | then one column per role from tbl_resources. Cell values: R|A|C|I|blank. Each activity must have exactly one A — flag violations with DNGR conditional formatting. Include Governance RACI sub-section for governance activities from P1_5 governance_bodies[].
+
+Change_Log — tab colour GR100
+Table tbl_changes (CHG-### per DD-1) — standard WE-1 structure. Pre-populate one instruction row.
+Save to: /mnt/data/P2.2_Resource_RACI_Workbook{YYYY-MM-DD}_v1.0.xlsx
+
+QA (assertions inside the single code call)
+* DOCX: SS-1 styles applied; confidentiality footer every page; all 10 sections present; no raw bracket placeholders; role catalog totals consistent with workbook
+* XLSX: exactly 6 sheets with correct names; tbl_resources, tbl_loading, tbl_capacity, tbl_seniority, tbl_raci, tbl_changes all exist; freeze panes, filters, validations applied; weekly sum checks pass or flagged as open_items; capacity/demand totals align with loading totals
+If any assertion fails output only: QA FAIL: followed by compact list of failures and locations.
+
+─────────────────────────────────────────────────────
+EXECUTION CHECKPOINT
+Reasoning is complete. Open the code interpreter call now. Do not output the JSON handoff or closing message until after it completes.
+─────────────────────────────────────────────────────
+
+OUTPUT CONTRACT
+1. Code interpreter call — mandatory, must happen first
+2. P2_2_CANONICAL_HANDOFF fenced JSON in-chat after the code call:
+   * prompt_id | generated_on | resource_model | roles[] | weekly_loading | capacity_summary[] | seniority_mix[] | assumptions[] | open_items[] | validation
+3. Download links for both files
+Close with a brief message confirming outputs and inviting the user to proceed or request changes.`,
   },
   "risk_register.json": {
     prompt_id: "P2.4",
