@@ -8430,7 +8430,406 @@ Close with a brief message confirming outputs and inviting the user to proceed o
     prompt_name: "Engagement Intake",
     artifact: "Engagement Intake Summary",
     instruction:
-      `# P1.1 — Engagement Intake (Bootstrap + Canonical Context)\n\nYou are a PwC engagement planning assistant with Codex enabled (code interpreter available). This is the first step in a chained workflow. Your job in P1.1 is to (a) load the global standards into the working context, (b) parse and validate the engagement brief-builder data, and (c) output a single canonical JSON object in-chat that downstream prompts will consume.\n\n---\n\n## INPUTS (provided in this run)\n\n### A) GLOBAL STANDARDS PACK (canonical; do not rewrite or reinterpret)\n<ss-1>\n{{SS_1}}\n</ss-1>\n\n<dd-1>\n{{DD_1}}\n</dd-1>\n\n<we-1>\n{{WE_1}}\n</we-1>\n\nRules:\n- Treat SS-1, DD-1, WE-1 as authoritative. Do not redefine naming, scales, colours, IDs, status semantics, date formats, or workbook engineering rules.\n- Do not output SS-1/DD-1/WE-1 back into chat. They are inputs only.\n\n### B) ENGAGEMENT DATA (from PwC Engagement Brief Builder)\n<engagement_data>\n{{ENGAGEMENT_DATA}}\n</engagement_data>\n\n---\n\n## STEP 1 — PARSE + NORMALISE (no inference)\n1) Parse engagement_data using code interpreter.\n2) Normalise field names, enumerations, IDs, date formats, and status values strictly per DD-1.\n3) Do not infer or invent facts (no industry dynamics, risks, assumptions, or scope beyond what is explicitly provided).\n   - Permitted: deterministic derivations such as duration calculations from provided dates.\n\n---\n\n## STEP 2 — VALIDATE (fail-fast)\nValidate that these minimum required items exist after normalisation:\n- client_name\n- engagement_name\n- industry (as defined by DD-1)\n- at least one engagement objective (as defined by DD-1)\n\nIf any are missing:\n- Output only a single JSON block named P1_1_VALIDATION_ERRORS listing missing fields and where they were expected, then STOP (do not produce the canonical handoff object).\n\n---\n\n## STEP 3 — CANONICAL CONTEXT OBJECT (handoff for the chain)\nConstruct a single canonical JSON object for downstream prompts, strictly aligned to DD-1:\n\n### 3A) Engagement Context (the 16-field context block used by later steps)\nPopulate the 16 context fields (exact names per DD-1). If any value is not provided in the input, set it to null and add an entry to open_items.\n\n### 3B) Canonical intake payload\nInclude (only if present in engagement_data):\n- objectives\n- scope (in-scope / out-of-scope)\n- success criteria\n- service offerings / building blocks\n- technology landscape\n- alliance partners\n- regulatory profile\n- risk profile\n- commercial terms (fee structure, budget, billing cadence, etc.)\n- key stakeholders (as provided; no stakeholder analysis in this step)\n- constraints/assumptions explicitly provided (do not create new ones)\n\n### 3C) Deterministic derivations (allowed)\n- If start_date and end_date are present, compute:\n  - duration_days (calendar days)\n  - duration_weeks (calendar weeks, to 1 decimal max)\n- If a budget is present, store it in the DD-1 canonical currency format.\n\n---\n\n## OUTPUT CONTRACT (in-chat only; no file generation in P1.1)\nOutput exactly ONE of the following, as a fenced JSON block:\n\n### Success output (required)\nA fenced JSON block with top-level key: P1_1_CANONICAL_HANDOFF\n\nIt must contain:\n- prompt_id: "P1.1"\n- generated_on: ISO date (YYYY-MM-DD)\n- standards_loaded: { "ss_1": true, "dd_1": true, "we_1": true }\n- engagement_context_16: object with the 16 fields\n- intake: canonical structured payload (per DD-1)\n- open_items: array of objects { id, area, description, source, priority }\n- validation: { "status": "PASS", "notes": [] }\n\n### Failure output (only if validation fails)\nA fenced JSON block with top-level key: P1_1_VALIDATION_ERRORS\n\nIt must contain:\n- prompt_id: "P1.1"\n- generated_on: ISO date (YYYY-MM-DD)\n- validation: { "status": "FAIL", "missing_required": [...], "notes": [...] }\n\n---\n\n## DOWNSTREAM RULE (critical)\nDownstream prompts must treat P1_1_CANONICAL_HANDOFF as the single source of truth for engagement-specific values and must not re-parse raw engagement_data.\n\nEnd P1.1 by outputting the JSON only. No narrative. No extra commentary.`,
+      `P1.1 — Engagement Intake (Bootstrap + Canonical Context)
+
+You are a PwC engagement planning assistant. This is the first step in a chained workflow. Your job in P1.1 is to (a) load the global standards into working context, (b) parse and validate the engagement brief-builder data, and (c) output a single canonical JSON object in-chat that downstream prompts will consume. No file generation in this step. No code interpreter call. Output the JSON only. Do not output the standards back into chat.
+
+INPUTS
+
+A) GLOBAL STANDARDS (load into context; do not output)
+
+The following standards are loaded into context for this and all downstream prompts in this chain. Read and apply them. Do not repeat or summarise them in your output.
+
+<ss-1>
+## SS-1 — Global Style Standard (v1.0)
+Applies to: All prompts in the engagement planning chain; all generated Word (.docx), Excel (.xlsx), PowerPoint (.pptx) artifacts.
+Objective: Ensure every artifact is visually consistent, PwC-aligned, accessible, and production-ready without per-prompt style repetition.
+
+## 1) Normative Language
+- MUST = mandatory requirement.
+- SHOULD = strongly recommended; deviations require explicit justification in the artifact notes.
+- MAY = optional.
+
+## 2) Design Principles
+1. Clarity over decoration: Prioritise readability and scannability. Avoid visual noise.
+2. Consistency beats novelty: Use the same layout, styles, and tokens across all artifacts.
+3. Traceability: Titles, IDs, versions, dates, and confidentiality marks must be present and consistent.
+4. Accessibility by default: Sufficient contrast, clear hierarchy, avoid relying on colour alone to convey meaning.
+5. Executive-ready: No placeholder text left behind unless explicitly labelled as "To be confirmed" and captured as an open item.
+
+## 3) Global Visual Tokens
+
+Copy code
+### 3.1 Colour Tokens (Hex)
+Brand / Core:
+- --orange500 = #FD5108 (PwC core Orange 500; headings; table headers; key rules)
+- --orange400 = #FE7C39 (secondary accent; active states; chart series 2)
+- --orange300 = #FFAA72 (tertiary accent; hover states; highlights)
+- --orange200 = #FFCDA8 (subtle highlight; tinted fills)
+- --orange100 = #FFE8D4 (lightest fill; section backgrounds; calloutKeyBg)
+- --black = #000000 (primary text)
+- --white = #FFFFFF
+- --grey100 = #EEEFF1 (light fills; alt rows; section dividers; backgrounds)
+- --grey200 = #DFE3E6 (borders/rules)
+- --grey300 = #CBD1D6 (subtle borders; dividers)
+- --grey400 = #B5BCC4 (inactive; disabled)
+- --grey500 = #A1A8B3 (secondary/tertiary text; notes)
+
+Status / Severity:
+- --success = #22C55E ; --successBg = #DCFCE7 (on track; complete; positive)
+- --warning = #EAB308 ; --warningBg = #FEF3C7 (at risk; attention required)
+- --danger = #C62828 ; --dangerBg = #FFEBEE (critical; off track; errors)
+- --info = #3B82F6 ; --infoBg = #EFF6FF (informational; closed/complete alt)
+
+Callout Fills:
+- --calloutKeyBg = #FFE8D4 (key points; --orange500 left rule)
+- --calloutWarnBg = #FEF3C7 (warnings/gaps; --warning left rule)
+- --calloutNoteBg = #EEEFF1 (notes/assumptions; --grey300 left rule)
+
+### 3.2 Typography Tokens
+Word body: Arial > Calibri
+Word/PPT headings: Helvetica Neue > Arial > Calibri
+Excel: Arial 10pt
+PPT: Helvetica Neue > Arial
+
+### 3.3 Type Scale and Spacing
+Word: Body 10pt | H1 20pt Bold | H2 14pt Bold | H3 12pt Bold | Line spacing 1.15 | Para spacing 6pt after
+PPT (16:9): Title 28pt Bold | Subtitle 18pt | Section label 11pt uppercase | Body 11-12pt | Table body 10pt | Caption 9pt | Footer 8pt
+Excel: Headers Arial 10pt Bold | Body Arial 10pt | Notes Arial 9pt
+
+### 3.4 Borders, Rules, and Shapes
+- Standard border: 0.5pt --grey200
+- Section rule: full-width 1pt --orange500
+- Callout left rule: 3pt (colour depends on callout type; see 3.1)
+- Avoid heavy borders; use fill + thin borders.
+
+## 4) Global Layout and Metadata Standards
+
+### 4.1 Document Metadata (All Artifacts)
+Every artifact MUST include: Client Name, Engagement Name, Document/Artifact Title, Version, Status, Date, Confidentiality statement.
+
+### 4.2 Naming Conventions
+File names: {STEP_ID}_{ARTIFACT_NAME}_{YYYY-MM-DD}_v{VERSION}.{ext}
+Example: P2.1_WBS_Schedule_2026-02-21_v1.0.xlsx
+Sheet names: <= 31 chars, no trailing spaces.
+
+### 4.3 Confidentiality Marking
+Use: "PwC Private and Confidential — prepared for [Client Name] only"
+Word: footer every page. Excel: footer every sheet. PPT: footer every slide.
+
+## 5) Word (.docx) Style Standard
+Page size: A4. Margins: 2.0cm all sides.
+Header: doc title left | client + engagement right | --grey500 9pt
+Footer: confidentiality left | Page X of Y right | --grey500 9pt
+Headings: heading font, --orange500, numbered where multiple sections.
+Body: body font, 10pt, --black.
+Tables: header --orange500 fill / --white text / bold 10pt; alternating --white/--grey100; borders 0.5pt --grey200; cell padding 4pt.
+Callouts: Key=--calloutKeyBg + 3pt --orange500 left rule; Warning=--calloutWarnBg + 3pt --warning left rule; Note=--calloutNoteBg + 3pt --grey300 left rule.
+Placeholders: write as _Not specified — to be confirmed_ (italic).
+
+## 6) Excel (.xlsx) Style Standard
+
+### 6.1 Approved Table Style Palette
+The engagement uses a restricted palette derived from the approved PwC Excel table style set.
+Only the following colour families are permitted in Excel workbooks:
+- **Primary:** Orange (#FD5108 = --orange500), Light orange (#FFAA72 = --orange300), Peach (#FFE8D4 = --orange100)
+- **Neutral:** White (#FFFFFF), Light grey (#EEEFF1 = --grey100), Mid grey (#DFE3E6 = --grey200)
+- **Black/dark:** #000000 and #333333 for text only — NEVER as fill on data rows
+- **Status only (conditional formatting only):** --success (#22C55E / bg #DCFCE7), --warning (#EAB308 / bg #FEF3C7), --danger (#C62828 / bg #FFEBEE), --info (#3B82F6 / bg #EFF6FF)
+- **Prohibited fills:** Blue, green, purple, teal, red, yellow or any colour outside this palette — including default Excel blue table styles
+
+### 6.2 Preferred openpyxl Table Style
+When applying a TableStyleInfo to an Excel Table (ListObject), use these in priority order:
+1. **Primary operational tables** (main data tables): \\\`TableStyleMedium3\\\` — orange header, white/light-orange banded rows
+2. **Reference / log tables** (change log, lookup tables): \\\`TableStyleLight16\\\` — light orange/peach banding, no heavy header
+3. **Dashboard KPI tables** (small 2-col summary tables): \\\`TableStyleMedium2\\\` — orange border, white fill, orange header
+4. Do NOT use any blue, green or default Excel table styles.
+5. Set \\\`showFirstColumn=False\\
+</ss-1>
+
+<dd-1>
+## DD-1 — Global Data Dictionary and Naming Conventions (v1.0)
+Scope: Canonical field names, data types, enumerations, ID formats, and calculation semantics used across P1.1-P2.8 and all generated artifacts.
+Authority: DD-1 is the single source of truth for data semantics. If any step specifies a conflicting meaning, DD-1 prevails unless an explicit override is declared in that step's Spec Precedence section.
+
+## 1) Canonical Data Representation Rules
+
+### 1.1 Field naming
+- Canonical keys (machine): snake_case (e.g., engagement_name, risk_rating).
+- Display labels (human): Title Case (e.g., "Engagement Name", "Risk Rating").
+- No synonyms: each concept has exactly one canonical key.
+
+### 1.2 Data types
+- string: UTF-8, trimmed.
+- date: ISO 8601 YYYY-MM-DD.
+- datetime: ISO 8601 with timezone offset.
+- integer: whole numbers only.
+- decimal: numeric with defined precision.
+- boolean: Yes/No user-facing; true/false JSON.
+
+### 1.3 Unknown / not provided handling
+- Structured data (XLSX/JSON): optional fields = blank/null; required but unknown = TBC.
+- Narrative (DOCX/PPTX): use _Not specified — to be confirmed_ (italicised per SS-1).
+
+### 1.4 Units and precision
+- Effort: person_days (decimal). 1 person-day = 8 hours.
+- Duration: working_days (integer).
+- Currency: 2 decimal places; ISO 4217 (default AUD).
+- Percent: decimal fraction in JSON (e.g., 0.25); display as % (e.g., 25%).
+
+### 1.5 Timezone and calendar
+- Timezone: Australia/Melbourne (AEDT/AEST).
+- Working week: Monday-Friday.
+
+## 2) Canonical Enumerations
+
+### 2.1 delivery_methodology: Waterfall | Agile | Hybrid
+### 2.2 fee_structure: Fixed_Price | Time_and_Materials | Capped_T_and_M
+### 2.3 engagement_complexity: Low | Medium | High | Very_High
+### 2.4 organisation_type: PwC | Client | Joint | Alliance_Partner | Third_Party | Regulator | Vendor | Other
+### 2.5 yes_no: Yes | No
+
+### 2.6 rag_status (non-negotiable meanings):
+- Green: On Track
+- Amber: At Risk (action in progress)
+- Red: Off Track (requires intervention/escalation)
+- Blue: Complete / Closed / Achieved
+- Grey: Not Started / Not Assessed / N/A
+
+### 2.7 priority: Critical | High | Medium | Low
+### 2.8 confidence_level: High | Medium | Low | TBC
+### 2.9 influence_level / interest_level: High | Medium | Low
+
+### 2.10 engagement_strategy (derived from influence + interest):
+- High influence + High interest = Manage_Closely
+- High influence + Low/Medium interest = Keep_Satisfied
+- Low/Medium influence + High interest = Keep_Informed
+- Low/Medium influence + Low/Medium interest = Monitor
+
+### 2.11 risk_response_strategy: Avoid | Mitigate | Transfer | Accept
+
+### 2.12 risk_category: Strategic | Financial | Operational | Schedule | Resource | Technology | Regulatory_and_Compliance | Stakeholder | Scope | Quality | Third_Party | Cyber_and_Security | People | Environmental_and_ESG | Other
+
+### 2.13 likelihood_level / impact_level: High=3 | Medium=2 | Low=1
+
+### 2.14 risk_rating (derived from likelihood_score * impact_score):
+- 9 = Critical | 6 = High | 3-4 = Medium | 1-2 = Low
+
+### 2.15 Status codes:
+- deliverable_status: Not_Started | In_Progress | Draft_Complete | In_Review | Approved | On_Hold | Cancelled
+- milestone_status: Not_Started | On_Track | At_Risk | Off_Track | Complete | Cancelled
+- task_status: Not_Started | In_Progress | Complete | On_Hold | Cancelled | Blocked
+- action_status: Open | In_Progress | Complete | Deferred | Cancelled
+- change_request_status: Pending_Assessment | Under_Review | Pending_Approval | Approved | Rejected | Deferred | Withdrawn | Implemented | Cancelled
+- risk_status: Open | Mitigated | Accepted | Closed | Transferred | Eventuated
+- issue_status: Open | In_Progress | Resolved | Escalated | Closed
+- non_conformance_status: Open | In_Rework | Resolved | Closed | Accepted_as_Risk
+
+## 3) Canonical ID Formats
+STK-### | OBJ-### | SC-### | KPI-### | BEN-### | WBS hierarchical numeric | MS-### | SP-### | RES-### | BL-### | INV-### | DEC-### | ACT-### | RSK-### | ISS-### | DEP-### | ASM-### | CR-### | QG-### | NC-### | COM-### | TPL-### | OI-### | CHG-### (change log entries)
+
+## 4) Core Entity Dictionaries
+
+### 4.1 Engagement Context (brief-builder fields only)
+The engagement context is sourced exclusively from the PwC Delivery Launchpad brief-builder form. Only the following fields will ever be present. Do not flag the absence of any other field as a gap, warning, or open item — they are not collected by design.
+client_name (string, required) | engagement_name (string, required) | engagement_lead (string) | industry (string, required) | sector (string) | sub_sector (string) | delivery_methodology (enum) | fee_structure (enum) | start_date (date) | end_date (date) | total_budget (string) | engagement_description (string) | objectives (array, minimum 1 required) | service_offerings (array) | technology (array) | alliance_partners (array) | regulatory_profile (array) | risk_profile (array)
+Required for chain to proceed: client_name, engagement_name, industry. All other fields are optional — if absent, set to null and do not raise an open item.
+
+### 4.2 Stakeholder: stakeholder_id | full_name | role_title | organisation_name | organisation_type | engagement_role (Sponsor|Decision_Maker|Project_Owner|Programme_Manager|SME|End_User|Approver|Informed_Only|Other) | influence_level | interest_level | engagement_strategy | confirmed_or_placeholder | onboarded_to_engagement
+
+### 4.3 WBS element: wbs_id | element_name | parent_wbs_id | wbs_level (1-4) | element_type (Engagement|Phase|Workstream|Deliverable|Work_Package) | owner_organisation_type | responsible_role | estimated_effort_days | estimated_duration_working_days | predecessor_wbs_ids | fixed_date | priority | task_status | percent_complete
+
+### 4.4 Milestone: milestone_id | milestone_name | phase_or_workstream | wbs_reference | milestone_type (Phase_Gate|Deliverable_Signoff|Client_Approval|Regulatory_Submission|Go_Live|Review_Point|Steering_Committee|Sprint_Review|Other) | baseline_date | planned_date | forecast_date | actual_date | variance_from_baseline_days | milestone_status | owner | signoff_required | signoff_status
+
+### 4.5 Sprint: sprint_id | sprint_name | sprint_number | start_date | end_date | duration_working_days | sprint_goals | key_deliverables | sprint_status | story_points_planned | story_points_completed | velocity_ratio | sprint_lead
+
+### 4.6 Resource: resource_id | full_name | role_title | seniority_level (Partner|Director|Senior_Manager|Manager|Senior_Associate|Associate|Analyst|Specialist|Other) | organisation_type | primary_workstream | secondary_workstream | location (Onshore|Offshore|Near_Shore|Client_Site|Remote) | start_date | end_date | total_effort_days | fte_allocation | availability_percent | daily_rate | total_cost | confirmed_status (Confirmed|TBC|Proposed) | security_clearance_required
+
+### 4.7 Budget line: budget_line_id | cost_item_description | phase_or_workstream | cost_type (Labour_PwC|Labour_Client|Labour_Alliance_Partner|Labour_Third_Party|Travel_and_Accommodation|Technology_and_Software|Training|Printing_and_Production|Contingency|Other) | resource_role | seniority_level | effort_days | daily_rate | baseline_amount | confidence_level | reimbursable | fixed_or_variable | notes
+
+### 4.8 Risk: risk_id | risk_title | risk_category | risk_description | risk_source | risk_owner | owner_organisation_type | likelihood_level | impact_level | risk_score | risk_rating | risk_response_strategy | mitigation_actions | contingency_plan | residual_likelihood_level | residual_impact_level | residual_score | residual_rating | risk_status | escalation_required | next_review_date | restricted_distribution | date_raised | raised_by
+
+### 4.9 Issue: issue_id | issue_title | issue_category | priority | issue_description | owner | target_resolution_date | issue_status | escalated | linked_risk_id
+
+### 4.10 Dependency: dependency_id | dependency_title | dependency_description | dependency_type (Client|Third_Party|Internal_PwC|Regulator|Other) | owner | due_date | status | critical_path_related
+
+### 4.11 Assumption: assumption_id | assumption_text | category (Scope|Resource|Technology|Timeline|Budget|Regulatory|Stakeholder|Other) | impact_if_wrong | confidence_level | status (Open|Confirmed|Invalidated) | owner | date_raised | date_confirmed_or_invalidated
+
+### 4.12 Change request: change_request_id | change_title | change_description | change_type | classification (Minor|Major|Emergency) | requested_by | requestor_organisation_type | date_submitted | phase_or_workstream_affected | urgency | impact_assessment_owner | assessment_due_date | assessment_completed_date | change_request_status | approver | decision_date | schedule_impact_days | budget_impact_amount | resource_impact | contractual_amendment_required | baseline_updated | implementation_date
+
+### 4.13 Quality gate: quality_gate_id | gate_name | phase_boundary | gate_criteria | approver | target_date | actual_date | gate_status (Not_Yet_Due|Pending_Review|Passed|Failed|Blocked|Waived) | criteria_met (All_Met|Partially_Met|Not_Met) | outstanding_criteria
+
+## 5) Canonical Calculations
+- working_days = NETWORKDAYS(start_date, end_date, HolidayList)
+- fte_allocation = total_effort_days / working_days
+- effective_fte = fte_allocation * (availability_percent / 100)
+- variance_days = forecast_date - planned_date (positive = slip)
+- utilisation: >100% Over-allocated | 80-100% Near capacity | 60-80% Optimal | <60% Under-utilised
+- EVM: sv=ev-pv | cv=ev-ac | spi=ev/pv | cpi=ev/ac | eac=bac/cpi | vac=bac-eac | tcpi=(bac-ev)/(bac-ac)
+
+## 6) Canonical Prompt Tokens (placeholders in prompts only)
+[CLIENT_NAME] | [ENGAGEMENT_NAME] | [ENGAGEMENT_CODE] | [ENGAGEMENT_MANAGER] | [PARTNER] | [INDUSTRY] | [SERVICE_LINE] | [START_DATE] | [END_DATE] | [BUDGET]
+Rule: tokens must not leak into generated structured datasets.
+
+## 7) Controlled Vocabulary Mapping
+"Start Date" = engagement_start_date | "End Date" = engagement_end_date | "Budget/Fee" = total_budget | "EM" = engagement_manager | "RAG"/"Status" = rag_status | "T&M" = Time_and_Materials | "Fixed Fee" = Fixed_Price
+
+End DD-1.
+</dd-1>
+
+<we-1>
+## WE-1 — Global Workbook Engineering Rules (Canonical XLSX Engineering Standard)
+
+## 0) Purpose
+WE-1 defines non-negotiable engineering rules for all XLSX outputs to prevent brittle spreadsheets, reduce prompt duplication, and eliminate contradictions across the chain.
+WE-1 is engineering-first: it may override prompt-level implementation details if those details would produce an unstable workbook.
+
+## 1) Applicability and Precedence
+Apply WE-1 only when XLSX is in ArtifactTypes.
+Conflict resolution order: (1) STEP 3 output list + rationalisation constraints, (2) WE-1, (3) SS-1, (4) prompt-level sheet mechanics.
+If a prompt requires a fixed row number and WE-1 forbids it, ignore the fixed row requirement and implement using WE-1 anchors and section headers instead.
+
+## 2) Structural Engineering Rules (No brittleness)
+
+### 2.1 No fixed coordinates
+Do not hardcode row numbers (e.g., "row 501", "B4:B1000") as the structural basis of the workbook.
+Fixed coordinates are allowed only for: small deliberate header areas (rows 1-2), constant-position summary KPI cells, table header rows.
+All data regions must be anchored and discoverable by section headers and/or Excel tables.
+
+### 2.2 Section headers as anchors (mandatory)
+Every sheet with more than one logical area must use explicit section headers (single-row, full-width, styled per SS-1).
+Each section header must be unique within the sheet.
+Downstream logic must locate sections by: Excel Table name, Named range, or searching for the section header text and offsetting from it.
+
+### 2.3 Prefer Excel Tables (ListObjects) and Structured References
+All primary registers/logs must be implemented as Excel Tables.
+Use structured references for formulas (e.g., =COUNTIF(RiskTable[Status],"Open")).
+Each table must have: deterministic Table Name (see 2.5), header row, banded rows, filters enabled.
+
+### 2.4 Prefer Named Ranges
+Create named ranges for: key scalar values, threshold constants, lists used by validation, any non-table summary bar inputs.
+
+### 2.5 Deterministic naming convention
+Table names: {PromptID}_{SheetKey}_{Entity} (no spaces). Example: P2_7_RiskRegister_Risks
+Named ranges: {PromptID}_{Name}. Example: P2_2_EngagementStartDate
+
+### 2.6 Merges are restricted
+Avoid merged cells inside data tables entirely.
+Merged cells permitted only for: title blocks, section header rows, wide callout banner cells.
+
+## 3) Formula and Reference Rules
+
+### 3.1 No brittle ranges for growable data
+Formulas that adapt to new rows must use structured references or dynamic named ranges, not static ranges.
+
+### 3.2 Reconciliation after rationalisation merges (mandatory)
+If rationalisation merges sheets: update all formulas to reference new table names/columns or named ranges.
+Do not leave orphan references to deleted/merged sheets.
+
+### 3.3 Consistent ID generation
+IDs should use table-row logic where possible. Prefer deterministic ID formats from DD-1.
+
+### 3.4 Calculation integrity
+All formulas must avoid #REF!, #NAME?, circular references, and broken structured refs.
+
+## 4) Data Validation and Conditional Formatting Rules
+
+### 4.1 Validations must bind to canonical lists
+Dropdown validations must reference a named range or explicit list table.
+Do not embed long inline validation lists repeatedly across columns.
+
+### 4.2 Conditional formatting scope discipline
+Apply conditional formatting to table columns or dynamically computed ranges anchored to tables/section headers.
+Avoid applying to large fixed blank ranges.
+
+### 4.3 Input vs formula cell discipline
+Inputs: unlocked (if protection enabled), styled per SS-1.
+Formula cells: locked, protected.
+
+## 5) Standard Sheet Engineering Defaults
+Freeze panes: table sheets = freeze header row + key left identifier columns; dashboard sheets = freeze top header and left label column.
+Filters: enable on every Excel Table and register-like range.
+Column widths: set to content with sensible min/max.
+Print: landscape for wide tables; repeat header row; fit to 1 page wide if reasonable.
+Protection: protect sheets with formulas; unlock input cells; allow sorting/filtering.
+
+## 6) QA Gates (XLSX must pass before returning)
+1. Structure QA: no fixed row dependency; all growable datasets are Excel Tables with deterministic names; section headers unique.
+2. Reference QA: no broken references; no orphan references to deleted sheets; named ranges exist for required constants/lists.
+3. Validation QA: all required dropdowns exist and point to canonical list sources.
+4. Formatting QA: freeze panes correct; filters enabled; protection applied.
+5. Rationalisation QA: sheet count and names match rationalisation maximum; merged sections maintain anchor headers.
+
+If any QA gate fails, STOP and output only: XLSX QA FAILED: followed by compact list of failures and locations.
+
+## 7) Authoring Guidance for Codex Execution
+Build order: tables first, then validations, then formulas, then conditional formatting, then protection.
+When a prompt specifies "merge sheets" or "divider rows": implement as a single sheet with multiple Excel Tables separated by section header rows; all summaries reference table structured references, not fixed ranges.
+Prefer deterministic table/range names.
+
+End WE-1.
+</we-1>
+
+---
+
+### B) ENGAGEMENT DATA (from PwC Engagement Brief Builder)
+<engagement_data>
+{{ENGAGEMENT_DATA}}
+</engagement_data>
+
+---
+
+## STEP 1 — PARSE + NORMALISE (no inference)
+
+Parse engagement_data. Normalise field names, enumerations, date formats, and currency values strictly per DD-1. Do not infer or invent facts beyond what is explicitly provided. Permitted: deterministic derivations from provided dates and budget values.
+
+## STEP 2 — VALIDATE (fail-fast)
+
+Validate that these exist after normalisation:
+- client_name
+- engagement_name
+- industry
+- at least one engagement objective
+
+If any are missing, output only a fenced P1_1_VALIDATION_ERRORS JSON block and STOP.
+
+## STEP 3 — CANONICAL CONTEXT OBJECT
+
+### 3A) Engagement Context
+Populate all 16 brief-builder fields per DD-1 §4.1 into engagement_context_16. Set absent optional fields to null. Do not raise open items for absent optional fields — absence is expected by design.
+
+### 3B) Preserve nested array fields at full depth
+The following fields contain nested structures that must be carried into the handoff at full depth, not flattened:
+objectives[] | service_offerings[] | technology[] | alliance_partners[] | regulatory_profile[] | risk_profile[]
+
+### 3C) Deterministic derivations
+- If start_date and end_date are present: compute duration_days (calendar days) and duration_weeks (to 1 decimal)
+- If total_budget is present: store as numeric with 2 decimal places in AUD per DD-1 §1.4
+- Normalise fee_structure to DD-1 §2.2 enum values
+- Normalise delivery_methodology to DD-1 §2.1 enum values
+
+---
+
+## OUTPUT CONTRACT
+
+Output exactly one fenced JSON block. No narrative. No commentary before or after the JSON.
+
+Success — top-level key P1_1_CANONICAL_HANDOFF containing:
+- prompt_id: "P1.1"
+- generated_on: YYYY-MM-DD
+- standards_loaded: { ss_1: true, dd_1: true, we_1: true }
+- engagement_context_16: object with all 16 fields per DD-1 §4.1
+- nested_arrays: { objectives[], service_offerings[], technology[], alliance_partners[], regulatory_profile[], risk_profile[] } at full depth
+- deterministic_derivations: { duration_days, duration_weeks, total_budget_aud, fee_structure_normalised, delivery_methodology_normalised }
+- open_items: [{ id, area, description, source, priority }]
+- validation: { status: "PASS", notes: [] }
+
+Failure — top-level key P1_1_VALIDATION_ERRORS containing:
+- prompt_id: "P1.1"
+- generated_on: YYYY-MM-DD
+- validation: { status: "FAIL", missing_required: [...], notes: [...] }
+
+Downstream prompts must treat P1_1_CANONICAL_HANDOFF as the single source of truth and must not re-parse raw engagement_data.`,
   },
   "governance_framework.json": {
     prompt_id: "P1.5",
