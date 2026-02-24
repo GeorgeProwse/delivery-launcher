@@ -8250,194 +8250,80 @@ const INLINED_PROMPTS = {
     prompt_name: "WBS & Schedule",
     artifact: "WBS & Project Schedule",
     instruction:
-      `EXECUTION CONSTRAINTS — MANDATORY:\\nYou must follow these execution rules without exception before performing any task.\\n\\n1. Do all parsing, validation, reasoning, and content drafting in your response text only. Do not use code interpreter for any of these steps.\\n\\n2. Make exactly ONE code interpreter call. This call must contain the complete, final file generation script in its entirety. Do not split file generation across multiple calls.\\n\\n3. Do not use code interpreter to inspect, test, explore, or validate data, variables, or helper functions before the final generation call.\\n\\n4. Do not make iterative or exploratory code calls at any stage.\\n\\n5. If a code error occurs inside the single permitted call, handle it internally using try/except. Do not make a second code call to fix or retry it.\\n\\n6. Generate and save all required output files within the single permitted code call. Do not make additional code calls for each file format separately.\\n\\n7. Do not confirm, summarise, or test outputs with a code call. Confirm completion in your response text only.\\n\\n8. Do not present preview tables or confirmation gates mid-execution. Treat all proposed content as confirmed and proceed directly to file generation without waiting for user input.\\n\\n9. After delivering all output files, include a brief closing message confirming what was generated and inviting the user to request changes or proceed with the next prompt. Do not await a response — this message is terminal.\\n\\n---\\n\\n# P2.1 — WBS & Schedule (Chain Step)
-
-SS-1, DD-1, WE-1 are loaded from P1.1. Apply them. Do not restate them.
-
----
-
-## PURPOSE
-Produce the canonical WBS and Project Schedule as a single combined workbook. Output:
-1) Real .xlsx — WBS & Schedule Workbook (operational tracker combining scope decomposition and timeline)
-2) Canonical JSON handoff in-chat for downstream prompts
-
-Do not pause for user input. Where inputs are missing, apply DD-1 placeholder conventions and raise open_items.
-
----
-
-## INPUTS
-Parse the most recent in-chat JSON objects:
-- P1_1_CANONICAL_HANDOFF — engagement identifiers; service offerings; technology; methodology; dates
-- P1_2_CANONICAL_HANDOFF — stakeholder register for workstream ownership
-- P1_3_CANONICAL_HANDOFF — scope inclusions/exclusions; objectives; success criteria; constraints; assumptions
-- P1_4_CANONICAL_HANDOFF — charter; commercial terms; sign-off authorities
-- P1_5_CANONICAL_HANDOFF — governance bodies; cadence; escalation; RAID expectations
-
----
-
-## HARD PRECONDITIONS (FAIL-FAST)
-Required minimum:
-1) P1_1_CANONICAL_HANDOFF.engagement.client_name and .engagement_name
-2) P1_3_CANONICAL_HANDOFF.scope (inclusions OR boundary statement)
-3) P1_1_CANONICAL_HANDOFF.engagement.start_date
-
-If any missing, STOP and output only:
-> BLOCKED: Missing required upstream handoff(s) for WBS & Schedule. Require P1.1 engagement IDs + P1.3 scope + P1.1 start date. Re-run upstream, then re-run P2.1.
-
----
-
-## STEP 1 — EXTRACT + NORMALISE
-From P1_3_CANONICAL: inclusions, exclusions, constraints, assumptions, workstreams, deliverables, objectives, success criteria
-From P1_1_CANONICAL: service offerings, building blocks, technology, regulatory domains, delivery methodology, start date, end date (if available)
-From P1_5_CANONICAL: governance, reporting, RAID, quality governance expectations
-
-WBS levels:
-- L1: Engagement
-- L2: Phase or Workstream
-- L3: Deliverable
-- L4: Work Package
-
-Always include these standard L2 workstreams unless explicitly excluded:
-- Programme Management & Governance
-- Stakeholder Engagement & Change
-- Quality Assurance
-- Risk/Issue/Dependency Management
-
----
-
-## STEP 2 — DERIVE SCHEDULING PARAMETERS
-From P1_1_CANONICAL:
-- Delivery methodology (Waterfall / Agile / Hybrid)
-- Start date (mandatory; use as anchor for all scheduling)
-- End date or engagement duration (if stated; else derive from scope and effort)
-- Fee structure and engagement scale (affects realistic duration estimate)
-
-From P1_5_CANONICAL (governance bodies):
-- Extract meeting cadence to anchor reporting milestones
-- Identify Steering Committee cadence for sign-off milestone timing
-
-If methodology is Agile or Hybrid:
-- Calculate sprint length (default 2 weeks unless stated)
-- Derive sprint count from duration
-
-If end date is not stated: estimate based on scope size and typical engagement norms; flag as assumption.
-
----
-
-## STEP 3 — BUILD WBS STRUCTURE (EXTRACT + INFER, NO INVENTION)
-Generate WBS elements from scope. Infer standard workstreams if not explicitly listed.
-
-For each WBS element define:
-wbs_id (DD-1 format) | parent_wbs_id | level (1–4) | element_type (Phase | Workstream | Deliverable | Work_Package) | name | description | owner_type (PwC | Client | Joint | Third_Party) | responsible_role | effort_days (estimate; flag as assumption if not stated) | start_week (relative offset from start date) | end_week
-
----
-
-## STEP 4 — BUILD SCHEDULE
-For each L3 Deliverable and L4 Work Package:
-- Map to a week range anchored from P1_1 start_date
-- Apply sequential scheduling where predecessors are defined
-- Allow concurrent scheduling where workstreams can run in parallel
-- Flag milestone rows (sign-off gates, phase completions, governance reviews)
-- If Agile/Hybrid: assign each work package to a sprint
-
-Mandatory milestones (create if implied; else mark TBC with open item):
-- Engagement kickoff
-- End of each phase
-- Steering Committee review points (from P1_5 cadence)
-- Final delivery / sign-off
-
----
-
-## STEP 5 — BUILD THE XLSX WORKBOOK
-Generate a real .xlsx using openpyxl. Apply SS-1 Excel + WE-1 throughout.
-
-Exactly 6 sheets (stable names):
-1) WBS_Structure
-2) WBS_Dictionary
-3) Deliverable_Register
-4) Milestone_Plan
-5) Project_Schedule
-6) Change_Log
-
-**WBS_Structure**
-Tab colour: primary per SS-1. SS-1 header block rows 1-2.
-Excel Table tbl_wbs columns:
-WBS_ID | Parent_WBS_ID | Level | Element_Type | Name | Description | Owner_Type | Responsible_Role | Effort_Days | Start_Week | End_Week | Status | Notes
-Conditional formatting: L1 bold/shaded; L2 semi-bold; L3/L4 standard. Freeze panes + filters per WE-1.
-Dropdown validations: Element_Type, Owner_Type, Status (Not Started | In Progress | Complete | On Hold | Cancelled).
-
-**WBS_Dictionary**
-Tab colour: reference per SS-1.
-Excel Table tbl_dictionary columns:
-WBS_ID | Element_Name | Full_Description | Acceptance_Criteria | Dependencies | Assumptions | Key_Risks | Notes
-Populate from WBS elements. Link Acceptance_Criteria to objectives/success criteria from P1_3_CANONICAL.
-
-**Deliverable_Register**
-Tab colour: reference per SS-1.
-Excel Table tbl_deliverables columns:
-Deliverable_ID | WBS_ID | Deliverable_Name | Workstream | Owner_Type | Responsible_Role | Effort_Days | Planned_Start | Planned_End | Acceptance_Criteria | Sign_Off_Required | Sign_Off_Authority | Scope_Objective_Trace | Status | Notes
-Populate all L3 deliverables. Link Scope_Objective_Trace to P1_3_CANONICAL scope inclusions and objectives.
-Named ranges: nr_total_deliverables, nr_deliverables_complete, nr_deliverables_at_risk.
-
-**Milestone_Plan**
-Tab colour: primary per SS-1.
-Excel Table tbl_milestones columns:
-Milestone_ID | Milestone_Name | Phase_or_Workstream | Milestone_Type (Phase_Gate | Governance_Review | Deliverable_Sign_Off | Client_Approval | Reporting_Cycle | Sprint_Review | Other) | Planned_Date | Actual_Date | Status | Owner_Role | Notes
-Pre-populate with all identified milestones anchored to start_date. Include governance meeting milestones from P1_5.
-If Agile/Hybrid: include sprint review milestones.
-Conditional formatting: Status colour-coding (On Track green, At Risk amber, Delayed red).
-
-**Project_Schedule**
-Tab colour: primary per SS-1.
-Excel Table tbl_schedule columns:
-Task_ID | WBS_ID | Task_Name | Level | Workstream | Owner_Role | Planned_Start | Planned_End | Duration_Days | Predecessors | Status | Pct_Complete | Is_Milestone | Is_Critical_Path | Sprint (if Agile/Hybrid) | Notes
-Plus Gantt columns: one column per week commencing across engagement duration. Apply conditional formatting formula to shade Gantt cells where planned start <= week <= planned end.
-Freeze first 12 columns. Filter on all columns.
-If Agile/Hybrid: include Sprint_Plan sub-section grouping tasks by sprint.
-If Waterfall: Critical_Path column flags tasks with zero float.
-
-**Change_Log**
-Tab colour: reference per SS-1.
-Excel Table tbl_changes per WE-1.
-Columns: Change_ID | Date | Sheet | Record_ID | Field | Previous_Value | New_Value | Changed_By_Role | Reason | Approved_By_Role
+      `EXECUTION RULES:
+1. Do all reasoning, parsing, and content drafting in response text only. This is preparatory work — it does not complete the task.
+2. You MUST make exactly one code interpreter call. A response that ends without a code interpreter call has failed.
+3. Output the JSON handoff and closing message only after the code call completes.
+4. Handle all errors with try/except internally. No second calls to fix errors.
+P2.1 — WBS & Schedule
+INPUTS
+Parse from context: P1_1_CANONICAL_HANDOFF, P1_2_CANONICAL_HANDOFF, P1_3_CANONICAL_HANDOFF, P1_4_CANONICAL_HANDOFF, P1_5_CANONICAL_HANDOFF. SS-1, DD-1, WE-1 are loaded — treat as authoritative.
+HARD PRECONDITIONS
+Stop and output the message below if any of these are missing: client_name, engagement_name (from P1_1), scope inclusions or boundary statement (from P1_3), start_date (from P1_1).
+BLOCKED: Missing required upstream handoff(s) for WBS & Schedule. Require P1.1 engagement IDs + P1.3 scope + P1.1 start date. Re-run upstream steps then re-run P2.1.
+STEP 1 — EXTRACT + NORMALISE
+From P1_3: inclusions, exclusions, constraints, assumptions, workstreams, deliverables, objectives, success criteria. From P1_1: service offerings, building blocks, technology, regulatory domains, methodology, start date, end date. From P1_5: governance bodies, reporting cadence, RAID expectations.
+WBS levels: L1 = Engagement | L2 = Phase or Workstream | L3 = Deliverable | L4 = Work Package.
+Always include these L2 workstreams unless explicitly excluded:
+* Programme Management & Governance
+* Stakeholder Engagement & Change
+* Quality Assurance
+* Risk/Issue/Dependency Management
+STEP 2 — DERIVE SCHEDULING PARAMETERS
+From P1_1: methodology, start date, end date or duration, fee structure and scale. From P1_5: extract governance meeting cadence to anchor reporting milestones; Steering Committee cadence for sign-off timing.
+If methodology is Agile or Hybrid: default sprint length = 2 weeks unless stated; derive sprint count from duration.
+If end date not stated: estimate from scope size and engagement norms; flag as assumption.
+STEP 3 — BUILD WBS STRUCTURE
+Generate WBS elements from scope. Infer standard workstreams if not explicitly listed. For each element: wbs_id (DD-1) | parent_wbs_id | level (1–4) | element_type (Phase|Workstream|Deliverable|Work_Package) | name | description | owner_type (PwC|Client|Joint|Third_Party) | responsible_role | effort_days | start_week | end_week
+STEP 4 — BUILD SCHEDULE
+For each L3 deliverable and L4 work package: map to a week range anchored from start_date; apply sequential scheduling where predecessors are defined; allow parallel scheduling across workstreams; flag milestone rows.
+Mandatory milestones (create if implied; mark TBC with open item if uncertain):
+* Engagement kickoff
+* End of each phase
+* Steering Committee review points from P1_5
+* Final delivery / sign-off
+If Agile/Hybrid: assign work packages to sprints; include sprint review milestones.
+STEP 5 — BUILD XLSX
+Use openpyxl. Apply SS-1 and WE-1 throughout. Exactly 6 sheets.
+WBS_Structure — tab colour OR500
+SS-1 header block rows 1–2. Table tbl_wbs columns: WBS_ID | Parent_WBS_ID | Level | Element_Type | Name | Description | Owner_Type | Responsible_Role | Effort_Days | Start_Week | End_Week | Status | Notes
+Dropdowns: Element_Type (Phase|Workstream|Deliverable|Work_Package) | Owner_Type (PwC|Client|Joint|Third_Party) | Status (Not_Started|In_Progress|Complete|On_Hold|Cancelled).
+Conditional formatting: L1 rows → OR500 fill white bold; L2 rows → OR100 fill bold; L3/L4 standard. Freeze panes + filters per WE-1.
+WBS_Dictionary — tab colour GR100
+Table tbl_dictionary columns: WBS_ID | Element_Name | Full_Description | Acceptance_Criteria | Dependencies | Assumptions | Key_Risks | Notes
+Populate from WBS elements. Link Acceptance_Criteria to objectives/success criteria from P1_3.
+Deliverable_Register — tab colour GR100
+Table tbl_deliverables columns: Deliverable_ID | WBS_ID | Deliverable_Name | Workstream | Owner_Type | Responsible_Role | Effort_Days | Planned_Start | Planned_End | Acceptance_Criteria | Sign_Off_Required | Sign_Off_Authority | Scope_Objective_Trace | Status | Notes
+Populate all L3 deliverables. Link Scope_Objective_Trace to P1_3 scope inclusions and objectives. Named ranges: nr_total_deliverables | nr_deliverables_complete | nr_deliverables_at_risk.
+Milestone_Plan — tab colour OR500
+Table tbl_milestones columns: Milestone_ID | Milestone_Name | Phase_or_Workstream | Milestone_Type (dropdown: Phase_Gate|Governance_Review|Deliverable_Sign_Off|Client_Approval|Reporting_Cycle|Sprint_Review|Other) | Planned_Date | Actual_Date | Status | Owner_Role | Notes
+Pre-populate all milestones anchored to start_date. Include governance milestones from P1_5. If Agile/Hybrid: include sprint review milestones. Conditional formatting: Status — On_Track → SUCC fill; At_Risk → WARN fill; Off_Track → DNGR fill.
+Project_Schedule — tab colour OR500
+Table tbl_schedule columns: Task_ID | WBS_ID | Task_Name | Level | Workstream | Owner_Role | Planned_Start | Planned_End | Duration_Days | Predecessors | Status | Pct_Complete | Is_Milestone | Is_Critical_Path | Sprint | Notes
+Plus one column per week commencing across engagement duration. Conditional formatting formula shades Gantt cells where planned_start <= week <= planned_end using OR200 fill. Freeze first 12 columns. Filters on all columns.
+If Waterfall: Is_Critical_Path flags tasks with zero float. If Agile/Hybrid: group tasks by sprint in Sprint sub-section.
+Change_Log — tab colour GR100
+Table tbl_changes (CHG-### per DD-1) columns: Change_ID | Date | Sheet | Record_ID | Field | Previous_Value | New_Value | Changed_By_Role | Reason | Approved_By_Role
 Pre-populate one instruction row.
-
-File: P2.1_WBS_Schedule_{YYYY-MM-DD}_v1.0.xlsx → /mnt/data/
-
----
-
-## STEP 6 — JSON HANDOFF
-Output the following fenced JSON in-chat (in response text — not via code) with top-level key P2_1_CANONICAL_HANDOFF:
-- prompt_id: "P2.1"
-- generated_on: YYYY-MM-DD
-- wbs: [{ wbs_id, parent_wbs_id, level, element_type, name, description, owner_type, responsible_role, effort_days, start_week, end_week }]
-- deliverables: [{ deliverable_id, name, workstream, acceptance_criteria, owner_type, responsible_role, effort_days, scope_trace }]
-- milestones: [{ milestone_id, name, type, planned_date, owner_role }]
-- schedule_bounds: { start_date, end_date, duration_weeks, methodology }
-- standard_workstreams_included: [string]
-- assumptions: [string]
-- open_items: [{ id, area, description, source, priority }]
-- validation: { status: "PASS", notes: [] }
-
-Do not embed SS-1/DD-1/WE-1 in this JSON.
-
----
-
-## QA
-XLSX: exactly 6 sheets with specified names; all required Excel Tables present; Gantt columns span full engagement duration; dropdown validations applied; milestone dates anchored to start_date; no formula errors; freeze panes and filters set.
-
-QA FAIL: output only — QA FAIL: followed by compact list of failures (Sheet + Table/Column).
-
----
-
-## OUTPUT
-1) P2_1_CANONICAL_HANDOFF fenced JSON in-chat
-2) Download link: P2.1_WBS_Schedule_{YYYY-MM-DD}_v1.0.xlsx
-No other narrative output.
-
-After delivering all files, include a brief closing message confirming what was generated and inviting the user to request changes or send the next prompt. Do not await a response — this message is terminal.
-
-`,
+Save to: \`/mnt/data/P2.1_WBS_Schedule_{YYYY-MM-DD}_v1.0.xlsx\`
+QA (assertions inside the single code call)
+* Exactly 6 sheets with correct names
+* All tables exist: tbl_wbs, tbl_dictionary, tbl_deliverables, tbl_milestones, tbl_schedule, tbl_changes
+* Gantt columns span full engagement duration
+* Dropdown validations applied; milestone dates anchored to start_date
+* Freeze panes and filters set on all sheets
+If any assertion fails output only: QA FAIL: followed by compact list of failures and locations.
+─────────────────────────────────────────────────────
+EXECUTION CHECKPOINT
+Reasoning is complete. Open the code interpreter call now.
+Do not output the JSON handoff or closing message until after it completes.
+─────────────────────────────────────────────────────
+OUTPUT CONTRACT
+1. Code interpreter call — mandatory, must happen first
+2. P2_1_CANONICAL_HANDOFF fenced JSON in-chat after the code call:
+   * prompt_id | generated_on | wbs[] | deliverables[] | milestones[] | schedule_bounds | standard_workstreams_included[] | assumptions[] | open_items[] | validation
+3. Download link for the xlsx
+Close with a brief message confirming outputs and inviting the user to proceed or request changes.`,
   },
   "budget_cost_baseline.json": {
     prompt_id: "P2.3",
@@ -8551,7 +8437,107 @@ Close with a brief message confirming outputs and inviting the user to proceed o
     prompt_name: "Governance Framework",
     artifact: "Governance Framework",
     instruction:
-      `EXECUTION CONSTRAINTS — MANDATORY:\\nYou must follow these execution rules without exception before performing any task.\\n\\n1. Do all parsing, validation, reasoning, and content drafting in your response text only. Do not use code interpreter for any of these steps.\\n\\n2. Make exactly ONE code interpreter call. This call must contain the complete, final file generation script in its entirety. Do not split file generation across multiple calls.\\n\\n3. Do not use code interpreter to inspect, test, explore, or validate data, variables, or helper functions before the final generation call.\\n\\n4. Do not make iterative or exploratory code calls at any stage.\\n\\n5. If a code error occurs inside the single permitted call, handle it internally using try/except. Do not make a second code call to fix or retry it.\\n\\n6. Generate and save all required output files within the single permitted code call. Do not make additional code calls for each file format separately.\\n\\n7. Do not confirm, summarise, or test outputs with a code call. Confirm completion in your response text only.\\n\\n8. Do not present preview tables or confirmation gates mid-execution. Treat all proposed content as confirmed and proceed directly to file generation without waiting for user input.\\n\\n9. After delivering all output files, include a brief closing message confirming what was generated and inviting the user to request changes or proceed with the next prompt. Do not await a response — this message is terminal.\\n\\n---\\n\\n# P1.5 — Governance Framework (Chain Step)\n\n## PURPOSE\nProduce the canonical Governance Framework defining the engagement\'s governance structure, decision rights, escalation, and reporting. Outputs:\n1) Real .docx — Governance Framework (client-ready)\n2) Real .xlsx — Governance Workbook (operational tracker)\n3) Canonical JSON handoff in-chat for downstream prompts\n\nDo not pause for user input. Where inputs are missing, apply DD-1 placeholder conventions and raise open_items.\n\n---\n\n## INPUTS\nParse the most recent in-chat JSON objects:\n- P1_1_CANONICAL_HANDOFF\n- P1_2_CANONICAL_HANDOFF\n- P1_3_CANONICAL_HANDOFF\n- P1_4_CANONICAL_HANDOFF\n\nSS-1, DD-1, WE-1 are loaded from P1.1. Apply them. Do not restate them.\n\n---\n\n## STEP 1 — EXTRACT + NORMALISE\nExtract only what is explicitly present:\n- P1.1: engagement identifiers, dates, delivery methodology, workstreams\n- P1.2: sponsor, project owner, decision makers, governance-relevant stakeholders\n- P1.4: charter decision rights and sign-off expectations\n- P1.3: scope and regulatory constraints influencing governance\n- P1.4: objectives and compliance drivers influencing governance focus\n\nRules:\n- Prefer existing client governance if explicitly stated; otherwise propose engagement-level structure and mark "Client governance linkage: TBC"\n- Membership lists must be role-based unless names are explicitly known\n- Any governance body introduced without explicit evidence must be marked Proposed and listed as open_item\n- Apply size-based governance structure as a minimum floor (not ceiling):\n  - Small engagement (<6 months, 1-2 workstreams): propose Steering Committee + Delivery Working Group\n  - Medium engagement (6-12 months, 2-4 workstreams): add PMO / Reporting Forum\n  - Large engagement (12+ months, 4+ workstreams): add Workstream Lead Forums as appropriate\n- Do NOT propose only one governance body and stop — a realistic engagement governance model requires multiple forums. Use engagement size and methodology to determine the right set.\n- If engagement size cannot be determined from upstream, default to Medium\n- Use DD-1 canonical decision types and role labels throughout\n\n---\n\n## STEP 2 — VALIDATE\nHard minimums (fail-fast):\n- client_name and engagement_name exist\n\nIf hard minimums fail — output P1_5_VALIDATION_ERRORS fenced JSON and STOP:\n{ prompt_id: "P1.5", generated_on: YYYY-MM-DD, validation: { status: "FAIL", missing_required: [...], notes: [...] } }\n\nSoft minimums (create open_items, do not fail):\n- Client Sponsor role identified\n- Client Project Owner role identified\n- Delivery methodology known\n- At least one governance body defined (may be Proposed)\n\n---\n\n## STEP 3 — GOVERNANCE DESIGN\nBuild governance model using this precedence:\n1) Explicit governance bodies/cadence from P1_4_CANONICAL_HANDOFF\n2) Explicit stakeholder structures from P1_2_CANONICAL_HANDOFF\n3) If absent, propose a default structure aligned to engagement complexity from P1.1/P1.3/P1.4; mark all as Proposed\n\nDefault governance bodies (use only if needed; mark Proposed):\n- Steering Committee — strategic decisions, sponsor-level\n- Delivery Working Group(s) — one per primary workstream or phase\n- RAID Forum — risks/issues/dependencies/assumptions\n- Change Control Board — only if not covered by Steering Committee\n- Technical Design Authority — only if technology/architecture is in scope\n- Quality Review Board — only if complexity is High/Very_High or regulated deliverables exist\n\nRequired outputs from governance design:\n- Governance principles (5-8)\n- Governance bodies: purpose, chair role, membership roles, frequency, quorum, decision scope\n- Decision authority matrix: decision type → approver role → consult/inform → timeframe\n- Escalation ladder: trigger → level → owner → timeframe → destination\n- Reporting cadence: report type → audience → frequency → owner → format → approval role\n- Document management rules (use TBC if tooling unknown)\n\nAll Proposed items must be explicitly labelled and carried into open_items.\n\n## STEP 4 — BUILD DELIVERABLES\n\n### 4A) DOCX — Governance Framework\nGenerate a real .docx using python-docx. Apply SS-1 Word styling throughout.\n\nSections (no additions; use Word heading styles throughout for TOC):\n\n1) Document Control — version, date, author, status, distribution\n2) Purpose — what this framework governs; relationship to P1.5 and P2.x\n3) Governance Principles — 5-8 principles in SS-1 key callout box\n4) Governance Structure Overview — narrative + hierarchy table: Layer | Body | Purpose | Chair Role | Frequency | Status\n5) Governance Bodies — for each body: purpose, membership table, frequency, quorum, standing agenda, inputs/outputs, escalation in/out, ToR summary callout\n6) Decision Making Framework — principles + decision authority matrix: Decision Type | Description | Approver (A) | Recommender (R) | Consulted (C) | Informed (I) | Timeframe\n7) Escalation Framework — triggers + ladder table: Level | Trigger | Owner Role | Escalates To | Timeframe | Notes\n8) Reporting and Communications Governance — cadence table: Report | Audience | Frequency | Owner Role | Format | Approval Role\n9) RAID Governance — how RAID items are reviewed and escalated; cross-reference P2.7/P2.8\n10) Change Control Governance — how change decisions are governed; reference P2.7 for detailed process\n11) Quality Governance — quality gates intent; reference P2.6 for detailed plan\n12) Open Items — table: # | Open Item | Area | Priority | Action Required | Owner Role\n13) Appendices — version history; reference documents (P1.1-P1.5)\n\nFile: P1.5_Governance_Framework_{YYYY-MM-DD}_v1.0.docx → /mnt/data/\n\n---\n\n### 4B) XLSX — Governance Workbook\nGenerate a real .xlsx using openpyxl. Apply SS-1 Excel + WE-1 throughout.\n\nSheets (exactly 4; exact names; stable):\n1) Meeting_Cadence\n2) Decision_Action_Log\n3) Gov_RACI_TOR\n4) Change_Log\n\n**Meeting_Cadence**\nTab colour: primary per SS-1. SS-1 header block rows 1-2.\nFormula-driven summary block above table: total active meetings; count by frequency.\nExcel Table tbl_meetings columns:\n- Meeting_ID (MTG-###)\n- Governance_Body\n- Meeting_Type\n- Purpose\n- Frequency — dropdown: Weekly | Fortnightly | Monthly | Ad_Hoc | One_Off\n- Duration\n- Day — dropdown: Mon | Tue | Wed | Thu | Fri; nullable\n- Time — nullable\n- Chair_Role\n- Agenda_Owner_Role\n- Minutes_Owner_Role\n- Attendees_Roles\n- Standing_Agenda\n- Status — dropdown: Planned | Active | Retired\n- Notes\n\n**Decision_Action_Log**\nTab colour: primary per SS-1.\nSingle Excel Table tbl_decisions_actions (no section divider rows).\nColumns:\n- Record_ID (DEC-### or ACT-### based on type)\n- Record_Type — dropdown: Decision | Action\n- Date_Raised\n- Title\n- Description\n- Source_Body\n- Raised_By_Role\n- Owner_Role\n- Due_Date\n- Status — dropdown: Open | In_Progress | Pending | Approved | Rejected | Deferred | Complete | Cancelled\n- Decision_Outcome — nullable; warning highlight if blank when Record_Type = Decision\n- Rationale — nullable\n- Impact — nullable\n- Escalated — dropdown: Yes | No\n- Notes\n\nConditional formatting: overdue Due_Date → danger highlight; Decision_Outcome blank on Decision rows → warning highlight.\n\n**Gov_RACI_TOR**\nTab colour: reference per SS-1. Two tables separated by section header.\n\ntbl_gov_raci — rows are governance activities (minimum set):\nPrepare steerco pack | Chair steerco | Minutes/actions distribution | Maintain RAID registers | Maintain decision/action log | Change request triage | Quality reviews | Status reporting\nColumns: Activity + one column per key role from P1.5/P1.2\nValues restricted to: R | A | C | I (blank allowed)\nConditional formatting: no A per row → warning highlight; multiple A per row → warning highlight\n\ntbl_tor — one row per governance body:\nColumns: Governance_Body | Purpose | Chair_Role | Membership_Roles | Frequency | Quorum_Rule | Decision_Scope | Standing_Agenda | Inputs | Outputs | Escalation_Path | Status (Confirmed/Proposed) | Notes\n\n**Change_Log**\nTab colour: reference per SS-1.\nExcel Table tbl_changes (CHG-### per DD-1) columns:\n- Change_ID | Date | Artifact | Sheet_or_Section | Record_ID | Change_Type | Previous_Value | New_Value | Changed_By_Role | Reason | Approved_By_Role\n\nPre-populate one instruction row.\n\nFile: P1.5_Governance_Workbook_{YYYY-MM-DD}_v1.0.xlsx → /mnt/data/\n\n---\n\n## STEP 5 — JSON HANDOFF\nOutput the following fenced JSON in-chat (in response text — not via code) with top-level key P1_5_CANONICAL_HANDOFF:\n- prompt_id: "P1.5"\n- generated_on: YYYY-MM-DD\n- engagement_identifiers: { client_name, engagement_name, engagement_code }\n- governance_principles: [string]\n- governance_bodies: [{ body_id, name, status, purpose, chair_role, member_roles[], frequency, quorum_rule, decision_scope, inputs[], outputs[], escalation_path }]\n- decision_authority_matrix: [{ decision_type, approver_role, recommender_roles[], consulted_roles[], informed_roles[], timeframe }]\n- escalation_ladder: [{ level, trigger, owner_role, escalates_to, timeframe, notes }]\n- reporting_cadence: [{ report_name, audience_roles[], frequency, owner_role, format, approval_role }]\n- open_items: [{ id, area, description, source, priority }]\n- validation: { status: "PASS", notes: [] }\n\nDo not embed SS-1/DD-1/WE-1 in this JSON.\n\n---\n\n## QA\nDOCX: SS-1 styles applied; confidentiality footer every page; all 13 sections present; no raw bracket placeholders; all Proposed items labelled and in open_items.\nXLSX: exactly 4 sheets with correct names; all 5 tables exist (tbl_meetings, tbl_decisions_actions, tbl_gov_raci, tbl_tor, tbl_changes); dropdowns reference named ranges; RACI conditional formatting applied; no formula errors; freeze panes and filters set.\n\nQA FAIL: output only — QA FAIL: followed by compact list of failures (Sheet + Table/Column).\n\n---\n\n## OUTPUT\n1) P1_5_CANONICAL_HANDOFF fenced JSON in-chat\n2) Download links: P1.5_Governance_Framework_{YYYY-MM-DD}_v1.0.docx and P1.5_Governance_Workbook_{YYYY-MM-DD}_v1.0.xlsx\nNo other narrative output.\n\nAfter delivering all files, include a brief closing message confirming what was generated and inviting the user to request changes or send the next prompt. Do not await a response — this message is terminal.`,
+      `EXECUTION RULES:
+1. Do all reasoning, parsing, and content drafting in response text only. This is preparatory work — it does not complete the task.
+2. You MUST make exactly one code interpreter call. A response that ends without a code interpreter call has failed.
+3. Output the JSON handoff and closing message only after the code call completes.
+4. Handle all errors with try/except internally. No second calls to fix errors.
+P1.5 — Governance Framework
+INPUTS
+Parse from context: P1_1_CANONICAL_HANDOFF, P1_2_CANONICAL_HANDOFF, P1_3_CANONICAL_HANDOFF, P1_4_CANONICAL_HANDOFF. SS-1, DD-1, WE-1 are loaded — treat as authoritative.
+If provided, apply as last-write-wins:
+<governance_overrides>
+{{GOVERNANCE_OVERRIDES}}
+</governance_overrides>
+STEP 1 — EXTRACT + NORMALISE
+From P1_1: engagement identifiers, dates, methodology, workstreams. From P1_2: sponsor, project owner, decision makers, governance-relevant stakeholders. From P1_3: scope and regulatory constraints influencing governance. From P1_4: charter decision rights, sign-off expectations, objectives, compliance drivers.
+Rules:
+* Prefer explicit client governance if stated; otherwise propose engagement-level structure and mark "Client governance linkage: TBC"
+* Membership lists must be role-based unless names are explicitly known
+* Any governance body without explicit evidence must be marked Proposed and listed as open_item
+* Size-based minimum structure:
+   * Small (<6 months, 1–2 workstreams): Steering Committee + Delivery Working Group
+   * Medium (6–12 months, 2–4 workstreams): add PMO / Reporting Forum
+   * Large (12+ months, 4+ workstreams): add Workstream Lead Forums
+* Do not propose only one governance body — a realistic model requires multiple forums
+* If engagement size cannot be determined, default to Medium
+* Use DD-1 canonical decision types and role labels throughout
+STEP 2 — VALIDATE
+Stop and output P1_5_VALIDATION_ERRORS fenced JSON only if: client_name or engagement_name are missing.
+Soft checks (create open_items, do not stop):
+* Client Sponsor role identified
+* Client Project Owner role identified
+* Delivery methodology known
+* At least one governance body defined
+STEP 3 — GOVERNANCE DESIGN
+Build governance model using this precedence:
+1. Explicit governance bodies/cadence from P1_4
+2. Explicit stakeholder structures from P1_2
+3. If absent, propose default structure aligned to engagement complexity; mark all as Proposed
+Default governance bodies (use only if needed; mark Proposed):
+* Steering Committee — strategic decisions, sponsor-level
+* Delivery Working Group(s) — one per primary workstream or phase
+* RAID Forum — risks/issues/dependencies/assumptions
+* Change Control Board — only if not covered by Steering Committee
+* Technical Design Authority — only if technology/architecture in scope
+* Quality Review Board — only if complexity is High/Very_High or regulated deliverables exist
+Required outputs from governance design:
+* Governance principles (5–8)
+* Governance bodies: purpose, chair role, membership roles, frequency, quorum, decision scope
+* Decision authority matrix: decision type → approver role → consult/inform → timeframe
+* Escalation ladder: trigger → level → owner → timeframe → destination
+* Reporting cadence: report type → audience → frequency → owner → format → approval role
+* Document management rules (TBC if tooling unknown)
+All Proposed items must be labelled and carried into open_items.
+STEP 4 — BUILD DELIVERABLES
+4A) DOCX — Governance Framework
+Use python-docx. Apply SS-1 Word styling throughout. Use Word heading styles on all sections for TOC compatibility.
+Sections in this order, no additions:
+1. Document Control — version, date, author, status, distribution
+2. Purpose — what this framework governs; relationship to P1.5 and P2.x
+3. Governance Principles — 5–8 principles in SS-1 key callout box
+4. Governance Structure Overview — narrative + hierarchy table: Layer | Body | Purpose | Chair Role | Frequency | Status
+5. Governance Bodies — for each body: purpose, membership table, frequency, quorum, standing agenda, inputs/outputs, escalation in/out, ToR summary callout
+6. Decision Making Framework — principles + decision authority matrix: Decision Type | Description | Approver (A) | Recommender (R) | Consulted (C) | Informed (I) | Timeframe
+7. Escalation Framework — triggers + ladder table: Level | Trigger | Owner Role | Escalates To | Timeframe | Notes
+8. Reporting and Communications Governance — cadence table: Report | Audience | Frequency | Owner Role | Format | Approval Role
+9. RAID Governance — how RAID items are reviewed and escalated; cross-reference P2.7/P2.8
+10. Change Control Governance — how change decisions are governed; reference P2.7 for detailed process
+11. Quality Governance — quality gates intent; reference P2.6 for detailed plan
+12. Open Items — table: # | Open Item | Area | Priority | Action Required | Owner Role
+13. Appendices — version history; reference documents (P1.1–P1.5)
+Save to: \`/mnt/data/P1.5_Governance_Framework_{YYYY-MM-DD}_v1.0.docx\`
+4B) XLSX — Governance Workbook
+Use openpyxl. Apply SS-1 and WE-1 throughout. Exactly 4 sheets.
+Meeting_Cadence — tab colour OR500
+SS-1 header block rows 1–2. Formula summary block above table: total active meetings; count by frequency.
+Table tbl_meetings columns: Meeting_ID (MTG-###) | Governance_Body | Meeting_Type | Purpose | Frequency (dropdown: Weekly|Fortnightly|Monthly|Ad_Hoc|One_Off) | Duration | Day (dropdown: Mon|Tue|Wed|Thu|Fri) | Time | Chair_Role | Agenda_Owner_Role | Minutes_Owner_Role | Attendees_Roles | Standing_Agenda | Status (dropdown: Planned|Active|Retired) | Notes
+Decision_Action_Log — tab colour OR500
+Table tbl_decisions_actions columns: Record_ID (DEC-### or ACT-###) | Record_Type (dropdown: Decision|Action) | Date_Raised | Title | Description | Source_Body | Raised_By_Role | Owner_Role | Due_Date | Status (dropdown: Open|In_Progress|Pending|Approved|Rejected|Deferred|Complete|Cancelled) | Decision_Outcome | Rationale | Impact | Escalated (dropdown: Yes|No) | Notes
+Conditional formatting: overdue Due_Date → DNGR fill; Decision_Outcome blank on Decision rows → WARN fill.
+Gov_RACI_TOR — tab colour GR100
+Two tables separated by a styled section header row.
+Table tbl_gov_raci: rows are governance activities (minimum: Prepare steerco pack | Chair steerco | Minutes/actions distribution | Maintain RAID registers | Maintain decision/action log | Change request triage | Quality reviews | Status reporting). Columns: Activity + one column per key role from P1_5/P1_2. Values restricted to R|A|C|I (blank allowed). Conditional formatting: no A per row → WARN fill; multiple A per row → WARN fill.
+Table tbl_tor: one row per governance body. Columns: Governance_Body | Purpose | Chair_Role | Membership_Roles | Frequency | Quorum_Rule | Decision_Scope | Standing_Agenda | Inputs | Outputs | Escalation_Path | Status (dropdown: Confirmed|Proposed) | Notes
+Change_Log — tab colour GR100
+Table tbl_changes (CHG-### per DD-1) columns: Change_ID | Date | Artifact | Sheet_or_Section | Record_ID | Change_Type | Previous_Value | New_Value | Changed_By_Role | Reason | Approved_By_Role
+Pre-populate one instruction row.
+Save to: \`/mnt/data/P1.5_Governance_Workbook_{YYYY-MM-DD}_v1.0.xlsx\`
+QA (assertions inside the single code call)
+* DOCX: SS-1 styles applied; confidentiality footer every page; all 13 sections present; no raw bracket placeholders; all Proposed items labelled and in open_items
+* XLSX: exactly 4 sheets with correct names; all 5 tables exist (tbl_meetings, tbl_decisions_actions, tbl_gov_raci, tbl_tor, tbl_changes); dropdowns reference named ranges; RACI conditional formatting applied; freeze panes and filters set
+If any assertion fails output only: QA FAIL: followed by compact list of failures and locations.
+─────────────────────────────────────────────────────
+EXECUTION CHECKPOINT
+Reasoning is complete. Open the code interpreter call now.
+Do not output the JSON handoff or closing message until after it completes.
+─────────────────────────────────────────────────────
+OUTPUT CONTRACT
+1. Code interpreter call — mandatory, must happen first
+2. P1_5_CANONICAL_HANDOFF fenced JSON in-chat after the code call:
+   * prompt_id | generated_on | engagement_identifiers | governance_principles[] | governance_bodies[] | decision_authority_matrix[] | escalation_ladder[] | reporting_cadence[] | open_items[] | validation
+3. Download links for both files
+Close with a brief message confirming outputs and inviting the user to proceed or request changes.`,
   },
   "pmo_playbook.json": {
     prompt_id: "P2.8",
