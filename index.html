@@ -2293,7 +2293,8 @@ textarea {
   background: #fffdf9;
   cursor: text;
 }
-#gateModal {
+#gateModal,
+#clearFormModal {
   display: none;
   position: fixed;
   inset: 0;
@@ -2302,10 +2303,12 @@ textarea {
   align-items: center;
   justify-content: center;
 }
-#gateModal.visible {
+#gateModal.visible,
+#clearFormModal.visible {
   display: flex;
 }
-#gateModalBox {
+#gateModalBox,
+#clearFormModalBox {
   background: var(--cardBg);
   width: 460px;
   max-width: 95vw;
@@ -4534,15 +4537,20 @@ function fbFilterList(listId, query) {
     });
 }
 
-// ── Toggle section is no longer used in stepper mode but kept for compat ──
+// ── fbToggleSection delegates to toggleSection (single toggle implementation) ──
 function fbToggleSection(section) {
-  // no-op in stepper mode
+  if (typeof toggleSection === "function") toggleSection(section);
 }
 
 // ── APP STATE ──
 let appData = {};
 let completedSteps = new Set();
 let formData = {};
+// Globals initialised early to prevent read-before-set
+var _autoSaveTimer = null;
+var _pendingGateId = null;
+var highlightedEl = null;
+var guidancePanel = null;
 
 // ── INLINED DATA (standalone mode) ──
 const INLINED_DATA = {
@@ -9052,6 +9060,7 @@ function updateBriefStrength() {
     lbl.textContent = label;
     lbl.style.color = color;
   }
+  if (typeof updateNavPills === "function") updateNavPills();
 }
 
 function scoreSectionS1() {
@@ -9136,8 +9145,24 @@ function getVal(dropId, freeId) {
 }
 
 // ── LOAD ALL DATA (standalone: uses inlined data) ──
+var _dataLoadError = false;
 function loadAllData() {
-  Object.entries(INLINED_DATA).forEach(([key, val]) => (appData[key] = val));
+  try {
+    Object.entries(INLINED_DATA).forEach(([key, val]) => (appData[key] = val));
+    // Validate required data sections are present
+    var required = ["industries", "objectives", "services", "technologies", "partners", "regulatory", "risk", "workflow"];
+    var missing = required.filter(function(k) { return !appData[k]; });
+    if (missing.length > 0) {
+      _dataLoadError = true;
+      showError("Incomplete data — missing: " + missing.join(", ") + ". Some features may not work.");
+      return;
+    }
+  } catch (e) {
+    _dataLoadError = true;
+    showError("Failed to load application data. Please refresh the page.");
+    return;
+  }
+  _dataLoadError = false;
   var _de = document.getElementById("dataError");
   if (_de) _de.innerHTML = "";
   renderAll();
@@ -10095,35 +10120,32 @@ function startWorkflow() {
 }
 function confirmLaunchWorkflow() {
   closeReviewPanelDirect();
-  // CHUNK 3: always do a fresh launch from review panel — bypass resume check
   completedSteps = new Set();
-  doShowWorkflow();
+  doShowWorkflow({ skipResume: true });
 }
 function goBackToForm() {
   document.getElementById("formPage").classList.add("active");
   document.getElementById("workflowPage").classList.remove("active");
   document.getElementById("headerSubtitle").textContent = "Form";
 }
-function showWorkflow() {
-  // CHUNK 3: if there is existing progress, offer resume vs restart
-  if (completedSteps && completedSteps.size > 0) {
+// Consolidated workflow display: handles resume check + page transition
+function doShowWorkflow(opts) {
+  opts = opts || {};
+  // If there is existing progress and we're not bypassing resume, offer resume vs restart
+  if (!opts.skipResume && completedSteps && completedSteps.size > 0) {
     document.getElementById("resumeStepCount").textContent =
       completedSteps.size;
     document.getElementById("resumeModal").classList.add("visible");
     return;
   }
-  doShowWorkflow();
-}
-function doShowWorkflow() {
   document.getElementById("formPage").classList.remove("active");
   document.getElementById("workflowPage").classList.add("active");
   document.getElementById("headerSubtitle").textContent = "Workflow";
+  var ec = (formData && formData.engagement_context) || {};
   document.getElementById("workflowTitle").textContent =
-    `${formData.engagement_context.client_name} — ${formData.engagement_context.engagement_name}`;
+    (ec.client_name || "") + " \u2014 " + (ec.engagement_name || "");
   renderWorkflow();
-  // CHANGE 5: Build phase filter pills after render
   buildPhaseFilterPills();
-  // CHANGE 12: Show/hide tip banner based on localStorage
   try {
     var tipDismissed = localStorage.getItem("pwc_workflow_tip_dismissed");
     var tipBanner = document.getElementById("workflowTipBanner");
@@ -10137,7 +10159,6 @@ function doShowWorkflow() {
   setTimeout(function () {
     if (mainPanel) mainPanel.scrollTop = 0;
   }, 700);
-  // Always jump to the first workflow guidance step regardless of where the user was in the form guidance
   if (guidedMode && guidancePanel) {
     const firstWorkflowStep = guidanceSteps.findIndex(
       (s) => s.target === "promptCards",
@@ -10150,6 +10171,8 @@ function doShowWorkflow() {
     }
   }
 }
+// Legacy alias
+function showWorkflow() { doShowWorkflow(); }
 
 // ── RENDER WORKFLOW ──
 function renderWorkflow() {
@@ -10273,8 +10296,30 @@ function renderWorkflow() {
   // Update sidebar summary initial state
   var sidebarCount = document.getElementById("sidebarSummaryCount");
   if (sidebarCount) sidebarCount.textContent = "0 of " + totalSteps + " steps";
+  // Restore completed steps visual state (moved here so all callers get it)
+  if (completedSteps && completedSteps.size > 0) {
+    completedSteps.forEach(function (id) {
+      var card = document.getElementById("card-" + id);
+      var badge = document.getElementById("badge-" + id);
+      var si = document.getElementById("sidebar-" + id);
+      if (card) {
+        card.classList.remove("active-card", "locked-card");
+        card.classList.add("completed-card");
+      }
+      if (badge) {
+        badge.textContent = "Complete";
+        badge.className = "status-badge badge-done";
+      }
+      if (si) {
+        si.classList.remove("active", "locked");
+        si.classList.add("completed");
+      }
+    });
+    unlockNextSteps();
+  }
   updatePhaseProgress();
   updateSidebarPhaseBadges();
+  updateProgress();
   loadAllPrompts(workflow);
 }
 
@@ -10320,21 +10365,22 @@ function loadAllPrompts(workflow) {
 function buildPromptText(prompt, promptJson, data) {
   const instruction =
     promptJson.instruction || "[Instruction not found in prompt file]";
-  const pid = prompt.prompt_id;
+  const pid = prompt.prompt_id || "";
 
   // P1.1 — inject global standards + FULL engagement data
   if (pid === "P1.1") {
-    const briefJson = JSON.stringify(data, null, 2);
+    // Guard against undefined/null in data before serialising
+    var safeData = data || {};
+    const briefJson = JSON.stringify(safeData, null, 2);
+    var gs = typeof GLOBAL_STANDARDS !== "undefined" ? GLOBAL_STANDARDS : {};
     return instruction
-      .replace("{{SS_1}}", GLOBAL_STANDARDS.SS1)
-      .replace("{{DD_1}}", GLOBAL_STANDARDS.DD1)
-      .replace("{{WE_1}}", GLOBAL_STANDARDS.WE1)
+      .replace("{{SS_1}}", gs.SS1 || "")
+      .replace("{{DD_1}}", gs.DD1 || "")
+      .replace("{{WE_1}}", gs.WE1 || "")
       .replace("{{ENGAGEMENT_DATA}}", briefJson);
   }
 
   // All other prompts — instruction only.
-  // Engagement data is already established in session history via P1.1.
-  // No engagement context injection occurs here for P1.2+ under any condition.
   return instruction;
 }
 
@@ -11046,8 +11092,6 @@ const guidanceSteps = [
 ];
 
 let currentStep = 0;
-let highlightedEl = null;
-let guidancePanel = null;
 
 function initGuidedExperience() {
   guidedMode = true;
@@ -11237,29 +11281,25 @@ function applyFormState(state) {
   if (!state.selState) return;
   _formSelState = state.selState;
 
-  // Restore industry cascade by simulating pill clicks
+  // Restore industry cascade via direct function calls (no click simulation)
   var ind = _formSelState.industry || {};
   if (ind.industry) {
     var indPill = Array.from(document.querySelectorAll("#industryPills .fb-pill"))
       .find(function(p) { return p.textContent.trim() === ind.industry; });
     if (indPill) {
-      indPill.click();
-      setTimeout(function() {
-        if (ind.sector) {
-          var secPill = Array.from(document.querySelectorAll("#sectorPills .fb-pill"))
-            .find(function(p) { return p.textContent.trim() === ind.sector; });
-          if (secPill) {
-            secPill.click();
-            setTimeout(function() {
-              if (ind.subsector) {
-                var subPill = Array.from(document.querySelectorAll("#subsectorPills .fb-pill"))
-                  .find(function(p) { return p.textContent.trim() === ind.subsector; });
-                if (subPill) subPill.click();
-              }
-            }, 150);
+      fbSelectIndustry(indPill, ind.industry);
+      if (ind.sector) {
+        var secPill = Array.from(document.querySelectorAll("#sectorPills .fb-pill"))
+          .find(function(p) { return p.textContent.trim() === ind.sector; });
+        if (secPill) {
+          fbSelectSector(secPill, ind.sector);
+          if (ind.subsector) {
+            var subPill = Array.from(document.querySelectorAll("#subsectorPills .fb-pill"))
+              .find(function(p) { return p.textContent.trim() === ind.subsector; });
+            if (subPill) fbSelectSubsector(subPill, ind.subsector);
           }
         }
-      }, 150);
+      }
     }
   }
 
@@ -11274,27 +11314,32 @@ function applyFormState(state) {
     ];
     dotSections.forEach(function(ds) {
       if (!ds.state) return;
+      // Build slug-to-element map once per section to avoid querySelectorAll in inner loop
+      var tabEls = document.querySelectorAll("#" + ds.listId + " .fb-tab-item");
+      var slugMap = {};
+      tabEls.forEach(function(t) { slugMap[slugify(t.textContent.trim())] = t; });
       Object.keys(ds.state).forEach(function(key) {
         if (!ds.hasKey(ds.state[key])) return;
-        document.querySelectorAll("#" + ds.listId + " .fb-tab-item").forEach(function(t) {
-          if (slugify(t.textContent.trim()) === key) {
-            t.classList.add("has-data");
-            var dot = t.querySelector(".fb-tab-dot"); if (dot) dot.style.background = "#22c55e";
-          }
-        });
+        var t = slugMap[key];
+        if (t) {
+          t.classList.add("has-data");
+          var dot = t.querySelector(".fb-tab-dot"); if (dot) dot.style.background = "#22c55e";
+        }
       });
     });
     // Objectives tab dots
     if (_formSelState.obj) {
+      var objTabEls = document.querySelectorAll("#objTypeList .fb-tab-item");
+      var objSlugMap = {};
+      objTabEls.forEach(function(t) { objSlugMap[slugify(t.textContent.trim())] = t; });
       Object.keys(_formSelState.obj).forEach(function(typeId) {
         var saved = _formSelState.obj[typeId];
         if (saved && Object.values(saved.drops || {}).some(function(v) { return v; })) {
-          document.querySelectorAll("#objTypeList .fb-tab-item").forEach(function(t) {
-            if (slugify(t.textContent.trim()) === typeId) {
-              t.classList.add("has-data");
-              var dot = t.querySelector(".fb-tab-dot"); if (dot) dot.style.background = "#22c55e";
-            }
-          });
+          var t = objSlugMap[typeId];
+          if (t) {
+            t.classList.add("has-data");
+            var dot = t.querySelector(".fb-tab-dot"); if (dot) dot.style.background = "#22c55e";
+          }
         }
       });
     }
@@ -11304,16 +11349,18 @@ function applyFormState(state) {
 }
 
 // ── Auto-save on any input/change inside the form ──
+var _autoSaveInitialised = false;
 function initAutoSave() {
+  if (_autoSaveInitialised) return;
   const formEl = document.getElementById("formPage");
   if (!formEl) return;
+  _autoSaveInitialised = true;
   formEl.addEventListener("input", debounceAutoSave);
   formEl.addEventListener("change", debounceAutoSave);
   // also hook clicks (for button-style selectors)
   formEl.addEventListener("click", debounceAutoSave);
 }
 
-let _autoSaveTimer = null;
 function debounceAutoSave() {
   clearTimeout(_autoSaveTimer);
   _autoSaveTimer = setTimeout(function () {
@@ -11321,7 +11368,7 @@ function debounceAutoSave() {
       const state = collectFormState();
       localStorage.setItem(DRAFT_KEY, JSON.stringify(state));
     } catch (e) {
-      /* quota exceeded — ignore */
+      showToast("Draft could not be saved \u2014 storage full.", "error");
     }
     updateAllSectionDots();
     if (typeof updateBriefStrength === "function") updateBriefStrength();
@@ -11338,6 +11385,13 @@ function checkForDraft() {
     var hasData = Object.keys(state.fields || {}).some(function (k) {
       return state.fields[k] && state.fields[k].trim();
     });
+    if (!hasData && state.selState) {
+      var selKeys = ["industry", "obj", "services", "tech", "partners", "reg", "risk"];
+      hasData = selKeys.some(function (k) {
+        var section = state.selState[k];
+        return section && typeof section === "object" && Object.keys(section).length > 0;
+      });
+    }
     if (!hasData) return;
     var ts = new Date(state._ts);
     var formatted =
@@ -11379,16 +11433,14 @@ function dismissDraft() {
 var _formSelState = { industry: {}, obj: {}, services: {}, tech: {}, partners: {}, reg: {}, risk: {} };
 
 function _fssSaveObj() {
-  var tab = document.querySelector("#objTypeList .fb-tab-item.active");
-  if (!tab) return;
-  var typeName = tab.textContent.trim();
-  var typeId = slugify(typeName);
-  if (!_formSelState.obj) _formSelState.obj = {};
-  var drops = {}, frees = {};
-  document.querySelectorAll('[id^="obj-drop-' + typeId + '"]').forEach(function(el) { drops[el.id] = el.value; });
-  document.querySelectorAll('[id^="obj-free-' + typeId + '"]').forEach(function(el) { if (el.value) frees[el.id] = { val: el.value, isManual: el.style.display !== "none" }; });
-  var ctx = document.getElementById("obj-context-" + typeId);
-  _formSelState.obj[typeId] = { typeName: typeName, drops: drops, frees: frees, context: ctx ? ctx.value : "" };
+  _fssSaveSection("objTypeList", "obj", function(typeId, tab) {
+    var typeName = tab.textContent.trim();
+    var drops = {}, frees = {};
+    document.querySelectorAll('[id^="obj-drop-' + typeId + '"]').forEach(function(el) { drops[el.id] = el.value; });
+    document.querySelectorAll('[id^="obj-free-' + typeId + '"]').forEach(function(el) { if (el.value) frees[el.id] = { val: el.value, isManual: el.style.display !== "none" }; });
+    var ctx = document.getElementById("obj-context-" + typeId);
+    return { typeName: typeName, drops: drops, frees: frees, context: ctx ? ctx.value : "" };
+  });
 }
 function _fssApplyObj(typeId) {
   var saved = _formSelState.obj && _formSelState.obj[typeId];
@@ -11408,15 +11460,22 @@ function _fssApplyObj(typeId) {
   fbEvalObjDot(typeId);
 }
 
-function _fssSaveServices() {
-  var tab = document.querySelector("#domainTabList .fb-tab-item.active");
+// ── Shared _fssSave helper: reads active tab + runs section-specific collector ──
+function _fssSaveSection(tabListId, stateKey, collectFn) {
+  var tab = document.querySelector("#" + tabListId + " .fb-tab-item.active");
   if (!tab) return;
-  var domId = slugify(tab.textContent.trim());
-  var bbs = {};
-  document.querySelectorAll("#domainBlockPanel .fb-bb-item.selected").forEach(function(el) { bbs[el.id] = true; });
-  var notes = document.getElementById("svc-notes-" + domId);
-  if (!_formSelState.services) _formSelState.services = {};
-  _formSelState.services[domId] = { bbs: bbs, notes: notes ? notes.value : "" };
+  var id = slugify(tab.textContent.trim());
+  if (!_formSelState[stateKey]) _formSelState[stateKey] = {};
+  _formSelState[stateKey][id] = collectFn(id, tab);
+}
+
+function _fssSaveServices() {
+  _fssSaveSection("domainTabList", "services", function(domId) {
+    var bbs = {};
+    document.querySelectorAll("#domainBlockPanel .fb-bb-item.selected").forEach(function(el) { bbs[el.id] = true; });
+    var notes = document.getElementById("svc-notes-" + domId);
+    return { bbs: bbs, notes: notes ? notes.value : "" };
+  });
 }
 function _fssApplyServices(domId) {
   var saved = _formSelState.services && _formSelState.services[domId];
@@ -11436,14 +11495,12 @@ function _fssApplyServices(domId) {
 }
 
 function _fssSaveTech() {
-  var tab = document.querySelector("#techCatList .fb-tab-item.active");
-  if (!tab) return;
-  var catId = slugify(tab.textContent.trim());
-  var subs = Array.from(document.querySelectorAll("#tech-subs-" + catId + " .fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
-  var prods = Array.from(document.querySelectorAll("#tech-prod-chips-" + catId + " .fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
-  var notes = document.getElementById("tech-notes-" + catId);
-  if (!_formSelState.tech) _formSelState.tech = {};
-  _formSelState.tech[catId] = { subs: subs, prods: prods, notes: notes ? notes.value : "" };
+  _fssSaveSection("techCatList", "tech", function(catId) {
+    var subs = Array.from(document.querySelectorAll("#tech-subs-" + catId + " .fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
+    var prods = Array.from(document.querySelectorAll("#tech-prod-chips-" + catId + " .fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
+    var notes = document.getElementById("tech-notes-" + catId);
+    return { subs: subs, prods: prods, notes: notes ? notes.value : "" };
+  });
 }
 function _fssApplyTech(catId) {
   var saved = _formSelState.tech && _formSelState.tech[catId];
@@ -11474,14 +11531,12 @@ function _fssApplyTech(catId) {
 }
 
 function _fssSavePartners() {
-  var tab = document.querySelector("#partnerTabList .fb-tab-item.active");
-  if (!tab) return;
-  var pid = slugify(tab.textContent.trim());
-  var families = Array.from(document.querySelectorAll("#partner-fams-" + pid + " .fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
-  var prods = Array.from(document.querySelectorAll("#partner-prods-" + pid + " .fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
-  var notes = document.getElementById("partner-notes-" + pid);
-  if (!_formSelState.partners) _formSelState.partners = {};
-  _formSelState.partners[pid] = { families: families, prods: prods, notes: notes ? notes.value : "" };
+  _fssSaveSection("partnerTabList", "partners", function(pid) {
+    var families = Array.from(document.querySelectorAll("#partner-fams-" + pid + " .fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
+    var prods = Array.from(document.querySelectorAll("#partner-prods-" + pid + " .fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
+    var notes = document.getElementById("partner-notes-" + pid);
+    return { families: families, prods: prods, notes: notes ? notes.value : "" };
+  });
 }
 function _fssApplyPartners(pid) {
   var saved = _formSelState.partners && _formSelState.partners[pid];
@@ -11512,18 +11567,16 @@ function _fssApplyPartners(pid) {
 }
 
 function _fssSaveReg() {
-  var tab = document.querySelector("#regGroupList .fb-tab-item.active");
-  if (!tab) return;
-  var gid = slugify(tab.textContent.trim());
-  var checked = [], reqs = {};
-  document.querySelectorAll("#regDetailPanel .fb-check-item.checked").forEach(function(el) {
-    var name = el.querySelector(".fb-check-name"); if (!name) return;
-    var regName = name.textContent.trim(); checked.push(regName);
-    var reqDiv = el.nextElementSibling;
-    if (reqDiv) reqs[regName] = Array.from(reqDiv.querySelectorAll(".fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
+  _fssSaveSection("regGroupList", "reg", function(gid) {
+    var checked = [], reqs = {};
+    document.querySelectorAll("#regDetailPanel .fb-check-item.checked").forEach(function(el) {
+      var name = el.querySelector(".fb-check-name"); if (!name) return;
+      var regName = name.textContent.trim(); checked.push(regName);
+      var reqDiv = el.nextElementSibling;
+      if (reqDiv) reqs[regName] = Array.from(reqDiv.querySelectorAll(".fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
+    });
+    return { checked: checked, reqs: reqs };
   });
-  if (!_formSelState.reg) _formSelState.reg = {};
-  _formSelState.reg[gid] = { checked: checked, reqs: reqs };
 }
 function _fssApplyReg(gid) {
   var saved = _formSelState.reg && _formSelState.reg[gid];
@@ -11545,18 +11598,16 @@ function _fssApplyReg(gid) {
 }
 
 function _fssSaveRisk() {
-  var tab = document.querySelector("#riskGroupList .fb-tab-item.active");
-  if (!tab) return;
-  var gid = slugify(tab.textContent.trim());
-  var checked = [], risks = {};
-  document.querySelectorAll("#riskDetailPanel .fb-check-item.checked").forEach(function(el) {
-    var name = el.querySelector(".fb-check-name"); if (!name) return;
-    var riskType = name.textContent.trim(); checked.push(riskType);
-    var riskDiv = el.nextElementSibling;
-    if (riskDiv) risks[riskType] = Array.from(riskDiv.querySelectorAll(".fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
+  _fssSaveSection("riskGroupList", "risk", function(gid) {
+    var checked = [], risks = {};
+    document.querySelectorAll("#riskDetailPanel .fb-check-item.checked").forEach(function(el) {
+      var name = el.querySelector(".fb-check-name"); if (!name) return;
+      var riskType = name.textContent.trim(); checked.push(riskType);
+      var riskDiv = el.nextElementSibling;
+      if (riskDiv) risks[riskType] = Array.from(riskDiv.querySelectorAll(".fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
+    });
+    return { checked: checked, risks: risks };
   });
-  if (!_formSelState.risk) _formSelState.risk = {};
-  _formSelState.risk[gid] = { checked: checked, risks: risks };
 }
 function _fssApplyRisk(gid) {
   var saved = _formSelState.risk && _formSelState.risk[gid];
@@ -11578,16 +11629,50 @@ function _fssApplyRisk(gid) {
 }
 
 function clearAllFormData() {
-  if (!confirm("Start a new engagement? This will clear all current data and cannot be undone.")) return;
+  // Show confirmation modal instead of native confirm()
+  var modal = document.getElementById("clearFormModal");
+  if (modal) {
+    modal.classList.add("visible");
+    return;
+  }
+  // Fallback: build and show modal dynamically using gateModal pattern
+  modal = document.createElement("div");
+  modal.id = "clearFormModal";
+  modal.innerHTML =
+    '<div id="clearFormModalBox">' +
+      '<div class="gate-modal-header">' +
+        '<span class="gate-modal-icon">&#9888;</span>' +
+        '<span class="gate-modal-title">New Engagement</span>' +
+      '</div>' +
+      '<div class="gate-modal-body">' +
+        '<p>Start a new engagement? This will clear all current data and cannot be undone.</p>' +
+      '</div>' +
+      '<div class="gate-modal-footer">' +
+        '<button class="btn-gate-cancel" onclick="closeClearFormModal()">Cancel</button>' +
+        '<button class="btn-gate-confirm" onclick="confirmClearAllFormData()">Clear &amp; Start New</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(modal);
+  modal.classList.add("visible");
+}
+function closeClearFormModal() {
+  var modal = document.getElementById("clearFormModal");
+  if (modal) modal.classList.remove("visible");
+}
+function confirmClearAllFormData() {
+  closeClearFormModal();
+  // Reset S1 text fields
   ["clientName","engagementName","engagementLead","startDate","endDate","deliveryMethodology","feeStructure","totalBudget","engagementDescription"].forEach(function(id) {
     var el = document.getElementById(id); if (el) el.value = "";
   });
+  // Reset S2 industry cascade — re-render from data
   ["industryDrop","sectorDrop","subsectorDrop"].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ""; });
-  document.querySelectorAll("#industryPills .fb-pill, #sectorPills .fb-pill, #subsectorPills .fb-pill").forEach(function(p) { p.classList.remove("selected"); });
+  document.querySelectorAll("#industryPills .fb-pill").forEach(function(p) { p.classList.remove("selected"); });
   var sp = document.getElementById("sectorPills"); if (sp) sp.innerHTML = '<span class="fb-cascade-placeholder">Select an industry first</span>';
   var ssp = document.getElementById("subsectorPills"); if (ssp) ssp.innerHTML = '<span class="fb-cascade-placeholder">Select a sector first</span>';
   var ts = document.getElementById("trail-sector"); if (ts) { ts.classList.remove("ready"); ts.classList.add("fb-cascade-dim"); }
   var tss = document.getElementById("trail-subsector"); if (tss) { tss.classList.remove("ready"); tss.classList.add("fb-cascade-dim"); }
+  // Reset selection state and detail panels
   _formSelState = { industry: {}, obj: {}, services: {}, tech: {}, partners: {}, reg: {}, risk: {} };
   ["domainBlockPanel","techDetailPanel","partnerDetailPanel","regDetailPanel","riskDetailPanel","objThemePanel"].forEach(function(id) {
     var el = document.getElementById(id);
@@ -11625,17 +11710,13 @@ function getSectionCompleteness(sid) {
   return "partial";
 }
 
-function updateSectionDot(sid) {
-  // Delegate to fbEvalDots which handles the new fb-section-dot + fb-nav-dot classes
-  if (typeof fbEvalDots === "function") fbEvalDots();
+function updateSectionDot() {
+  // Individual section dot update is a no-op; use updateAllSectionDots instead
 }
 
 function updateAllSectionDots() {
-  ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8"].forEach(updateSectionDot);
+  if (typeof fbEvalDots === "function") fbEvalDots();
 }
-
-// ── Wire up on init ──
-const _origInit = typeof init === "function" ? init : null;
 
 // ═══════════════════════════════════════════
 // CHUNK 2 — REVIEW PANEL + SOFT VALIDATION + DEMO DATA
@@ -11646,7 +11727,7 @@ function openReviewPanel() {
   renderReviewPanel();
   document.getElementById("reviewOverlay").classList.add("visible");
 }
-function closeReviewPanel(e) {
+function onReviewOverlayClick(e) {
   if (e && e.target !== document.getElementById("reviewOverlay")) return;
   closeReviewPanelDirect();
 }
@@ -11696,8 +11777,12 @@ function checkBriefCompleteness() {
   return issues;
 }
 
-function rv(v) {
+function nullIfBlank(v) {
   return v && String(v).trim() ? v : null;
+}
+function escHtml(str) {
+  if (!str) return "";
+  return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
 function renderReviewPanel() {
@@ -11733,12 +11818,12 @@ function renderReviewPanel() {
       fieldId = row[1],
       val = row[2],
       type = row[3];
-    var display = rv(val) ? val : "—";
-    var cls = rv(val) ? "review-val" : "review-val missing";
+    var display = nullIfBlank(val) ? escHtml(val) : "\u2014";
+    var cls = nullIfBlank(val) ? "review-val" : "review-val missing";
     h +=
       '<div class="review-row">' +
       '<span class="review-key">' +
-      label +
+      escHtml(label) +
       "</span>" +
       '<span class="' +
       cls +
@@ -11762,11 +11847,11 @@ function renderReviewPanel() {
     ["Sector", ind.sector],
     ["Sub-sector", ind.sub_sector],
   ].forEach(function (row) {
-    const display = rv(row[1]) ? row[1] : "—";
-    const cls = rv(row[1]) ? "review-val" : "review-val missing";
+    const display = nullIfBlank(row[1]) ? escHtml(row[1]) : "\u2014";
+    const cls = nullIfBlank(row[1]) ? "review-val" : "review-val missing";
     h +=
       '<div class="review-row"><span class="review-key">' +
-      row[0] +
+      escHtml(row[0]) +
       '</span><span class="' +
       cls +
       '">' +
@@ -11793,11 +11878,11 @@ function renderReviewPanel() {
       obj.themes.forEach(function (t) {
         h +=
           '<div class="review-list-item"><strong>' +
-          obj.objective_type +
-          "</strong> › " +
-          t.theme +
+          escHtml(obj.objective_type) +
+          "</strong> \u203A " +
+          escHtml(t.theme) +
           ": " +
-          t.specific_objective +
+          escHtml(t.specific_objective) +
           "</div>";
       });
     });
@@ -11825,9 +11910,9 @@ function renderReviewPanel() {
       s.building_blocks.forEach(function (bb) {
         h +=
           '<div class="review-list-item"><strong>' +
-          s.domain +
-          "</strong> › " +
-          bb.building_block +
+          escHtml(s.domain) +
+          "</strong> \u203A " +
+          escHtml(bb.building_block) +
           "</div>";
       });
     });
@@ -11854,9 +11939,9 @@ function renderReviewPanel() {
     techs.slice(0, 5).forEach(function (t) {
       h +=
         '<div class="review-list-item"><strong>' +
-        t.category +
+        escHtml(t.category) +
         "</strong>: " +
-        (t.sub_categories || []).slice(0, 3).join(", ") +
+        (t.sub_categories || []).slice(0, 3).map(escHtml).join(", ") +
         "</div>";
     });
   }
@@ -11878,10 +11963,10 @@ function renderReviewPanel() {
       '<div class="review-row"><span class="review-val missing">None selected</span></div>';
   } else {
     regs.slice(0, 4).forEach(function (r) {
-      var reqStr = (r.requirements || []).slice(0, 3).join(", ");
+      var reqStr = (r.requirements || []).slice(0, 3).map(escHtml).join(", ");
       h +=
         '<div class="review-list-item"><strong>' +
-        (r.regulator || "") +
+        escHtml(r.regulator || "") +
         "</strong>" +
         (reqStr ? ": " + reqStr : "") +
         "</div>";
@@ -11905,10 +11990,10 @@ function renderReviewPanel() {
       '<div class="review-row"><span class="review-val missing">None selected</span></div>';
   } else {
     risks.slice(0, 4).forEach(function (r) {
-      var riskStr = (r.specific_risks || []).slice(0, 3).join(", ");
+      var riskStr = (r.specific_risks || []).slice(0, 3).map(escHtml).join(", ");
       h +=
         '<div class="review-list-item"><strong>' +
-        (r.risk_type || "") +
+        escHtml(r.risk_type || "") +
         "</strong>" +
         (riskStr ? ": " + riskStr : "") +
         "</div>";
@@ -11979,7 +12064,7 @@ function rvStartEdit(spanEl, fieldId, type) {
 // ── Load Example Data ──
 function loadExampleData() {
   if (!appData || !appData.industries) {
-    showToast("Data is still loading — please wait a moment.", "warning");
+    showToast("Data is still loading \u2014 please wait a moment.", "warning");
     return;
   }
   var sv = function (id, v) {
@@ -11999,187 +12084,116 @@ function loadExampleData() {
     "engagementDescription",
     "End-to-end modernisation of core banking platform, migrating from legacy on-premise infrastructure to cloud-native architecture on AWS. Encompasses data migration, API integration, regulatory compliance uplift, and change management across 8 business units.",
   );
-  // S2: click industry pill then sector
-  setTimeout(function () {
-    var indPill = Array.from(
-      document.querySelectorAll("#industryPills .fb-pill"),
-    ).find(function (p) {
-      return p.textContent.trim() === "Financial Services";
-    });
-    if (indPill) {
-      indPill.click();
-    }
-    setTimeout(function () {
-      var secPill = Array.from(
-        document.querySelectorAll("#sectorPills .fb-pill"),
-      ).find(function (p) {
-        return p.textContent.trim() === "Banking and Capital Markets";
-      });
-      if (secPill) {
-        secPill.click();
-      }
-      setTimeout(function () {
-        var subPill = Array.from(
-          document.querySelectorAll("#subsectorPills .fb-pill"),
-        ).find(function (p) {
-          return p.textContent.trim() === "Retail Banking";
-        });
-        if (subPill) subPill.click();
-      }, 200);
-    }, 200);
-  }, 200);
-  // S3: open Business Problem objective type
-  setTimeout(function () {
-    var objTab = Array.from(
-      document.querySelectorAll("#objTypeList .fb-tab-item"),
-    ).find(function (t) {
-      return t.textContent.trim().indexOf("Business Problem") === 0;
-    });
-    if (objTab) objTab.click();
-  }, 500);
-  // S3: set objective dropdowns after panel has rendered
-  setTimeout(function () {
-    var sv2 = function (id, v) {
-      var e = document.getElementById(id);
-      if (e) e.value = v;
-    };
-    sv2(
-      "obj-drop-business-problem-operational-performance",
-      "Siloed operations across business units",
-    );
-    sv2(
-      "obj-drop-business-problem-data-information",
-      "Fragmented and siloed data",
-    );
-    sv2(
-      "obj-drop-business-problem-technology-systems",
-      "Ageing and legacy technology landscape",
-    );
+
+  // S2: industry cascade — use direct API calls
+  var indPill = Array.from(
+    document.querySelectorAll("#industryPills .fb-pill"),
+  ).find(function (p) { return p.textContent.trim() === "Financial Services"; });
+  if (indPill) fbSelectIndustry(indPill, "Financial Services");
+  var secPill = Array.from(
+    document.querySelectorAll("#sectorPills .fb-pill"),
+  ).find(function (p) { return p.textContent.trim() === "Banking and Capital Markets"; });
+  if (secPill) fbSelectSector(secPill, "Banking and Capital Markets");
+  var subPill = Array.from(
+    document.querySelectorAll("#subsectorPills .fb-pill"),
+  ).find(function (p) { return p.textContent.trim() === "Retail Banking"; });
+  if (subPill) fbSelectSubsector(subPill, "Retail Banking");
+  _formSelState.industry = { industry: "Financial Services", sector: "Banking and Capital Markets", subsector: "Retail Banking" };
+
+  // S3: objectives — write state directly
+  _formSelState.obj = _formSelState.obj || {};
+  _formSelState.obj["business-problem"] = {
+    typeName: "Business Problem",
+    drops: {
+      "obj-drop-business-problem-operational-performance": "Siloed operations across business units",
+      "obj-drop-business-problem-data-information": "Fragmented and siloed data",
+      "obj-drop-business-problem-technology-systems": "Ageing and legacy technology landscape"
+    },
+    frees: {},
+    context: ""
+  };
+  // Render the objective type tab as active and apply saved state
+  var objTab = Array.from(
+    document.querySelectorAll("#objTypeList .fb-tab-item"),
+  ).find(function (t) { return t.textContent.trim().indexOf("Business Problem") === 0; });
+  if (objTab) {
+    objTab.click();
+    sv("obj-drop-business-problem-operational-performance", "Siloed operations across business units");
+    sv("obj-drop-business-problem-data-information", "Fragmented and siloed data");
+    sv("obj-drop-business-problem-technology-systems", "Ageing and legacy technology landscape");
     if (typeof fbObjChange === "function") fbObjChange("business-problem");
-  }, 700);
-  // S4: open Data & AI domain
-  setTimeout(function () {
-    var domTab = Array.from(
-      document.querySelectorAll("#domainTabList .fb-tab-item"),
-    ).find(function (t) {
-      return t.textContent.trim() === "Data & AI";
-    });
-    if (domTab) {
-      domTab.click();
-      setTimeout(function () {
-        document
-          .querySelectorAll("#domainBlockPanel .fb-bb-item .fb-bb-check")
-          .forEach(function (check, i) {
-            if (i < 3) check.click();
-          });
-      }, 200);
-    }
-  }, 800);
-  // S5: open Data & Analytics tech category
-  setTimeout(function () {
-    var techTab = Array.from(
-      document.querySelectorAll("#techCatList .fb-tab-item"),
-    ).find(function (t) {
-      return t.textContent.trim().indexOf("Data & Analytics") === 0;
-    });
-    if (techTab) {
-      techTab.click();
-      setTimeout(function () {
-        document
-          .querySelectorAll("#techDetailPanel .fb-chip")
-          .forEach(function (chip, i) {
-            if (i < 2) chip.click();
-          });
-      }, 200);
-    }
-  }, 1100);
-  // S6: open AWS partner and select product families
-  setTimeout(function () {
-    var partTab = Array.from(
-      document.querySelectorAll("#partnerTabList .fb-tab-item"),
-    ).find(function (t) {
-      return t.textContent.trim() === "AWS";
-    });
-    if (partTab) {
-      partTab.click();
-      setTimeout(function () {
-        document
-          .querySelectorAll("#partnerDetailPanel .fb-chip")
-          .forEach(function (chip, i) {
-            if (i < 2) chip.click();
-          });
-      }, 200);
-    }
-  }, 1300);
-  // S7: open Financial Services regulatory group
-  setTimeout(function () {
-    var regTab = Array.from(
-      document.querySelectorAll("#regGroupList .fb-tab-item"),
-    ).find(function (t) {
-      return t.textContent.trim() === "Financial Services";
-    });
-    if (regTab) {
-      regTab.click();
-      setTimeout(function () {
-        document
-          .querySelectorAll("#regDetailPanel .fb-check-item")
-          .forEach(function (item, i) {
-            if (i < 2) item.click();
-          });
-      }, 200);
-    }
-  }, 1500);
-  // S8: open Financial Services risk group and select risk types
-  setTimeout(function () {
-    var riskTab = Array.from(
-      document.querySelectorAll("#riskGroupList .fb-tab-item"),
-    ).find(function (t) {
-      return t.textContent.trim() === "Financial Services";
-    });
-    if (riskTab) {
-      riskTab.click();
-      setTimeout(function () {
-        document
-          .querySelectorAll("#riskDetailPanel .fb-check-item")
-          .forEach(function (item, i) {
-            if (i < 2) item.click();
-          });
-      }, 200);
-    }
-  }, 1700);
-  setTimeout(function () {
-    fbEvalDots();
-    if (typeof updateBriefStrength === "function") updateBriefStrength();
-    try {
-      var st = collectFormState();
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(st));
-    } catch (e) {}
-    showToast("Example data loaded.", "success");
-  }, 2200);
+  }
+
+  // S4: services — write state directly
+  _formSelState.services = _formSelState.services || {};
+  var domTab = Array.from(
+    document.querySelectorAll("#domainTabList .fb-tab-item"),
+  ).find(function (t) { return t.textContent.trim() === "Data & AI"; });
+  if (domTab) {
+    domTab.click();
+    var bbChecks = document.querySelectorAll("#domainBlockPanel .fb-bb-item .fb-bb-check");
+    bbChecks.forEach(function (check, i) { if (i < 3) check.click(); });
+    _fssSaveServices();
+  }
+
+  // S5: technology — write state directly
+  _formSelState.tech = _formSelState.tech || {};
+  var techTab = Array.from(
+    document.querySelectorAll("#techCatList .fb-tab-item"),
+  ).find(function (t) { return t.textContent.trim().indexOf("Data & Analytics") === 0; });
+  if (techTab) {
+    techTab.click();
+    document.querySelectorAll("#techDetailPanel .fb-chip").forEach(function (chip, i) { if (i < 2) chip.click(); });
+    _fssSaveTech();
+  }
+
+  // S6: partners — write state directly
+  _formSelState.partners = _formSelState.partners || {};
+  var partTab = Array.from(
+    document.querySelectorAll("#partnerTabList .fb-tab-item"),
+  ).find(function (t) { return t.textContent.trim() === "AWS"; });
+  if (partTab) {
+    partTab.click();
+    document.querySelectorAll("#partnerDetailPanel .fb-chip").forEach(function (chip, i) { if (i < 2) chip.click(); });
+    _fssSavePartners();
+  }
+
+  // S7: regulatory — write state directly
+  _formSelState.reg = _formSelState.reg || {};
+  var regTab = Array.from(
+    document.querySelectorAll("#regGroupList .fb-tab-item"),
+  ).find(function (t) { return t.textContent.trim() === "Financial Services"; });
+  if (regTab) {
+    regTab.click();
+    document.querySelectorAll("#regDetailPanel .fb-check-item").forEach(function (item, i) { if (i < 2) item.click(); });
+    _fssSaveReg();
+  }
+
+  // S8: risk — write state directly
+  _formSelState.risk = _formSelState.risk || {};
+  var riskTab = Array.from(
+    document.querySelectorAll("#riskGroupList .fb-tab-item"),
+  ).find(function (t) { return t.textContent.trim() === "Financial Services"; });
+  if (riskTab) {
+    riskTab.click();
+    document.querySelectorAll("#riskDetailPanel .fb-check-item").forEach(function (item, i) { if (i < 2) item.click(); });
+    _fssSaveRisk();
+  }
+
+  // Final: update dots and strength in one pass
+  fbEvalDots();
+  if (typeof updateBriefStrength === "function") updateBriefStrength();
+  try {
+    var st = collectFormState();
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(st));
+  } catch (e) {}
+  showToast("Example data loaded.", "success");
 }
 
-// Wire Brief Strength to all form interactions
-document.addEventListener("change", function () {
-  var fp = document.getElementById("formPage");
-  if (
-    fp &&
-    fp.classList.contains("active") &&
-    typeof updateBriefStrength === "function"
-  )
-    updateBriefStrength();
-});
-document.addEventListener("click", function () {
-  var fp = document.getElementById("formPage");
-  if (
-    fp &&
-    fp.classList.contains("active") &&
-    typeof updateBriefStrength === "function"
-  )
-    setTimeout(updateBriefStrength, 150);
-});
+// Document-level change/click listeners removed — form-level listeners
+// from initAutoSave already call updateBriefStrength via debounceAutoSave.
 
 // CHUNK 3 — REOPEN, GATE MODAL, RESUME, INLINE EDIT
-var _pendingGateId = null;
 
 function reopenStep(id) {
   completedSteps.delete(id);
@@ -12248,13 +12262,9 @@ function reopenStep(id) {
 
 // Gate modal
 function checkGateReady() {
-  var boxes = document.querySelectorAll(
-    "#gateModalChecklist input[type=checkbox]",
-  );
-  var allChecked = true;
-  boxes.forEach(function (b) {
-    if (!b.checked) allChecked = false;
-  });
+  var allChecked = Array.from(
+    document.querySelectorAll("#gateModalChecklist input[type=checkbox]")
+  ).every(function (b) { return b.checked; });
   var btn = document.getElementById("gateConfirmBtn");
   if (btn) {
     btn.classList.toggle("ready", allChecked);
@@ -12291,41 +12301,12 @@ function proceedSparse() {
 function restartWorkflow() {
   document.getElementById("resumeModal").classList.remove("visible");
   completedSteps = new Set();
-  doShowWorkflow();
+  doShowWorkflow({ skipResume: true });
 }
 function continueWorkflow() {
   document.getElementById("resumeModal").classList.remove("visible");
-  // Transition to workflow page and restore visual state
-  document.getElementById("formPage").classList.remove("active");
-  document.getElementById("workflowPage").classList.add("active");
-  document.getElementById("headerSubtitle").textContent = "Workflow";
-  document.getElementById("workflowTitle").textContent =
-    (formData.engagement_context.client_name || "") +
-    " — " +
-    (formData.engagement_context.engagement_name || "");
-  renderWorkflow();
-  // Restore completed visual state
-  completedSteps.forEach(function (id) {
-    var card = document.getElementById("card-" + id);
-    var badge = document.getElementById("badge-" + id);
-    var si = document.getElementById("sidebar-" + id);
-    if (card) {
-      card.classList.remove("active-card", "locked-card");
-      card.classList.add("completed-card");
-    }
-    if (badge) {
-      badge.textContent = "Complete";
-      badge.className = "status-badge badge-done";
-    }
-    if (si) {
-      si.classList.remove("active", "locked");
-      si.classList.add("completed");
-    }
-  });
-  unlockNextSteps();
-  updateProgress();
-  var mainPanel = document.querySelector(".workflow-main");
-  if (mainPanel) mainPanel.scrollTop = 0;
+  // State restoration now handled inside renderWorkflow
+  doShowWorkflow({ skipResume: true });
 }
 
 // Inline prompt editing (#12)
@@ -12537,14 +12518,6 @@ function exportAllPrompts() {
   showToast("All prompts exported successfully.", "success");
 }
 
-// Wire nav pill updates into existing Brief Strength updater
-var _origUpdateBriefStrength =
-  typeof updateBriefStrength === "function" ? updateBriefStrength : null;
-updateBriefStrength = function () {
-  if (_origUpdateBriefStrength) _origUpdateBriefStrength();
-  updateNavPills();
-};
-
 // Also update pills on load
 document.addEventListener("DOMContentLoaded", function () {
   loadAllData();
@@ -12552,11 +12525,10 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // ─── LANDING PAGE ───
-let guidedMode = false;
-let selectedMode = "guided";
+let guidedMode = true;
 
 function selectMode(mode) {
-  selectedMode = mode;
+  guidedMode = mode === "guided";
   var gBtn = document.getElementById("chip-guided");
   var qBtn = document.getElementById("chip-quick");
   if (gBtn) gBtn.classList.toggle("lp-chip-active", mode === "guided");
@@ -12564,12 +12536,10 @@ function selectMode(mode) {
 }
 
 function launchSelected() {
-  if (selectedMode === "guided") {
-    guidedMode = true;
+  if (guidedMode) {
     showFormPage();
     setTimeout(initGuidedExperience, 300);
   } else {
-    guidedMode = false;
     showFormPage();
   }
 }
@@ -12683,7 +12653,7 @@ function showFormPage() {
 
 
   <!-- CHUNK 2: Review overlay -->
-  <div id="reviewOverlay" onclick="closeReviewPanel(event)">
+  <div id="reviewOverlay" onclick="onReviewOverlayClick(event)">
     <div id="reviewPanel">
       <div id="reviewPanel-header">
         <div><h3>Review Your Brief</h3><p>This is the data that will be sent to every AI prompt.</p></div>
