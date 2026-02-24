@@ -282,11 +282,52 @@ body{background:var(--g100)}
   .wiz-wrap{padding:20px 14px 48px}
   .stat-grid{grid-template-columns:1fr 1fr}
 }
+
+/* ── VERSION BANNER ── */
+.version-banner{display:flex;align-items:center;gap:10px;padding:9px 18px;background:var(--warningBg);border-bottom:1px solid var(--warning);font-size:12px;color:#92400e;flex-shrink:0}
+.version-banner.hidden{display:none}
+.version-banner strong{font-weight:700}
+.version-banner-btns{display:flex;gap:8px;margin-left:auto}
+
+/* ── SKIP LINK ── */
+.skip-link{position:absolute;left:-9999px;top:4px;z-index:9999;padding:6px 14px;background:var(--o500);color:#fff;font-size:13px;font-weight:600}
+.skip-link:focus{left:4px}
+
+/* ── EVIDENCE GAP BADGE ── */
+.evidence-gap-badge{background:#EFF6FF;color:#1D4ED8;font-size:10px;font-weight:700;padding:2px 8px;border:1px solid #BFDBFE}
+
+/* ── COMPLETENESS DISCLAIMER ── */
+.completeness-disclaimer{font-size:12px;color:var(--g500);background:var(--g100);border-left:3px solid var(--g300);padding:7px 12px;margin-bottom:18px;line-height:1.5}
+
+/* ── GAPS CONTROLS ── */
+.gaps-controls{background:#fff;border:1px solid var(--g200);padding:12px 16px;margin-bottom:18px;display:flex;flex-direction:column;gap:10px}
+.gaps-toggles{display:flex;gap:20px;flex-wrap:wrap}
+.toggle-label{display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer}
+.toggle-label input{cursor:pointer}
+.gaps-selects{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.gaps-selects label{font-size:12px;color:var(--g500);display:flex;align-items:center;gap:6px}
+.gaps-selects select{font-size:12px;border:1px solid var(--g200);padding:4px 8px;font-family:inherit;background:#fff;cursor:pointer}
+.gap-badges{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:5px}
+
+/* ── DOMAIN NAV KEYBOARD FOCUS ── */
+.domain-link:focus-visible{outline:2px solid var(--o500);outline-offset:-2px;background:var(--o100)}
+
 </style>
 </head>
 <body>
+<a href="#content" class="skip-link">Skip to main content</a>
 
 <div class="app">
+
+<!-- Version mismatch banner (Change 7) -->
+<div class="version-banner hidden" id="versionBanner" role="alert" aria-live="assertive">
+  <strong>Notice:</strong>&nbsp;Saved responses belong to a different framework version and were not loaded.
+  <div class="version-banner-btns">
+    <button class="btn btn-sm btn-secondary" onclick="hideVersionBanner()">Dismiss</button>
+    <button class="btn btn-sm btn-destructive" onclick="doReset()">Reset storage</button>
+  </div>
+</div>
+
 
   <!-- ── SIDEBAR ── -->
   <aside class="sidebar">
@@ -346,176 +387,192 @@ const modelConfig = JSON.parse(`{"meta": {"name": "PPM/PMO Maturity Assessment F
 // ═══════════════════════════════════════════════════════════
 // SCORING HELPERS (pure functions)
 // ═══════════════════════════════════════════════════════════
-function derivePriority(score, confidence) {
+
+// ═══════════════════════════════════════════════════════════
+// SCORING HELPERS — Changes 1, 2, 3
+// Change 3 (Option A): priorityRules in modelConfig are descriptive text only.
+// Code below is the single source of truth for all priority logic.
+// ═══════════════════════════════════════════════════════════
+
+// Change 2: performance priority derived ONLY from score
+function computePerformancePriority(score) {
   if (!score) return "";
-  if (score <= 2 || confidence === "Low") return "High";
-  if (score === 3 || confidence === "Medium") return "Medium";
+  if (score <= 2) return "High";
+  if (score === 3) return "Medium";
   if (score === 4) return "Low";
   return "Sustain";
 }
 
+// Change 2: evidence gap derived ONLY from confidence
+function computeEvidenceGap(confidence) {
+  return confidence === "Low";
+}
+
 function deriveUpliftWave(priority) {
   if (!priority) return "";
-  const map = {
-    High: "0\u201390 days",
-    Medium: "3\u20136 months",
-    Low: "6\u201312 months",
-    Sustain: "BAU / optimise",
-  };
+  var map = { High:"0\u201390 days", Medium:"3\u20136 months", Low:"6\u201312 months", Sustain:"BAU / optimise" };
   return map[priority] || "";
 }
 
 function suggestedRecommendationFor(question, score) {
   if (!score) return "";
-  const key = String(score);
+  var key = String(score);
   return (question.recommendedActionsByLevel && question.recommendedActionsByLevel[key])
-    ? question.recommendedActionsByLevel[key]
-    : "";
+    ? question.recommendedActionsByLevel[key] : "";
 }
 
 function deriveRecommendation(question, response) {
-  const suggested = suggestedRecommendationFor(question, response.score);
-  const priority = derivePriority(response.score, response.confidence);
-  const upliftWave = deriveUpliftWave(priority);
-  return {
-    questionId: question.id,
-    suggestedRecommendation: suggested,
-    priority: priority,
-    upliftWave: upliftWave,
-  };
+  var suggested = suggestedRecommendationFor(question, response.score);
+  var priority  = computePerformancePriority(response.score);
+  var upliftWave = deriveUpliftWave(priority);
+  var egap = computeEvidenceGap(response.confidence);
+  return { questionId:question.id, suggestedRecommendation:suggested,
+           priority:priority, upliftWave:upliftWave, evidenceGap:egap };
 }
 
-function safeAvg(values) {
-  if (!values.length) return undefined;
-  return values.reduce(function(a, b) { return a + b; }, 0) / values.length;
-}
-
-function computeScores(model, responses) {
+// Change 1: question-level weighted average (not domain-average-of-averages)
+function computeScores(model, respArr) {
   var respByQ = {};
-  responses.forEach(function(r) { respByQ[r.questionId] = r; });
+  respArr.forEach(function(r){ respByQ[r.questionId] = r; });
   var qByDomain = {};
-  model.questions.forEach(function(q) {
-    if (!qByDomain[q.domainId]) qByDomain[q.domainId] = [];
+  model.questions.forEach(function(q){
+    if(!qByDomain[q.domainId]) qByDomain[q.domainId] = [];
     qByDomain[q.domainId].push(q);
   });
 
-  var domainSummaries = model.domains.map(function(d) {
+  var domainSummaries = model.domains.map(function(d){
     var qs = qByDomain[d.id] || [];
-    var scored = [];
-    var conf = { high: 0, medium: 0, low: 0 };
-    qs.forEach(function(q) {
+    var wSum=0, wN=0, answered=0;
+    var conf={high:0,medium:0,low:0};
+    qs.forEach(function(q){
       var r = respByQ[q.id];
-      if (r && r.score) scored.push(r.score);
-      if (r && r.confidence === "High") conf.high += 1;
-      if (r && r.confidence === "Medium") conf.medium += 1;
-      if (r && r.confidence === "Low") conf.low += 1;
+      if(r && r.score){
+        var w = (typeof q.defaultWeight==="number" ? q.defaultWeight : 1);
+        wSum += r.score * w; wN += w; answered++;
+      }
+      if(r && r.confidence==="High")   conf.high++;
+      if(r && r.confidence==="Medium") conf.medium++;
+      if(r && r.confidence==="Low")    conf.low++;
     });
-    return {
-      domainId: d.id,
-      domainName: d.name,
-      domainScore: safeAvg(scored),
-      weight: (typeof d.defaultWeight === "number" ? d.defaultWeight : 1),
-      confidenceCounts: conf,
-    };
+    return { domainId:d.id, domainName:d.name,
+             domainScore: wN ? (wSum/wN) : undefined,
+             totalQuestions:qs.length, answeredQuestions:answered,
+             weight:(typeof d.defaultWeight==="number"?d.defaultWeight:1),
+             confidenceCounts:conf };
   });
 
-  var num = 0, den = 0;
-  domainSummaries.forEach(function(ds) {
-    if (typeof ds.domainScore === "number") {
-      num += ds.domainScore * ds.weight;
-      den += ds.weight;
+  // Global question-weighted average
+  var gWSum=0, gWN=0;
+  model.questions.forEach(function(q){
+    var r = respByQ[q.id];
+    if(r && r.score){
+      var w = (typeof q.defaultWeight==="number" ? q.defaultWeight : 1);
+      gWSum += r.score * w; gWN += w;
     }
   });
-  var overallScore = den ? (num / den) : undefined;
-  return { overallScore: overallScore, domainSummaries: domainSummaries };
+  return { overallScore: gWN ? (gWSum/gWN) : undefined,
+           domainSummaries: domainSummaries, scoringMethod:"question_average" };
 }
 
-function deriveAllRecommendations(model, responses) {
+function deriveAllRecommendations(model, respArr) {
   var respByQ = {};
-  responses.forEach(function(r) { respByQ[r.questionId] = r; });
+  respArr.forEach(function(r){ respByQ[r.questionId]=r; });
   var out = [];
-  model.questions.forEach(function(q) {
+  model.questions.forEach(function(q){
     var r = respByQ[q.id];
-    if (!r) return;
+    if(!r) return;
     out.push(deriveRecommendation(q, r));
   });
   return out;
 }
 
-
 // ═══════════════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════════════
-var STORAGE_KEY = "ppm_pmo_maturity_v2";
-var responses = {};   // qId -> {score, confidence, evidenceNotes}
-var currentView = "wizard";
+var STORAGE_KEY   = "ppm_pmo_maturity_v2";
+var SCHEMA_VERSION = 1;
+var responses     = {};
+var currentView   = "wizard";
 var currentDomainIdx = 0;
-var currentQIdx = 0;
+var currentQIdx   = 0;
 
-// Lookup maps
-var domainMap = {}, capMap = {}, questionMap = {};
-modelConfig.domains.forEach(function(d){ domainMap[d.id] = d; });
-modelConfig.capabilities.forEach(function(c){ capMap[c.id] = c; });
-modelConfig.questions.forEach(function(q){ questionMap[q.id] = q; });
+var domainMap={}, capMap={}, questionMap={};
+modelConfig.domains.forEach(function(d){ domainMap[d.id]=d; });
+modelConfig.capabilities.forEach(function(c){ capMap[c.id]=c; });
+modelConfig.questions.forEach(function(q){ questionMap[q.id]=q; });
 
-// Questions grouped by domain (preserving model order)
 var byDomain = modelConfig.domains.map(function(d){
-  return modelConfig.questions.filter(function(q){ return q.domainId === d.id; });
+  return modelConfig.questions.filter(function(q){ return q.domainId===d.id; });
 });
 
 // ═══════════════════════════════════════════════════════════
-// PERSISTENCE
+// PERSISTENCE — Change 7: schema-versioned with mismatch detection
 // ═══════════════════════════════════════════════════════════
+function simpleHash(str){
+  var h=5381;
+  for(var i=0;i<str.length;i++){ h=((h<<5)+h)^str.charCodeAt(i); h=h>>>0; }
+  return h.toString(16);
+}
+var MODEL_HASH = simpleHash(
+  modelConfig.meta.version + "|" +
+  modelConfig.questions.map(function(q){ return q.id; }).join(",")
+);
+
 function loadResponses(){
   try{
     var s = localStorage.getItem(STORAGE_KEY);
-    if(s){ responses = JSON.parse(s).responses || {}; }
+    if(!s) return;
+    var d = JSON.parse(s);
+    if(d.schemaVersion!==SCHEMA_VERSION ||
+       d.frameworkVersion!==modelConfig.meta.version ||
+       d.modelHash!==MODEL_HASH){
+      showVersionBanner(); return;
+    }
+    responses = d.responses || {};
   }catch(e){}
 }
 function saveResponses(){
   try{
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({responses:responses, savedAt:new Date().toISOString()}));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      schemaVersion: SCHEMA_VERSION,
+      frameworkVersion: modelConfig.meta.version,
+      modelHash: MODEL_HASH,
+      savedAt: new Date().toISOString(),
+      responses: responses
+    }));
     refreshSaveTs();
   }catch(e){}
 }
 function refreshSaveTs(){
   try{
-    var s = localStorage.getItem(STORAGE_KEY);
-    if(s){
-      var d = JSON.parse(s);
-      if(d.savedAt){
-        var el = document.getElementById("saveTs");
-        if(el) el.textContent = "Saved " + new Date(d.savedAt).toLocaleTimeString("en-AU");
-      }
+    var s=localStorage.getItem(STORAGE_KEY);
+    if(s){ var d=JSON.parse(s);
+      if(d.savedAt){ var el=document.getElementById("saveTs");
+        if(el) el.textContent="Saved "+new Date(d.savedAt).toLocaleTimeString("en-AU"); }
     }
   }catch(e){}
 }
+function showVersionBanner(){ var b=document.getElementById("versionBanner"); if(b) b.classList.remove("hidden"); }
+function hideVersionBanner(){ var b=document.getElementById("versionBanner"); if(b) b.classList.add("hidden"); }
 
 // ═══════════════════════════════════════════════════════════
 // RESPONSE HELPERS
 // ═══════════════════════════════════════════════════════════
-function getR(qId){ return responses[qId] || {score:null, confidence:null, evidenceNotes:""}; }
-
-function setField(qId, field, value){
-  if(!responses[qId]) responses[qId] = {score:null, confidence:null, evidenceNotes:""};
-  responses[qId][field] = value;
-  saveResponses();
+function getR(qId){ return responses[qId]||{score:null,confidence:null,evidenceNotes:""}; }
+function setField(qId,field,value){
+  if(!responses[qId]) responses[qId]={score:null,confidence:null,evidenceNotes:""};
+  responses[qId][field]=value; saveResponses();
 }
-
 function getRespArray(){
   return Object.keys(responses).filter(function(id){
-    var r = responses[id];
-    return r.score || r.confidence || r.evidenceNotes;
+    var r=responses[id]; return r.score||r.confidence||r.evidenceNotes;
   }).map(function(id){
-    var r = responses[id];
-    return {questionId:id, score:r.score, confidence:r.confidence, evidenceNotes:r.evidenceNotes};
+    var r=responses[id];
+    return {questionId:id,score:r.score,confidence:r.confidence,evidenceNotes:r.evidenceNotes};
   });
 }
-
 function answeredCount(){
-  return Object.keys(responses).filter(function(id){
-    return responses[id] && responses[id].score;
-  }).length;
+  return Object.keys(responses).filter(function(id){ return responses[id]&&responses[id].score; }).length;
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -527,377 +584,423 @@ function esc(s){
 }
 function csvQ(s){
   if(!s) return "";
-  s = String(s);
-  if(s.indexOf(",")!==-1 || s.indexOf('"')!==-1 || s.indexOf("\n")!==-1){
-    return '"' + s.replace(/"/g,'""') + '"';
+  s=String(s);
+  if(s.indexOf(",")!==-1||s.indexOf('"')!==-1||s.indexOf("\n")!==-1){
+    return '"'+s.replace(/"/g,'""')+'"';
   }
   return s;
 }
 
 // ═══════════════════════════════════════════════════════════
-// SIDEBAR
+// SIDEBAR — Change 5: always show done/total, completion label
 // ═══════════════════════════════════════════════════════════
 function refreshSidebar(){
-  var ans = answeredCount();
-  var tot = modelConfig.questions.length;
-  var pct = tot ? Math.round(ans/tot*100) : 0;
+  var ans=answeredCount(), tot=modelConfig.questions.length;
+  var pct=tot?Math.round(ans/tot*100):0;
+  var pb=document.getElementById("progressBar"); if(pb) pb.style.width=pct+"%";
+  var pi=document.getElementById("progressInfo"); if(pi) pi.textContent=ans+" / "+tot+" answered";
+  var sc=computeScores(modelConfig,getRespArray());
+  var el=document.getElementById("overallScore");
+  if(el) el.textContent=typeof sc.overallScore==="number"?sc.overallScore.toFixed(2):"\u2014";
 
-  var pb = document.getElementById("progressBar");
-  if(pb) pb.style.width = pct + "%";
-  var pi = document.getElementById("progressInfo");
-  if(pi) pi.textContent = ans + " / " + tot + " answered";
-
-  var sc = computeScores(modelConfig, getRespArray());
-  var el = document.getElementById("overallScore");
-  if(el) el.textContent = typeof sc.overallScore==="number" ? sc.overallScore.toFixed(2) : "\u2014";
-
-  // Domain nav
-  var nav = document.getElementById("domainNav");
-  if(!nav) return;
-  var html = "";
-  modelConfig.domains.forEach(function(d, idx){
-    var dqs = byDomain[idx];
-    var done = dqs.filter(function(q){ return responses[q.id] && responses[q.id].score; }).length;
-    var full = done === dqs.length && dqs.length > 0;
-    var part = done > 0 && !full;
-    var active = currentView === "wizard" && currentDomainIdx === idx;
-    html += '<a class="domain-link' + (active ? ' active' : '') + '" role="button" tabindex="0" data-di="' + idx + '">';
-    html += '<span class="domain-check' + (full ? ' complete' : part ? ' partial' : '') + '">' + (full ? '&#10003;' : '') + '</span>';
-    html += '<span class="domain-name">' + esc(d.name) + '</span>';
-    if(done > 0) html += '<span class="domain-count">' + done + '/' + dqs.length + '</span>';
-    html += '</a>';
+  var nav=document.getElementById("domainNav"); if(!nav) return;
+  var html="";
+  modelConfig.domains.forEach(function(d,idx){
+    var dqs=byDomain[idx];
+    var done=dqs.filter(function(q){ return responses[q.id]&&responses[q.id].score; }).length;
+    var full=done===dqs.length&&dqs.length>0, part=done>0&&!full;
+    var active=currentView==="wizard"&&currentDomainIdx===idx;
+    var compLabel=full?"complete":part?"partial complete":"not started";
+    html+='<a class="domain-link'+(active?' active':'')+'" role="button" tabindex="0" data-di="'+idx+'" aria-label="'+esc(d.name)+', '+done+' of '+dqs.length+' answered, '+compLabel+'">';
+    html+='<span class="domain-check'+(full?' complete':part?' partial':'')+'" aria-hidden="true">'+(full?'&#10003;':'')+'</span>';
+    html+='<span class="domain-name">'+esc(d.name)+'</span>';
+    html+='<span class="domain-count">'+done+'/'+dqs.length+'</span>';
+    html+='</a>';
   });
-  nav.innerHTML = html;
-
+  nav.innerHTML=html;
   nav.querySelectorAll(".domain-link").forEach(function(el){
-    function go(){ goToQuestion(parseInt(el.getAttribute("data-di")), 0); }
-    el.addEventListener("click", go);
-    el.addEventListener("keydown", function(e){
-      if(e.key==="Enter"||e.key===" "){ e.preventDefault(); go(); }
-    });
+    function go(){ goToQuestion(parseInt(el.getAttribute("data-di")),0); }
+    el.addEventListener("click",go);
+    el.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); go(); } });
   });
 }
 
 // ═══════════════════════════════════════════════════════════
 // WIZARD NAVIGATION
 // ═══════════════════════════════════════════════════════════
-function goToQuestion(di, qi){
-  currentDomainIdx = Math.max(0, Math.min(di, modelConfig.domains.length-1));
-  var dqs = byDomain[currentDomainIdx];
-  currentQIdx = Math.max(0, Math.min(qi, dqs.length-1));
-  if(currentView !== "wizard"){
-    currentView = "wizard";
-    syncTabs();
-  }
+function goToQuestion(di,qi){
+  currentDomainIdx=Math.max(0,Math.min(di,modelConfig.domains.length-1));
+  var dqs=byDomain[currentDomainIdx];
+  currentQIdx=Math.max(0,Math.min(qi,dqs.length-1));
+  if(currentView!=="wizard"){ currentView="wizard"; syncTabs(); }
   renderWizard();
 }
-
 function nextQ(){
-  var dqs = byDomain[currentDomainIdx];
-  if(currentQIdx < dqs.length-1){ currentQIdx++; renderWizard(); }
-  else if(currentDomainIdx < modelConfig.domains.length-1){ currentDomainIdx++; currentQIdx=0; renderWizard(); }
+  var dqs=byDomain[currentDomainIdx];
+  if(currentQIdx<dqs.length-1){ currentQIdx++; renderWizard(); }
+  else if(currentDomainIdx<modelConfig.domains.length-1){ currentDomainIdx++; currentQIdx=0; renderWizard(); }
   else{ switchView("summary"); }
 }
-
 function prevQ(){
-  if(currentQIdx > 0){ currentQIdx--; renderWizard(); }
-  else if(currentDomainIdx > 0){ currentDomainIdx--; currentQIdx=byDomain[currentDomainIdx].length-1; renderWizard(); }
+  if(currentQIdx>0){ currentQIdx--; renderWizard(); }
+  else if(currentDomainIdx>0){ currentDomainIdx--; currentQIdx=byDomain[currentDomainIdx].length-1; renderWizard(); }
 }
-
 function skipToUnanswered(){
-  for(var di=0; di<byDomain.length; di++){
-    for(var qi=0; qi<byDomain[di].length; qi++){
-      if(!responses[byDomain[di][qi].id] || !responses[byDomain[di][qi].id].score){
-        goToQuestion(di, qi); return;
-      }
+  for(var di=0;di<byDomain.length;di++){
+    for(var qi=0;qi<byDomain[di].length;qi++){
+      if(!responses[byDomain[di][qi].id]||!responses[byDomain[di][qi].id].score){ goToQuestion(di,qi); return; }
     }
   }
   switchView("summary");
 }
-
 function overallQNum(){
-  var n=0;
-  for(var i=0;i<currentDomainIdx;i++) n+=byDomain[i].length;
-  return n+currentQIdx+1;
+  var n=0; for(var i=0;i<currentDomainIdx;i++) n+=byDomain[i].length; return n+currentQIdx+1;
 }
 
 // ═══════════════════════════════════════════════════════════
-// WIZARD RENDER
+// WIZARD RENDER — Changes 2, 8
 // ═══════════════════════════════════════════════════════════
 function renderWizard(){
-  var dqs = byDomain[currentDomainIdx];
-  var q = dqs[currentQIdx];
-  var domain = modelConfig.domains[currentDomainIdx];
-  var cap = capMap[q.capabilityId];
-  var r = getR(q.id);
-  var rec = r.score ? deriveRecommendation(q, r) : null;
-  var qNum = overallQNum();
-  var tot = modelConfig.questions.length;
-  var ans = answeredCount();
-  var pct = tot ? Math.round(ans/tot*100) : 0;
-  var isFirst = currentDomainIdx===0 && currentQIdx===0;
-  var isLast  = currentDomainIdx===modelConfig.domains.length-1 && currentQIdx===dqs.length-1;
+  var dqs=byDomain[currentDomainIdx], q=dqs[currentQIdx];
+  var domain=modelConfig.domains[currentDomainIdx], cap=capMap[q.capabilityId];
+  var r=getR(q.id);
+  var rec=r.score?deriveRecommendation(q,r):null;
+  var qNum=overallQNum(), tot=modelConfig.questions.length;
+  var ans=answeredCount(), pct=tot?Math.round(ans/tot*100):0;
+  var isFirst=currentDomainIdx===0&&currentQIdx===0;
+  var isLast=currentDomainIdx===modelConfig.domains.length-1&&currentQIdx===dqs.length-1;
 
-  var h = '';
-
-  // Thin progress strip
-  h += '<div class="wiz-strip"><div class="wiz-strip-fill" style="width:' + pct + '%"></div></div>';
-  h += '<div class="wiz-scroll"><div class="wiz-wrap">';
+  var h='';
+  h+='<div class="wiz-strip" role="progressbar" aria-valuenow="'+pct+'" aria-valuemin="0" aria-valuemax="100" aria-label="Assessment progress: '+pct+'%"><div class="wiz-strip-fill" style="width:'+pct+'%"></div></div>';
+  h+='<div class="wiz-scroll"><div class="wiz-wrap">';
 
   // Breadcrumb
-  h += '<div class="wiz-crumb">';
-  h += '<span class="crumb-domain">' + esc(domain.name) + '</span>';
-  if(cap){
-    h += '<span class="crumb-sep">\u203a</span>';
-    h += '<span class="crumb-cap">' + esc(cap.name) + '</span>';
-  }
-  h += '<span class="crumb-dim ' + q.dimension.toLowerCase() + '">' + esc(q.dimension) + '</span>';
-  h += '</div>';
+  h+='<div class="wiz-crumb" aria-label="Location">';
+  h+='<span class="crumb-domain">'+esc(domain.name)+'</span>';
+  if(cap){ h+='<span class="crumb-sep" aria-hidden="true">\u203a</span><span class="crumb-cap">'+esc(cap.name)+'</span>'; }
+  h+='<span class="crumb-dim '+q.dimension.toLowerCase()+'">'+esc(q.dimension)+'</span>';
+  h+='</div>';
 
-  // Counter
-  h += '<div class="wiz-counter">Question ' + qNum + ' of ' + tot;
-  h += ' &nbsp;&middot;&nbsp; ' + (currentQIdx+1) + ' of ' + dqs.length + ' in this domain</div>';
+  h+='<div class="wiz-counter" aria-live="polite">Question '+qNum+' of '+tot+' &nbsp;&middot;&nbsp; '+(currentQIdx+1)+' of '+dqs.length+' in domain</div>';
 
-  // Question text
-  h += '<h2 class="wiz-question">' + esc(q.question) + '</h2>';
+  // Question heading — tabindex for focus management (Change 8)
+  h+='<h2 class="wiz-question" id="wizQuestion" tabindex="-1">'+esc(q.question)+'</h2>';
 
-  // Evidence prompt
   if(q.evidencePrompts){
-    h += '<details class="evidence-wrap">';
-    h += '<summary>Evidence guidance</summary>';
-    h += '<div class="evidence-tip">' + esc(q.evidencePrompts) + '</div>';
-    h += '</details>';
+    h+='<details class="evidence-wrap"><summary>Evidence guidance</summary><div class="evidence-tip">'+esc(q.evidencePrompts)+'</div></details>';
   }
 
-  // Rating label + cards
-  h += '<div class="rating-label">Select a maturity level</div>';
-  h += '<div class="rating-grid">';
+  // Rating cards with Change 8: role=radiogroup, aria-checked, aria-label
+  h+='<div class="rating-label" id="ratingGroupLabel">Select a maturity level</div>';
+  h+='<div class="rating-grid" role="radiogroup" aria-labelledby="ratingGroupLabel">';
   for(var lvl=1;lvl<=5;lvl++){
-    var li = modelConfig.scoring.levels[lvl-1];
-    var ex = q.levelExamples ? (q.levelExamples[String(lvl)]||'') : '';
-    var sel = r.score===lvl;
-    h += '<button class="rating-card' + (sel?' selected':'') + '" data-score="' + lvl + '" aria-pressed="' + sel + '">';
-    h += '<div class="rating-num">' + lvl + '</div>';
-    h += '<div class="rating-name">' + esc(li ? li.name : '') + '</div>';
-    h += '<div class="rating-desc">' + esc(ex) + '</div>';
-    h += '</button>';
+    var li=modelConfig.scoring.levels[lvl-1];
+    var ex=q.levelExamples?(q.levelExamples[String(lvl)]||''):'';
+    var sel=r.score===lvl, ln=li?li.name:'';
+    h+='<button class="rating-card'+(sel?' selected':'')+'" data-score="'+lvl+'" role="radio" aria-checked="'+sel+'" aria-label="Level '+lvl+': '+esc(ln)+(sel?' (selected)':'')+'">';
+    h+='<div class="rating-num" aria-hidden="true">'+lvl+'</div>';
+    h+='<div class="rating-name">'+esc(ln)+'</div>';
+    h+='<div class="rating-desc">'+esc(ex)+'</div>';
+    h+='</button>';
   }
-  h += '</div>';
+  h+='</div>';
 
-  // Confidence + result
-  h += '<div class="meta-row">';
-  h += '<div class="conf-group"><span class="conf-label">Confidence:</span>';
+  // Confidence + result — Change 8: role=radiogroup
+  h+='<div class="meta-row">';
+  h+='<div class="conf-group" role="radiogroup" aria-label="Confidence in your rating"><span class="conf-label" aria-hidden="true">Confidence:</span>';
   ['High','Medium','Low'].forEach(function(c){
-    h += '<button class="conf-btn' + (r.confidence===c?' selected':'') + '" data-conf="' + c + '">' + c + '</button>';
+    var cs=r.confidence===c;
+    h+='<button class="conf-btn'+(cs?' selected':'')+'" data-conf="'+c+'" role="radio" aria-checked="'+cs+'" aria-label="Confidence: '+c+'">'+c+'</button>';
   });
-  h += '</div>';
+  h+='</div>';
   if(rec){
-    h += '<div class="result-row">';
-    h += '<span class="pri-badge ' + rec.priority.toLowerCase() + '">' + rec.priority + '</span>';
-    h += '<span class="wave-label">' + esc(rec.upliftWave) + '</span>';
-    h += '</div>';
+    h+='<div class="result-row" aria-live="polite">';
+    h+='<span class="pri-badge '+rec.priority.toLowerCase()+'" aria-label="Performance priority: '+rec.priority+'">'+rec.priority+'</span>';
+    if(rec.evidenceGap){ h+='<span class="badge badge-default evidence-gap-badge" aria-label="Evidence gap: low confidence">Evidence gap</span>'; }
+    h+='<span class="wave-label">'+esc(rec.upliftWave)+'</span>';
+    h+='</div>';
   }
-  h += '</div>';
+  h+='</div>';
 
-  // Notes
-  h += '<div class="notes-group">';
-  h += '<label class="notes-label" for="wizNotes">Notes / evidence (optional)</label>';
-  h += '<textarea class="notes-area" id="wizNotes" placeholder="Observations, links, artefacts\u2026">' + esc(r.evidenceNotes) + '</textarea>';
-  h += '</div>';
+  h+='<div class="notes-group"><label class="notes-label" for="wizNotes">Notes / evidence (optional)</label>';
+  h+='<textarea class="notes-area" id="wizNotes" placeholder="Observations, links, artefacts\u2026">'+esc(r.evidenceNotes)+'</textarea></div>';
 
-  // Navigation row
-  h += '<div class="wiz-nav">';
-  h += isFirst ? '<div></div>' : '<button class="btn btn-secondary" id="prevBtn">\u2190 Back</button>';
-
-  // Progress dots
-  h += '<div class="wiz-dots">';
-  dqs.forEach(function(dq, idx){
-    var hasAns = !!(responses[dq.id] && responses[dq.id].score);
-    var isCur  = idx===currentQIdx;
-    h += '<button class="wiz-dot' + (isCur?' current':'') + (hasAns?' answered':'') + '" data-qi="' + idx + '" title="Q' + (idx+1) + (hasAns?' \u2713':'') + '"></button>';
+  // Nav
+  h+='<div class="wiz-nav">';
+  h+=isFirst?'<div></div>':'<button class="btn btn-secondary" id="prevBtn">\u2190 Back</button>';
+  h+='<div class="wiz-dots" role="navigation" aria-label="Question navigation">';
+  dqs.forEach(function(dq,idx){
+    var hasAns=!!(responses[dq.id]&&responses[dq.id].score), isCur=idx===currentQIdx;
+    h+='<button class="wiz-dot'+(isCur?' current':'')+(hasAns?' answered':'')+'" data-qi="'+idx+'" aria-label="Question '+(idx+1)+(hasAns?', answered':'')+(isCur?', current':'')+'" title="Q'+(idx+1)+(hasAns?' \u2713':'')+'"></button>';
   });
-  h += '</div>';
+  h+='</div>';
+  h+='<button class="btn btn-primary" id="nextBtn">'+(isLast?'View Summary \u2192':'Next \u2192')+'</button>';
+  h+='</div>';
+  h+='</div></div>';
 
-  h += '<button class="btn btn-primary" id="nextBtn">' + (isLast ? 'View Summary \u2192' : 'Next \u2192') + '</button>';
-  h += '</div>';
-  h += '</div></div>'; // wiz-wrap, wiz-scroll
+  var content=document.getElementById("content");
+  content.innerHTML=h;
 
-  var content = document.getElementById("content");
-  content.innerHTML = h;
+  // Change 8: focus question heading on navigation
+  var qh=content.querySelector("#wizQuestion"); if(qh) qh.focus();
+  var sc2=content.querySelector(".wiz-scroll"); if(sc2) sc2.scrollTop=0;
 
-  // Focus the scroll container at top
-  var scroll = content.querySelector(".wiz-scroll");
-  if(scroll) scroll.scrollTop = 0;
+  var qId=q.id;
 
-  var qId = q.id;
-
-  // Rating card clicks
+  // Rating card events
   content.querySelectorAll(".rating-card").forEach(function(btn){
-    btn.addEventListener("click", function(){
-      var score = parseInt(this.getAttribute("data-score"));
-      setField(qId, "score", score);
-
+    btn.addEventListener("click",function(){
+      var score=parseInt(this.getAttribute("data-score"));
+      setField(qId,"score",score);
       content.querySelectorAll(".rating-card").forEach(function(b){
-        var s = parseInt(b.getAttribute("data-score"))===score;
-        b.classList.toggle("selected", s);
-        b.setAttribute("aria-pressed", s);
+        var s=parseInt(b.getAttribute("data-score"))===score;
+        b.classList.toggle("selected",s);
+        b.setAttribute("aria-checked",s);
+        b.setAttribute("aria-label","Level "+b.getAttribute("data-score")+": "+b.querySelector(".rating-name").textContent+(s?" (selected)":""));
       });
-
-      // Update/create result row
-      var metaRow = content.querySelector(".meta-row");
-      if(metaRow){
-        var rr = metaRow.querySelector(".result-row");
-        if(!rr){ rr = document.createElement("div"); rr.className="result-row"; metaRow.appendChild(rr); }
-        var recNow = deriveRecommendation(questionMap[qId], getR(qId));
-        rr.innerHTML = '<span class="pri-badge ' + recNow.priority.toLowerCase() + '">' + recNow.priority + '</span>'
-                     + '<span class="wave-label">' + esc(recNow.upliftWave) + '</span>';
-      }
-
-      // Update dots
-      var dqsNow = byDomain[currentDomainIdx];
-      content.querySelectorAll(".wiz-dot").forEach(function(dot, idx){
-        var dq2 = dqsNow[idx];
-        if(dq2) dot.classList.toggle("answered", !!(responses[dq2.id] && responses[dq2.id].score));
-      });
-
+      updateResultRow(content,qId);
+      refreshDots(content,byDomain[currentDomainIdx]);
       refreshSidebar();
     });
   });
 
-  // Confidence buttons
+  // Confidence events
   content.querySelectorAll(".conf-btn").forEach(function(btn){
-    btn.addEventListener("click", function(){
-      var conf = this.getAttribute("data-conf");
-      setField(qId, "confidence", conf);
+    btn.addEventListener("click",function(){
+      var conf=this.getAttribute("data-conf");
+      setField(qId,"confidence",conf);
       content.querySelectorAll(".conf-btn").forEach(function(b){
-        b.classList.toggle("selected", b.getAttribute("data-conf")===conf);
+        var s=b.getAttribute("data-conf")===conf; b.classList.toggle("selected",s); b.setAttribute("aria-checked",s);
       });
+      updateResultRow(content,qId);
     });
   });
 
   // Notes
-  var notesEl = document.getElementById("wizNotes");
-  if(notesEl){
-    notesEl.addEventListener("input", function(){
-      if(!responses[qId]) responses[qId]={score:null,confidence:null,evidenceNotes:""};
-      responses[qId].evidenceNotes = this.value;
-      clearTimeout(this._t);
-      this._t = setTimeout(saveResponses, 600);
-    });
-  }
+  var notesEl=document.getElementById("wizNotes");
+  if(notesEl){ notesEl.addEventListener("input",function(){
+    if(!responses[qId]) responses[qId]={score:null,confidence:null,evidenceNotes:""};
+    responses[qId].evidenceNotes=this.value; clearTimeout(this._t); this._t=setTimeout(saveResponses,600);
+  }); }
 
-  // Prev / Next
-  var pb2 = document.getElementById("prevBtn");
-  if(pb2) pb2.addEventListener("click", prevQ);
-  var nb = document.getElementById("nextBtn");
-  if(nb) nb.addEventListener("click", nextQ);
-
-  // Dots
+  var pb2=document.getElementById("prevBtn"); if(pb2) pb2.addEventListener("click",prevQ);
+  var nb=document.getElementById("nextBtn");   if(nb)  nb.addEventListener("click",nextQ);
   content.querySelectorAll(".wiz-dot").forEach(function(dot){
-    var qi = parseInt(dot.getAttribute("data-qi"));
-    dot.addEventListener("click", function(){ goToQuestion(currentDomainIdx, qi); });
+    var qi2=parseInt(dot.getAttribute("data-qi"));
+    dot.addEventListener("click",function(){ goToQuestion(currentDomainIdx,qi2); });
   });
-
   refreshSidebar();
 }
 
-// ═══════════════════════════════════════════════════════════
-// SUMMARY VIEW
-// ═══════════════════════════════════════════════════════════
-function renderSummary(){
-  var arr = getRespArray();
-  var sc  = computeScores(modelConfig, arr);
-  var ans = answeredCount();
-  var tot = modelConfig.questions.length;
-  var domsScored = sc.domainSummaries.filter(function(d){ return typeof d.domainScore==="number"; }).length;
+function updateResultRow(content,qId){
+  var rec2=getR(qId).score?deriveRecommendation(questionMap[qId],getR(qId)):null;
+  if(!rec2) return;
+  var mr=content.querySelector(".meta-row"); if(!mr) return;
+  var rr=mr.querySelector(".result-row");
+  if(!rr){ rr=document.createElement("div"); rr.className="result-row"; rr.setAttribute("aria-live","polite"); mr.appendChild(rr); }
+  var h='<span class="pri-badge '+rec2.priority.toLowerCase()+'" aria-label="Performance priority: '+rec2.priority+'">'+rec2.priority+'</span>';
+  if(rec2.evidenceGap){ h+='<span class="badge badge-default evidence-gap-badge" aria-label="Evidence gap: low confidence">Evidence gap</span>'; }
+  h+='<span class="wave-label">'+esc(rec2.upliftWave)+'</span>';
+  rr.innerHTML=h;
+}
 
-  var h = '<div class="view-pad">';
-  h += '<div class="view-title">Assessment Summary</div>';
-  h += '<div class="view-sub">' + ans + ' of ' + tot + ' questions answered</div>';
-
-  // Stat cards
-  h += '<div class="stat-grid">';
-  h += '<div class="stat-card"><div class="stat-label">Overall Maturity Score</div>';
-  h += '<div class="stat-val" style="color:var(--o500)">' + (typeof sc.overallScore==="number" ? sc.overallScore.toFixed(2) : "\u2014") + '</div>';
-  h += '<div class="stat-sub">out of 5.00</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Completion</div>';
-  h += '<div class="stat-val">' + Math.round(ans/tot*100) + '%</div>';
-  h += '<div class="stat-sub">' + ans + ' / ' + tot + ' questions</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Domains Assessed</div>';
-  h += '<div class="stat-val">' + domsScored + ' / ' + modelConfig.domains.length + '</div></div>';
-  h += '</div>';
-
-  // Domain table
-  h += '<h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Domain Scores</h3>';
-  h += '<div class="table-wrap" style="margin-bottom:28px"><table class="table">';
-  h += '<thead><tr><th>Domain</th><th>Score</th><th>High conf.</th><th>Med. conf.</th><th>Low conf.</th></tr></thead><tbody>';
-  sc.domainSummaries.forEach(function(ds){
-    h += '<tr><td style="font-weight:500">' + esc(ds.domainName) + '</td>';
-    h += '<td>' + (typeof ds.domainScore==="number"
-          ? '<strong>' + ds.domainScore.toFixed(2) + '</strong> <span style="color:var(--g400);font-size:11px">/ 5.00</span>'
-          : '<span style="color:var(--g400)">\u2014</span>') + '</td>';
-    h += '<td><span class="badge badge-success">' + ds.confidenceCounts.high + '</span></td>';
-    h += '<td><span class="badge badge-warning">' + ds.confidenceCounts.medium + '</span></td>';
-    h += '<td><span class="badge badge-error">' + ds.confidenceCounts.low + '</span></td>';
-    h += '</tr>';
+function refreshDots(content,dqs){
+  content.querySelectorAll(".wiz-dot").forEach(function(dot,idx){
+    var dq2=dqs[idx]; if(!dq2) return;
+    var hasAns=!!(responses[dq2.id]&&responses[dq2.id].score);
+    dot.classList.toggle("answered",hasAns);
+    dot.setAttribute("aria-label","Question "+(idx+1)+(hasAns?", answered":"")+(idx===currentQIdx?", current":""));
   });
-  h += '</tbody></table></div>';
-
-  h += '<div style="display:flex;gap:10px;flex-wrap:wrap">';
-  h += '<button class="btn btn-primary" onclick="switchView(\'wizard\')">\u2190 Back to Assessment</button>';
-  h += '<button class="btn btn-secondary" onclick="exportCSV()">Export CSV</button>';
-  h += '<button class="btn btn-secondary" onclick="exportJSON()">Export JSON</button>';
-  h += '</div></div>';
-  document.getElementById("content").innerHTML = h;
 }
 
 // ═══════════════════════════════════════════════════════════
-// GAPS VIEW
+// SUMMARY VIEW — Changes 1, 5
 // ═══════════════════════════════════════════════════════════
+function renderSummary(){
+  var arr=getRespArray(), sc=computeScores(modelConfig,arr);
+  var ans=answeredCount(), tot=modelConfig.questions.length;
+  var domsScored=sc.domainSummaries.filter(function(d){ return typeof d.domainScore==="number"; }).length;
+
+  var h='<div class="view-pad">';
+  h+='<div class="view-title">Assessment Summary</div>';
+  h+='<p class="view-sub">'+ans+' of '+tot+' questions answered &nbsp;&middot;&nbsp; Scoring: <em>Question-weighted average of answered questions</em></p>';
+  h+='<p class="completeness-disclaimer" role="note">Scores are based on answered questions only. Low completion reduces reliability of domain scores.</p>';
+
+  h+='<div class="stat-grid">';
+  h+='<div class="stat-card"><div class="stat-label">Overall Maturity Score</div>';
+  h+='<div class="stat-val" style="color:var(--o500)">'+(typeof sc.overallScore==="number"?sc.overallScore.toFixed(2):"\u2014")+'</div>';
+  h+='<div class="stat-sub">out of 5.00</div></div>';
+  h+='<div class="stat-card"><div class="stat-label">Completion</div>';
+  h+='<div class="stat-val">'+(tot?Math.round(ans/tot*100):0)+'%</div>';
+  h+='<div class="stat-sub">'+ans+' / '+tot+' questions</div></div>';
+  h+='<div class="stat-card"><div class="stat-label">Domains Assessed</div>';
+  h+='<div class="stat-val">'+domsScored+' / '+modelConfig.domains.length+'</div></div>';
+  h+='</div>';
+
+  // Change 5: domain table with Answered + Completion % columns
+  h+='<h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Domain Scores</h3>';
+  h+='<div class="table-wrap" style="margin-bottom:28px"><table class="table">';
+  h+='<thead><tr><th>Domain</th><th>Score</th><th>Answered</th><th>Completion</th><th>High conf.</th><th>Med. conf.</th><th>Low conf.</th></tr></thead><tbody>';
+  sc.domainSummaries.forEach(function(ds){
+    var pct2=ds.totalQuestions?Math.round(ds.answeredQuestions/ds.totalQuestions*100):0;
+    h+='<tr><td style="font-weight:500">'+esc(ds.domainName)+'</td>';
+    h+='<td>'+(typeof ds.domainScore==="number"
+          ?'<strong>'+ds.domainScore.toFixed(2)+'</strong> <span style="color:var(--g400);font-size:11px">/ 5.00</span>'
+          :'<span style="color:var(--g400)">\u2014</span>')+'</td>';
+    h+='<td>'+ds.answeredQuestions+' / '+ds.totalQuestions+'</td>';
+    h+='<td>'+pct2+'%</td>';
+    h+='<td><span class="badge badge-success">'+ds.confidenceCounts.high+'</span></td>';
+    h+='<td><span class="badge badge-warning">'+ds.confidenceCounts.medium+'</span></td>';
+    h+='<td><span class="badge badge-error">'+ds.confidenceCounts.low+'</span></td>';
+    h+='</tr>';
+  });
+  h+='</tbody></table></div>';
+
+  h+='<div style="display:flex;gap:10px;flex-wrap:wrap">';
+  h+='<button class="btn btn-primary" onclick="switchView(\'wizard\')">\u2190 Back to Assessment</button>';
+  h+='<button class="btn btn-secondary" onclick="exportCSV()">Export CSV</button>';
+  h+='<button class="btn btn-secondary" onclick="exportJSON()">Export JSON</button>';
+  h+='</div></div>';
+  document.getElementById("content").innerHTML=h;
+}
+
+// ═══════════════════════════════════════════════════════════
+// GAPS VIEW — Change 4: filters, severity ranking, open-in-assessment
+// ═══════════════════════════════════════════════════════════
+var gapsState={ showPerformance:true, showEvidence:false,
+                dimensionFilter:"All", domainFilter:"All", sortBy:"severity" };
+
 function renderGaps(){
-  var arr  = getRespArray();
-  var recs = deriveAllRecommendations(modelConfig, arr);
-  var ord  = {High:0,Medium:1,Low:2,Sustain:3,"":4};
-  recs.sort(function(a,b){
-    var pa = ord[a.priority]!==undefined ? ord[a.priority] : 4;
-    var pb = ord[b.priority]!==undefined ? ord[b.priority] : 4;
-    if(pa!==pb) return pa-pb;
-    return ((responses[a.questionId]&&responses[a.questionId].score)||99)
-         - ((responses[b.questionId]&&responses[b.questionId].score)||99);
+  var arr=getRespArray(), recs=deriveAllRecommendations(modelConfig,arr);
+  var priOrd={High:0,Medium:1,Low:2,Sustain:3,"":4};
+
+  var enriched=recs.map(function(rec){
+    var q2=questionMap[rec.questionId], d2=q2?domainMap[q2.domainId]:null;
+    var c2=q2?capMap[q2.capabilityId]:null, r2=responses[rec.questionId]||{};
+    return { rec:rec, q:q2, domain:d2, cap:c2,
+             score:r2.score, confidence:r2.confidence,
+             severity:(5-(r2.score||5)),
+             isPerformanceGap: rec.priority!=="Sustain"&&rec.priority!=="",
+             isEvidenceGap: rec.evidenceGap };
   });
 
-  var h = '<div class="view-pad">';
-  h += '<div class="view-title">Top Gaps &amp; Recommendations</div>';
-  h += '<div class="view-sub">Sorted by priority (High first) then score. Recommended actions from the framework.</div>';
+  var h='<div class="view-pad">';
+  h+='<div class="view-title">Top Gaps &amp; Recommendations</div>';
+  h+='<div class="view-sub">Improvement backlog. Performance gaps = score &lt; 5. Evidence gaps = low-confidence responses.</div>';
 
-  if(recs.length===0){
-    h += '<div class="empty-state"><div class="empty-title">No scored questions yet</div>';
-    h += '<div class="empty-desc">Score questions in the Assessment tab to see gaps and recommendations here.</div></div>';
+  // Controls
+  h+='<div class="gaps-controls">';
+  h+='<div class="gaps-toggles">';
+  h+='<label class="toggle-label"><input type="checkbox" id="togPerf"'+(gapsState.showPerformance?' checked':'')+'>Show performance gaps</label>';
+  h+='<label class="toggle-label"><input type="checkbox" id="togEvid"'+(gapsState.showEvidence?' checked':'')+'>Show evidence gaps</label>';
+  h+='</div><div class="gaps-selects">';
+  h+='<label>Dimension: <select id="selDim"><option value="All"'+(gapsState.dimensionFilter==="All"?' selected':'')+'>All</option><option value="Design"'+(gapsState.dimensionFilter==="Design"?' selected':'')+'>Design</option><option value="Adoption"'+(gapsState.dimensionFilter==="Adoption"?' selected':'')+'>Adoption</option></select></label>';
+
+  var domOpts='<option value="All"'+(gapsState.domainFilter==="All"?' selected':'')+'>All domains</option>';
+  modelConfig.domains.forEach(function(d){
+    domOpts+='<option value="'+esc(d.id)+'"'+(gapsState.domainFilter===d.id?' selected':'')+'>'+esc(d.name)+'</option>';
+  });
+  h+='<label>Domain: <select id="selDomain">'+domOpts+'</select></label>';
+  h+='<label>Sort by: <select id="selSort">';
+  h+='<option value="severity"'+(gapsState.sortBy==="severity"?' selected':'')+'>Severity</option>';
+  h+='<option value="priority_score"'+(gapsState.sortBy==="priority_score"?' selected':'')+'>Priority then score</option>';
+  h+='<option value="domain_priority"'+(gapsState.sortBy==="domain_priority"?' selected':'')+'>Domain then priority</option>';
+  h+='</select></label></div></div>';
+
+  // Filter
+  var filtered=enriched.filter(function(item){
+    if(gapsState.dimensionFilter!=="All"&&item.q&&item.q.dimension!==gapsState.dimensionFilter) return false;
+    if(gapsState.domainFilter!=="All"&&item.domain&&item.domain.id!==gapsState.domainFilter) return false;
+    var show=false;
+    if(gapsState.showPerformance&&item.isPerformanceGap) show=true;
+    if(gapsState.showEvidence&&item.isEvidenceGap) show=true;
+    return show;
+  });
+
+  // Sort
+  if(gapsState.sortBy==="severity"){
+    filtered.sort(function(a,b){
+      if(b.severity!==a.severity) return b.severity-a.severity;
+      if(a.score!==b.score) return (a.score||99)-(b.score||99);
+      var ca=a.confidence==="Low"?0:a.confidence==="Medium"?1:2;
+      var cb=b.confidence==="Low"?0:b.confidence==="Medium"?1:2;
+      return ca-cb;
+    });
+  } else if(gapsState.sortBy==="priority_score"){
+    filtered.sort(function(a,b){
+      var pa=priOrd[a.rec.priority]!==undefined?priOrd[a.rec.priority]:4;
+      var pb=priOrd[b.rec.priority]!==undefined?priOrd[b.rec.priority]:4;
+      if(pa!==pb) return pa-pb; return (a.score||99)-(b.score||99);
+    });
   } else {
-    recs.forEach(function(rec, idx){
-      var q2 = questionMap[rec.questionId];
-      var c2 = q2 ? capMap[q2.capabilityId] : null;
-      var d2 = q2 ? domainMap[q2.domainId]  : null;
-      var r2 = responses[rec.questionId];
-      h += '<div class="gap-card">';
-      h += '<div class="gap-rank">' + (idx+1) + '</div>';
-      h += '<div class="gap-info">';
-      h += '<div class="gap-title">' + (q2 ? esc(q2.question) : rec.questionId) + '</div>';
-      h += '<div class="gap-meta">';
-      if(d2) h += esc(d2.name);
-      if(c2) h += ' \u2192 ' + esc(c2.name);
-      h += ' &middot; Score: <strong>' + (r2?r2.score:'-') + '</strong>';
-      h += ' &middot; <span class="pri-badge ' + rec.priority.toLowerCase() + '">' + rec.priority + '</span>';
-      h += ' &middot; ' + esc(rec.upliftWave);
-      h += '</div>';
-      if(rec.suggestedRecommendation){
-        h += '<div class="gap-action">' + esc(rec.suggestedRecommendation) + '</div>';
-      }
-      h += '</div></div>';
+    filtered.sort(function(a,b){
+      var da=a.domain?a.domain.id:"", db=b.domain?b.domain.id:"";
+      if(da!==db) return da<db?-1:1;
+      var pa=priOrd[a.rec.priority]!==undefined?priOrd[a.rec.priority]:4;
+      var pb=priOrd[b.rec.priority]!==undefined?priOrd[b.rec.priority]:4;
+      return pa-pb;
     });
   }
-  h += '</div>';
-  document.getElementById("content").innerHTML = h;
+
+  h+='<div id="gapsListContainer">';
+  if(filtered.length===0){
+    h+='<div class="empty-state"><div class="empty-title">No items match your filters</div>';
+    h+='<div class="empty-desc">'+(enriched.length===0?'Score questions in the Assessment tab to see gaps here.':'Try adjusting your filter settings.')+'</div></div>';
+  } else {
+    filtered.forEach(function(item,idx){
+      h+='<div class="gap-card"><div class="gap-rank">'+(idx+1)+'</div><div class="gap-info">';
+      h+='<div class="gap-title">'+(item.q?esc(item.q.question):item.rec.questionId)+'</div>';
+      h+='<div class="gap-meta">';
+      if(item.domain) h+=esc(item.domain.name);
+      if(item.cap)    h+=' \u2192 '+esc(item.cap.name);
+      if(item.q)      h+=' &middot; <span class="crumb-dim '+item.q.dimension.toLowerCase()+'">'+esc(item.q.dimension)+'</span>';
+      h+=' &middot; Score: <strong>'+(item.score||'&mdash;')+'</strong>';
+      h+=' &middot; Confidence: '+(item.confidence||'&mdash;');
+      h+='</div>';
+      h+='<div class="gap-badges">';
+      if(item.isPerformanceGap){
+        h+='<span class="pri-badge '+item.rec.priority.toLowerCase()+'" aria-label="Performance priority: '+item.rec.priority+'">'+item.rec.priority+'</span> ';
+        h+='<span class="wave-label">'+esc(item.rec.upliftWave)+'</span>';
+      }
+      if(item.isEvidenceGap){
+        h+=' <span class="badge badge-default evidence-gap-badge" aria-label="Evidence gap">Evidence gap</span>';
+      }
+      h+='</div>';
+      if(item.rec.suggestedRecommendation){
+        h+='<div class="gap-action">'+esc(item.rec.suggestedRecommendation)+'</div>';
+      }
+      // Change 4: open in assessment
+      if(item.q){
+        var di2=modelConfig.domains.findIndex(function(d){ return d.id===item.q.domainId; });
+        var qi2=di2>=0&&byDomain[di2]?byDomain[di2].findIndex(function(q){ return q.id===item.q.id; }):-1;
+        if(di2>=0&&qi2>=0){
+          h+='<button class="btn btn-ghost btn-sm open-in-assessment" data-di="'+di2+'" data-qi="'+qi2+'" style="margin-top:6px;padding-left:0">Open in assessment \u2192</button>';
+        }
+      }
+      h+='</div></div>';
+    });
+  }
+  h+='</div></div>';
+  document.getElementById("content").innerHTML=h;
+
+  // Bind controls
+  function rerender(){
+    var tp=document.getElementById("togPerf");  if(tp) gapsState.showPerformance=tp.checked;
+    var te=document.getElementById("togEvid");  if(te) gapsState.showEvidence=te.checked;
+    var sd=document.getElementById("selDim");   if(sd) gapsState.dimensionFilter=sd.value;
+    var sdo=document.getElementById("selDomain");if(sdo) gapsState.domainFilter=sdo.value;
+    var ss=document.getElementById("selSort");  if(ss) gapsState.sortBy=ss.value;
+    renderGaps();
+  }
+  ["togPerf","togEvid","selDim","selDomain","selSort"].forEach(function(id){
+    var el2=document.getElementById(id);
+    if(el2) el2.addEventListener(el2.tagName==="SELECT"?"change":"change",rerender);
+  });
+  document.querySelectorAll(".open-in-assessment").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      goToQuestion(parseInt(this.getAttribute("data-di")),parseInt(this.getAttribute("data-qi")));
+    });
+  });
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -905,69 +1008,76 @@ function renderGaps(){
 // ═══════════════════════════════════════════════════════════
 function syncTabs(){
   document.querySelectorAll(".view-tab").forEach(function(t){
-    t.classList.toggle("active", t.getAttribute("data-view")===currentView);
+    t.classList.toggle("active",t.getAttribute("data-view")===currentView);
   });
 }
-
 function switchView(v){
-  currentView = v;
-  syncTabs();
-  refreshSidebar();
+  currentView=v; syncTabs(); refreshSidebar();
   if(v==="wizard") renderWizard();
   else if(v==="summary") renderSummary();
   else if(v==="gaps") renderGaps();
 }
 
 // ═══════════════════════════════════════════════════════════
-// EXPORT
+// EXPORT — Change 6: analysis-ready JSON + CSV
 // ═══════════════════════════════════════════════════════════
 function exportJSON(){
-  var arr  = getRespArray();
-  var sc   = computeScores(modelConfig, arr);
-  var recs = deriveAllRecommendations(modelConfig, arr);
-  var rm   = {};
+  var arr=getRespArray(), sc=computeScores(modelConfig,arr);
+  var recs=deriveAllRecommendations(modelConfig,arr), rm={};
   recs.forEach(function(r){ rm[r.questionId]=r; });
-  var out = {
-    meta:{exportedAt:new Date().toISOString(), version:modelConfig.meta.version,
-          total:modelConfig.questions.length, answered:answeredCount()},
+  var completionByDomain={};
+  sc.domainSummaries.forEach(function(ds){
+    completionByDomain[ds.domainId]={ domainName:ds.domainName, answered:ds.answeredQuestions, total:ds.totalQuestions };
+  });
+  var out={
+    meta:{ exportedAt:new Date().toISOString(), frameworkVersion:modelConfig.meta.version,
+           scoringMethod:"question_average", totalQuestions:modelConfig.questions.length,
+           answeredQuestions:answeredCount() },
     overallScore:sc.overallScore,
+    completionByDomain:completionByDomain,
     domainSummaries:sc.domainSummaries,
-    responses:arr.map(function(r){
-      var rec=rm[r.questionId]||{};
-      return {questionId:r.questionId,score:r.score,confidence:r.confidence,
-              evidenceNotes:r.evidenceNotes,suggestedRecommendation:rec.suggestedRecommendation||"",
-              priority:rec.priority||"",upliftWave:rec.upliftWave||""};
+    responses:modelConfig.questions.map(function(q){
+      var r=getR(q.id), rec=rm[q.id]||{};
+      var d2=domainMap[q.domainId]||{}, c2=capMap[q.capabilityId]||{};
+      return { questionId:q.id, questionText:q.question,
+               domainId:q.domainId, domainName:d2.name||"",
+               capabilityId:q.capabilityId, capabilityName:c2.name||"",
+               dimension:q.dimension, score:r.score, confidence:r.confidence,
+               evidenceNotes:r.evidenceNotes, performancePriority:rec.priority||"",
+               upliftWave:rec.upliftWave||"", evidenceGap:!!(rec.evidenceGap),
+               suggestedRecommendation:rec.suggestedRecommendation||"" };
     })
   };
   dl(new Blob([JSON.stringify(out,null,2)],{type:"application/json"}),
-     "maturity-" + new Date().toISOString().slice(0,10) + ".json");
+     "maturity-"+new Date().toISOString().slice(0,10)+".json");
 }
 
 function exportCSV(){
-  var arr  = getRespArray();
-  var recs = deriveAllRecommendations(modelConfig, arr);
-  var rm   = {};
+  var arr=getRespArray(), sc=computeScores(modelConfig,arr);
+  var recs=deriveAllRecommendations(modelConfig,arr), rm={};
   recs.forEach(function(r){ rm[r.questionId]=r; });
-  var rows = [["domainId","domainName","capabilityId","capabilityName","dimension","questionId",
-               "score","confidence","evidenceNotes","suggestedRecommendation","priority","upliftWave"].join(",")];
+  var overall=typeof sc.overallScore==="number"?sc.overallScore.toFixed(4):"";
+  var comp=modelConfig.questions.length?Math.round(answeredCount()/modelConfig.questions.length*100)+"%":"0%";
+  var rows=[["frameworkVersion","scoringMethod","overallScore","totalCompletion",
+             "domainId","domainName","capabilityId","capabilityName","dimension",
+             "questionId","questionText","score","confidence","evidenceNotes",
+             "performancePriority","upliftWave","evidenceGap","suggestedRecommendation"].join(",")];
   modelConfig.questions.forEach(function(q){
-    var r = getR(q.id);
-    var rec = rm[q.id]||{};
-    rows.push([q.domainId, csvQ((domainMap[q.domainId]||{}).name||""),
-               q.capabilityId, csvQ((capMap[q.capabilityId]||{}).name||""),
-               q.dimension, q.id, r.score||"", r.confidence||"",
-               csvQ(r.evidenceNotes||""), csvQ(rec.suggestedRecommendation||""),
-               rec.priority||"", rec.upliftWave||""].join(","));
+    var r=getR(q.id), rec=rm[q.id]||{};
+    var d2=domainMap[q.domainId]||{}, c2=capMap[q.capabilityId]||{};
+    rows.push([csvQ(modelConfig.meta.version),"question_average",overall,comp,
+               q.domainId,csvQ(d2.name||""),q.capabilityId,csvQ(c2.name||""),q.dimension,
+               q.id,csvQ(q.question||""),r.score||"",r.confidence||"",
+               csvQ(r.evidenceNotes||""),rec.priority||"",rec.upliftWave||"",
+               rec.evidenceGap?"true":"false",csvQ(rec.suggestedRecommendation||"")].join(","));
   });
-  dl(new Blob([rows.join("\n")],{type:"text/csv;charset=utf-8;"}),
-     "maturity-" + new Date().toISOString().slice(0,10) + ".csv");
+  dl(new Blob([rows.join("\r\n")],{type:"text/csv;charset=utf-8;"}),
+     "maturity-"+new Date().toISOString().slice(0,10)+".csv");
 }
 
-function dl(blob, name){
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement("a");
-  a.href = url; a.download = name; a.click();
-  URL.revokeObjectURL(url);
+function dl(blob,name){
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement("a"); a.href=url; a.download=name; a.click(); URL.revokeObjectURL(url);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -976,31 +1086,25 @@ function dl(blob, name){
 function showResetModal(){ document.getElementById("resetModal").classList.remove("hidden"); }
 function hideReset()     { document.getElementById("resetModal").classList.add("hidden"); }
 function doReset(){
-  responses={};
-  currentDomainIdx=0; currentQIdx=0;
+  responses={}; currentDomainIdx=0; currentQIdx=0;
   localStorage.removeItem(STORAGE_KEY);
-  hideReset();
-  switchView("wizard");
+  hideReset(); hideVersionBanner(); switchView("wizard");
 }
 
 // ═══════════════════════════════════════════════════════════
-// KEYBOARD
+// KEYBOARD SHORTCUTS
 // ═══════════════════════════════════════════════════════════
-document.addEventListener("keydown", function(e){
+document.addEventListener("keydown",function(e){
   if(currentView!=="wizard") return;
   if(e.target.tagName==="TEXTAREA"||e.target.tagName==="INPUT") return;
-  if(e.key>="1"&&e.key<="5"){
-    var c = document.querySelector('.rating-card[data-score="'+e.key+'"]');
-    if(c) c.click();
-  } else if(e.key==="ArrowRight"){ e.preventDefault(); nextQ(); }
-    else if(e.key==="ArrowLeft") { e.preventDefault(); prevQ(); }
+  if(e.key>="1"&&e.key<="5"){ var c=document.querySelector('.rating-card[data-score="'+e.key+'"]'); if(c) c.click(); }
+  else if(e.key==="ArrowRight"){ e.preventDefault(); nextQ(); }
+  else if(e.key==="ArrowLeft") { e.preventDefault(); prevQ(); }
 });
 
-// ═══════════════════════════════════════════════════════════
-// VIEW TAB HANDLERS
-// ═══════════════════════════════════════════════════════════
+// Tab click handlers
 document.querySelectorAll(".view-tab").forEach(function(t){
-  t.addEventListener("click", function(){ switchView(this.getAttribute("data-view")); });
+  t.addEventListener("click",function(){ switchView(this.getAttribute("data-view")); });
 });
 
 // ═══════════════════════════════════════════════════════════
@@ -1011,6 +1115,7 @@ document.querySelectorAll(".view-tab").forEach(function(t){
   refreshSidebar();
   renderWizard();
 })();
+
 </script>
 </body>
 </html>
