@@ -12072,9 +12072,9 @@ function loadExampleData() {
       domTab.click();
       setTimeout(function () {
         document
-          .querySelectorAll("#domainBlockPanel .fb-bb-item")
-          .forEach(function (bb, i) {
-            if (i < 3) bb.click();
+          .querySelectorAll("#domainBlockPanel .fb-bb-item .fb-bb-check")
+          .forEach(function (check, i) {
+            if (i < 3) check.click();
           });
       }, 200);
     }
@@ -12089,8 +12089,11 @@ function loadExampleData() {
     if (techTab) {
       techTab.click();
       setTimeout(function () {
-        var firstSub = document.querySelector("#techDetailPanel .fb-chip");
-        if (firstSub) firstSub.click();
+        document
+          .querySelectorAll("#techDetailPanel .fb-chip")
+          .forEach(function (chip, i) {
+            if (i < 2) chip.click();
+          });
       }, 200);
     }
   }, 1100);
@@ -12122,8 +12125,11 @@ function loadExampleData() {
     if (regTab) {
       regTab.click();
       setTimeout(function () {
-        var firstReg = document.querySelector("#regDetailPanel .fb-check-item");
-        if (firstReg) firstReg.click();
+        document
+          .querySelectorAll("#regDetailPanel .fb-check-item")
+          .forEach(function (item, i) {
+            if (i < 2) item.click();
+          });
       }, 200);
     }
   }, 1500);
