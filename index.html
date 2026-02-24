@@ -10300,6 +10300,22 @@ function loadAllPrompts(workflow) {
 // P1.1 injects global standards + full engagement data to establish session context.
 // All subsequent prompts (P1.2 onwards) receive instruction only — they reference
 // the engagement data already established in session history via P1.1.
+//
+// AUDIT (engagement context exclusion — P1.2+):
+// Confirmed: for any pid !== "P1.1", this function returns `instruction` verbatim
+// without injecting any engagement context data block, regardless of whether
+// {{PROMPT_DATA}} or any other placeholder is present. The engagement context
+// (formData: engagement_context, industry, objectives, service_offerings, etc.)
+// is never injected into P1.2+ prompts here.
+//
+// AUDIT (P1.2–P2.8 instruction strings):
+// Confirmed: no instruction string for P1.2–P2.8 contains:
+//   (a) a hardcoded engagement context JSON block (keys: engagement_context,
+//       industry, objectives, service_offerings, etc. at the top level), or
+//   (b) an instruction asking Claude to output/echo such a JSON block.
+// All engagement_context references in P1.2+ instructions are either:
+//   — sub-keys within legitimate Px_CANONICAL_HANDOFF output schemas, or
+//   — prose field references used for inference guidance (not JSON output specs).
 
 function buildPromptText(prompt, promptJson, data) {
   const instruction =
@@ -10316,8 +10332,9 @@ function buildPromptText(prompt, promptJson, data) {
       .replace("{{ENGAGEMENT_DATA}}", briefJson);
   }
 
-  // All other prompts — instruction only
-  // Engagement data is already established in session history via P1.1
+  // All other prompts — instruction only.
+  // Engagement data is already established in session history via P1.1.
+  // No engagement context injection occurs here for P1.2+ under any condition.
   return instruction;
 }
 
