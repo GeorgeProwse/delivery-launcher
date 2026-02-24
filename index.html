@@ -271,7 +271,7 @@ body {
   outline: none;
 }
 #lp-start-btn:hover {
-  background-color: #FE7C39;
+  background-color: var(--orange500);
   color: #fff;
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
@@ -694,7 +694,7 @@ select:focus,
 textarea:focus {
   outline: none;
   border-color: var(--orange500);
-  box-shadow: 0 0 0 2px rgba(253, 81, 8, 0.07);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.08);
 }
 .field.has-error input[type="text"],
 .field.has-error input[type="date"],
@@ -1273,7 +1273,7 @@ textarea {
   border-color: var(--orange500);
   color: #fff;
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(253, 81, 8, 0.28);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 .workflow-tip-banner {
@@ -1393,7 +1393,7 @@ textarea {
 }
 .prompt-card.active-card {
   border-left-color: var(--orange500);
-  box-shadow: 0 2px 8px rgba(253, 81, 8, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 .prompt-card.completed-card {
   border-left-color: var(--success);
@@ -1414,16 +1414,16 @@ textarea {
 
 @keyframes cardPulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(253, 81, 8, 0);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
   }
   30% {
-    box-shadow: 0 0 0 6px rgba(253, 81, 8, 0.25);
+    box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.1);
   }
   70% {
-    box-shadow: 0 0 0 10px rgba(253, 81, 8, 0.1);
+    box-shadow: 0 0 0 10px rgba(0, 0, 0, 0.04);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(253, 81, 8, 0);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
   }
 }
 .prompt-card.card-pulse {
@@ -1513,7 +1513,7 @@ textarea {
 .badge-ready {
   background-color: var(--orange100);
   color: var(--orange500);
-  border: 1px solid rgba(253, 81, 8, 0.15);
+  border: 1px solid var(--orange300);
 }
 .badge-done {
   background-color: var(--successBg);
@@ -1673,11 +1673,11 @@ textarea {
   gap: 6px;
   transition: background-color 200ms ease, box-shadow 200ms ease;
   font-family: system-ui, sans-serif;
-  box-shadow: 0 2px 6px rgba(253, 81, 8, 0.25);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 .btn-copy:hover {
   background-color: #d94000;
-  box-shadow: 0 3px 10px rgba(253, 81, 8, 0.35);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
 }
 .btn-copy.copied {
   background-color: var(--success);
@@ -3055,7 +3055,7 @@ textarea {
 .fb-step.active .fb-step-num {
   background: var(--orange500);
   color: #fff;
-  box-shadow: 0 0 0 4px rgba(253, 81, 8, 0.2);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 .fb-step.active .fb-step-label {
   color: var(--orange500);
@@ -3191,7 +3191,7 @@ textarea {
 .fb-field textarea:focus {
   outline: none;
   border-color: var(--orange500);
-  box-shadow: 0 0 0 3px rgba(253, 81, 8, 0.1);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
 }
 .fb-field-error {
   font-size: 11px;
