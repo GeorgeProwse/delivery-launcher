@@ -221,8 +221,63 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .breakdown-table td{padding:9px 12px;border-bottom:1px solid var(--grey100);}
 .breakdown-table tfoot td{background:var(--surfaceColor);font-weight:700;}
 
+/* Context summary bar */
+.context-bar{position:sticky;top:64px;z-index:99;background:var(--white);border-bottom:1px solid var(--borderColor);padding:8px 32px;display:none;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;}
+.context-bar.has-content{display:flex;}
+.ctx-pill{padding:2px 8px;background:var(--orange100);color:var(--orange500);font-size:11px;font-weight:500;}
+.ctx-pill-filter{padding:2px 8px;background:var(--infoBg);color:#1e40af;font-size:11px;font-weight:500;}
+.ctx-count{font-size:11px;font-weight:600;color:var(--secondaryText);}
+.ctx-spacer{flex:1;}
+.ctx-reset{background:none;border:none;font-size:11px;color:var(--secondaryText);cursor:pointer;text-decoration:underline;font-family:system-ui,sans-serif;padding:2px 4px;}
+.ctx-reset:hover{color:var(--textColor);}
+
+/* Top recommendation banner */
+.top-rec-banner{background:var(--cardBg);border:1px solid var(--borderColor);border-left:4px solid var(--orange500);padding:18px 20px;margin-bottom:16px;animation:fadeIn .2s ease;}
+.top-rec-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.top-rec-name{font-size:16px;font-weight:700;}
+.top-rec-score{font-size:20px;font-weight:700;margin-left:auto;}
+.top-rec-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.top-rec-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--secondaryText);margin-bottom:6px;}
+.top-rec-list{list-style:none;font-size:12px;line-height:1.6;display:flex;flex-direction:column;gap:3px;}
+.top-rec-list li{display:flex;align-items:flex-start;gap:6px;}
+.top-rec-list li::before{content:'';display:none;}
+
+/* Compare mode */
+.compare-check{width:15px;height:15px;cursor:pointer;accent-color:var(--orange500);flex-shrink:0;}
+.compare-tray{position:fixed;bottom:0;left:0;right:0;z-index:99;background:var(--white);border-top:1px solid var(--borderColor);padding:10px 32px;display:flex;align-items:center;gap:12px;box-shadow:0 -2px 8px rgba(0,0,0,.08);animation:slideUp .2s ease;}
+.compare-tray-name{font-size:13px;font-weight:600;}
+.compare-max-msg{font-size:11px;color:var(--error);font-weight:500;animation:fadeIn .2s ease;}
+
+/* Matrix sticky */
+.matrix-table thead th{position:sticky;top:0;z-index:2;}
+.matrix-table td:first-child,.matrix-table th:first-child{position:sticky;left:0;z-index:1;background:var(--white);}
+.matrix-table thead th:first-child{z-index:3;background:var(--surfaceColor);}
+.matrix-table tr:hover td:first-child{background:var(--surfaceColor);}
+.matrix-controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px;}
+.matrix-controls label{font-size:11px;font-weight:600;color:var(--secondaryText);text-transform:uppercase;letter-spacing:.5px;}
+.matrix-controls select,.matrix-controls input[type=text]{padding:6px 10px;border:1px solid var(--borderColor);font-size:12px;font-family:system-ui,sans-serif;background:var(--white);color:var(--textColor);outline:none;}
+.matrix-controls select:focus,.matrix-controls input[type=text]:focus{border-color:var(--orange500);}
+
+/* Modal executive summary */
+.exec-summary{padding:14px 16px;background:var(--surfaceColor);margin-bottom:18px;border-left:3px solid var(--orange500);}
+.exec-summary-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+.exec-summary-score{font-size:20px;font-weight:700;margin-left:auto;}
+.exec-fit{font-size:13px;color:var(--secondaryText);margin-bottom:10px;line-height:1.5;}
+.exec-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.exec-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--secondaryText);margin-bottom:4px;}
+.exec-list{list-style:none;font-size:12px;line-height:1.5;display:flex;flex-direction:column;gap:2px;}
+.exec-list li{display:flex;align-items:flex-start;gap:5px;}
+.modal-copy-actions{display:flex;gap:8px;margin-bottom:18px;}
+
+/* Focus-visible styles */
+.nav-tab:focus-visible,.chip:focus-visible,.filter-select:focus-visible,.btn:focus-visible,.modal-close:focus-visible,.view-toggle-btn:focus-visible,.filter-btn:focus-visible,.tier-pill:focus-visible,.ctx-reset:focus-visible{outline:2px solid var(--orange500);outline-offset:2px;}
+input[type=range]:focus-visible{outline:2px solid var(--orange500);outline-offset:2px;}
+input[type=checkbox]:focus-visible{outline:2px solid var(--orange500);outline-offset:1px;}
+.chip-info:focus-visible{outline:2px solid var(--orange500);outline-offset:1px;border-color:var(--orange500);color:var(--orange500);}
+.tooltip-wrap.tooltip-active .tooltip-box{opacity:1;}
+
 footer{text-align:center;padding:24px;font-size:12px;color:var(--secondaryText);border-top:1px solid var(--borderColor);background:var(--cardBg);margin-top:48px;}
-@media(max-width:640px){.content{padding:16px 12px}header{padding:0 16px}.nav-wrap{padding:0 12px}.header-subtitle{display:none}}
+@media(max-width:640px){.content{padding:16px 12px}header{padding:0 16px}.nav-wrap{padding:0 12px}.header-subtitle{display:none}.top-rec-cols,.exec-cols{grid-template-columns:1fr}.context-bar{padding:8px 12px}}
 </style>
 </head>
 <body>
@@ -264,6 +319,8 @@ footer{text-align:center;padding:24px;font-size:12px;color:var(--secondaryText);
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Decision Guide
   </button>
 </div>
+
+<div id="context-bar" class="context-bar"></div>
 
 <div class="content">
 
@@ -351,6 +408,7 @@ footer{text-align:center;padding:24px;font-size:12px;color:var(--secondaryText);
       <button class="view-toggle-btn" id="res-table-btn" onclick="setView('result','table')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Table</button>
     </div>
   </div>
+  <div id="top-rec-banner"></div>
   <div id="result-disq-banner" style="display:none;margin-bottom:14px"></div>
   <div id="result-card-view"></div>
   <div id="result-table-view" style="display:none"><div class="card" style="padding:0;overflow:hidden"><table class="data-table" id="result-table"></table></div></div>
@@ -371,7 +429,17 @@ footer{text-align:center;padding:24px;font-size:12px;color:var(--secondaryText);
       <button class="view-toggle-btn" id="mat-table-btn" onclick="setView('matrix','table')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Table</button>
     </div>
   </div>
-  <div id="matrix-grid-view"><div class="card" style="padding:10px"><div class="matrix-wrap"><table class="matrix-table" id="matrix-table"></table></div></div></div>
+  <div class="matrix-controls">
+    <label>Sort tools by</label>
+    <select id="matrix-sort-select" onchange="matrixSort=this.value;renderMatrix()">
+      <option value="score">Weighted score (desc)</option>
+      <option value="tier">Tier (asc), then score</option>
+      <option value="name">Name (A-Z)</option>
+    </select>
+    <label style="margin-left:8px">Filter criteria</label>
+    <input type="text" id="matrix-criteria-filter" placeholder="Type to filter..." oninput="matrixCriteriaFilter=this.value.toLowerCase();renderMatrix()">
+  </div>
+  <div id="matrix-grid-view"><div class="card" style="padding:10px"><div class="matrix-wrap" style="max-height:70vh;overflow:auto"><table class="matrix-table" id="matrix-table"></table></div></div></div>
   <div id="matrix-table-view" style="display:none"><div class="card" style="padding:0;overflow:hidden"><table class="data-table" id="matrix-list-table"></table></div></div>
   <div class="alert" style="margin-top:0"><div class="alert-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div>5 = Fully meets out-of-the-box &nbsp;|&nbsp; 4 = Mostly meets, minor config &nbsp;|&nbsp; 3 = Partially meets, workarounds needed &nbsp;|&nbsp; 2 = Weak, add-ons required &nbsp;|&nbsp; 1 = Does not meet requirement</div></div>
 </div>
@@ -441,6 +509,8 @@ footer{text-align:center;padding:24px;font-size:12px;color:var(--secondaryText);
     <div class="modal-body" id="modal-body"></div>
   </div>
 </div>
+
+<div id="compare-tray" style="display:none"></div>
 
 <footer>PwC PPM / PMO Tool Selector &nbsp;|&nbsp; Scores based on published feature sets and Gartner/Forrester analyst data as at 2025. Indicative enterprise pricing based on disclosed contract data -- always obtain a formal vendor quote. &nbsp;|&nbsp; For internal advisory use only.</footer>
 
@@ -731,6 +801,25 @@ let selectedDims={dim1:null,dim2:null,dim3:null,dim4:null};
 let filterValues={budget:'any',deploy:'any',ecosystem:'any',itavail:'any'};
 let resultTierFilter='all', commTierFilter='all', matrixTierFilter=['1','2','3','4'];
 let viewState={result:'card',matrix:'grid',commercial:'card'};
+let compareSet=new Set();
+let matrixSort='score';
+let matrixCriteriaFilter='';
+let lastModalTrigger=null;
+
+// ================================================================
+// HELPERS
+// ================================================================
+function getEligibleTools(){ return tools.filter(t=>!isDisqualified(t)); }
+function getDisqualifiedTools(){ return tools.filter(t=>isDisqualified(t)); }
+function getWeightedContrib(tool){
+  return criteria.map((c,i)=>({idx:i,label:c.label,raw:tool.scores[i],weight:currentWeights[i],contrib:(tool.scores[i]*currentWeights[i])/100}));
+}
+function getTopCriteria(tool,n){ return getWeightedContrib(tool).sort((a,b)=>b.contrib-a.contrib).slice(0,n); }
+function getBottomCriteria(tool,n){ return getWeightedContrib(tool).sort((a,b)=>a.contrib-b.contrib).slice(0,n); }
+function copyToClipboard(text){
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text);}
+  else{const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}
+}
 
 // ================================================================
 // ELIGIBILITY
@@ -774,6 +863,7 @@ function renderWeights(){
 }
 function syncWeightUI(){
   criteria.forEach((_,i)=>{ const w=document.getElementById('wv-'+i),s=document.getElementById('wslider-'+i); if(w) w.textContent=currentWeights[i]+'%'; if(s) s.value=currentWeights[i]; });
+  buildContextSummaryUI();
 }
 function recalcWeightsFromDims(){
   const w=[...baseWeights];
@@ -794,12 +884,19 @@ function renderDimensions(){
       const wrap=document.createElement('div'); wrap.className='tooltip-wrap';
       const chip=document.createElement('button');
       chip.className='chip'+(selectedDims[dim.id]===opt.id?' selected':'');
-      chip.innerHTML=`<svg class="chip-check" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>${opt.label}<span class="chip-info">i</span>`;
+      chip.innerHTML=`<svg class="chip-check" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>${opt.label}`;
       chip.onclick=()=>{
         row.querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));
         chip.classList.add('selected'); selectedDims[dim.id]=opt.id;
-        recalcWeightsFromDims(); syncWeightUI(); updateConfigSummary();
+        recalcWeightsFromDims(); syncWeightUI(); updateConfigSummary(); buildContextSummaryUI();
       };
+      const infoBtn=document.createElement('button');
+      infoBtn.className='chip-info'; infoBtn.textContent='i'; infoBtn.type='button';
+      infoBtn.setAttribute('aria-label','Info: '+opt.label);
+      infoBtn.onclick=function(ev){ev.stopPropagation();wrap.classList.toggle('tooltip-active');};
+      infoBtn.onfocus=function(){wrap.classList.add('tooltip-active');};
+      infoBtn.onblur=function(){setTimeout(function(){wrap.classList.remove('tooltip-active');},150);};
+      chip.appendChild(infoBtn);
       const tip=document.createElement('div'); tip.className='tooltip-box'; tip.textContent=opt.desc;
       wrap.appendChild(chip); wrap.appendChild(tip); row.appendChild(wrap);
     });
@@ -809,7 +906,7 @@ function renderFilters(){
   const g=document.getElementById('filter-grid'); if(!g) return; g.innerHTML='';
   filterDefs.forEach(fd=>{
     const d=document.createElement('div'); d.className='filter-item';
-    d.innerHTML=`<div class="filter-item-label">${fd.label}</div><div class="filter-item-sub">${fd.sub}</div><select class="filter-select" onchange="filterValues['${fd.id}']=this.value;updateConfigSummary()">${fd.options.map(o=>`<option value="${o.val}"${filterValues[fd.id]===o.val?' selected':''}>${o.label}</option>`).join('')}</select>`;
+    d.innerHTML=`<div class="filter-item-label">${fd.label}</div><div class="filter-item-sub">${fd.sub}</div><select class="filter-select" onchange="filterValues['${fd.id}']=this.value;updateConfigSummary();buildContextSummaryUI()">${fd.options.map(o=>`<option value="${o.val}"${filterValues[fd.id]===o.val?' selected':''}>${o.label}</option>`).join('')}</select>`;
     g.appendChild(d);
   });
 }
@@ -828,6 +925,38 @@ function updateConfigSummary(){
     disqBox.innerHTML=`<div class="alert alert-error" style="margin-bottom:0"><div class="alert-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></div><div><strong>${disqList.length} tool${disqList.length>1?'s':''} disqualified</strong> by eligibility filters: ${disqList.map(t=>`<strong>${t.name}</strong>`).join(', ')}.</div></div>`;
   } else disqBox.style.display='none';
 }
+function buildContextSummaryUI(){
+  const bar=document.getElementById('context-bar'); if(!bar) return;
+  const pills=[];
+  dimensions.forEach(dim=>{
+    if(selectedDims[dim.id]){
+      const opt=dim.options.find(o=>o.id===selectedDims[dim.id]);
+      if(opt) pills.push('<span class="ctx-pill">'+opt.label+'</span>');
+    }
+  });
+  filterDefs.forEach(fd=>{
+    if(filterValues[fd.id]!=='any'){
+      const opt=fd.options.find(o=>o.val===filterValues[fd.id]);
+      if(opt) pills.push('<span class="ctx-pill-filter">'+fd.label+': '+opt.label+'</span>');
+    }
+  });
+  const elig=getEligibleTools().length, disq=getDisqualifiedTools().length;
+  if(pills.length===0 && disq===0){ bar.innerHTML=''; bar.classList.remove('has-content'); return; }
+  let html=pills.join('')+'<span class="ctx-count">'+elig+' eligible</span>';
+  if(disq>0) html+='<span class="ctx-count" style="color:var(--error)">'+disq+' disqualified</span>';
+  html+='<span class="ctx-spacer"></span>';
+  html+='<button class="btn btn-primary" style="padding:5px 14px;font-size:11px" onclick="showPanel(\'results\')">View Results</button>';
+  html+='<button class="ctx-reset" onclick="resetContext()">Reset context</button>';
+  bar.innerHTML=html;
+  bar.classList.add('has-content');
+}
+function resetContext(){
+  selectedDims={dim1:null,dim2:null,dim3:null,dim4:null};
+  filterValues={budget:'any',deploy:'any',ecosystem:'any',itavail:'any'};
+  recalcWeightsFromDims();
+  renderDimensions(); renderFilters(); renderWeights(); syncWeightUI();
+  updateConfigSummary(); buildContextSummaryUI();
+}
 
 // ================================================================
 // RESULTS
@@ -839,6 +968,29 @@ function renderResults(){
   if(disqList.length){ banner.style.display='block'; banner.innerHTML=`<div class="alert alert-error" style="margin-bottom:0"><div class="alert-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></div><div><strong>${disqList.length} tool${disqList.length>1?'s':''} disqualified</strong>: ${disqList.map(t=>`<strong>${t.name}</strong>`).join(', ')}.</div></div>`; }
   else banner.style.display='none';
 
+  // TOP RECOMMENDATION BANNER
+  const topBanner=document.getElementById('top-rec-banner');
+  const topFiltered=scored.filter(t=>resultTierFilter==='all'||String(t.tier)===resultTierFilter);
+  if(topFiltered.length>0){
+    const top=topFiltered[0];
+    const topContribs=getTopCriteria(top,3);
+    const topCons=top.cons.slice(0,2);
+    const bc=scoreColor(top.totalScore);
+    topBanner.innerHTML=`<div class="top-rec-banner">
+      <div class="top-rec-header">
+        <span style="font-size:11px;font-weight:600;color:var(--orange500)">TOP RECOMMENDATION</span>
+        <span class="top-rec-name">${top.name}</span>
+        <span class="tier-badge ${tiers[top.tier].badge}">Tier ${top.tier}</span>
+        <span class="top-rec-score" style="color:${bc}">${top.totalScore}</span>
+      </div>
+      <div class="top-rec-cols">
+        <div><div class="top-rec-label">Why it fits</div><ul class="top-rec-list">${topContribs.map(c=>'<li><span style="color:var(--success);flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></span>'+c.label+' <span style="color:var(--secondaryText)">('+c.contrib.toFixed(2)+')</span></li>').join('')}</ul></div>
+        <div><div class="top-rec-label">Trade-offs</div><ul class="top-rec-list">${topCons.map(c=>'<li><span style="color:var(--warning);flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg></span>'+c+'</li>').join('')}</ul></div>
+      </div>
+      <div style="margin-top:12px"><button class="btn btn-primary" style="padding:7px 16px;font-size:12px" onclick="openModal('${top.id}')">View details</button></div>
+    </div>`;
+  } else { topBanner.innerHTML=''; }
+
   // CARDS
   const cv=document.getElementById('result-card-view'); cv.innerHTML='';
   const grid=document.createElement('div'); grid.className='results-grid'; cv.appendChild(grid);
@@ -849,10 +1001,11 @@ function renderResults(){
     const card=document.createElement('div');
     card.className=`tool-card${rank<=3?' rank-'+rank:''}`;
     const pct=(tool.totalScore/5)*100, bc=scoreColor(tool.totalScore);
+    const chk=compareSet.has(tool.id)?'checked':'';
     card.innerHTML=`
       <div class="tool-card-header">
         <div>${rank<=3?`<div class="rank-label"><svg width="10" height="10" viewBox="0 0 24 24" fill="#FD5108" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>${rl[rank-1]} ranked</div>`:''}<div class="tool-name">${tool.name}</div><div style="font-size:11px;color:var(--secondaryText);margin-top:1px">${tiers[tool.tier].label}</div></div>
-        <div class="tier-badge ${tiers[tool.tier].badge}">Tier ${tool.tier}</div>
+        <div style="display:flex;align-items:flex-start;gap:8px"><input type="checkbox" class="compare-check" data-tool-id="${tool.id}" ${chk} onchange="toggleCompare('${tool.id}')" title="Compare"><div class="tier-badge ${tiers[tool.tier].badge}">Tier ${tool.tier}</div></div>
       </div>
       <div class="tool-card-body">
         <div class="score-row"><div class="score-bar-track"><div class="score-bar-fill" style="width:${pct}%;background:${bc}"></div></div><div class="score-num" style="color:${bc}">${tool.totalScore}</div></div>
@@ -867,14 +1020,16 @@ function renderResults(){
 
   // TABLE
   const tbl=document.getElementById('result-table');
-  let html=`<thead><tr><th>#</th><th>Tool</th><th>Tier</th><th>Score</th><th>Best For</th><th></th></tr></thead><tbody>`;
+  let html=`<thead><tr><th style="width:30px"></th><th>#</th><th>Tool</th><th>Tier</th><th>Score</th><th>Best For</th><th></th></tr></thead><tbody>`;
   let r=0;
   scored.forEach(tool=>{
     if(resultTierFilter!=='all'&&String(tool.tier)!==resultTierFilter) return;
     r++; const pct=(tool.totalScore/5)*100, bc=scoreColor(tool.totalScore);
-    html+=`<tr><td style="font-size:11px;font-weight:600;color:var(--secondaryText)">${r}</td><td><strong style="font-size:14px">${tool.name}</strong><div style="font-size:11px;color:var(--secondaryText)">${tiers[tool.tier].label}</div></td><td><span class="tier-badge ${tiers[tool.tier].badge}">Tier ${tool.tier}</span></td><td><div class="tbl-score-bar"><div class="tbl-bar-track"><div class="tbl-bar-fill" style="width:${pct}%;background:${bc}"></div></div><span style="font-size:13px;font-weight:700;color:${bc}">${tool.totalScore}</span></div></td><td style="font-size:12px;color:var(--secondaryText);max-width:200px">${tool.bestFor}</td><td><button class="btn btn-primary" style="padding:6px 12px;font-size:12px;white-space:nowrap" onclick="openModal('${tool.id}')">Details</button></td></tr>`;
+    const chk=compareSet.has(tool.id)?'checked':'';
+    html+=`<tr><td><input type="checkbox" class="compare-check" data-tool-id="${tool.id}" ${chk} onchange="toggleCompare('${tool.id}')" title="Compare"></td><td style="font-size:11px;font-weight:600;color:var(--secondaryText)">${r}</td><td><strong style="font-size:14px">${tool.name}</strong><div style="font-size:11px;color:var(--secondaryText)">${tiers[tool.tier].label}</div></td><td><span class="tier-badge ${tiers[tool.tier].badge}">Tier ${tool.tier}</span></td><td><div class="tbl-score-bar"><div class="tbl-bar-track"><div class="tbl-bar-fill" style="width:${pct}%;background:${bc}"></div></div><span style="font-size:13px;font-weight:700;color:${bc}">${tool.totalScore}</span></div></td><td style="font-size:12px;color:var(--secondaryText);max-width:200px">${tool.bestFor}</td><td><button class="btn btn-primary" style="padding:6px 12px;font-size:12px;white-space:nowrap" onclick="openModal('${tool.id}')">Details</button></td></tr>`;
   });
   tbl.innerHTML=html+'</tbody>';
+  renderCompareTray();
 }
 function filterResultTier(btn,tier){
   document.querySelectorAll('#panel-results .filter-btn').forEach(b=>b.classList.remove('active'));
@@ -882,13 +1037,91 @@ function filterResultTier(btn,tier){
 }
 
 // ================================================================
+// COMPARE
+// ================================================================
+function toggleCompare(toolId){
+  if(compareSet.has(toolId)){
+    compareSet.delete(toolId);
+  } else {
+    if(compareSet.size>=3){
+      const msg=document.getElementById('compare-max-msg');
+      if(!msg){
+        const tray=document.getElementById('compare-tray');
+        const m=document.createElement('span');m.id='compare-max-msg';m.className='compare-max-msg';m.textContent='Max 3 tools';
+        tray.appendChild(m); setTimeout(()=>{const el=document.getElementById('compare-max-msg');if(el)el.remove();},2000);
+      }
+      // Uncheck the checkbox that was just clicked
+      document.querySelectorAll('.compare-check[data-tool-id="'+toolId+'"]').forEach(cb=>{cb.checked=false;});
+      return;
+    }
+    compareSet.add(toolId);
+  }
+  document.querySelectorAll('.compare-check[data-tool-id="'+toolId+'"]').forEach(cb=>{cb.checked=compareSet.has(toolId);});
+  renderCompareTray();
+}
+function renderCompareTray(){
+  const tray=document.getElementById('compare-tray');
+  if(compareSet.size<2){ tray.style.display='none'; return; }
+  tray.style.display='flex';
+  const names=[...compareSet].map(id=>{const t=tools.find(x=>x.id===id);return t?t.name:id;});
+  tray.innerHTML='<span class="compare-tray-name">'+names.join(' vs ')+'</span><span class="ctx-spacer"></span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px" onclick="openCompareModal()">Compare</button><button class="btn btn-secondary" style="padding:6px 14px;font-size:12px" onclick="clearCompare()">Clear</button>';
+  tray.className='compare-tray';
+}
+function clearCompare(){
+  compareSet.clear();
+  document.querySelectorAll('.compare-check').forEach(cb=>{cb.checked=false;});
+  renderCompareTray();
+}
+function openCompareModal(){
+  lastModalTrigger=document.activeElement;
+  const selTools=[...compareSet].map(id=>tools.find(t=>t.id===id)).filter(Boolean);
+  document.getElementById('modal-title').textContent='Compare Tools';
+  let html='<table class="breakdown-table" style="font-size:12px"><thead><tr><th>Criterion</th>';
+  selTools.forEach(t=>{html+='<th style="text-align:center">'+t.name+'</th>';});
+  html+='</tr></thead><tbody>';
+  criteria.forEach((c,i)=>{
+    html+='<tr><td style="font-size:12px">'+c.label+'</td>';
+    selTools.forEach(t=>{
+      const contrib=(t.scores[i]*currentWeights[i])/100;
+      html+='<td style="text-align:center"><div class="dot dot-'+t.scores[i]+'" style="width:22px;height:22px;font-size:10px;display:inline-flex">'+t.scores[i]+'</div><div style="font-size:10px;color:var(--secondaryText);margin-top:2px">'+contrib.toFixed(2)+'</div></td>';
+    });
+    html+='</tr>';
+  });
+  html+='</tbody><tfoot><tr><td style="font-weight:700">Total</td>';
+  selTools.forEach(t=>{const s=calcScore(t);html+='<td style="text-align:center;font-weight:700;font-size:15px;color:'+scoreColor(s)+'">'+s+'</td>';});
+  html+='</tr></tfoot></table>';
+  html+='<div style="margin-top:14px"><button class="btn btn-secondary" style="padding:7px 14px;font-size:12px" onclick="copyComparison()">Copy comparison</button></div>';
+  document.getElementById('modal-body').innerHTML=html;
+  document.getElementById('modal-overlay').classList.add('open');
+  trapFocusInModal();
+}
+function copyComparison(){
+  const selTools=[...compareSet].map(id=>tools.find(t=>t.id===id)).filter(Boolean);
+  let text='COMPARISON: '+selTools.map(t=>t.name).join(' vs ')+'\n\n';
+  text+='Criterion\t'+selTools.map(t=>t.name).join('\t')+'\n';
+  text+='-'.repeat(60)+'\n';
+  criteria.forEach((c,i)=>{
+    text+=c.label+'\t'+selTools.map(t=>{const contrib=(t.scores[i]*currentWeights[i])/100;return t.scores[i]+' ('+contrib.toFixed(2)+')';}).join('\t')+'\n';
+  });
+  text+='-'.repeat(60)+'\n';
+  text+='TOTAL\t'+selTools.map(t=>calcScore(t)).join('\t')+'\n';
+  copyToClipboard(text);
+}
+
+// ================================================================
 // MATRIX
 // ================================================================
 function renderMatrix(){
-  const visible=tools.filter(t=>matrixTierFilter.includes(String(t.tier)));
+  let visible=tools.filter(t=>matrixTierFilter.includes(String(t.tier)));
+  // Sort tools
+  if(matrixSort==='score') visible.sort((a,b)=>calcScore(b)-calcScore(a));
+  else if(matrixSort==='tier') visible.sort((a,b)=>a.tier-b.tier||calcScore(b)-calcScore(a));
+  else if(matrixSort==='name') visible.sort((a,b)=>a.name.localeCompare(b.name));
+
   const tbl=document.getElementById('matrix-table'); if(!tbl) return;
   let html=`<thead><tr><th>Criterion / Weight</th>${visible.map(t=>`<th style="${isDisqualified(t)?'opacity:.35':''}">${t.name}${isDisqualified(t)?' x':''}</th>`).join('')}</tr></thead><tbody>`;
   criteria.forEach((c,i)=>{
+    if(matrixCriteriaFilter&&!c.label.toLowerCase().includes(matrixCriteriaFilter)) return;
     html+=`<tr><td><div style="font-weight:600;font-size:13px">${c.label}</div><div style="font-size:11px;color:var(--secondaryText)">${currentWeights[i]}%</div></td>`;
     visible.forEach(t=>{ html+=`<td style="${isDisqualified(t)?'opacity:.35':''}"><div class="dot dot-${t.scores[i]}">${t.scores[i]}</div></td>`; });
     html+=`</tr>`;
@@ -897,7 +1130,7 @@ function renderMatrix(){
   tbl.innerHTML=html;
 
   const lt=document.getElementById('matrix-list-table'); if(!lt) return;
-  const vt=visible.filter(t=>!isDisqualified(t)).sort((a,b)=>calcScore(b)-calcScore(a));
+  const vt=visible.filter(t=>!isDisqualified(t));
   let lh=`<thead><tr><th>Tool</th><th>Tier</th>${criteria.map(c=>`<th style="font-size:10px">${c.label.split(' ').slice(0,2).join(' ')}</th>`).join('')}<th>Score</th></tr></thead><tbody>`;
   vt.forEach(t=>{ const s=calcScore(t); lh+=`<tr><td><strong>${t.name}</strong></td><td><span class="tier-badge ${tiers[t.tier].badge}">Tier ${t.tier}</span></td>${t.scores.map(sc=>`<td><div class="dot dot-${sc}" style="width:20px;height:20px;font-size:10px">${sc}</div></td>`).join('')}<td style="font-weight:700;color:${scoreColor(s)}">${s}</td></tr>`; });
   lt.innerHTML=lh+'</tbody>';
@@ -982,21 +1215,88 @@ function setView(panel,mode){
 // MODAL
 // ================================================================
 function openModal(toolId){
+  lastModalTrigger=document.activeElement;
   const tool=tools.find(t=>t.id===toolId); if(!tool) return;
   document.getElementById('modal-title').textContent=tool.name;
   const s=calcScore(tool);
+  const topC=getTopCriteria(tool,3);
+  const botC=getBottomCriteria(tool,2);
   const breakdown=criteria.map((c,i)=>`<tr><td style="font-size:13px">${c.label}</td><td style="text-align:center"><div class="dot dot-${tool.scores[i]}">${tool.scores[i]}</div></td><td style="text-align:right;font-weight:700;font-size:13px">${((tool.scores[i]*currentWeights[i])/100).toFixed(2)}</td></tr>`).join('');
   document.getElementById('modal-body').innerHTML=`
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap"><span class="tier-badge ${tiers[tool.tier].badge}">${tiers[tool.tier].label}</span><span style="font-size:12px;color:var(--secondaryText);padding:3px 10px;background:var(--surfaceColor)">${tool.verdictText}</span></div>
+    <div class="exec-summary">
+      <div class="exec-summary-header">
+        <span class="tier-badge ${tiers[tool.tier].badge}">${tiers[tool.tier].label}</span>
+        <span style="font-size:12px;color:var(--secondaryText);padding:3px 10px;background:var(--white)">${tool.verdictText}</span>
+        <span class="exec-summary-score" style="color:${scoreColor(s)}">${s}</span>
+      </div>
+      <div class="exec-fit"><strong>Fit summary:</strong> ${tool.bestFor}</div>
+      <div class="exec-cols">
+        <div><div class="exec-label">Top 3 strengths</div><ul class="exec-list">${topC.map(c=>'<li><span style="color:var(--success);flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></span>'+c.label+' ('+c.contrib.toFixed(2)+')</li>').join('')}</ul></div>
+        <div><div class="exec-label">Bottom 2 gaps</div><ul class="exec-list">${botC.map(c=>'<li><span style="color:var(--error);flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg></span>'+c.label+' ('+c.contrib.toFixed(2)+')</li>').join('')}</ul></div>
+      </div>
+    </div>
+    <div class="modal-copy-actions">
+      <button class="btn btn-secondary" style="padding:6px 14px;font-size:11px" onclick="copyModalSummary('${tool.id}')">Copy summary</button>
+      <button class="btn btn-secondary" style="padding:6px 14px;font-size:11px" onclick="copyModalBreakdown('${tool.id}')">Copy score breakdown</button>
+    </div>
     <div class="modal-pricing"><div class="pricing-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FD5108" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div><strong>Pricing:</strong> ${tool.pricing}<br><strong>Deployment:</strong> ${tool.deployWeeks}</div></div>
     <div class="modal-section"><div class="modal-section-title">Strengths</div><ul class="modal-list">${tool.pros.map(p=>`<li><span class="modal-list-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FD5108" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></span>${p}</li>`).join('')}</ul></div>
     <div class="modal-section"><div class="modal-section-title">Limitations</div><ul class="modal-list">${tool.cons.map(c=>`<li><span class="modal-list-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FD5108" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg></span>${c}</li>`).join('')}</ul></div>
     <div class="modal-section"><div class="modal-section-title">Score Breakdown</div><table class="breakdown-table"><thead><tr><th>Criterion</th><th style="text-align:center">Score</th><th style="text-align:right">Weighted</th></tr></thead><tbody>${breakdown}</tbody><tfoot><tr><td colspan="2" style="font-weight:700">Total</td><td style="text-align:right;font-size:17px;font-weight:700;color:${scoreColor(s)}">${s}</td></tr></tfoot></table></div>
     <a href="${tool.url}" target="_blank" rel="noopener" style="font-size:13px;font-weight:600;color:var(--orange500);text-decoration:none;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--orange500);padding:8px 14px;transition:background .2s" onmouseover="this.style.background='var(--orange100)'" onmouseout="this.style.background='transparent'">Visit ${tool.name} <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>`;
   document.getElementById('modal-overlay').classList.add('open');
+  trapFocusInModal();
+}
+function copyModalSummary(toolId){
+  const tool=tools.find(t=>t.id===toolId); if(!tool) return;
+  const s=calcScore(tool);
+  const topC=getTopCriteria(tool,3);
+  const botC=getBottomCriteria(tool,2);
+  let text=tool.name+' -- '+tiers[tool.tier].label+'\n';
+  text+='Score: '+s+'/5\n';
+  text+='Verdict: '+tool.verdictText+'\n';
+  text+='Fit: '+tool.bestFor+'\n\n';
+  text+='Top strengths:\n'+topC.map(c=>'  + '+c.label+' ('+c.contrib.toFixed(2)+')').join('\n')+'\n\n';
+  text+='Gaps:\n'+botC.map(c=>'  - '+c.label+' ('+c.contrib.toFixed(2)+')').join('\n')+'\n';
+  copyToClipboard(text);
+}
+function copyModalBreakdown(toolId){
+  const tool=tools.find(t=>t.id===toolId); if(!tool) return;
+  const s=calcScore(tool);
+  let text=tool.name+' -- Score Breakdown\n\n';
+  text+='Criterion\tScore\tWeight\tContribution\n';
+  text+='-'.repeat(60)+'\n';
+  criteria.forEach((c,i)=>{
+    text+=c.label+'\t'+tool.scores[i]+'\t'+currentWeights[i]+'%\t'+((tool.scores[i]*currentWeights[i])/100).toFixed(2)+'\n';
+  });
+  text+='-'.repeat(60)+'\n';
+  text+='TOTAL\t\t\t'+s+'\n';
+  copyToClipboard(text);
 }
 function closeModal(e){
-  if(!e||e.target===document.getElementById('modal-overlay')) document.getElementById('modal-overlay').classList.remove('open');
+  if(!e||e.target===document.getElementById('modal-overlay')){
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.removeEventListener('keydown',modalKeyHandler);
+    if(lastModalTrigger&&lastModalTrigger.focus) lastModalTrigger.focus();
+    lastModalTrigger=null;
+  }
+}
+function modalKeyHandler(e){
+  if(e.key==='Escape'){e.preventDefault();closeModal();}
+  if(e.key==='Tab'){
+    const modal=document.querySelector('.modal');
+    const focusable=modal.querySelectorAll('button,a,[tabindex],input,select,textarea');
+    if(focusable.length===0) return;
+    const first=focusable[0],last=focusable[focusable.length-1];
+    if(e.shiftKey){if(document.activeElement===first){e.preventDefault();last.focus();}}
+    else{if(document.activeElement===last){e.preventDefault();first.focus();}}
+  }
+}
+function trapFocusInModal(){
+  document.addEventListener('keydown',modalKeyHandler);
+  const modal=document.querySelector('.modal');
+  const focusable=modal.querySelectorAll('button,a,[tabindex],input,select,textarea');
+  if(focusable.length>0) focusable[0].focus();
 }
 
 // ================================================================
@@ -1015,7 +1315,7 @@ function showPanel(name){
 }
 
 // INIT
-renderDimensions(); renderFilters(); renderWeights();
+renderDimensions(); renderFilters(); renderWeights(); buildContextSummaryUI();
 </script>
 </body>
 </html>
