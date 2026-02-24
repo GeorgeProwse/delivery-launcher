@@ -11672,23 +11672,26 @@ function checkBriefCompleteness() {
     issues.push(
       "Industry not selected — industry-specific content will be generic",
     );
-  const og = document.getElementById("objectiveTypeGrid");
-  if (!og || !og.querySelector(".selected"))
+  const fd = formData || {};
+  const objs = (fd.objectives || []).filter(function (o) {
+    return o.themes && o.themes.length > 0;
+  });
+  if (!objs.length)
     issues.push(
       "No Engagement Objectives selected — planning outputs will be generic",
     );
-  const dg = document.getElementById("domainGrid");
-  if (!dg || !dg.querySelector(".selected"))
+  const svcs = (fd.service_offerings || []).filter(function (s) {
+    return s.building_blocks && s.building_blocks.length > 0;
+  });
+  if (!svcs.length)
     issues.push(
       "No Service Offerings selected — building-block context will be missing",
     );
-  const rg = document.getElementById("regulatoryIndustryGrid");
-  if (!rg || !rg.querySelector(".selected"))
+  if (!(fd.regulatory_profile && fd.regulatory_profile.length > 0))
     issues.push(
       "No Regulatory Profile selected — compliance content will be generic",
     );
-  const rkg = document.getElementById("riskIndustryGrid");
-  if (!rkg || !rkg.querySelector(".selected"))
+  if (!(fd.risk_profile && fd.risk_profile.length > 0))
     issues.push("No Risk Profile selected — Risk Register will be generic");
   return issues;
 }
