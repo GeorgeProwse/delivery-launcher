@@ -207,67 +207,76 @@ body {
   flex-wrap: wrap;
 }
 
-.lp-chip {
+/* Guided mode toggle */
+.lp-guided-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 9px 18px;
-  font-size: 12px;
+  gap: 10px;
+}
+.lp-toggle-label {
+  font-size: 13px;
   font-weight: 500;
   font-family: system-ui, sans-serif;
-  border-radius: 100px;
-  border: 1.5px solid #dcdcdc;
-  background: #fff;
-  color: #777;
+  color: var(--textColor);
+  user-select: none;
   cursor: pointer;
-  transition: all 150ms ease;
+}
+.lp-toggle-track {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background-color: #FD5108;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s ease;
   outline: none;
-  letter-spacing: -0.01em;
-}
-.lp-chip:hover {
-  border-color: #e8530e;
-  color: #e8530e;
-  background: #fff5f0;
-}
-.lp-chip-active {
-  border-color: #e8530e !important;
-  background: #e8530e !important;
-  color: #fff !important;
-  font-weight: 600;
-}
-.lp-chip-active .lp-chip-dot {
-  background: rgba(255, 255, 255, 0.6) !important;
-}
-.lp-chip-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #ccc;
+  padding: 0;
   flex-shrink: 0;
-  transition: background 150ms ease;
+}
+.lp-toggle-track[aria-checked="false"] {
+  background-color: #CBD1D6;
+}
+.lp-toggle-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  position: absolute;
+  top: 2px;
+  left: 22px;
+  transition: left 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  pointer-events: none;
+}
+.lp-toggle-track[aria-checked="false"] .lp-toggle-thumb {
+  left: 2px;
 }
 
 #lp-start-btn {
-  padding: 10px 32px;
-  font-size: 16px;
-  font-weight: 700;
-  background: #fd5108;
-  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: #FFAA72;
   border: none;
-  cursor: pointer;
+  color: var(--textColor);
+  font-weight: 600;
+  font-size: 13px;
   font-family: system-ui, sans-serif;
   letter-spacing: -0.01em;
-  transition: background 150ms ease, box-shadow 150ms ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: all 0.15s ease;
   border-radius: 100px;
   outline: none;
-  box-shadow: 0 2px 12px rgba(253, 81, 8, 0.35);
 }
 #lp-start-btn:hover {
-  background: #c94000;
-  box-shadow: 0 4px 18px rgba(253, 81, 8, 0.45);
+  background-color: #FE7C39;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 #lp-start-btn:focus {
-  outline: 2px solid #fd5108;
+  outline: 2px solid #FFAA72;
   outline-offset: 3px;
 }
 
@@ -3906,8 +3915,12 @@ textarea {
       <p id="lp-sub">an AI-powered workflow that expedites project planning by generating a full suite of tailored artifacts, enabling teams to spend less time on documentation and more time delivering value to clients.
 </p>
       <div id="lp-cta-row">
-        <button class="lp-chip lp-chip-active" id="chip-guided" onclick="selectMode('guided')">Guided</button>
-        <button class="lp-chip" id="chip-quick" onclick="selectMode('quick')">Quick</button>
+        <div class="lp-guided-toggle">
+          <button class="lp-toggle-track" id="guided-toggle" role="switch" aria-checked="true" aria-label="Guided mode" onclick="toggleGuidedMode()">
+            <span class="lp-toggle-thumb"></span>
+          </button>
+          <span class="lp-toggle-label" onclick="toggleGuidedMode()">Guided</span>
+        </div>
         <button id="lp-start-btn" onclick="launchSelected()">Start</button>
       </div>
     </div>
@@ -8452,7 +8465,79 @@ After delivering all files, include a brief closing message confirming what was 
     prompt_name: "Engagement Charter",
     artifact: "Engagement Charter",
     instruction:
-      `EXECUTION CONSTRAINTS — MANDATORY:\\nYou must follow these execution rules without exception before performing any task.\\n\\n1. Do all parsing, validation, reasoning, and content drafting in your response text only. Do not use code interpreter for any of these steps.\\n\\n2. Make exactly ONE code interpreter call. This call must contain the complete, final file generation script in its entirety. Do not split file generation across multiple calls.\\n\\n3. Do not use code interpreter to inspect, test, explore, or validate data, variables, or helper functions before the final generation call.\\n\\n4. Do not make iterative or exploratory code calls at any stage.\\n\\n5. If a code error occurs inside the single permitted call, handle it internally using try/except. Do not make a second code call to fix or retry it.\\n\\n6. Generate and save all required output files within the single permitted code call. Do not make additional code calls for each file format separately.\\n\\n7. Do not confirm, summarise, or test outputs with a code call. Confirm completion in your response text only.\\n\\n8. Do not present preview tables or confirmation gates mid-execution. Treat all proposed content as confirmed and proceed directly to file generation without waiting for user input.\\n\\n9. After delivering all output files, include a brief closing message confirming what was generated and inviting the user to request changes or proceed with the next prompt. Do not await a response — this message is terminal.\\n\\n---\\n\\n# P1.4 — Engagement Charter (Chain Step)\n\n## PURPOSE\nProduce the canonical Engagement Charter as the engagement\'s governing baseline. Outputs:\n1) Real .docx — Engagement Charter (client-ready)\n2) Canonical JSON handoff in-chat for downstream prompts\n\nDo not pause for user input. Where inputs are missing, apply DD-1 placeholder conventions and raise open_items.\n\n---\n\n## INPUTS\nParse the most recent in-chat JSON objects:\n- P1_1_CANONICAL_HANDOFF\n- P1_2_CANONICAL_HANDOFF\n- P1_3_CANONICAL_HANDOFF\n\nIf present, apply any user-provided overrides as last-write-wins. If none provided, proceed with upstream data only.\n\nSS-1, DD-1, WE-1 are loaded from P1.1. Apply them. Do not restate them.\n\n---\n\n## STEP 1 — EXTRACT + NORMALISE\nExtract only what is explicitly present from each handoff:\n\nP1_1: client/engagement identifiers, delivery methodology, fee structure, budget, dates, workstreams, description, regulatory requirements, technology, partners\nP1_2: sponsor, project owner, key decision makers, governance-relevant stakeholders, sensitivities\nP1_3: scope boundary statement, inclusions, exclusions, assumptions, constraints, dependencies\nP1_3: objectives, success criteria, KPIs, benefits, open items relevant to measurability\n\nRules:\n- Use DD-1 canonical field names and enums throughout\n- Never invent hard facts: contract values, named individuals, legal clauses, committed dates, or specific cost figures\n- Missing sections: where upstream is silent, propose a reasonable engagement-appropriate default, flag it as \'Proposed — to be confirmed\', and create an open_item. Do not leave entire sections blank.\n- Missing names: use role-level (e.g., "Client Sponsor (TBC)") — do not fabricate\n- Provenance (source of each key statement) goes into the JSON handoff only; do not add source columns to charter tables\n- If more than half the charter sections are \'Proposed\' with no upstream basis, add a prominent open item: \'Charter requires client review and confirmation before baseline — majority of content is proposed\'\n\n---\n\n## STEP 2 — VALIDATE\nHard minimums (fail-fast):\n- client_name and engagement_name exist\n- At least one Objective exists (from P1.3)\n\nIf hard minimums fail — output P1_4_VALIDATION_ERRORS fenced JSON and STOP:\n{ prompt_id: "P1.4", generated_on: YYYY-MM-DD, validation: { status: "FAIL", missing_required: [...], notes: [...] } }\n\nSoft minimums (create open_items, do not fail):\n- Delivery methodology known\n- Fee structure and total budget known\n- Start and end dates known\n- Sponsor and project owner identified\n- Scope boundary statement present\n- High-level governance intent stated (can be "TBC — see P1.5")\n\n## STEP 3 — BUILD DELIVERABLE\n\n### DOCX — Engagement Charter\nGenerate a real .docx using python-docx. Apply SS-1 Word styling throughout.\n\nSections (no additions beyond these; use Word heading styles throughout for TOC):\n\n1) Document Control\n   - Version, date, author (PwC), status\n   - Distribution: role-based from P1.2; else TBC\n\n2) Purpose and Introduction\n   - Purpose of the charter and how it is maintained\n   - Relationship to downstream artifacts (reference P1.5+ and P2.x as "to be produced")\n\n3) Engagement Overview\n   - Table: Client Name | Engagement Name | Engagement Code | Delivery Methodology | Fee Structure | Total Budget/Fee | Start Date | End Date | Primary Workstreams | Prepared By | Date\n   - Engagement description if provided; else placeholder\n\n4) Objectives and Success Definition\n   - Objectives table: # | Objective ID | Objective | Type | Priority | Owner Role | Status\n   - Success Criteria table: # | SC ID | Success Criterion | Linked Objective ID | Target | Owner Role | Status\n   - KPI summary table: # | KPI ID | KPI | KPI Type | Linked Objective ID | Baseline/Target | Frequency | Status\n\n5) Scope\n   - Scope boundary statement from P1.3\n   - In-scope summary (bullet groups or table)\n   - Out-of-scope summary (bullet groups or table)\n   - Assumptions, constraints, dependencies tables (explicit items from P1.3 only)\n   - Statement: "Any scope change requires formal change control (see section 11)"\n\n6) Delivery Approach\n   - Methodology description if known; else placeholder + open item\n   - Workstreams/phases overview from P1.1 if present; else TBC\n   - Note: schedule baseline is produced in P2.2; do not invent dates\n\n7) Engagement Team and Roles\n   - PwC roles table: Role | Name (if known) | Responsibilities\n   - Client roles table: Role | Name (if known) | Responsibilities\n   - Minimum roles (include even if names TBC): PwC Engagement Lead, PwC Engagement Manager, Workstream Leads, Client Sponsor, Client Project Owner, Client Programme Manager\n\n8) Governance and Decision Rights\n   - Charter-level intent only; do not create full governance bodies unless explicit\n   - Decision rights table: Decision Type | Accountable Role | Consulted | Informed\n   - Decision types: scope change, budget change, schedule change, deliverable sign-off, risk acceptance, issue escalation, commercial changes\n   - Statement: "Detailed governance framework is defined in P1.5"\n\n9) Commercial Terms\n   - Fee structure narrative (T&M/Fixed/Capped; only if known)\n   - Table: Commercial Item | Value | Notes\n   - Items: billing frequency, invoicing contact, PO reference, payment terms, expense policy, currency, GST treatment\n   - If fee structure missing: insert SS-1 warning callout\n\n10) Risk, Compliance and Quality\n    - Regulatory/compliance obligations (explicit only; else placeholder + open item)\n    - Initial risk posture (high-level only; detailed register is P2.7)\n    - Quality commitment: "No client-facing deliverable without internal QA review" (detailed quality plan is P2.6)\n\n11) Change Control\n    - Statement that all changes to scope/schedule/budget require formal CR approval\n    - Reference: "Detailed Change Control Log is P2.7"\n\n12) Assumptions and Open Items\n    - Table: # | Open Item | Area | Priority | Action Required | Owner Role\n    - Include open items from P1.3, P1.4, and any new ones from this step\n\n13) Sign-off\n    - Table: Role | Name | Organisation | Signature | Date\n    - Roles: Client Sponsor, Client Project Owner, PwC Engagement Lead, PwC Engagement Manager, PwC Account Leader\n\nFile: P1.4_Engagement_Charter_{YYYY-MM-DD}_v1.0.docx → /mnt/data/\n\n---\n\n## STEP 4 — JSON HANDOFF\nAfter QA, output fenced JSON in-chat with top-level key P1_4_CANONICAL_HANDOFF:\n- prompt_id: "P1.4"\n- generated_on: YYYY-MM-DD\n- engagement_identifiers: { client_name, engagement_name, engagement_code }\n- engagement_context: { delivery_methodology, fee_structure, start_date, end_date, total_budget_fee, primary_workstreams[], regulatory_requirements }\n- scope_summary: { boundary_statement, in_scope[], out_of_scope[], assumptions[], constraints[], dependencies[] }\n- objectives_refs: { objective_ids[], success_criteria_ids[], kpi_ids[], benefit_ids[] }\n- roles: { pwc_roles[], client_roles[] }\n- decision_rights_summary: [{ decision_type, accountable_role, consulted_roles[], informed_roles[] }]\n- commercial_terms: { billing_frequency, currency, invoicing_contact_role, po_reference, payment_terms, expenses_policy, notes }\n- open_items: [{ id, area, description, source, priority }]\n- validation: { status: "PASS", notes: [] }\n\nDo not embed SS-1/DD-1/WE-1 in this JSON.\n\n---\n\n## QA\nDOCX: SS-1 styles applied; confidentiality footer every page; all 13 sections present; no raw bracket placeholders; tables conform to SS-1 standard.\n\nQA FAIL: output only — QA FAIL: followed by compact list of failures. No other output.\n\n---\n\n## OUTPUT\n1) P1_4_CANONICAL_HANDOFF fenced JSON in-chat\n2) Download link: P1.4_Engagement_Charter_{YYYY-MM-DD}_v1.0.docx\nNo other narrative output.\n\nAfter delivering all files, include a brief closing message confirming what was generated and inviting the user to request changes or send the next prompt. Do not await a response — this message is terminal.`,
+      `EXECUTION RULES:
+1. Do all reasoning, parsing, and content drafting in response text only. This is preparatory work — it does not complete the task.
+2. You MUST make exactly one code interpreter call. A response that ends without a code interpreter call has failed.
+3. Output the JSON handoff and closing message only after the code call completes.
+4. Handle all errors with try/except internally. No second calls to fix errors.
+---
+# P1.4 — Engagement Charter
+## INPUTS
+Parse from context: \`P1_1_CANONICAL_HANDOFF\`, \`P1_2_CANONICAL_HANDOFF\`, \`P1_3_CANONICAL_HANDOFF\`. SS-1, DD-1, WE-1 are loaded — treat as authoritative.
+If provided, apply as last-write-wins:
+<charter_overrides>
+{{CHARTER_OVERRIDES}}
+</charter_overrides>
+---
+## STEP 1 — EXTRACT + NORMALISE
+From P1_1: client/engagement identifiers, methodology, fee structure, budget, dates, workstreams, description, regulatory requirements, technology, partners.
+From P1_2: sponsor, project owner, key decision makers, governance-relevant stakeholders, sensitivities.
+From P1_3: scope boundary statement, inclusions, exclusions, assumptions, constraints, dependencies, objectives, success criteria, open items.
+Rules:
+- Use DD-1 canonical field names and enums throughout
+- Never invent hard facts: contract values, named individuals, legal clauses, committed dates, or specific cost figures
+- Where upstream is silent, propose a reasonable default, flag as "Proposed — to be confirmed", and create an open_item
+- Use role-level placeholders for missing names (e.g. "Client Sponsor (TBC)") — do not fabricate
+- Provenance goes into the JSON handoff only; do not add source columns to charter tables
+- If more than half the charter sections are Proposed with no upstream basis, add a prominent open item: "Charter requires client review and confirmation before baseline — majority of content is proposed"
+---
+## STEP 2 — VALIDATE
+Stop and output \`P1_4_VALIDATION_ERRORS\` fenced JSON only if: client_name or engagement_name are missing, OR zero objectives exist.
+Soft checks (create open_items, do not stop):
+- Delivery methodology known
+- Fee structure and total budget known
+- Start and end dates known
+- Sponsor and project owner identified
+- Scope boundary statement present
+- High-level governance intent stated (can be "TBC — see P1.5")
+---
+## STEP 3 — BUILD DOCX
+Use python-docx. Apply SS-1 Word styling throughout. Use Word heading styles on all sections for TOC compatibility.
+Sections in this order, no additions:
+1. Document Control — version, date, author (PwC), status; distribution from P1_2 roles or TBC
+2. Purpose and Introduction — purpose of the charter and how it is maintained; reference downstream artifacts as "to be produced"
+3. Engagement Overview — table: Client Name | Engagement Name | Engagement Code | Delivery Methodology | Fee Structure | Total Budget | Start Date | End Date | Primary Workstreams | Prepared By | Date; engagement description if provided
+4. Objectives and Success Definition — objectives table: # | Objective ID | Objective | Type | Priority | Owner Role | Status; success criteria table: # | SC ID | Criterion | Linked Objective ID | Target | Owner Role | Status; KPI table: # | KPI ID | KPI | Type | Linked Objective ID | Baseline/Target | Frequency | Status
+5. Scope — scope boundary statement; in-scope summary; out-of-scope summary; assumptions table; constraints table; dependencies table; statement that scope changes require formal change control
+6. Delivery Approach — methodology description or placeholder + open item; workstreams/phases from P1_1 or TBC; note that schedule baseline is produced in P2.2
+7. Engagement Team and Roles — PwC roles table: Role | Name | Responsibilities; Client roles table: Role | Name | Responsibilities; minimum roles even if TBC: PwC Engagement Lead, PwC Engagement Manager, Workstream Leads, Client Sponsor, Client Project Owner, Client Programme Manager
+8. Governance and Decision Rights — decision rights table: Decision Type | Accountable Role | Consulted | Informed; decision types: scope change, budget change, schedule change, deliverable sign-off, risk acceptance, issue escalation, commercial changes; note detailed governance is defined in P1.5
+9. Commercial Terms — fee structure narrative; table: Commercial Item | Value | Notes covering billing frequency, invoicing contact, PO reference, payment terms, expense policy, currency, GST treatment; SS-1 warning callout if fee structure missing
+10. Risk, Compliance and Quality — regulatory obligations (explicit only); high-level risk posture only; quality commitment statement; note detailed registers are P2.6 and P2.7
+11. Change Control — statement that all scope/schedule/budget changes require formal CR approval; reference P2.7
+12. Assumptions and Open Items — table: # | Open Item | Area | Priority | Action Required | Owner Role; include open items from P1_3, P1_4, and any new items from this step
+13. Sign-off — table: Role | Name | Organisation | Signature | Date; roles: Client Sponsor, Client Project Owner, PwC Engagement Lead, PwC Engagement Manager, PwC Account Leader
+Save to: \`/mnt/data/P1.4_Engagement_Charter_{YYYY-MM-DD}_v1.0.docx\`
+---
+## QA (assertions inside the single code call)
+- SS-1 styles applied throughout
+- Confidentiality footer on every page
+- All 13 sections present
+- No raw bracket placeholders
+- All tables conform to SS-1 standard
+If any assertion fails output only: \`QA FAIL:\` followed by compact list of failures.
+---
+─────────────────────────────────────────────────────
+EXECUTION CHECKPOINT
+Reasoning is complete. Open the code interpreter call now.
+Do not output the JSON handoff or closing message until after it completes.
+─────────────────────────────────────────────────────
+## OUTPUT CONTRACT
+1) Code interpreter call — mandatory, must happen first
+2) \`P1_4_CANONICAL_HANDOFF\` fenced JSON in-chat after the code call:
+   - prompt_id | generated_on | engagement_identifiers | engagement_context | scope_summary | objectives_refs | roles | decision_rights_summary | commercial_terms | open_items[] | validation
+3) Download link for the docx
+Close with a brief message confirming outputs and inviting the user to proceed or request changes.`,
   },
   "engagement_intake.json": {
     prompt_id: "P1.1",
@@ -8473,7 +8558,87 @@ After delivering all files, include a brief closing message confirming what was 
     prompt_name: "PMO Playbook",
     artifact: "PMO Playbook",
     instruction:
-      `EXECUTION CONSTRAINTS — MANDATORY:\\nYou must follow these execution rules without exception before performing any task.\\n\\n1. Do all parsing, validation, reasoning, and content drafting in your response text only. Do not use code interpreter for any of these steps.\\n\\n2. Make exactly ONE code interpreter call. This call must contain the complete, final file generation script in its entirety. Do not split file generation across multiple calls.\\n\\n3. Do not use code interpreter to inspect, test, explore, or validate data, variables, or helper functions before the final generation call.\\n\\n4. Do not make iterative or exploratory code calls at any stage.\\n\\n5. If a code error occurs inside the single permitted call, handle it internally using try/except. Do not make a second code call to fix or retry it.\\n\\n6. Generate and save all required output files within the single permitted code call. Do not make additional code calls for each file format separately.\\n\\n7. Do not confirm, summarise, or test outputs with a code call. Confirm completion in your response text only.\\n\\n8. Do not present preview tables or confirmation gates mid-execution. Treat all proposed content as confirmed and proceed directly to file generation without waiting for user input.\\n\\n9. After delivering all output files, include a brief closing message confirming what was generated and inviting the user to request changes or proceed with the next prompt. Do not await a response — this message is terminal.\\n\\n---\\n\\n# P2.8 — PMO Playbook (Chain Step)\n\nSS-1, DD-1, WE-1 are loaded from P1.1. Apply them. Do not restate them.\n\n---\n\n## PURPOSE\nThis is the final planning consolidation step. Generate:\n1) A real \`.pptx\` — PMO Playbook (single operational + communication playbook, including Change Control policy and process)\n2) The canonical JSON handoff in-chat (do NOT save JSON as a file unless explicitly required)\n\nNote: The operational Excel trackers are produced in prior steps (P2.1–P2.7). This step produces two outputs: the consolidated PowerPoint playbook and a single XLSX master tracker (P2.8_PMP_Master_Tracker).\n\nThis step must not pause for user input.\n\n---\n\n## INPUTS\nParse the most recent in-chat JSON objects (all 12 required):\n- \`P1_1_CANONICAL_HANDOFF\` — engagement identifiers + SS-1/DD-1/WE-1 confirmation\n- \`P1_2_CANONICAL_HANDOFF\` — stakeholders + influence/interest + engagement strategies\n- \`P1_3_CANONICAL_HANDOFF\` — scope inclusions/exclusions + objectives + success criteria\n- \`P1_4_CANONICAL_HANDOFF\` — charter + commercial terms + key authorities\n- \`P1_5_CANONICAL_HANDOFF\` — governance bodies + cadence + escalation paths\n- \`P2_1_CANONICAL_HANDOFF\` — WBS workstreams + deliverables + milestones + schedule\n- \`P2_2_CANONICAL_HANDOFF\` — resource roles + capacity peaks + RACI summary\n- \`P2_3_CANONICAL_HANDOFF\` — budget baseline summary + fee structure\n- \`P2_4_CANONICAL_HANDOFF\` — top risks + counts + escalations\n- \`P2_5_CANONICAL_HANDOFF\` — comms cadence + audiences\n- \`P2_6_CANONICAL_HANDOFF\` — quality gates + review cadence + metrics\n- \`P2_7_CANONICAL_HANDOFF\` — change thresholds + authorities + freeze periods\n\n---\n\n## HARD PRECONDITIONS (FAIL-FAST)\n1) All 12 upstream handoffs listed above must be present.\n2) \`P1_1_CANONICAL_HANDOFF.engagement.client_name\` and \`.engagement_name\` must be present.\n3) \`P2_1_CANONICAL_HANDOFF.schedule_bounds.methodology\` must be present and one of {Waterfall, Agile, Hybrid}.\n\nIf any missing, STOP and output only:\n> \`BLOCKED: Missing required upstream handoff(s) for PMO Playbook (P2.8). Require P1.1–P1.5 and P2.1–P2.7 canonical handoffs. Re-run missing steps, then re-run P2.8.\`\n\n---\n\n## STEP 1 — CONSOLIDATION AUDIT (MUST EXECUTE)\nPerform a deterministic cross-document audit using upstream JSON only (no invention). Produce \`consistency_audit[]\` in the JSON handoff with each check marked PASS | WARNING | FAIL.\n\n**1A) Scope Consistency:** Workstreams in P2.1 align with scope categories in P1.3 and charter workstreams in P1.5. Every in-scope item has at least one mapped WBS element OR is marked "non-decomposable / governance-only". No excluded scope items appear as deliverables/work packages.\n\n**1B) Date Consistency:** Charter start/end vs schedule start/end match (or differences explained). Resource plan date range within schedule range. Milestones in critical path exist in schedule.\n\n**1C) Resource/Budget Consistency:** RACI roles are a subset of resource roles (+ governance-only roles). Budget effort basis aligns with resource effort within 5% tolerance if both totals available.\n\n**1D) Governance/Comms/Change Consistency:** All governance bodies appear in comms cadence where relevant. Risk/issue escalation bodies exist in governance. Change authority roles exist in governance/RACI.\n\n**1E) Open Items Consolidation:** Build \`master_open_items[]\` by aggregating all open items from upstream handoffs. Flag \`blocks_delivery_start: true\` if any upstream flagged or if a critical precondition is unmet.\n\nIf FAIL count > 5, the PPTX cover slide must include a prominent banner:\n> "⚠ Significant planning inconsistencies detected. Resolve all FAIL items before distributing this playbook. See Consistency Audit."\n\n## STEP 2 — BUILD DELIVERABLES\n\n### 2A) PPTX — PMO Playbook\nGenerate a real \`.pptx\`. Apply SS-1 slide system: 16:9 widescreen; title/divider styling; footer "PwC Private and Confidential"; logo placeholder per SS-1; consistent typography and grid. Enforce: max 5 bullets per slide; max 6 table rows per slide (split as needed); presenter notes on every slide.\n\nHard limit: **max 55 slides**. If content exceeds, compress by: (1) combining adjacent summaries, (2) moving detail to appendix, (3) reducing tables to "top N".\n\n#### Fixed PPTX structure:\n\n**Slide 1 — Title:** PMO Playbook; Client | Engagement; Date, v1.0, Draft. Add FAIL banner if FAIL count > 5.\n**Slide 2 — How to Use This Playbook:** Purpose, audiences, maintenance/versioning.\n**Slide 3 — Contents:** Six parts with slide ranges.\n\n**Part 1 — Engagement Overview** (divider + slides):\n- Engagement at a glance (facts + top objectives)\n- Objectives (cards)\n- Success criteria (table)\n- Scope at a glance (in/out + boundary statement)\n- Timeline/roadmap (phases + key milestones)\n- Team overview (grid; names if available else roles)\n- Key contacts (table)\n\n**Part 2 — How We Will Deliver** (divider + slides):\n- Delivery approach (methodology-specific)\n- Workstreams map (cards)\n- Workstream summary table\n- Key milestones table\n- Critical path summary (Waterfall/Hybrid) OR delivery criticality/release constraints (Agile)\n- Sprint plan (Agile/Hybrid) OR phase plan (Waterfall)\n- Deliverables overview (table)\n- Budget overview (table + simple composition visual placeholder)\n\n**Part 3 — How We Will Manage the Plan** (divider + slides):\n- Schedule management process (flow)\n- Resource management process (flow)\n- Budget management process (flow; fee-structure adaptation)\n- Quality management process (flow)\n- Deliverable review & sign-off lifecycle (flow + turnaround table)\n\n**Part 4 — Risks, Issues, Changes** (divider + slides):\n- RAID overview (cards)\n- Risk process + matrix\n- Top risks baseline (top 10)\n- Issue process + escalation ladder\n- Dependency process\n- Assumption process\n- Change control process (standard + emergency)\n- Change authority matrix\n- Change freeze calendar (only if freeze periods exist upstream)\n\n**Part 5 — How We Will Work Together** (divider + slides):\n- Governance structure diagram\n- Governance cadence table\n- Decision-making framework\n- Stakeholder engagement matrix (influence-interest)\n- Communications plan summary\n- Reporting cadence summary\n- RACI summary (high level)\n- Ways of working (cards)\n- Escalation path (ladder)\n\n**Part 6 — Reference** (divider + slides):\n- Planning document index (all planning artifacts produced across P1.1–P2.7; status)\n- Readiness assessment (overall + dimension table)\n- Open items (critical/high only)\n- Key assumptions & constraints\n- Glossary (DD-1 terms + engagement-specific)\n- Closing slide\n\nFilename: \`P2.8_PMO_Playbook_{YYYY-MM-DD}_v1.0.pptx\` (save to \`/mnt/data/\`)\n\n---\n\n### 2B) XLSX — PMP Master Tracker\nGenerate a real \`.xlsx\` using openpyxl. Apply SS-1 Excel + WE-1.\n\nExactly 5 sheets (stable names): \`Engagement_Dashboard\`, \`Doc_Index_and_Readiness\`, \`RAID_and_Changes\`, \`Budget_and_Milestones\`, \`Open_Items_and_Change_Log\`\n\nWE-1 requirements:\n- All datasets as Excel Tables (\`tbl_*\`) + structured references. No fixed row anchors.\n- Named ranges for KPI anchor cells.\n\nRequired tables:\n- Sheet 2: \`tbl_doc_index\`, \`tbl_readiness\`\n- Sheet 3: \`tbl_raid\`, \`tbl_changes_summary\`\n- Sheet 4: \`tbl_budget_summary\`, \`tbl_milestones\`\n- Sheet 5: \`tbl_open_items\`, \`tbl_change_log\`\n\nDashboard (Sheet 1): Formula-driven where feasible; allowed manual fields: reporting period, RAG dropdowns (Overall/Schedule/Budget/Resources/Risk/Quality), one-line narrative summaries.\n\nPopulate from upstream handoffs:\n- Document index: one entry per artifact produced across P1.1–P2.7\n- Readiness dimensions: the following 10 standard dimensions (one row per dimension, score each 1–5): 1) Executive & Sponsor Readiness, 2) Scope & Requirements Readiness, 3) Schedule & Milestone Readiness, 4) Resource & Capability Readiness, 5) Financial & Budget Readiness, 6) Governance & Decision-Making Readiness, 7) Risk & Issue Management Readiness, 8) Change Management & Stakeholder Readiness, 9) Quality & Compliance Readiness, 10) Technology & Infrastructure Readiness\n- Milestones: from P2.1\n- Top RAID items: Critical/High only\n- Change summary: from P2.7\n- Open items: all sources, aggregated\n- Budget snapshot: from P2.3 summary\n\nFilename: \`P2.8_PMP_Master_Tracker_{YYYY-MM-DD}_v1.0.xlsx\` (save to \`/mnt/data/\`)\n\n---\n\n## QA (all checks must be implemented as assertions inside the single code call; do not make a separate code call for QA)\n\n**PPTX:** Slide count ≤55; every slide has required footer + logo placeholder + title; no overflowing text (best-effort); table row limits enforced; RAG meanings and colours match DD-1/SS-1.\n\n**XLSX:** Exactly 5 sheets with specified names; all required tables present; dropdowns for readiness status and RAG cells; no formula errors; dashboard cells link to tables where specified.\n\n---\n\n## OUTPUT (mandatory)\n1) Download link for \`.pptx\`\n2) Download link for \`.xlsx\`\nNo other narrative output.\n\nAfter delivering all files, include a brief closing message confirming what was generated and inviting the user to request changes or send the next prompt. Do not await a response — this message is terminal.`,
+      `EXECUTION RULES:
+1. Do all reasoning, parsing, and content drafting in response text only. This is preparatory work — it does not complete the task.
+2. You MUST make exactly one code interpreter call. A response that ends without a code interpreter call has failed.
+3. Output the closing message only after the code call completes.
+4. Handle all errors with try/except internally. No second calls to fix errors.
+---
+# P2.8 — PMO Playbook
+## INPUTS
+Parse from context: \`P1_1_CANONICAL_HANDOFF\`, \`P1_2_CANONICAL_HANDOFF\`, \`P1_3_CANONICAL_HANDOFF\`, \`P1_4_CANONICAL_HANDOFF\`, \`P1_5_CANONICAL_HANDOFF\`, \`P2_1_CANONICAL_HANDOFF\`, \`P2_2_CANONICAL_HANDOFF\`, \`P2_3_CANONICAL_HANDOFF\`, \`P2_4_CANONICAL_HANDOFF\`, \`P2_5_CANONICAL_HANDOFF\`, \`P2_6_CANONICAL_HANDOFF\`, \`P2_7_CANONICAL_HANDOFF\`. SS-1, DD-1, WE-1 are loaded — treat as authoritative.
+---
+## HARD PRECONDITIONS
+Stop and output the message below if any of the 12 handoffs are missing, or if client_name/engagement_name (P1_1) or schedule_bounds.methodology (P2_1) are absent:
+> BLOCKED: Missing required upstream handoff(s) for PMO Playbook (P2.8). Require P1.1–P1.5 and P2.1–P2.7 canonical handoffs. Re-run missing steps then re-run P2.8.
+---
+## STEP 1 — CONSOLIDATION AUDIT
+Using upstream JSON only, produce \`consistency_audit[]\` with each check marked PASS | WARNING | FAIL.
+1A) Scope Consistency: P2_1 workstreams align with P1_3 scope categories and P1_5 charter workstreams. Every in-scope item has a mapped WBS element or is marked non-decomposable. No excluded items appear as deliverables.
+1B) Date Consistency: Charter start/end vs schedule start/end match or differences are explained. Resource plan date range within schedule range. Critical path milestones exist in schedule.
+1C) Resource/Budget Consistency: RACI roles are a subset of resource roles. Budget effort aligns with resource effort within 5% tolerance where both totals are available.
+1D) Governance/Comms/Change Consistency: All governance bodies appear in comms cadence. Risk/issue escalation bodies exist in governance. Change authority roles exist in governance/RACI.
+1E) Open Items Consolidation: Aggregate all open items from all upstream handoffs into \`master_open_items[]\`. Flag \`blocks_delivery_start: true\` if any critical precondition is unmet.
+If FAIL count > 5, PPTX cover slide must include:
+> "⚠ Significant planning inconsistencies detected. Resolve all FAIL items before distributing this playbook. See Consistency Audit."
+---
+## STEP 2 — BUILD DELIVERABLES
+### 2A) PPTX — PMO Playbook
+Use python-pptx. Apply SS-1 slide system: 16:9; title/divider styling; footer "PwC Private and Confidential" every slide; "PwC" logo text placeholder top-left per SS-1; consistent typography. Max 5 bullets per slide; max 6 table rows per slide (split if exceeded). Presenter notes on every slide. Hard limit: 55 slides maximum — compress by combining summaries, moving detail to appendix, or reducing tables to top N.
+Fixed structure:
+**Slide 1 — Title:** PMO Playbook | Client | Engagement | Date | v1.0 | Draft. Add FAIL banner if FAIL count > 5.
+**Slide 2 — How to Use This Playbook:** Purpose, audiences, maintenance/versioning.
+**Slide 3 — Contents:** Six parts with slide ranges.
+**Part 1 — Engagement Overview** (section divider + slides):
+Engagement at a glance (facts + top objectives) | Objectives (cards) | Success criteria (table) | Scope at a glance (in/out + boundary statement) | Timeline/roadmap (phases + key milestones) | Team overview (grid; names if available else roles) | Key contacts (table)
+**Part 2 — How We Will Deliver** (section divider + slides):
+Delivery approach (methodology-specific) | Workstreams map (cards) | Workstream summary table | Key milestones table | Critical path summary (Waterfall/Hybrid) OR delivery criticality (Agile) | Sprint plan (Agile/Hybrid) OR phase plan (Waterfall) | Deliverables overview (table) | Budget overview (table + composition visual placeholder)
+**Part 3 — How We Will Manage the Plan** (section divider + slides):
+Schedule management process (flow) | Resource management process (flow) | Budget management process (flow; fee-structure adapted) | Quality management process (flow) | Deliverable review and sign-off lifecycle (flow + turnaround table)
+**Part 4 — Risks, Issues, Changes** (section divider + slides):
+RAID overview (cards) | Risk process + matrix | Top risks baseline (top 10) | Issue process + escalation ladder | Dependency process | Assumption process | Change control process (standard + emergency) | Change authority matrix | Change freeze calendar (only if freeze periods exist in P2_7)
+**Part 5 — How We Will Work Together** (section divider + slides):
+Governance structure diagram | Governance cadence table | Decision-making framework | Stakeholder engagement matrix (influence-interest) | Communications plan summary | Reporting cadence summary | RACI summary (high level) | Ways of working (cards) | Escalation path (ladder)
+**Part 6 — Reference** (section divider + slides):
+Planning document index (all artifacts P1.1–P2.7 with status) | Readiness assessment (overall + 10-dimension table) | Open items (Critical/High only) | Key assumptions and constraints | Glossary (DD-1 terms + engagement-specific) | Closing slide
+Save to: \`/mnt/data/P2.8_PMO_Playbook_{YYYY-MM-DD}_v1.0.pptx\`
+---
+### 2B) XLSX — PMP Master Tracker
+Use openpyxl. Apply SS-1 and WE-1. Exactly 5 sheets.
+Table names: \`tbl_doc_index\` | \`tbl_readiness\` | \`tbl_raid\` | \`tbl_changes_summary\` | \`tbl_budget_summary\` | \`tbl_milestones\` | \`tbl_open_items\` | \`tbl_change_log\`
+**Engagement_Dashboard** — tab colour OR500
+Formula-driven KPIs where feasible. Manual fields: reporting period, RAG dropdowns (Overall|Schedule|Budget|Resources|Risk|Quality per DD-1 §2.6), one-line narrative summaries per dimension.
+Named ranges for all KPI anchor cells. SS-1 header block rows 1–2.
+**Doc_Index_and_Readiness** — tab colour GR100
+Table \`tbl_doc_index\`: one row per artifact produced across P1.1–P2.7. Columns: Artifact_ID | Step | Artifact_Name | File_Type | Filename | Status | Version | Date_Generated | Notes.
+Table \`tbl_readiness\`: 10 standard dimensions. Columns: Dimension_ID | Dimension | Score_1_5 (dropdown: 1|2|3|4|5) | RAG (formula: 4–5=Green, 3=Amber, 1–2=Red) | Evidence | Gaps | Owner | Notes.
+Dimensions: Executive & Sponsor Readiness | Scope & Requirements Readiness | Schedule & Milestone Readiness | Resource & Capability Readiness | Financial & Budget Readiness | Governance & Decision-Making Readiness | Risk & Issue Management Readiness | Change Management & Stakeholder Readiness | Quality & Compliance Readiness | Technology & Infrastructure Readiness.
+**RAID_and_Changes** — tab colour OR500
+Table \`tbl_raid\`: Critical/High risks and issues from P2_4. Columns: Item_ID | Type (dropdown: Risk|Issue|Dependency|Assumption) | Title | Category | Rating | Owner | Status | Next_Review | Notes.
+Table \`tbl_changes_summary\`: from P2_7. Columns: CR_ID | Title | Classification | Status | Budget_Impact | Schedule_Impact_Days | Decision_Date | Notes.
+**Budget_and_Milestones** — tab colour OR500
+Table \`tbl_budget_summary\`: from P2_3. Columns: Cost_Category | Baseline_Amount | Actual_to_Date | Forecast_to_Complete | EAC | Variance | Variance_Pct | Status.
+Table \`tbl_milestones\`: from P2_1. Columns: Milestone_ID | Milestone_Name | Phase | Type | Planned_Date | Forecast_Date | Status | Owner | Notes.
+Conditional formatting: milestone Status per DD-1 RAG tokens; budget Status per SUCC/WARN/DNGR tokens.
+**Open_Items_and_Change_Log** — tab colour GR100
+Table \`tbl_open_items\`: aggregated from all upstream handoffs. Columns: OI_ID | Source_Step | Area | Description | Priority | Action_Required | Owner | Due_Date | Status | Blocks_Delivery_Start.
+Table \`tbl_change_log\` (CHG-### per DD-1): Change_ID | Date | Sheet | Record_ID | Change_Type | Previous_Value | New_Value | Changed_By | Reason | Approved_By. Pre-populate one instruction row.
+Save to: \`/mnt/data/P2.8_PMP_Master_Tracker_{YYYY-MM-DD}_v1.0.xlsx\`
+---
+## QA (assertions inside the single code call)
+- PPTX: slide count ≤55; every slide has footer + logo placeholder + title; table row limits enforced; RAG colours match DD-1/SS-1; FAIL banner present if FAIL count > 5
+- XLSX: exactly 5 sheets with correct names; all tables exist; RAG and readiness score dropdowns applied; dashboard cells link to tables; no formula errors
+If any assertion fails output only: \`QA FAIL:\` followed by compact list of failures and locations.
+---
+─────────────────────────────────────────────────────
+EXECUTION CHECKPOINT
+Reasoning is complete. Open the code interpreter call now.
+Do not output the closing message until after it completes.
+─────────────────────────────────────────────────────
+## OUTPUT CONTRACT
+1) Code interpreter call — mandatory, must happen first
+2) Download links for both files
+Close with a brief message confirming outputs and inviting the user to request changes.`,
   },
   "quality_plan.json": {
     prompt_id: "P2.6",
@@ -8501,14 +8666,207 @@ After delivering all files, include a brief closing message confirming what was 
     prompt_name: "Scope, Objectives & Success Criteria",
     artifact: "Scope & Objectives Workbook",
     instruction:
-      `EXECUTION CONSTRAINTS — MANDATORY:\\nYou must follow these execution rules without exception before performing any task.\\n\\n1. Do all parsing, validation, reasoning, and content drafting in your response text only. Do not use code interpreter for any of these steps.\\n\\n2. Make exactly ONE code interpreter call. This call must contain the complete, final file generation script in its entirety. Do not split file generation across multiple calls.\\n\\n3. Do not use code interpreter to inspect, test, explore, or validate data, variables, or helper functions before the final generation call.\\n\\n4. Do not make iterative or exploratory code calls at any stage.\\n\\n5. If a code error occurs inside the single permitted call, handle it internally using try/except. Do not make a second code call to fix or retry it.\\n\\n6. Generate and save all required output files within the single permitted code call. Do not make additional code calls for each file format separately.\\n\\n7. Do not confirm, summarise, or test outputs with a code call. Confirm completion in your response text only.\\n\\n8. Do not present preview tables or confirmation gates mid-execution. Treat all proposed content as confirmed and proceed directly to file generation without waiting for user input.\\n\\n9. After delivering all output files, include a brief closing message confirming what was generated and inviting the user to request changes or proceed with the next prompt. Do not await a response — this message is terminal.\\n\\n---\\n\\n# P1.3 — Scope, Objectives & Success Criteria (Chain Step)\n\n## PURPOSE\nProduce the canonical Scope, Objectives & Success Criteria document. Outputs:\n1) Real .docx — Scope, Objectives & Success Criteria (client-ready)\n2) Real .xlsx — Scope & Objectives Workbook (inclusions/exclusions, objectives register, success criteria tracker)\n3) Canonical JSON handoff in-chat for downstream prompts\n\nGenerate a defensible draft where information is missing. Capture gaps as open_items. Do not use an interactive PROCEED loop.\n\n---\n\n## INPUTS\nParse the most recent in-chat JSON objects:\n- P1_1_CANONICAL_HANDOFF\n- P1_2_CANONICAL_HANDOFF\n\nIf present, apply scope_overrides as last-write-wins:\n<scope_overrides>\n{{SCOPE_OVERRIDES}}\n</scope_overrides>\n\nIf no scope_overrides provided, skip this section.\n\nSS-1, DD-1, WE-1 are loaded from P1.1. Apply them. Do not restate them.\n\n---\n\n## STEP 1 — EXTRACT + NORMALISE\nFrom P1_1_CANONICAL_HANDOFF extract: explicit in/out-of-scope statements, objectives, service offerings, technology, partners, regulatory requirements, assumptions, constraints.\nFrom P1_2_CANONICAL_HANDOFF extract: stakeholder roles relevant to scope sign-off.\n\nNormalise into four sets using DD-1 field names:\n- inclusions[]\n- exclusions[]\n- assumptions[]\n- constraints[]\n\nClassification rules:\n- Explicitly stated in-scope → Inclusion; confidence = High; source = Provided\n- Explicitly stated out-of-scope → Exclusion; confidence = High; source = Provided\n- Inferred → confidence = Medium or Low; source = Inferred_[type]\n- Uncertain → Assumption; set confidence = Low; set source = Other (or most applicable Inferred_[type]); create open_item\n\nDo not invent items not grounded in inputs.\n\n---\n\n## STEP 2 — VALIDATE\nHard minimums (fail-fast):\n- client_name and engagement_name exist\n- At least 1 scope record exists after extraction\n\nIf hard minimums fail — output P1_3_VALIDATION_ERRORS fenced JSON and STOP:\n{ prompt_id: "P1.3", generated_on: YYYY-MM-DD, validation: { status: "FAIL", missing_required: [...], notes: [...] } }\n\nSoft minimums (create open_items, do not fail):\n- At least 3 inclusions or scope marked TBC\n- At least 1 assumption (if none, add: "Scope boundaries based on current brief; to be confirmed in workshop"; confidence = Low)\n- At least 1 exclusion or note "No exclusions specified"\n\n## STEP 3 — BUILD DELIVERABLES\n\n### 3A) DOCX — Scope Statement\nGenerate a real .docx using python-docx. Apply SS-1 Word styling throughout.\n\nSections (no additions beyond these):\n1) Cover block — title, client, engagement, version v1.0, status Draft, date, confidentiality notice\n2) Purpose — 1 paragraph\n3) Engagement Overview — compact table: Client | Engagement | Start Date | End Date | Delivery Methodology | Engagement Lead | Engagement Manager\n4) Scope Boundary Statement — 2-3 plain English paragraphs (what\'s in, what\'s out, how changes are managed); Key Boundaries callout box (5-8 most material items)\n5) In Scope — table: # | Scope Item | Category | Description | Source | Confidence\n6) Out of Scope — table: # | Exclusion Item | Category | Reason | Source | Confidence; note that inclusions require formal change control\n7) Assumptions — table: # | Assumption | Category | Impact if Wrong | Confidence | Status; Low-confidence or High-impact items in warning callout\n8) Constraints — table: # | Constraint | Category | Impact | Source | Status\n9) Open Items — table: # | Open Item | Priority | Action Required | Suggested Owner\n10) Sign-off — table: Role | Name | Organisation | Signature | Date; roles: Client Sponsor, Client Project Owner, PwC Engagement Lead, PwC Engagement Manager\n\nFile: P1.3_Scope_Objectives_{YYYY-MM-DD}_v1.0.docx → /mnt/data/\n\n---\n\n### 3B) XLSX — Scope Registers\nGenerate a real .xlsx using openpyxl. Apply SS-1 Excel + WE-1 throughout.\n\nSheets (exact names; stable):\n1) Scope_Register\n2) Scope_Change_Log\n3) Scope_RACI\n4) Change_Log\n\n**Scope_Register**\nSS-1 header block rows 1-2. Excel Table tblScope from row 3.\nColumns:\n1. scope_record_id — INC-### / EXC-### / ASM-### / CON-### per type\n2. type — dropdown: Inclusion | Exclusion | Assumption | Constraint\n3. item_title\n4. description\n5. category — dropdown: Scope | Resource | Technology | Timeline | Budget | Regulatory | Stakeholder | Other\n6. source — dropdown: Provided | Inferred_Objectives | Inferred_Services | Inferred_Industry | Inferred_Regulatory | Override | Other\n7. confidence — dropdown: High | Medium | Low\n8. owner_org — dropdown: PwC | Client | Joint | Third_Party | TBC\n9. owner_role — nullable\n10. status — dropdown: Open | Confirmed | Invalidated | Deferred\n11. date_confirmed — YYYY-MM-DD; blank if not confirmed\n12. notes\n13. linked_objective_ids — nullable\n14. linked_stakeholder_ids — nullable\n\nConditional formatting (SS-1 status tokens):\n- confidence = Low → warning highlight\n- status = Open AND type = Exclusion or Assumption → warning highlight\n- owner_org or owner_role blank on Confirmed items → danger highlight\n\nFreeze panes: row 3 + columns A:B. Tab colour: primary per SS-1.\n\n**Scope_Change_Log**\nExcel Table tblScopeChanges. Tab colour: reference per SS-1.\nColumns: change_id (SCH-###) | change_date | scope_record_id | change_type (dropdown: Add | Remove | Modify | Reclassify | Confirm | Invalidate | Defer) | change_description | requested_by | approved_by | decision (dropdown: Approved | Rejected | Deferred | Pending) | decision_date | notes\n\n**Scope_RACI**\nExcel Table tblScopeRACI. Tab colour: reference per SS-1.\nColumns: scope_record_id | item_title | primary_workstream | accountable_role | responsible_role | consulted_roles | informed_roles | notes\nPopulate from P1.2 roles where known. Leave blank and create open_item where uncertain.\n\n**Change_Log**\nExcel Table tblChangeLog (CHG-### per DD-1). Tab colour: reference per SS-1.\nColumns: change_id | change_date | sheet_name | record_id | field_changed | previous_value | new_value | changed_by | reason\nPre-populate one instruction row.\n\nFile: P1.3_Scope_Registers_{YYYY-MM-DD}_v1.0.xlsx → /mnt/data/\n\n---\n\n### 3C) JSON HANDOFF\nOutput the following fenced JSON in-chat (in response text — not via code) with top-level key P1_3_CANONICAL_HANDOFF:\n- prompt_id: "P1.3"\n- generated_on: YYYY-MM-DD\n- engagement_identifiers: { client_name, engagement_name, engagement_code }\n- scope_boundary_statement: string\n- inclusions, exclusions, assumptions, constraints: arrays (DD-1 fields)\n- objectives[]: [{ objective_id, objective_type, theme, specific_objective, context, source }]\n- success_criteria[]: [{ sc_id, criterion, linked_objective_id, target, owner_role, source }]\n- open_items: [{ id, area, description, source, priority, suggested_owner_role }]\n- validation: { status: "PASS", notes: [] }\n\n---\n\n## QA\nDOCX: SS-1 styles applied; confidentiality footer every page; all 10 sections present; no raw bracket placeholders.\nXLSX: sheet names match exactly; tblScope (14 cols), tblScopeChanges (10 cols), tblScopeRACI (8 cols), tblChangeLog (9 cols) all exist; dropdowns, freeze panes, filters, conditional formatting applied; no formula errors.\n\nQA FAIL: output only — QA FAIL: followed by compact list of failures (Sheet + Table/Column). No other output.\n\n---\n\n## OUTPUT\n1) P1_3_CANONICAL_HANDOFF fenced JSON in-chat\n2) Download links: P1.3_Scope_Objectives_{YYYY-MM-DD}_v1.0.docx and P1.3_Scope_Registers_{YYYY-MM-DD}_v1.0.xlsx\nNo other narrative output.\n\nAfter delivering all files, include a brief closing message confirming what was generated and inviting the user to request changes or send the next prompt. Do not await a response — this message is terminal.`,
+      `EXECUTION RULES:
+1. Do all reasoning, parsing, and content drafting in response text only. This is preparatory work — it does not complete the task.
+2. You MUST make exactly one code interpreter call. A response that ends without a code interpreter call has failed.
+3. Output the JSON handoff and closing message only after the code call completes.
+4. Handle all errors with try/except internally. No second calls to fix errors.
+---
+# P1.3 — Scope, Objectives & Success Criteria
+## INPUTS
+Parse from context: \`P1_1_CANONICAL_HANDOFF\` and \`P1_2_CANONICAL_HANDOFF\`. SS-1, DD-1, WE-1 are loaded — treat as authoritative.
+If provided, apply as last-write-wins:
+<scope_overrides>
+{{SCOPE_OVERRIDES}}
+</scope_overrides>
+---
+## STEP 1 — EXTRACT + NORMALISE
+From P1_1: extract in/out-of-scope statements, objectives, service offerings, technology, partners, regulatory requirements, assumptions, constraints.
+From P1_2: extract stakeholder roles relevant to scope sign-off.
+Normalise into four sets using DD-1 field names: inclusions[] | exclusions[] | assumptions[] | constraints[]
+Classification rules:
+- Explicitly in-scope → Inclusion; confidence = High; source = Provided
+- Explicitly out-of-scope → Exclusion; confidence = High; source = Provided
+- Inferred → confidence = Medium or Low; source = Inferred_[type]
+- Uncertain → Assumption; confidence = Low; create open_item
+Do not invent items not grounded in inputs.
+---
+## STEP 2 — VALIDATE
+Stop and output \`P1_3_VALIDATION_ERRORS\` fenced JSON only if: client_name or engagement_name are missing, OR zero scope records exist after extraction.
+Soft checks (create open_items, do not stop):
+- At least 3 inclusions or scope marked TBC
+- At least 1 assumption (if none, add: "Scope boundaries based on current brief; to be confirmed in workshop"; confidence = Low)
+- At least 1 exclusion or note "No exclusions specified"
+---
+## STEP 3 — BUILD DELIVERABLES
+### 3A) DOCX — Scope Statement
+Use python-docx. Apply SS-1 Word styling throughout.
+Sections in this order, no additions:
+1. Cover block — title, client, engagement, version v1.0, status Draft, date, confidentiality notice
+2. Purpose — 1 paragraph
+3. Engagement Overview — table: Client | Engagement | Start Date | End Date | Delivery Methodology | Engagement Lead | Engagement Manager
+4. Scope Boundary Statement — 2–3 plain English paragraphs; Key Boundaries callout (5–8 material items)
+5. In Scope — table: # | Scope Item | Category | Description | Source | Confidence
+6. Out of Scope — table: # | Exclusion Item | Category | Reason | Source | Confidence; note inclusions require formal change control
+7. Assumptions — table: # | Assumption | Category | Impact if Wrong | Confidence | Status; Low-confidence or High-impact items in warning callout
+8. Constraints — table: # | Constraint | Category | Impact | Source | Status
+9. Open Items — table: # | Open Item | Priority | Action Required | Suggested Owner
+10. Sign-off — table: Role | Name | Organisation | Signature | Date; roles: Client Sponsor | Client Project Owner | PwC Engagement Lead | PwC Engagement Manager
+Save to: \`/mnt/data/P1.3_Scope_Objectives_{YYYY-MM-DD}_v1.0.docx\`
+---
+### 3B) XLSX — Scope Registers
+Use openpyxl. Apply SS-1 and WE-1 throughout.
+Sheets (exact names): \`Scope_Register\` | \`Scope_Change_Log\` | \`Scope_RACI\` | \`Change_Log\`
+**Scope_Register**
+SS-1 header block rows 1–2. Table \`tblScope\` from row 3. Tab colour OR500.
+Columns:
+1. scope_record_id — INC-### / EXC-### / ASM-### / CON-### per type
+2. type — dropdown: Inclusion | Exclusion | Assumption | Constraint
+3. item_title
+4. description
+5. category — dropdown: Scope | Resource | Technology | Timeline | Budget | Regulatory | Stakeholder | Other
+6. source — dropdown: Provided | Inferred_Objectives | Inferred_Services | Inferred_Industry | Inferred_Regulatory | Override | Other
+7. confidence — dropdown: High | Medium | Low
+8. owner_org — dropdown: PwC | Client | Joint | Third_Party | TBC
+9. owner_role
+10. status — dropdown: Open | Confirmed | Invalidated | Deferred
+11. date_confirmed — YYYY-MM-DD
+12. notes
+13. linked_objective_ids
+14. linked_stakeholder_ids
+Conditional formatting: confidence=Low → WARN fill; status=Open AND type=Exclusion or Assumption → WARN fill; owner blank on Confirmed items → DNGR fill.
+Freeze panes: row 3 + columns A:B.
+**Scope_Change_Log**
+Table \`tblScopeChanges\`. Tab colour GR100.
+Columns: change_id (SCH-###) | change_date | scope_record_id | change_type (dropdown: Add | Remove | Modify | Reclassify | Confirm | Invalidate | Defer) | change_description | requested_by | approved_by | decision (dropdown: Approved | Rejected | Deferred | Pending) | decision_date | notes
+**Scope_RACI**
+Table \`tblScopeRACI\`. Tab colour GR100.
+Columns: scope_record_id | item_title | primary_workstream | accountable_role | responsible_role | consulted_roles | informed_roles | notes
+Populate from P1_2 roles where known; leave blank and create open_item where uncertain.
+**Change_Log**
+Table \`tblChangeLog\` (CHG-### per DD-1). Tab colour GR100.
+Columns: change_id | change_date | sheet_name | record_id | field_changed | previous_value | new_value | changed_by | reason
+Pre-populate one instruction row.
+Save to: \`/mnt/data/P1.3_Scope_Registers_{YYYY-MM-DD}_v1.0.xlsx\`
+---
+## QA (assertions inside the single code call)
+- DOCX: SS-1 styles applied; confidentiality footer every page; all 10 sections present; no raw bracket placeholders
+- XLSX: sheet names match exactly; tblScope 14 cols; tblScopeChanges 10 cols; tblScopeRACI 8 cols; tblChangeLog 9 cols; dropdowns, freeze panes, filters, conditional formatting all applied
+If any assertion fails output only: \`QA FAIL:\` followed by compact list of failures and locations.
+---
+─────────────────────────────────────────────────────
+EXECUTION CHECKPOINT
+Reasoning is complete. Open the code interpreter call now.
+Do not output the JSON handoff or closing message until after it completes.
+─────────────────────────────────────────────────────
+## OUTPUT CONTRACT
+1) Code interpreter call — mandatory, must happen first
+2) \`P1_3_CANONICAL_HANDOFF\` fenced JSON in-chat after the code call:
+   - prompt_id | generated_on | engagement_identifiers | scope_boundary_statement | inclusions[] | exclusions[] | assumptions[] | constraints[] | objectives[] | success_criteria[] | open_items[] | validation
+3) Download links for both files
+Close with a brief message confirming outputs and inviting the user to proceed or request changes.`,
   },
   "stakeholder_analysis.json": {
     prompt_id: "P1.2",
     prompt_name: "Stakeholder Analysis",
     artifact: "Stakeholder Analysis Workbook",
     instruction:
-      `EXECUTION CONSTRAINTS — MANDATORY:\\nYou must follow these execution rules without exception before performing any task.\\n\\n1. Do all parsing, validation, reasoning, and content drafting in your response text only. Do not use code interpreter for any of these steps.\\n\\n2. Make exactly ONE code interpreter call. This call must contain the complete, final file generation script in its entirety. Do not split file generation across multiple calls.\\n\\n3. Do not use code interpreter to inspect, test, explore, or validate data, variables, or helper functions before the final generation call.\\n\\n4. Do not make iterative or exploratory code calls at any stage.\\n\\n5. If a code error occurs inside the single permitted call, handle it internally using try/except. Do not make a second code call to fix or retry it.\\n\\n6. Generate and save all required output files within the single permitted code call. Do not make additional code calls for each file format separately.\\n\\n7. Do not confirm, summarise, or test outputs with a code call. Confirm completion in your response text only.\\n\\n8. Do not present preview tables or confirmation gates mid-execution. Treat all proposed content as confirmed and proceed directly to file generation without waiting for user input.\\n\\n9. After delivering all output files, include a brief closing message confirming what was generated and inviting the user to request changes or proceed with the next prompt. Do not await a response — this message is terminal.\\n\\n---\\n\\n# P1.2 — Stakeholder Register & Analysis (Chain Step)\n\n## PURPOSE\nCreate the canonical Stakeholder Register & Analysis for the engagement, suitable for downstream steps (Governance, Communications, RACI). This step must generate:\n1) A real \`.xlsx\` Stakeholder Register workbook (primary artifact)\n2) A canonical JSON handoff object in-chat for downstream prompts (do not save JSON as a file unless explicitly required)\n\nNo additional artifacts unless explicitly listed in STEP 3.\n\n---\n\n## INPUTS (available in-chat from prior step)\nYou MUST locate and parse the most recent in-chat JSON object:\n- \`P1_1_CANONICAL_HANDOFF\`\n\nOptional additional stakeholder data may be provided by the user in this step (if present):\n<stakeholder_overrides>\n{{STAKEHOLDER_OVERRIDES}}\n</stakeholder_overrides>\n\nIf no stakeholder_overrides are provided, skip this section entirely.\n\nRules:\n- SS-1, DD-1, WE-1 are already loaded into context from P1.1. Treat them as authoritative.\n- Use DD-1 canonical field names, ID formats, date formats, and enums throughout.\n- Apply WE-1 workbook engineering rules (tables, structured refs, no brittle anchors).\n\n---\n\n## STEP 1 — EXTRACT + INFER + NORMALISE STAKEHOLDERS\n\nApply the following three tiers in order. Do NOT skip Tier 2 if Tier 1 yields sparse results.\n\n### Tier 1 — Extract (explicit upstream data)\nFrom \`P1_1_CANONICAL_HANDOFF\`, extract all stakeholder-related content:\n- \`intake.key_client_stakeholders\` (if present)\n- Any stakeholders explicitly named in objectives, scope, regulatory, or risk sections\n- Any named individuals in governance or commercial context\n\nMark all Tier 1 stakeholders as \`source: P1_1_Intake\`.\n\n### Tier 2 — Infer (professional judgment; always run; no floor limit)\nRegardless of how many stakeholders Tier 1 yields, apply professional judgment to infer the full realistic set of stakeholders for this engagement. This is not a "fill the minimum" exercise — infer every role that a competent engagement manager would expect to be in the room.\n\n**Inference sources (use all that are available):**\n- \`engagement_name\` — what does this project do? Who in a typical organisation owns, approves, or is impacted by work like this?\n- \`industry\` and \`sector\` — what is the standard organisational structure in this industry? What C-suite, operational, compliance, and technology roles typically exist?\n- \`objectives[]\` — which business functions will own each objective? Which will be impacted? Both are stakeholders.\n- \`regulatory_profile[]\` — which regulators, internal compliance functions, legal, or audit roles are implied?\n- \`service_offerings[]\` — what PwC capability domains are in scope? Each implies a client counterpart who owns that domain.\n- \`risk_profile[]\` — what risk owners, assurance functions, or oversight roles are implied by the stated risks?\n- \`engagement_context\` — delivery mode, timeline, and fee structure all imply additional stakeholders (e.g. procurement for commercial approvals, finance for budget governance)\n\n**Inference depth expectation:**\nFor a typical named engagement with a named client and at least one objective, you must infer a realistic full cast — not a skeleton. As a guide:\n- For a small/focused engagement (single workstream, <6 months): expect 8–15 stakeholders minimum\n- For a medium engagement (2–4 workstreams, 6–12 months): expect 15–25 stakeholders minimum\n- For a large/programme-level engagement: expect 25+ stakeholders minimum\n\nThese are floors, not targets. If the engagement context justifies more, include more.\n\n**If inference is blocked by insufficient context:**\nIf \`engagement_name\`, \`industry\`, and \`objectives[]\` are ALL absent or blank, you cannot infer a meaningful register. In this case, do NOT produce a thin register. Instead, STOP and output the following message to the user before doing anything else:\n\n> "⚠ Insufficient context to infer stakeholders. To generate a meaningful Stakeholder Register I need at minimum: (1) the engagement name or a description of what this project is trying to achieve, and (2) either the client\'s industry or the type of organisation. Please provide these and re-run P1.2."\n\nOnly trigger this block if all three signals are genuinely absent. A client name alone, combined with an engagement name, is sufficient to infer industry-typical roles — use your knowledge of that organisation and industry.\n\n**For each inferred role, create a stakeholder row with:**\n- \`full_name\`: null\n- \`role_title\`: specific inferred role title (not generic — e.g. "Head of Regulatory Compliance" not "Compliance Person")\n- \`organisation_name\`: Client or PwC as appropriate\n- \`source\`: \`Inferred\`\n- \`notes\`: one-line rationale (e.g. "Required for regulatory sign-off given stated compliance objective")\n\nInferred roles must be structurally plausible. Do not infer roles contradicted by the engagement context.\n\n### Tier 3 — Override (last-write-wins)\nApply \`stakeholder_overrides\` (if provided) over Tier 1 and Tier 2 results. Do not invent values not present in overrides.\n\n### Deduplication\nAfter all tiers: deduplicate using:\n- Exact email match (if present), OR\n- Exact \`full_name\` + \`organisation_name\`, OR\n- Exact \`role_title\` + \`organisation_name\` (only if name is null/missing)\n\n### Missing data handling\n- Use \`null\` for unknown values in the canonical model.\n- In the workbook, render unknowns as: \`Not specified — to be confirmed\` (italic per SS-1).\n\n---\n\n## STEP 2 — VALIDATE\n\n### Hard minimums (FAIL-FAST — stop and output errors if not met)\n- \`client_name\` exists in \`P1_1_CANONICAL_HANDOFF\`\n- At least one of \`engagement_name\` or \`objectives[]\` exists — sufficient to infer engagement purpose\n\nIf hard minimums are not met, output ONLY a fenced \`P1_2_VALIDATION_ERRORS\` JSON block and STOP.\n\n### Depth check (do NOT fail; flag as WARNING if triggered)\nAfter completing all three tiers, count total stakeholders. If the count is below the engagement-size floor defined in Tier 2:\n- Do NOT stop — instead add an open item: "Stakeholder register may be incomplete — review against engagement scope and supplement before P1.5 Governance Framework"\n- Include a \`WARNING\` flag in the \`validation.notes[]\` of the JSON handoff\n\n### Soft minimums (do NOT fail; create open_items instead)\n- A client sponsor or client accountable role is identified\n- A client project owner / day-to-day lead is identified\n- A PwC engagement lead and engagement manager exist\n- At least one \`preferred_channel\` is known for \`Manage_Closely\` stakeholders\n- If more than 70% of stakeholders are \`source: Inferred\`, add open item: "Stakeholder register is largely inferred — validate with client and engagement team before P1.5"\n\n### Transparency requirement\nIf any stakeholders were inferred (Tier 2), the workbook **must** include a visible notice in the Sheet 1 header block:\n> "⚠ This register includes inferred stakeholders (source = Inferred). These represent structurally expected roles based on engagement context and must be validated before use."\n\n## STEP 3 — BUILD THE DELIVERABLES\n\n### 3A) XLSX — Stakeholder Register & Analysis (PRIMARY ARTIFACT)\nGenerate a real \`.xlsx\` using openpyxl. Apply SS-1 (Excel) + WE-1 throughout.\n\nSheet names (must be stable and exact):\n- \`Stakeholder_Register\`\n- \`Stakeholder_Summary\`\n- \`Change_Log\`\n\n---\n\n### Sheet 1: Stakeholder_Register\nCreate an Excel Table named \`tblStakeholders\` with a compact SS-1 header block in rows 1–3.\n\nHeader block (rows 1–3) must contain:\n- Row 1: Client Name, Engagement Name, Generated Date, Version (v1.0), Status (Draft)\n- Row 2: Inference notice if any inferred stakeholders exist (see Step 2 transparency requirement); else blank\n- Row 3: blank separator\n\nTable \`tblStakeholders\` starts at row 4.\n\nColumns (use these headers exactly, in this order):\n1.  \`stakeholder_id\` — sequential IDs: STK-001, STK-002… per DD-1\n2.  \`full_name\`\n3.  \`organisation_name\`\n4.  \`stakeholder_type\` — dropdown: PwC | Client | Alliance_Partner | Third_Party | Regulator | Vendor | Other\n5.  \`role_title\`\n6.  \`group_or_function\` — nullable\n7.  \`decision_authority\` — dropdown: Yes | No | TBC\n8.  \`influence_score\` — dropdown: 1 | 2 | 3 | 4 | 5 (default 3 if not known; add open item)\n9.  \`interest_score\` — dropdown: 1 | 2 | 3 | 4 | 5 (default 3 if not known; add open item)\n10. \`influence_level\` — formula: \`=IF([@influence_score]<=2,"Low",IF([@influence_score]=3,"Medium","High"))\`\n11. \`interest_level\` — formula: \`=IF([@interest_score]<=2,"Low",IF([@interest_score]=3,"Medium","High"))\`\n12. \`influence_interest_quadrant\` — formula derived from influence_level + interest_level:\n    - High/High = Manage_Closely | High/Low or High/Medium = Keep_Satisfied\n    - Low or Medium/High = Keep_Informed | Low or Medium/Low or Medium/Medium = Monitor\n13. \`engagement_strategy\` — formula: mirrors \`influence_interest_quadrant\` (per DD-1 §2.10)\n14. \`primary_workstream\` — nullable; free text\n15. \`preferred_channel\` — dropdown: Email | Teams | Workshop | Meeting | Phone | Other\n16. \`communication_cadence\` — dropdown: Weekly | Fortnightly | Monthly | Ad_Hoc | TBC\n17. \`sensitivity\` — dropdown: Standard | Sensitive | Restricted\n18. \`email\` — nullable; text format\n19. \`phone\` — nullable; text format\n20. \`location\` — nullable\n21. \`notes\`\n22. \`source\` — dropdown: P1_1_Intake | Inferred | Override | Manual | Other\n23. \`last_confirmed_date\` — date format per DD-1 (YYYY-MM-DD); default blank\n\nFormatting + engineering requirements:\n- Apply WE-1: Excel Table + structured references only; no fixed row references in formulas.\n- Freeze panes: row 4 header + columns A:B.\n- Auto-filter enabled via the table.\n- Data validation: enforce dropdowns for all enumerated fields using named ranges.\n- Conditional formatting (apply SS-1 styling):\n  - \`sensitivity = Restricted\`: danger fill + danger text\n  - \`decision_authority = TBC\`: warning fill\n  - \`full_name\` AND \`role_title\` are both blank: warning fill\n  - \`source = Inferred\`: light italic fill to visually distinguish from confirmed rows\n- Tab colour: primary per SS-1\n\n---\n\n### Sheet 2: Stakeholder_Summary\nPurpose: executive summary and analysis for downstream prompt consumption.\n\nUse section header rows (per WE-1) to anchor each section. No fixed row numbers.\n\nSection 1 — COUNTS\nUsing COUNTIFS formulas referencing \`tblStakeholders\` structured references:\n- Total stakeholders\n- Count by \`stakeholder_type\`\n- Count by \`engagement_strategy\`\n- Count of Sensitive + Restricted stakeholders\n- Count of Inferred vs Confirmed stakeholders\n\nSection 2 — INFLUENCE-INTEREST MATRIX (2×2)\nFour quadrant cells showing:\n- Quadrant label\n- Count formula: \`=COUNTIF(tblStakeholders[influence_interest_quadrant],"Manage_Closely")\`\n- Names formula: \`=TEXTJOIN(", ",TRUE,IF(tblStakeholders[influence_interest_quadrant]="Manage_Closely",tblStakeholders[full_name],""))\` (array formula)\nInclude legend: 1-2 = Low, 3 = Medium, 4-5 = High\n\nSection 3 — TOP ATTENTION ITEMS\nTable \`tblAttentionItems\` listing stakeholders where:\n- \`decision_authority = TBC\`, OR\n- \`preferred_channel\` is blank, OR\n- \`sensitivity = Restricted\`, OR\n- \`source = Inferred\` (requires validation)\n\nColumns: \`stakeholder_id\` | \`full_name\` | \`issue\` | \`recommended_action\`\n\nAll formulas reference \`tblStakeholders\` structured references only. No hardcoded ranges.\n\n---\n\n### Sheet 3: Change_Log\nTable \`tblChangeLog\` with columns:\n- \`change_id\` (CHG-001…)\n- \`change_date\`\n- \`changed_by\`\n- \`change_description\`\n- \`affected_stakeholder_id\`\n- \`reason\`\n\nPre-populate one instruction row explaining how to use the log.\n\n---\n\n### 3B) IN-CHAT JSON HANDOFF (DOWNSTREAM CONTRACT)\nOutput the following fenced JSON block in-chat (in response text — not via code) with top-level key \`P1_2_CANONICAL_HANDOFF\`.\n\nIt must contain:\n- \`prompt_id\`: "P1.2"\n- \`generated_on\`: YYYY-MM-DD\n- \`engagement_identifiers\`: { client_name, engagement_name, engagement_code (nullable) }\n- \`stakeholders[]\`: canonical stakeholder objects per DD-1; nulls not placeholders\n- \`summary\`: { counts_by_stakeholder_type, counts_by_engagement_strategy, confirmed_count, inferred_count, restricted_stakeholders[] }\n- \`open_items[]\`: { id, area, description, source, priority }\n- \`validation\`: { status: "PASS", notes: [] }\n\nDo NOT include SS-1/DD-1/WE-1 content in this JSON.\n\n---\n\n## QA (all checks must be implemented as assertions inside the single code call; do not make a separate code call for QA)\n- Sheet names exactly match: \`Stakeholder_Register\`, \`Stakeholder_Summary\`, \`Change_Log\`\n- \`tblStakeholders\` exists with all 23 columns in the correct order\n- \`tblChangeLog\` exists with all 6 columns\n- Freeze panes set at row 4 + columns A:B on \`Stakeholder_Register\`\n- Auto-filter enabled on all tables\n- All dropdown validations exist and reference named ranges\n- All structured-reference formulas resolve without errors\n- No brittle fixed-row references used for core logic\n- Conditional formatting applied per SS-1 including \`source = Inferred\` styling\n- SS-1 header block present in rows 1–3 of \`Stakeholder_Register\`\n- Inference notice present in header row 2 if any inferred stakeholders exist\n- File saved to \`/mnt/data/\` with name: \`P1.2_Stakeholder_Register_v1.0_{YYYY-MM-DD}.xlsx\`\n\nIf QA fails, output only: \`QA FAIL:\` followed by a compact list of failures and locations (Sheet + Table/Column).\n\n---\n\n## OUTPUT CONTRACT\n**Success:**\n1) \`P1_2_CANONICAL_HANDOFF\` JSON fenced block in-chat\n2) Download link for the generated \`.xlsx\`\nNo other narrative output.\n\nAfter delivering all files, include a brief closing message confirming what was generated and inviting the user to request changes or send the next prompt. Do not await a response — this message is terminal.`,
+      `EXECUTION RULES:
+1. Do all reasoning, parsing, inference, and content drafting in response text only. This is preparatory work — it does not complete the task.
+2. You MUST make exactly one code interpreter call. A response that ends without a code interpreter call has failed.
+3. Output the JSON handoff and closing message only after the code call completes.
+4. Handle all errors with try/except internally. No second calls to fix errors.
+---
+# P1.2 — Stakeholder Register & Analysis
+## INPUTS
+Parse \`P1_1_CANONICAL_HANDOFF\` from context. SS-1, DD-1, WE-1 are loaded — treat as authoritative.
+If \`stakeholder_overrides\` are provided below, apply them last (last-write-wins):
+<stakeholder_overrides>
+{{STAKEHOLDER_OVERRIDES}}
+</stakeholder_overrides>
+---
+## STEP 1 — STAKEHOLDER IDENTIFICATION
+### Tier 1 — Extract
+Extract any explicitly named individuals or roles from \`P1_1_CANONICAL_HANDOFF\`. Mark as \`source: P1_1_Intake\`.
+### Tier 2 — Infer
+Infer the full realistic stakeholder cast using engagement_name, industry, objectives, regulatory_profile, service_offerings, risk_profile, and engagement_context. Include every role a competent engagement manager would expect.
+Minimum floors: small engagement <6 months = 8–15; medium 6–12 months = 15–25; large programme = 25+.
+If engagement_name, industry, and objectives are ALL absent, stop and ask the user for them before proceeding.
+For each inferred stakeholder: full_name = null; provide specific role_title, organisation_name, source = Inferred, and a one-line rationale in notes.
+### Tier 3 — Override
+Apply any stakeholder_overrides over Tier 1 and Tier 2 results.
+### Deduplication
+Deduplicate on: exact email, OR exact full_name + organisation_name, OR exact role_title + organisation_name (when name is null).
+---
+## STEP 2 — VALIDATE
+Stop and output \`P1_2_VALIDATION_ERRORS\` JSON only if: client_name is missing OR both engagement_name and objectives[] are absent.
+Soft checks (create open_items, do not stop):
+- Client sponsor, client project owner, PwC engagement lead, and PwC engagement manager are all present
+- If >70% of stakeholders are source = Inferred: add open item to validate register before P1.5
+If any stakeholders are inferred, row 2 of the Sheet 1 header block must read:
+"⚠ This register includes inferred stakeholders (source = Inferred). These represent structurally expected roles based on engagement context and must be validated before use."
+---
+## STEP 3 — GENERATE XLSX
+Use openpyxl. Apply SS-1 and WE-1 throughout. Three sheets: \`Stakeholder_Register\`, \`Stakeholder_Summary\`, \`Change_Log\`.
+### Stakeholder_Register
+Header block rows 1–3 (above the table):
+- Row 1: Client Name | Engagement Name | Generated Date | Version v1.0 | Status Draft — Arial 12pt bold OR500 fill OR100
+- Row 2: Inference notice if applicable; else blank — Arial 10pt italic DNGR on DNGR_BG
+- Row 3: blank separator
+Excel Table \`tblStakeholders\` starts at row 4. Columns in this exact order:
+| # | Column | Type |
+|---|--------|------|
+|1|stakeholder_id|STK-001… per DD-1|
+|2|full_name|text|
+|3|organisation_name|text|
+|4|stakeholder_type|dropdown: PwC\\|Client\\|Alliance_Partner\\|Third_Party\\|Regulator\\|Vendor\\|Other|
+|5|role_title|text|
+|6|group_or_function|text|
+|7|decision_authority|dropdown: Yes\\|No\\|TBC|
+|8|influence_score|dropdown: 1\\|2\\|3\\|4\\|5|
+|9|interest_score|dropdown: 1\\|2\\|3\\|4\\|5|
+|10|influence_level|=IF([@influence_score]<=2,"Low",IF([@influence_score]=3,"Medium","High"))|
+|11|interest_level|=IF([@interest_score]<=2,"Low",IF([@interest_score]=3,"Medium","High"))|
+|12|influence_interest_quadrant|formula: High+High=Manage_Closely; High+Low or High+Med=Keep_Satisfied; Low or Med+High=Keep_Informed; else=Monitor|
+|13|engagement_strategy|formula: mirrors influence_interest_quadrant|
+|14|primary_workstream|text|
+|15|preferred_channel|dropdown: Email\\|Teams\\|Workshop\\|Meeting\\|Phone\\|Other|
+|16|communication_cadence|dropdown: Weekly\\|Fortnightly\\|Monthly\\|Ad_Hoc\\|TBC|
+|17|sensitivity|dropdown: Standard\\|Sensitive\\|Restricted|
+|18|email|text|
+|19|phone|text|
+|20|location|text|
+|21|notes|text|
+|22|source|dropdown: P1_1_Intake\\|Inferred\\|Override\\|Manual\\|Other|
+|23|last_confirmed_date|YYYY-MM-DD|
+Engineering:
+- Structured references only; no fixed row numbers in formulas
+- Freeze panes after row 4, after column B
+- Named ranges for all dropdown lists; apply DataValidation to full table column ranges
+- Conditional formatting: sensitivity=Restricted → DNGR fill + DNGR font; decision_authority=TBC → WARN fill; source=Inferred → OR100 fill + GR500 italic
+- Tab colour OR500
+### Stakeholder_Summary
+Three sections separated by styled section header rows (WE-1). No fixed row numbers.
+Section 1 — Counts: total stakeholders; by stakeholder_type; by engagement_strategy; Sensitive+Restricted count; Inferred vs Confirmed count. All via COUNTIFS on tblStakeholders structured references.
+Section 2 — Influence-Interest Matrix: 2×2 grid. Each cell: quadrant label + COUNTIF + TEXTJOIN names array formula. Legend: 1-2=Low, 3=Medium, 4-5=High.
+Section 3 — Attention Items: Table \`tblAttentionItems\` (stakeholder_id | full_name | issue | recommended_action). Pre-populate for: decision_authority=TBC, preferred_channel blank, sensitivity=Restricted, source=Inferred.
+Tab colour OR500.
+### Change_Log
+Table \`tblChangeLog\`: change_id (CHG-001…) | change_date | changed_by | change_description | affected_stakeholder_id | reason.
+Pre-populate one example/instruction row. Tab colour GR100.
+Save to: \`/mnt/data/P1.2_Stakeholder_Register_v1.0_{YYYY-MM-DD}.xlsx\`
+---
+─────────────────────────────────────────────────────
+EXECUTION CHECKPOINT
+Reasoning is complete. Open the code interpreter call now.
+Do not output the JSON handoff or closing message until after it completes.
+─────────────────────────────────────────────────────
+## OUTPUT CONTRACT
+1) Code interpreter call — mandatory, must happen first
+2) \`P1_2_CANONICAL_HANDOFF\` fenced JSON in-chat after the code call:
+   - prompt_id | generated_on | engagement_identifiers | stakeholders[] | summary | open_items[] | validation
+3) Download link for the xlsx
+Close with a brief message confirming outputs and inviting the user to proceed or request changes.`,
   },
 };
 const GLOBAL_STANDARDS = {
@@ -12437,12 +12795,10 @@ document.addEventListener("DOMContentLoaded", function () {
 // ─── LANDING PAGE ───
 let guidedMode = true;
 
-function selectMode(mode) {
-  guidedMode = mode === "guided";
-  var gBtn = document.getElementById("chip-guided");
-  var qBtn = document.getElementById("chip-quick");
-  if (gBtn) gBtn.classList.toggle("lp-chip-active", mode === "guided");
-  if (qBtn) qBtn.classList.toggle("lp-chip-active", mode === "quick");
+function toggleGuidedMode() {
+  guidedMode = !guidedMode;
+  var track = document.getElementById("guided-toggle");
+  if (track) track.setAttribute("aria-checked", guidedMode ? "true" : "false");
 }
 
 function launchSelected() {
