@@ -12,6 +12,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-family: system-ui, sans-serif;
 }
 :root {
   --orange500: #fd5108;
@@ -444,12 +445,6 @@ body {
 
 /* ── FORM ── */
 
-/* Typography system - applied globally */
-*,
-*::before,
-*::after {
-  font-family: system-ui, sans-serif;
-}
 #lp-title,
 #lp-title em {
   font-family: Georgia, serif !important;
@@ -1080,7 +1075,6 @@ textarea {
   background: var(--successBg);
   color: var(--success);
 }
-/* CHANGE 10: keyboard-focusable sidebar items */
 .sidebar-item {
   padding: 8px 14px 8px 16px;
   font-size: 12px;
@@ -1201,7 +1195,6 @@ textarea {
   color: var(--textColor);
   margin-bottom: 2px;
 }
-/* CHANGE 6: per-phase breakdown text */
 .progress-breakdown {
   font-size: 11px;
   color: var(--secondaryText);
@@ -1222,7 +1215,6 @@ textarea {
   transition: width 0.3s ease;
 }
 
-/* CHANGE 5: Phase filter pill bar */
 .phase-filter-bar {
   background: var(--cardBg);
   border-bottom: 1px solid var(--borderColor);
@@ -1275,7 +1267,6 @@ textarea {
   box-shadow: 0 2px 8px rgba(253, 81, 8, 0.28);
 }
 
-/* CHANGE 12: Single workflow tip banner */
 .workflow-tip-banner {
   display: flex;
   align-items: center;
@@ -1310,7 +1301,6 @@ textarea {
   color: #1e40af;
 }
 
-/* CHANGE 1: Phase divider banners in main card area */
 .phase-divider {
   display: flex;
   align-items: center;
@@ -1373,7 +1363,6 @@ textarea {
   transition: width 0.3s ease;
 }
 
-/* CHANGE 3: padding on promptCards container */
 #promptCards {
   padding: 16px 24px 40px;
 }
@@ -1414,7 +1403,6 @@ textarea {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* CHANGE 4: orange pulse animation on newly unlocked card */
 @keyframes cardPulse {
   0% {
     box-shadow: 0 0 0 0 rgba(253, 81, 8, 0);
@@ -1433,7 +1421,6 @@ textarea {
   animation: cardPulse 1.2s ease;
 }
 
-/* CHANGE 10: focusable card headers */
 .prompt-card-header {
   padding: 14px 18px;
   display: flex;
@@ -1498,7 +1485,6 @@ textarea {
   line-height: 1.4;
 }
 
-/* CHANGE 8: dependency sub-label on locked cards */
 .dep-sublabel {
   font-size: 11px;
   color: var(--secondaryText);
@@ -1586,7 +1572,6 @@ textarea {
   letter-spacing: 0.4px;
 }
 
-/* CHANGE 2: expand/collapse button for prompt text box */
 .btn-expand-prompt {
   font-size: 11px;
   font-weight: 500;
@@ -1605,7 +1590,6 @@ textarea {
   background: var(--orange100);
 }
 
-/* CHANGE 2: prompt text box default smaller, expandable */
 .prompt-text-box {
   background-color: #1a1b2e;
   color: #d4d8e8;
@@ -1637,7 +1621,6 @@ textarea {
   max-height: 480px;
 }
 
-/* CHANGE 11: Prompt action buttons — clearer hierarchy */
 .prompt-actions {
   display: flex;
   gap: 0;
@@ -1716,7 +1699,6 @@ textarea {
   color: var(--secondaryText);
 }
 
-/* CHANGE 11: Export as secondary ghost */
 .btn-export {
   background: transparent;
   color: var(--secondaryText);
@@ -1740,7 +1722,6 @@ textarea {
   border-color: var(--success);
 }
 
-/* CHANGE 12: export-hint hidden — replaced by single tip banner */
 .export-hint {
   display: none;
 }
@@ -1961,7 +1942,6 @@ textarea {
   border-color: #888;
 }
 
-/* CHUNK 2 — BRIEF STRENGTH + REVIEW PANEL */
 .brief-strength-wrap {
   display: flex;
   align-items: center;
@@ -2222,8 +2202,6 @@ textarea {
   background: #d44000;
 }
 
-/* CHUNK 3 — REOPEN, STAGE GATE MODAL, INLINE EDIT */
-/* CHANGE 11: Reopen as secondary ghost — right side */
 .btn-reopen {
   background: transparent;
   color: var(--secondaryText);
@@ -2247,7 +2225,6 @@ textarea {
 .completed-card .btn-mark-done {
   display: none;
 }
-/* CHANGE 11: Mark Complete — green outline, right-side state-change action */
 .btn-mark-done {
   background: transparent;
   color: var(--success);
@@ -2266,7 +2243,6 @@ textarea {
   color: var(--white);
   box-shadow: 0 2px 6px rgba(34, 197, 94, 0.3);
 }
-/* CHANGE 11: Edit as small secondary ghost */
 .btn-edit-prompt {
   background: transparent;
   color: var(--secondaryText);
@@ -2530,7 +2506,6 @@ textarea {
   background: #d44000;
 }
 
-/* CHUNK 4 */
 #toastContainer {
   position: fixed;
   top: 20px;
@@ -4417,20 +4392,10 @@ function fbNav(dir) {
   fbGoToSection(_fbCurrentSection + dir);
 }
 
-// Legacy compat shim — old fbScrollTo calls still work
-function fbScrollTo(id, el) {
-  var match = id.match(/fb-s(\d+)/);
-  if (match) fbGoToSection(parseInt(match[1]));
-  return false;
-}
-
 // ── Init sections on load ──
 function fbInitSections() {
   fbGoToSection(1);
 }
-
-// ── Scroll spy is no longer needed (single-panel view) ──
-function fbInitScrollSpy() {}
 
 // ── Stepper dot states ──
 function fbUpdateDot(sectionId, state) {
@@ -8994,7 +8959,6 @@ function showError(msg) {
   else console.warn("Form error:", msg);
 }
 function toggleSection(id) {
-  // CHUNK 1: update dot after toggling
   setTimeout(function () {
     if (typeof updateSectionDot === "function") updateSectionDot(id);
   }, 100);
@@ -9175,7 +9139,6 @@ function loadAllData() {
       }
     });
   });
-  // CHUNK 1+2: auto-save, draft, dots, brief strength
   setTimeout(function () {
     initAutoSave();
     checkForDraft();
@@ -9195,6 +9158,24 @@ function loadAllData() {
 // ── Highlight active nav on scroll ──
 
 // ── Nav dot + section dot update ──
+
+// ── Shared tab/pill helpers ──
+function setActiveTab(containerId, el) {
+  document.querySelectorAll("#" + containerId + " .fb-tab-item").forEach(function (t) {
+    t.classList.remove("active");
+  });
+  el.classList.add("active");
+}
+function setActivePill(containerId, el) {
+  document.querySelectorAll("#" + containerId + " .fb-pill").forEach(function (p) {
+    p.classList.remove("selected");
+  });
+  el.classList.add("selected");
+}
+function updateTabDot(tab, hasVal) {
+  tab.classList.toggle("has-data", hasVal);
+  tab.querySelector(".fb-tab-dot").style.background = hasVal ? "#22c55e" : "";
+}
 
 // ════ S2: INDUSTRY ════
 function renderIndustry() {
@@ -9230,10 +9211,7 @@ function renderIndustry() {
 }
 
 function fbSelectIndustry(el, val) {
-  document.querySelectorAll("#industryPills .fb-pill").forEach(function (p) {
-    p.classList.remove("selected");
-  });
-  el.classList.add("selected");
+  setActivePill("industryPills", el);
   document.getElementById("industryDrop").value = val;
   // Populate sectors
   var ind = appData.industries.industries.find(function (i) {
@@ -9268,10 +9246,7 @@ function fbSelectIndustry(el, val) {
 }
 
 function fbSelectSector(el, val) {
-  document.querySelectorAll("#sectorPills .fb-pill").forEach(function (p) {
-    p.classList.remove("selected");
-  });
-  el.classList.add("selected");
+  setActivePill("sectorPills", el);
   document.getElementById("sectorDrop").value = val;
   var indVal = document.getElementById("industryDrop").value;
   var ind = appData.industries.industries.find(function (i) {
@@ -9311,10 +9286,7 @@ function fbSelectSector(el, val) {
 }
 
 function fbSelectSubsector(el, val) {
-  document.querySelectorAll("#subsectorPills .fb-pill").forEach(function (p) {
-    p.classList.remove("selected");
-  });
-  el.classList.add("selected");
+  setActivePill("subsectorPills", el);
   document.getElementById("subsectorDrop").value = val;
   fbFieldChange("s2");
 }
@@ -9337,14 +9309,9 @@ function renderObjectives() {
     .join("");
 }
 
-var _fbObjData = {};
-
 function fbSelectObjType(el, typeName) {
   _fssSaveObj();
-  document.querySelectorAll("#objTypeList .fb-tab-item").forEach(function (t) {
-    t.classList.remove("active");
-  });
-  el.classList.add("active");
+  setActiveTab("objTypeList", el);
   var data = appData.objectives.engagement_objectives.objective_types;
   var objType = data.find(function (o) {
     return o.objective_type === typeName;
@@ -9420,8 +9387,7 @@ function fbEvalObjDot(typeId) {
   var hasVal = Array.from(filled).some(function (s) {
     return s.value;
   });
-  tab.classList.toggle("has-data", hasVal);
-  tab.querySelector(".fb-tab-dot").style.background = hasVal ? "#22c55e" : "";
+  updateTabDot(tab, hasVal);
   fbEvalDots();
 }
 
@@ -9455,12 +9421,7 @@ function renderServices() {
 
 function fbSelectDomain(el, domainName) {
   _fssSaveServices();
-  document
-    .querySelectorAll("#domainTabList .fb-tab-item")
-    .forEach(function (t) {
-      t.classList.remove("active");
-    });
-  el.classList.add("active");
+  setActiveTab("domainTabList", el);
   var data = appData.services.domains;
   var domain = data.find(function (d) {
     return d.domain === domainName;
@@ -9560,8 +9521,7 @@ function fbToggleBB(el, domId) {
     var hasAny =
       document.querySelectorAll("#domainBlockPanel .fb-bb-item.selected")
         .length > 0;
-    tab.classList.toggle("has-data", hasAny);
-    tab.querySelector(".fb-tab-dot").style.background = hasAny ? "#22c55e" : "";
+    updateTabDot(tab, hasAny);
   }
   fbEvalDots();
 }
@@ -9586,10 +9546,7 @@ function renderTechnologies() {
 
 function fbSelectTechCat(el, catName) {
   _fssSaveTech();
-  document.querySelectorAll("#techCatList .fb-tab-item").forEach(function (t) {
-    t.classList.remove("active");
-  });
-  el.classList.add("active");
+  setActiveTab("techCatList", el);
   var data = appData.technologies.technology_and_tools.categories;
   var cat = data.find(function (c) {
     return c.category === catName;
@@ -9681,8 +9638,7 @@ function fbToggleTechSub(el, catId, subName) {
     var hasSel =
       document.querySelectorAll("#tech-subs-" + catId + " .fb-chip.selected")
         .length > 0;
-    tab.classList.toggle("has-data", hasSel);
-    tab.querySelector(".fb-tab-dot").style.background = hasSel ? "#22c55e" : "";
+    updateTabDot(tab, hasSel);
   }
   fbEvalDots();
 }
@@ -9707,12 +9663,7 @@ function renderPartners() {
 
 function fbSelectPartner(el, partnerName) {
   _fssSavePartners();
-  document
-    .querySelectorAll("#partnerTabList .fb-tab-item")
-    .forEach(function (t) {
-      t.classList.remove("active");
-    });
-  el.classList.add("active");
+  setActiveTab("partnerTabList", el);
   var data = appData.partners.alliance_partners.partners;
   var partner = data.find(function (p) {
     return p.partner === partnerName;
@@ -9792,8 +9743,7 @@ function fbTogglePartnerFam(el, pid, famName) {
     var hasSel =
       document.querySelectorAll("#partner-fams-" + pid + " .fb-chip.selected")
         .length > 0;
-    tab.classList.toggle("has-data", hasSel);
-    tab.querySelector(".fb-tab-dot").style.background = hasSel ? "#22c55e" : "";
+    updateTabDot(tab, hasSel);
   }
   fbEvalDots();
 }
@@ -9818,10 +9768,7 @@ function renderRegulatory() {
 
 function fbSelectRegGroup(el, groupName) {
   _fssSaveReg();
-  document.querySelectorAll("#regGroupList .fb-tab-item").forEach(function (t) {
-    t.classList.remove("active");
-  });
-  el.classList.add("active");
+  setActiveTab("regGroupList", el);
   var data = appData.regulatory.regulatory_profile.industry_groups;
   var group = data.find(function (g) {
     return g.industry_group === groupName;
@@ -9843,9 +9790,9 @@ function fbSelectRegGroup(el, groupName) {
         .join("");
       return (
         '<div class="fb-check-group">' +
-        '<div class="fb-check-item" onclick="fbToggleRegCheck(this,\'' +
+        '<div class="fb-check-item" onclick="fbToggleCheckItem(this,\'' +
         rid +
-        "')\">" +
+        "','req-wrap-','regGroupList','regDetailPanel')\">" +
         '<div class="fb-check-box">✓</div>' +
         '<span class="fb-check-name">' +
         reg.regulator +
@@ -9869,18 +9816,17 @@ function fbSelectRegGroup(el, groupName) {
   _fssApplyReg(gid);
 }
 
-function fbToggleRegCheck(el, rid) {
+function fbToggleCheckItem(el, itemId, wrapPrefix, groupListId, detailPanelId) {
   el.classList.toggle("checked");
   el.classList.toggle("open", el.classList.contains("checked"));
-  var wrap = document.getElementById("req-wrap-" + rid);
+  var wrap = document.getElementById(wrapPrefix + itemId);
   if (wrap) wrap.style.display = el.classList.contains("checked") ? "" : "none";
-  var tab = document.querySelector("#regGroupList .fb-tab-item.active");
+  var tab = document.querySelector("#" + groupListId + " .fb-tab-item.active");
   if (tab) {
     var hasSel =
-      document.querySelectorAll("#regDetailPanel .fb-check-item.checked")
+      document.querySelectorAll("#" + detailPanelId + " .fb-check-item.checked")
         .length > 0;
-    tab.classList.toggle("has-data", hasSel);
-    tab.querySelector(".fb-tab-dot").style.background = hasSel ? "#22c55e" : "";
+    updateTabDot(tab, hasSel);
   }
   fbEvalDots();
 }
@@ -9905,12 +9851,7 @@ function renderRisk() {
 
 function fbSelectRiskGroup(el, groupName) {
   _fssSaveRisk();
-  document
-    .querySelectorAll("#riskGroupList .fb-tab-item")
-    .forEach(function (t) {
-      t.classList.remove("active");
-    });
-  el.classList.add("active");
+  setActiveTab("riskGroupList", el);
   var data = appData.risk.risk_profile.industry_groups;
   var group = data.find(function (g) {
     return g.industry_group === groupName;
@@ -9932,9 +9873,9 @@ function fbSelectRiskGroup(el, groupName) {
         .join("");
       return (
         '<div class="fb-check-group">' +
-        '<div class="fb-check-item" onclick="fbToggleRiskCheck(this,\'' +
+        '<div class="fb-check-item" onclick="fbToggleCheckItem(this,\'' +
         rtid +
-        "')\">" +
+        "','risk-wrap-','riskGroupList','riskDetailPanel')\">" +
         '<div class="fb-check-box">✓</div>' +
         '<span class="fb-check-name">' +
         rt.risk_type +
@@ -9958,22 +9899,6 @@ function fbSelectRiskGroup(el, groupName) {
   _fssApplyRisk(gid);
 }
 
-function fbToggleRiskCheck(el, rtid) {
-  el.classList.toggle("checked");
-  el.classList.toggle("open", el.classList.contains("checked"));
-  var wrap = document.getElementById("risk-wrap-" + rtid);
-  if (wrap) wrap.style.display = el.classList.contains("checked") ? "" : "none";
-  var tab = document.querySelector("#riskGroupList .fb-tab-item.active");
-  if (tab) {
-    var hasSel =
-      document.querySelectorAll("#riskDetailPanel .fb-check-item.checked")
-        .length > 0;
-    tab.classList.toggle("has-data", hasSel);
-    tab.querySelector(".fb-tab-dot").style.background = hasSel ? "#22c55e" : "";
-  }
-  fbEvalDots();
-}
-
 // ════ renderAll override ════
 function renderAll() {
   renderIndustry();
@@ -9983,7 +9908,6 @@ function renderAll() {
   renderPartners();
   renderRegulatory();
   renderRisk();
-  fbInitScrollSpy();
   fbInitSections();
   setTimeout(fbEvalDots, 100);
 }
@@ -10189,7 +10113,6 @@ function renderWorkflow() {
     const phaseStepCountForBadge = phase.prompts.length;
     sidebarHTML += `<div class="sidebar-phase"><div class="sidebar-phase-label"><span>Phase ${phaseIndex} &mdash; ${phase.phase_name}</span><span class="sidebar-phase-count-badge" id="sidebar-phase-badge-${phase.phase_id}">0/${phaseStepCountForBadge}</span></div>`;
 
-    // CHANGE 1: Phase header banner in main cards area
     const phaseStepCount = phase.prompts.length;
     cardsHTML += `
         <div class="phase-divider" id="phase-divider-${phase.phase_id}" data-phase-id="${phase.phase_id}">
@@ -10208,7 +10131,6 @@ function renderWorkflow() {
       const isFirst = phase.phase_id === "P1" && idx === 0;
       const status = isFirst ? "active" : "locked";
 
-      // CHANGE 8: dependency tooltip text for locked cards
       const depsList =
         prompt.depends_on && prompt.depends_on.length
           ? prompt.depends_on.join(", ")
@@ -10217,7 +10139,6 @@ function renderWorkflow() {
         ? `Requires ${depsList} to be completed first.`
         : "";
 
-      // CHANGE 10: aria attributes on sidebar items
       sidebarHTML += `
           <div class="sidebar-item ${status}" id="sidebar-${prompt.prompt_id}"
             role="button" tabindex="0"
@@ -10474,7 +10395,6 @@ function exportPrompt(id) {
   }
 }
 function markDone(id) {
-  // CHUNK 3: check if this is a sign-off gate
   let isGate = false;
   if (appData && appData.workflow) {
     appData.workflow.phases.forEach(function (ph) {
@@ -10529,7 +10449,6 @@ function doMarkDone(id) {
       JSON.stringify(Array.from(completedSteps)),
     );
   } catch (e) {}
-  // CHANGE 4: Open next ready card, scroll to it, and pulse-highlight it
   const allCards = document.querySelectorAll(".prompt-card");
   for (var i = 0; i < allCards.length; i++) {
     var c = allCards[i];
@@ -10676,7 +10595,6 @@ function updatePhaseProgress() {
 
 // ── FORM COMPILATION ──
 
-/// CHANGE 5: Build phase filter pills dynamically
 function buildPhaseFilterPills() {
   var container = document.getElementById("phaseFilterPills");
   if (!container || !appData || !appData.workflow) return;
@@ -10695,7 +10613,6 @@ function buildPhaseFilterPills() {
   container.innerHTML = html;
 }
 
-// CHANGE 12: Dismiss workflow tip banner
 function dismissWorkflowTip() {
   var tip = document.getElementById("workflowTipBanner");
   if (tip) {
@@ -10706,7 +10623,6 @@ function dismissWorkflowTip() {
   }
 }
 
-// CHANGE 5: Phase filter / jump to phase
 function filterByPhase(phaseId) {
   // Update pill active state
   document.querySelectorAll(".phase-filter-pill").forEach(function (p) {
@@ -11227,7 +11143,6 @@ function skipGuidance() {
 }
 
 // ═══════════════════════════════════════════════════════
-// CHUNK 1 — AUTO-SAVE, DRAFT RESTORE, SECTION STATUS DOTS
 // ═══════════════════════════════════════════════════════
 
 const DRAFT_KEY = "pwc_launchpad_draft";
@@ -11489,8 +11404,7 @@ function _fssApplyServices(domId) {
   var tab = document.querySelector("#domainTabList .fb-tab-item.active");
   if (tab) {
     var hasAny = document.querySelectorAll("#domainBlockPanel .fb-bb-item.selected").length > 0;
-    tab.classList.toggle("has-data", hasAny);
-    tab.querySelector(".fb-tab-dot").style.background = hasAny ? "#22c55e" : "";
+    updateTabDot(tab, hasAny);
   }
 }
 
@@ -11586,7 +11500,7 @@ function _fssApplyReg(gid) {
       var nameEl = el.querySelector(".fb-check-name");
       if (nameEl && nameEl.textContent.trim() === regName && !el.classList.contains("checked")) {
         var rid = gid + "-" + slugify(regName);
-        fbToggleRegCheck(el, rid);
+        fbToggleCheckItem(el, rid, "req-wrap-", "regGroupList", "regDetailPanel");
         var reqReqs = (saved.reqs && saved.reqs[regName]) || [];
         var wrap = document.getElementById("req-wrap-" + rid);
         if (wrap) reqReqs.forEach(function(reqText) {
@@ -11617,7 +11531,7 @@ function _fssApplyRisk(gid) {
       var nameEl = el.querySelector(".fb-check-name");
       if (nameEl && nameEl.textContent.trim() === riskType && !el.classList.contains("checked")) {
         var rtid = gid + "-" + slugify(riskType);
-        fbToggleRiskCheck(el, rtid);
+        fbToggleCheckItem(el, rtid, "risk-wrap-", "riskGroupList", "riskDetailPanel");
         var riskRisks = (saved.risks && saved.risks[riskType]) || [];
         var wrap = document.getElementById("risk-wrap-" + rtid);
         if (wrap) riskRisks.forEach(function(riskText) {
@@ -11719,7 +11633,6 @@ function updateAllSectionDots() {
 }
 
 // ═══════════════════════════════════════════
-// CHUNK 2 — REVIEW PANEL + SOFT VALIDATION + DEMO DATA
 // ═══════════════════════════════════════════
 
 function openReviewPanel() {
@@ -12193,7 +12106,6 @@ function loadExampleData() {
 // Document-level change/click listeners removed — form-level listeners
 // from initAutoSave already call updateBriefStrength via debounceAutoSave.
 
-// CHUNK 3 — REOPEN, GATE MODAL, RESUME, INLINE EDIT
 
 function reopenStep(id) {
   completedSteps.delete(id);
@@ -12333,11 +12245,9 @@ function togglePromptEdit(id) {
 }
 
 // ════════════════════════════════════
-// CHUNK 4 — TOAST, PILLS, SEARCH, TOOLTIP, BULK EXPORT
 // ════════════════════════════════════
 
 // ── Toast notifications ──
-// CHANGE 2: Expand/collapse prompt text box
 function toggleExpandPrompt(id) {
   var box = document.getElementById("prompt-text-" + id);
   var btn = document.getElementById("expand-btn-" + id);
