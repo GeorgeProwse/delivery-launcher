@@ -11835,12 +11835,7 @@ function renderReviewPanel() {
   h += "</div>";
 
   // Tech
-  const techs = (
-    (d.technologies &&
-      d.technologies.technology_and_tools &&
-      d.technologies.technology_and_tools.categories) ||
-    []
-  ).filter(function (t) {
+  const techs = (d.technology || []).filter(function (t) {
     return t.sub_categories && t.sub_categories.length > 0;
   });
   const techCount = techs.reduce(function (a, t) {
@@ -11869,11 +11864,9 @@ function renderReviewPanel() {
 
   // Regulatory
   const regs = (d.regulatory_profile || []).filter(function (r) {
-    return r.requirements && r.requirements.length > 0;
+    return r.regulator;
   });
-  const regCount = regs.reduce(function (a, r) {
-    return a + (r.requirements || []).length;
-  }, 0);
+  const regCount = regs.length;
   h +=
     '<div class="review-section"><div class="review-section-title">Regulatory Profile (' +
     regCount +
@@ -11885,11 +11878,12 @@ function renderReviewPanel() {
       '<div class="review-row"><span class="review-val missing">None selected</span></div>';
   } else {
     regs.slice(0, 4).forEach(function (r) {
+      var reqStr = (r.requirements || []).slice(0, 3).join(", ");
       h +=
         '<div class="review-list-item"><strong>' +
-        (r.body || r.group || "") +
-        "</strong>: " +
-        (r.requirements || []).slice(0, 3).join(", ") +
+        (r.regulator || "") +
+        "</strong>" +
+        (reqStr ? ": " + reqStr : "") +
         "</div>";
     });
   }
@@ -11897,11 +11891,9 @@ function renderReviewPanel() {
 
   // Risks
   const risks = (d.risk_profile || []).filter(function (r) {
-    return r.risks && r.risks.length > 0;
+    return r.risk_type;
   });
-  const riskCount = risks.reduce(function (a, r) {
-    return a + (r.risks || []).length;
-  }, 0);
+  const riskCount = risks.length;
   h +=
     '<div class="review-section"><div class="review-section-title">Risk Profile (' +
     riskCount +
@@ -11913,11 +11905,12 @@ function renderReviewPanel() {
       '<div class="review-row"><span class="review-val missing">None selected</span></div>';
   } else {
     risks.slice(0, 4).forEach(function (r) {
+      var riskStr = (r.specific_risks || []).slice(0, 3).join(", ");
       h +=
         '<div class="review-list-item"><strong>' +
-        (r.category || r.group || "") +
-        "</strong>: " +
-        (r.risks || []).slice(0, 3).join(", ") +
+        (r.risk_type || "") +
+        "</strong>" +
+        (riskStr ? ": " + riskStr : "") +
         "</div>";
     });
   }
