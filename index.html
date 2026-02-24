@@ -8305,7 +8305,7 @@ If Waterfall: Is_Critical_Path flags tasks with zero float. If Agile/Hybrid: gro
 Change_Log — tab colour GR100
 Table tbl_changes (CHG-### per DD-1) columns: Change_ID | Date | Sheet | Record_ID | Field | Previous_Value | New_Value | Changed_By_Role | Reason | Approved_By_Role
 Pre-populate one instruction row.
-Save to: \`/mnt/data/P2.1_WBS_Schedule_{YYYY-MM-DD}_v1.0.xlsx\`
+Save to: /mnt/data/P2.1_WBS_Schedule_{YYYY-MM-DD}_v1.0.xlsx
 QA (assertions inside the single code call)
 * Exactly 6 sheets with correct names
 * All tables exist: tbl_wbs, tbl_dictionary, tbl_deliverables, tbl_milestones, tbl_schedule, tbl_changes
@@ -8610,16 +8610,16 @@ Close with a brief message confirming outputs and inviting the user to proceed o
 2. You MUST make exactly one code interpreter call. A response that ends without a code interpreter call has failed.
 3. Output the JSON handoff and closing message only after the code call completes.
 4. Handle all errors with try/except internally. No second calls to fix errors.
----
-# P1.4 — Engagement Charter
-## INPUTS
-Parse from context: \`P1_1_CANONICAL_HANDOFF\`, \`P1_2_CANONICAL_HANDOFF\`, \`P1_3_CANONICAL_HANDOFF\`. SS-1, DD-1, WE-1 are loaded — treat as authoritative.
+
+P1.4 — Engagement Charter
+INPUTS
+Parse from context: P1_1_CANONICAL_HANDOFF, P1_2_CANONICAL_HANDOFF, P1_3_CANONICAL_HANDOFF. SS-1, DD-1, WE-1 are loaded — treat as authoritative.
 If provided, apply as last-write-wins:
 <charter_overrides>
 {{CHARTER_OVERRIDES}}
 </charter_overrides>
----
-## STEP 1 — EXTRACT + NORMALISE
+
+STEP 1 — EXTRACT + NORMALISE
 From P1_1: client/engagement identifiers, methodology, fee structure, budget, dates, workstreams, description, regulatory requirements, technology, partners.
 From P1_2: sponsor, project owner, key decision makers, governance-relevant stakeholders, sensitivities.
 From P1_3: scope boundary statement, inclusions, exclusions, assumptions, constraints, dependencies, objectives, success criteria, open items.
@@ -8630,9 +8630,9 @@ Rules:
 - Use role-level placeholders for missing names (e.g. "Client Sponsor (TBC)") — do not fabricate
 - Provenance goes into the JSON handoff only; do not add source columns to charter tables
 - If more than half the charter sections are Proposed with no upstream basis, add a prominent open item: "Charter requires client review and confirmation before baseline — majority of content is proposed"
----
-## STEP 2 — VALIDATE
-Stop and output \`P1_4_VALIDATION_ERRORS\` fenced JSON only if: client_name or engagement_name are missing, OR zero objectives exist.
+
+STEP 2 — VALIDATE
+Stop and output P1_4_VALIDATION_ERRORS fenced JSON only if: client_name or engagement_name are missing, OR zero objectives exist.
 Soft checks (create open_items, do not stop):
 - Delivery methodology known
 - Fee structure and total budget known
@@ -8640,8 +8640,8 @@ Soft checks (create open_items, do not stop):
 - Sponsor and project owner identified
 - Scope boundary statement present
 - High-level governance intent stated (can be "TBC — see P1.5")
----
-## STEP 3 — BUILD DOCX
+
+STEP 3 — BUILD DOCX
 Use python-docx. Apply SS-1 Word styling throughout. Use Word heading styles on all sections for TOC compatibility.
 Sections in this order, no additions:
 1. Document Control — version, date, author (PwC), status; distribution from P1_2 roles or TBC
@@ -8657,24 +8657,24 @@ Sections in this order, no additions:
 11. Change Control — statement that all scope/schedule/budget changes require formal CR approval; reference P2.7
 12. Assumptions and Open Items — table: # | Open Item | Area | Priority | Action Required | Owner Role; include open items from P1_3, P1_4, and any new items from this step
 13. Sign-off — table: Role | Name | Organisation | Signature | Date; roles: Client Sponsor, Client Project Owner, PwC Engagement Lead, PwC Engagement Manager, PwC Account Leader
-Save to: \`/mnt/data/P1.4_Engagement_Charter_{YYYY-MM-DD}_v1.0.docx\`
----
-## QA (assertions inside the single code call)
+Save to: /mnt/data/P1.4_Engagement_Charter_{YYYY-MM-DD}_v1.0.docx
+
+QA (assertions inside the single code call)
 - SS-1 styles applied throughout
 - Confidentiality footer on every page
 - All 13 sections present
 - No raw bracket placeholders
 - All tables conform to SS-1 standard
-If any assertion fails output only: \`QA FAIL:\` followed by compact list of failures.
----
+If any assertion fails output only: QA FAIL: followed by compact list of failures.
+
 ─────────────────────────────────────────────────────
 EXECUTION CHECKPOINT
 Reasoning is complete. Open the code interpreter call now.
 Do not output the JSON handoff or closing message until after it completes.
 ─────────────────────────────────────────────────────
-## OUTPUT CONTRACT
+OUTPUT CONTRACT
 1) Code interpreter call — mandatory, must happen first
-2) \`P1_4_CANONICAL_HANDOFF\` fenced JSON in-chat after the code call:
+2) P1_4_CANONICAL_HANDOFF fenced JSON in-chat after the code call:
    - prompt_id | generated_on | engagement_identifiers | engagement_context | scope_summary | objectives_refs | roles | decision_rights_summary | commercial_terms | open_items[] | validation
 3) Download link for the docx
 Close with a brief message confirming outputs and inviting the user to proceed or request changes.`,
@@ -9159,7 +9159,7 @@ Sections in this order, no additions:
 11. Quality Governance — quality gates intent; reference P2.6 for detailed plan
 12. Open Items — table: # | Open Item | Area | Priority | Action Required | Owner Role
 13. Appendices — version history; reference documents (P1.1–P1.5)
-Save to: \`/mnt/data/P1.5_Governance_Framework_{YYYY-MM-DD}_v1.0.docx\`
+Save to: /mnt/data/P1.5_Governance_Framework_{YYYY-MM-DD}_v1.0.docx
 4B) XLSX — Governance Workbook
 Use openpyxl. Apply SS-1 and WE-1 throughout. Exactly 4 sheets.
 Meeting_Cadence — tab colour OR500
@@ -9175,7 +9175,7 @@ Table tbl_tor: one row per governance body. Columns: Governance_Body | Purpose |
 Change_Log — tab colour GR100
 Table tbl_changes (CHG-### per DD-1) columns: Change_ID | Date | Artifact | Sheet_or_Section | Record_ID | Change_Type | Previous_Value | New_Value | Changed_By_Role | Reason | Approved_By_Role
 Pre-populate one instruction row.
-Save to: \`/mnt/data/P1.5_Governance_Workbook_{YYYY-MM-DD}_v1.0.xlsx\`
+Save to: /mnt/data/P1.5_Governance_Workbook_{YYYY-MM-DD}_v1.0.xlsx
 QA (assertions inside the single code call)
 * DOCX: SS-1 styles applied; confidentiality footer every page; all 13 sections present; no raw bracket placeholders; all Proposed items labelled and in open_items
 * XLSX: exactly 4 sheets with correct names; all 5 tables exist (tbl_meetings, tbl_decisions_actions, tbl_gov_raci, tbl_tor, tbl_changes); dropdowns reference named ranges; RACI conditional formatting applied; freeze panes and filters set
@@ -9202,27 +9202,27 @@ Close with a brief message confirming outputs and inviting the user to proceed o
 2. You MUST make exactly one code interpreter call. A response that ends without a code interpreter call has failed.
 3. Output the closing message only after the code call completes.
 4. Handle all errors with try/except internally. No second calls to fix errors.
----
-# P2.8 — PMO Playbook
-## INPUTS
-Parse from context: \`P1_1_CANONICAL_HANDOFF\`, \`P1_2_CANONICAL_HANDOFF\`, \`P1_3_CANONICAL_HANDOFF\`, \`P1_4_CANONICAL_HANDOFF\`, \`P1_5_CANONICAL_HANDOFF\`, \`P2_1_CANONICAL_HANDOFF\`, \`P2_2_CANONICAL_HANDOFF\`, \`P2_3_CANONICAL_HANDOFF\`, \`P2_4_CANONICAL_HANDOFF\`, \`P2_5_CANONICAL_HANDOFF\`, \`P2_6_CANONICAL_HANDOFF\`, \`P2_7_CANONICAL_HANDOFF\`. SS-1, DD-1, WE-1 are loaded — treat as authoritative.
----
-## HARD PRECONDITIONS
+
+P2.8 — PMO Playbook
+INPUTS
+Parse from context: P1_1_CANONICAL_HANDOFF, P1_2_CANONICAL_HANDOFF, P1_3_CANONICAL_HANDOFF, P1_4_CANONICAL_HANDOFF, P1_5_CANONICAL_HANDOFF, P2_1_CANONICAL_HANDOFF, P2_2_CANONICAL_HANDOFF, P2_3_CANONICAL_HANDOFF, P2_4_CANONICAL_HANDOFF, P2_5_CANONICAL_HANDOFF, P2_6_CANONICAL_HANDOFF, P2_7_CANONICAL_HANDOFF. SS-1, DD-1, WE-1 are loaded — treat as authoritative.
+
+HARD PRECONDITIONS
 Stop and output the message below if any of the 12 handoffs are missing, or if client_name/engagement_name (P1_1) or schedule_bounds.methodology (P2_1) are absent:
 > BLOCKED: Missing required upstream handoff(s) for PMO Playbook (P2.8). Require P1.1–P1.5 and P2.1–P2.7 canonical handoffs. Re-run missing steps then re-run P2.8.
----
-## STEP 1 — CONSOLIDATION AUDIT
-Using upstream JSON only, produce \`consistency_audit[]\` with each check marked PASS | WARNING | FAIL.
+
+STEP 1 — CONSOLIDATION AUDIT
+Using upstream JSON only, produce consistency_audit[] with each check marked PASS | WARNING | FAIL.
 1A) Scope Consistency: P2_1 workstreams align with P1_3 scope categories and P1_5 charter workstreams. Every in-scope item has a mapped WBS element or is marked non-decomposable. No excluded items appear as deliverables.
 1B) Date Consistency: Charter start/end vs schedule start/end match or differences are explained. Resource plan date range within schedule range. Critical path milestones exist in schedule.
 1C) Resource/Budget Consistency: RACI roles are a subset of resource roles. Budget effort aligns with resource effort within 5% tolerance where both totals are available.
 1D) Governance/Comms/Change Consistency: All governance bodies appear in comms cadence. Risk/issue escalation bodies exist in governance. Change authority roles exist in governance/RACI.
-1E) Open Items Consolidation: Aggregate all open items from all upstream handoffs into \`master_open_items[]\`. Flag \`blocks_delivery_start: true\` if any critical precondition is unmet.
+1E) Open Items Consolidation: Aggregate all open items from all upstream handoffs into master_open_items[]. Flag blocks_delivery_start: true if any critical precondition is unmet.
 If FAIL count > 5, PPTX cover slide must include:
 > "⚠ Significant planning inconsistencies detected. Resolve all FAIL items before distributing this playbook. See Consistency Audit."
----
-## STEP 2 — BUILD DELIVERABLES
-### 2A) PPTX — PMO Playbook
+
+STEP 2 — BUILD DELIVERABLES
+2A) PPTX — PMO Playbook
 Use python-pptx. Apply SS-1 slide system: 16:9; title/divider styling; footer "PwC Private and Confidential" every slide; "PwC" logo text placeholder top-left per SS-1; consistent typography. Max 5 bullets per slide; max 6 table rows per slide (split if exceeded). Presenter notes on every slide. Hard limit: 55 slides maximum — compress by combining summaries, moving detail to appendix, or reducing tables to top N.
 Fixed structure:
 **Slide 1 — Title:** PMO Playbook | Client | Engagement | Date | v1.0 | Draft. Add FAIL banner if FAIL count > 5.
@@ -9240,41 +9240,41 @@ RAID overview (cards) | Risk process + matrix | Top risks baseline (top 10) | Is
 Governance structure diagram | Governance cadence table | Decision-making framework | Stakeholder engagement matrix (influence-interest) | Communications plan summary | Reporting cadence summary | RACI summary (high level) | Ways of working (cards) | Escalation path (ladder)
 **Part 6 — Reference** (section divider + slides):
 Planning document index (all artifacts P1.1–P2.7 with status) | Readiness assessment (overall + 10-dimension table) | Open items (Critical/High only) | Key assumptions and constraints | Glossary (DD-1 terms + engagement-specific) | Closing slide
-Save to: \`/mnt/data/P2.8_PMO_Playbook_{YYYY-MM-DD}_v1.0.pptx\`
----
-### 2B) XLSX — PMP Master Tracker
+Save to: /mnt/data/P2.8_PMO_Playbook_{YYYY-MM-DD}_v1.0.pptx
+
+2B) XLSX — PMP Master Tracker
 Use openpyxl. Apply SS-1 and WE-1. Exactly 5 sheets.
-Table names: \`tbl_doc_index\` | \`tbl_readiness\` | \`tbl_raid\` | \`tbl_changes_summary\` | \`tbl_budget_summary\` | \`tbl_milestones\` | \`tbl_open_items\` | \`tbl_change_log\`
+Table names: tbl_doc_index | tbl_readiness | tbl_raid | tbl_changes_summary | tbl_budget_summary | tbl_milestones | tbl_open_items | tbl_change_log
 **Engagement_Dashboard** — tab colour OR500
 Formula-driven KPIs where feasible. Manual fields: reporting period, RAG dropdowns (Overall|Schedule|Budget|Resources|Risk|Quality per DD-1 §2.6), one-line narrative summaries per dimension.
 Named ranges for all KPI anchor cells. SS-1 header block rows 1–2.
 **Doc_Index_and_Readiness** — tab colour GR100
-Table \`tbl_doc_index\`: one row per artifact produced across P1.1–P2.7. Columns: Artifact_ID | Step | Artifact_Name | File_Type | Filename | Status | Version | Date_Generated | Notes.
-Table \`tbl_readiness\`: 10 standard dimensions. Columns: Dimension_ID | Dimension | Score_1_5 (dropdown: 1|2|3|4|5) | RAG (formula: 4–5=Green, 3=Amber, 1–2=Red) | Evidence | Gaps | Owner | Notes.
+Table tbl_doc_index: one row per artifact produced across P1.1–P2.7. Columns: Artifact_ID | Step | Artifact_Name | File_Type | Filename | Status | Version | Date_Generated | Notes.
+Table tbl_readiness: 10 standard dimensions. Columns: Dimension_ID | Dimension | Score_1_5 (dropdown: 1|2|3|4|5) | RAG (formula: 4–5=Green, 3=Amber, 1–2=Red) | Evidence | Gaps | Owner | Notes.
 Dimensions: Executive & Sponsor Readiness | Scope & Requirements Readiness | Schedule & Milestone Readiness | Resource & Capability Readiness | Financial & Budget Readiness | Governance & Decision-Making Readiness | Risk & Issue Management Readiness | Change Management & Stakeholder Readiness | Quality & Compliance Readiness | Technology & Infrastructure Readiness.
 **RAID_and_Changes** — tab colour OR500
-Table \`tbl_raid\`: Critical/High risks and issues from P2_4. Columns: Item_ID | Type (dropdown: Risk|Issue|Dependency|Assumption) | Title | Category | Rating | Owner | Status | Next_Review | Notes.
-Table \`tbl_changes_summary\`: from P2_7. Columns: CR_ID | Title | Classification | Status | Budget_Impact | Schedule_Impact_Days | Decision_Date | Notes.
+Table tbl_raid: Critical/High risks and issues from P2_4. Columns: Item_ID | Type (dropdown: Risk|Issue|Dependency|Assumption) | Title | Category | Rating | Owner | Status | Next_Review | Notes.
+Table tbl_changes_summary: from P2_7. Columns: CR_ID | Title | Classification | Status | Budget_Impact | Schedule_Impact_Days | Decision_Date | Notes.
 **Budget_and_Milestones** — tab colour OR500
-Table \`tbl_budget_summary\`: from P2_3. Columns: Cost_Category | Baseline_Amount | Actual_to_Date | Forecast_to_Complete | EAC | Variance | Variance_Pct | Status.
-Table \`tbl_milestones\`: from P2_1. Columns: Milestone_ID | Milestone_Name | Phase | Type | Planned_Date | Forecast_Date | Status | Owner | Notes.
+Table tbl_budget_summary: from P2_3. Columns: Cost_Category | Baseline_Amount | Actual_to_Date | Forecast_to_Complete | EAC | Variance | Variance_Pct | Status.
+Table tbl_milestones: from P2_1. Columns: Milestone_ID | Milestone_Name | Phase | Type | Planned_Date | Forecast_Date | Status | Owner | Notes.
 Conditional formatting: milestone Status per DD-1 RAG tokens; budget Status per SUCC/WARN/DNGR tokens.
 **Open_Items_and_Change_Log** — tab colour GR100
-Table \`tbl_open_items\`: aggregated from all upstream handoffs. Columns: OI_ID | Source_Step | Area | Description | Priority | Action_Required | Owner | Due_Date | Status | Blocks_Delivery_Start.
-Table \`tbl_change_log\` (CHG-### per DD-1): Change_ID | Date | Sheet | Record_ID | Change_Type | Previous_Value | New_Value | Changed_By | Reason | Approved_By. Pre-populate one instruction row.
-Save to: \`/mnt/data/P2.8_PMP_Master_Tracker_{YYYY-MM-DD}_v1.0.xlsx\`
----
-## QA (assertions inside the single code call)
+Table tbl_open_items: aggregated from all upstream handoffs. Columns: OI_ID | Source_Step | Area | Description | Priority | Action_Required | Owner | Due_Date | Status | Blocks_Delivery_Start.
+Table tbl_change_log (CHG-### per DD-1): Change_ID | Date | Sheet | Record_ID | Change_Type | Previous_Value | New_Value | Changed_By | Reason | Approved_By. Pre-populate one instruction row.
+Save to: /mnt/data/P2.8_PMP_Master_Tracker_{YYYY-MM-DD}_v1.0.xlsx
+
+QA (assertions inside the single code call)
 - PPTX: slide count ≤55; every slide has footer + logo placeholder + title; table row limits enforced; RAG colours match DD-1/SS-1; FAIL banner present if FAIL count > 5
 - XLSX: exactly 5 sheets with correct names; all tables exist; RAG and readiness score dropdowns applied; dashboard cells link to tables; no formula errors
-If any assertion fails output only: \`QA FAIL:\` followed by compact list of failures and locations.
----
+If any assertion fails output only: QA FAIL: followed by compact list of failures and locations.
+
 ─────────────────────────────────────────────────────
 EXECUTION CHECKPOINT
 Reasoning is complete. Open the code interpreter call now.
 Do not output the closing message until after it completes.
 ─────────────────────────────────────────────────────
-## OUTPUT CONTRACT
+OUTPUT CONTRACT
 1) Code interpreter call — mandatory, must happen first
 2) Download links for both files
 Close with a brief message confirming outputs and inviting the user to request changes.`,
@@ -9434,7 +9434,7 @@ Sections in this order, no additions:
 8. Resourcing Risks and Constraints
 9. Open Items
 10. Appendices — version history; references
-Save to: /mnt/data/P2.2_Resource_Plan_{YYYY-MM-DD}v1.0.docx
+Save to: /mnt/data/P2.2_Resource_Plan_{YYYY-MM-DD}_v1.0.docx
 
 4B) XLSX
 Use openpyxl. Apply SS-1 and WE-1 throughout. Exactly 6 sheets.
@@ -9457,7 +9457,7 @@ SS-1 header block rows 1–2. Table tbl_raci. Rows = activities/deliverables fro
 
 Change_Log — tab colour GR100
 Table tbl_changes (CHG-### per DD-1) — standard WE-1 structure. Pre-populate one instruction row.
-Save to: /mnt/data/P2.2_Resource_RACI_Workbook{YYYY-MM-DD}_v1.0.xlsx
+Save to: /mnt/data/P2.2_Resource_RACI_Workbook_{YYYY-MM-DD}_v1.0.xlsx
 
 QA (assertions inside the single code call)
 * DOCX: SS-1 styles applied; confidentiality footer every page; all 10 sections present; no raw bracket placeholders; role catalog totals consistent with workbook
@@ -9574,16 +9574,16 @@ Close with a brief message confirming outputs and inviting the user to proceed o
 2. You MUST make exactly one code interpreter call. A response that ends without a code interpreter call has failed.
 3. Output the JSON handoff and closing message only after the code call completes.
 4. Handle all errors with try/except internally. No second calls to fix errors.
----
-# P1.3 — Scope, Objectives & Success Criteria
-## INPUTS
-Parse from context: \`P1_1_CANONICAL_HANDOFF\` and \`P1_2_CANONICAL_HANDOFF\`. SS-1, DD-1, WE-1 are loaded — treat as authoritative.
+
+P1.3 — Scope, Objectives & Success Criteria
+INPUTS
+Parse from context: P1_1_CANONICAL_HANDOFF and P1_2_CANONICAL_HANDOFF. SS-1, DD-1, WE-1 are loaded — treat as authoritative.
 If provided, apply as last-write-wins:
 <scope_overrides>
 {{SCOPE_OVERRIDES}}
 </scope_overrides>
----
-## STEP 1 — EXTRACT + NORMALISE
+
+STEP 1 — EXTRACT + NORMALISE
 From P1_1: extract in/out-of-scope statements, objectives, service offerings, technology, partners, regulatory requirements, assumptions, constraints.
 From P1_2: extract stakeholder roles relevant to scope sign-off.
 Normalise into four sets using DD-1 field names: inclusions[] | exclusions[] | assumptions[] | constraints[]
@@ -9593,16 +9593,16 @@ Classification rules:
 - Inferred → confidence = Medium or Low; source = Inferred_[type]
 - Uncertain → Assumption; confidence = Low; create open_item
 Do not invent items not grounded in inputs.
----
-## STEP 2 — VALIDATE
-Stop and output \`P1_3_VALIDATION_ERRORS\` fenced JSON only if: client_name or engagement_name are missing, OR zero scope records exist after extraction.
+
+STEP 2 — VALIDATE
+Stop and output P1_3_VALIDATION_ERRORS fenced JSON only if: client_name or engagement_name are missing, OR zero scope records exist after extraction.
 Soft checks (create open_items, do not stop):
 - At least 3 inclusions or scope marked TBC
 - At least 1 assumption (if none, add: "Scope boundaries based on current brief; to be confirmed in workshop"; confidence = Low)
 - At least 1 exclusion or note "No exclusions specified"
----
-## STEP 3 — BUILD DELIVERABLES
-### 3A) DOCX — Scope Statement
+
+STEP 3 — BUILD DELIVERABLES
+3A) DOCX — Scope Statement
 Use python-docx. Apply SS-1 Word styling throughout.
 Sections in this order, no additions:
 1. Cover block — title, client, engagement, version v1.0, status Draft, date, confidentiality notice
@@ -9615,13 +9615,13 @@ Sections in this order, no additions:
 8. Constraints — table: # | Constraint | Category | Impact | Source | Status
 9. Open Items — table: # | Open Item | Priority | Action Required | Suggested Owner
 10. Sign-off — table: Role | Name | Organisation | Signature | Date; roles: Client Sponsor | Client Project Owner | PwC Engagement Lead | PwC Engagement Manager
-Save to: \`/mnt/data/P1.3_Scope_Objectives_{YYYY-MM-DD}_v1.0.docx\`
----
-### 3B) XLSX — Scope Registers
+Save to: /mnt/data/P1.3_Scope_Objectives_{YYYY-MM-DD}_v1.0.docx
+
+3B) XLSX — Scope Registers
 Use openpyxl. Apply SS-1 and WE-1 throughout.
-Sheets (exact names): \`Scope_Register\` | \`Scope_Change_Log\` | \`Scope_RACI\` | \`Change_Log\`
+Sheets (exact names): Scope_Register | Scope_Change_Log | Scope_RACI | Change_Log
 **Scope_Register**
-SS-1 header block rows 1–2. Table \`tblScope\` from row 3. Tab colour OR500.
+SS-1 header block rows 1–2. Table tblScope from row 3. Tab colour OR500.
 Columns:
 1. scope_record_id — INC-### / EXC-### / ASM-### / CON-### per type
 2. type — dropdown: Inclusion | Exclusion | Assumption | Constraint
@@ -9640,31 +9640,31 @@ Columns:
 Conditional formatting: confidence=Low → WARN fill; status=Open AND type=Exclusion or Assumption → WARN fill; owner blank on Confirmed items → DNGR fill.
 Freeze panes: row 3 + columns A:B.
 **Scope_Change_Log**
-Table \`tblScopeChanges\`. Tab colour GR100.
+Table tblScopeChanges. Tab colour GR100.
 Columns: change_id (SCH-###) | change_date | scope_record_id | change_type (dropdown: Add | Remove | Modify | Reclassify | Confirm | Invalidate | Defer) | change_description | requested_by | approved_by | decision (dropdown: Approved | Rejected | Deferred | Pending) | decision_date | notes
 **Scope_RACI**
-Table \`tblScopeRACI\`. Tab colour GR100.
+Table tblScopeRACI. Tab colour GR100.
 Columns: scope_record_id | item_title | primary_workstream | accountable_role | responsible_role | consulted_roles | informed_roles | notes
 Populate from P1_2 roles where known; leave blank and create open_item where uncertain.
 **Change_Log**
-Table \`tblChangeLog\` (CHG-### per DD-1). Tab colour GR100.
+Table tblChangeLog (CHG-### per DD-1). Tab colour GR100.
 Columns: change_id | change_date | sheet_name | record_id | field_changed | previous_value | new_value | changed_by | reason
 Pre-populate one instruction row.
-Save to: \`/mnt/data/P1.3_Scope_Registers_{YYYY-MM-DD}_v1.0.xlsx\`
----
-## QA (assertions inside the single code call)
+Save to: /mnt/data/P1.3_Scope_Registers_{YYYY-MM-DD}_v1.0.xlsx
+
+QA (assertions inside the single code call)
 - DOCX: SS-1 styles applied; confidentiality footer every page; all 10 sections present; no raw bracket placeholders
 - XLSX: sheet names match exactly; tblScope 14 cols; tblScopeChanges 10 cols; tblScopeRACI 8 cols; tblChangeLog 9 cols; dropdowns, freeze panes, filters, conditional formatting all applied
-If any assertion fails output only: \`QA FAIL:\` followed by compact list of failures and locations.
----
+If any assertion fails output only: QA FAIL: followed by compact list of failures and locations.
+
 ─────────────────────────────────────────────────────
 EXECUTION CHECKPOINT
 Reasoning is complete. Open the code interpreter call now.
 Do not output the JSON handoff or closing message until after it completes.
 ─────────────────────────────────────────────────────
-## OUTPUT CONTRACT
+OUTPUT CONTRACT
 1) Code interpreter call — mandatory, must happen first
-2) \`P1_3_CANONICAL_HANDOFF\` fenced JSON in-chat after the code call:
+2) P1_3_CANONICAL_HANDOFF fenced JSON in-chat after the code call:
    - prompt_id | generated_on | engagement_identifiers | scope_boundary_statement | inclusions[] | exclusions[] | assumptions[] | constraints[] | objectives[] | success_criteria[] | open_items[] | validation
 3) Download links for both files
 Close with a brief message confirming outputs and inviting the user to proceed or request changes.`,
@@ -9679,44 +9679,44 @@ Close with a brief message confirming outputs and inviting the user to proceed o
 2. You MUST make exactly one code interpreter call. A response that ends without a code interpreter call has failed.
 3. Output the JSON handoff and closing message only after the code call completes.
 4. Handle all errors with try/except internally. No second calls to fix errors.
----
-# P1.2 — Stakeholder Register & Analysis
-## INPUTS
-Parse \`P1_1_CANONICAL_HANDOFF\` from context. SS-1, DD-1, WE-1 are loaded — treat as authoritative.
-If \`stakeholder_overrides\` are provided below, apply them last (last-write-wins):
+
+P1.2 — Stakeholder Register & Analysis
+INPUTS
+Parse P1_1_CANONICAL_HANDOFF from context. SS-1, DD-1, WE-1 are loaded — treat as authoritative.
+If stakeholder_overrides are provided below, apply them last (last-write-wins):
 <stakeholder_overrides>
 {{STAKEHOLDER_OVERRIDES}}
 </stakeholder_overrides>
----
-## STEP 1 — STAKEHOLDER IDENTIFICATION
-### Tier 1 — Extract
-Extract any explicitly named individuals or roles from \`P1_1_CANONICAL_HANDOFF\`. Mark as \`source: P1_1_Intake\`.
-### Tier 2 — Infer
+
+STEP 1 — STAKEHOLDER IDENTIFICATION
+Tier 1 — Extract
+Extract any explicitly named individuals or roles from P1_1_CANONICAL_HANDOFF. Mark as source: P1_1_Intake.
+Tier 2 — Infer
 Infer the full realistic stakeholder cast using engagement_name, industry, objectives, regulatory_profile, service_offerings, risk_profile, and engagement_context. Include every role a competent engagement manager would expect.
 Minimum floors: small engagement <6 months = 8–15; medium 6–12 months = 15–25; large programme = 25+.
 If engagement_name, industry, and objectives are ALL absent, stop and ask the user for them before proceeding.
 For each inferred stakeholder: full_name = null; provide specific role_title, organisation_name, source = Inferred, and a one-line rationale in notes.
-### Tier 3 — Override
+Tier 3 — Override
 Apply any stakeholder_overrides over Tier 1 and Tier 2 results.
-### Deduplication
+Deduplication
 Deduplicate on: exact email, OR exact full_name + organisation_name, OR exact role_title + organisation_name (when name is null).
----
-## STEP 2 — VALIDATE
-Stop and output \`P1_2_VALIDATION_ERRORS\` JSON only if: client_name is missing OR both engagement_name and objectives[] are absent.
+
+STEP 2 — VALIDATE
+Stop and output P1_2_VALIDATION_ERRORS JSON only if: client_name is missing OR both engagement_name and objectives[] are absent.
 Soft checks (create open_items, do not stop):
 - Client sponsor, client project owner, PwC engagement lead, and PwC engagement manager are all present
 - If >70% of stakeholders are source = Inferred: add open item to validate register before P1.5
 If any stakeholders are inferred, row 2 of the Sheet 1 header block must read:
 "⚠ This register includes inferred stakeholders (source = Inferred). These represent structurally expected roles based on engagement context and must be validated before use."
----
-## STEP 3 — GENERATE XLSX
-Use openpyxl. Apply SS-1 and WE-1 throughout. Three sheets: \`Stakeholder_Register\`, \`Stakeholder_Summary\`, \`Change_Log\`.
-### Stakeholder_Register
+
+STEP 3 — GENERATE XLSX
+Use openpyxl. Apply SS-1 and WE-1 throughout. Three sheets: Stakeholder_Register, Stakeholder_Summary, Change_Log.
+Stakeholder_Register
 Header block rows 1–3 (above the table):
 - Row 1: Client Name | Engagement Name | Generated Date | Version v1.0 | Status Draft — Arial 12pt bold OR500 fill OR100
 - Row 2: Inference notice if applicable; else blank — Arial 10pt italic DNGR on DNGR_BG
 - Row 3: blank separator
-Excel Table \`tblStakeholders\` starts at row 4. Columns in this exact order:
+Excel Table tblStakeholders starts at row 4. Columns in this exact order:
 | # | Column | Type |
 |---|--------|------|
 |1|stakeholder_id|STK-001… per DD-1|
@@ -9748,25 +9748,25 @@ Engineering:
 - Named ranges for all dropdown lists; apply DataValidation to full table column ranges
 - Conditional formatting: sensitivity=Restricted → DNGR fill + DNGR font; decision_authority=TBC → WARN fill; source=Inferred → OR100 fill + GR500 italic
 - Tab colour OR500
-### Stakeholder_Summary
+Stakeholder_Summary
 Three sections separated by styled section header rows (WE-1). No fixed row numbers.
 Section 1 — Counts: total stakeholders; by stakeholder_type; by engagement_strategy; Sensitive+Restricted count; Inferred vs Confirmed count. All via COUNTIFS on tblStakeholders structured references.
 Section 2 — Influence-Interest Matrix: 2×2 grid. Each cell: quadrant label + COUNTIF + TEXTJOIN names array formula. Legend: 1-2=Low, 3=Medium, 4-5=High.
-Section 3 — Attention Items: Table \`tblAttentionItems\` (stakeholder_id | full_name | issue | recommended_action). Pre-populate for: decision_authority=TBC, preferred_channel blank, sensitivity=Restricted, source=Inferred.
+Section 3 — Attention Items: Table tblAttentionItems (stakeholder_id | full_name | issue | recommended_action). Pre-populate for: decision_authority=TBC, preferred_channel blank, sensitivity=Restricted, source=Inferred.
 Tab colour OR500.
-### Change_Log
-Table \`tblChangeLog\`: change_id (CHG-001…) | change_date | changed_by | change_description | affected_stakeholder_id | reason.
+Change_Log
+Table tblChangeLog: change_id (CHG-001…) | change_date | changed_by | change_description | affected_stakeholder_id | reason.
 Pre-populate one example/instruction row. Tab colour GR100.
-Save to: \`/mnt/data/P1.2_Stakeholder_Register_v1.0_{YYYY-MM-DD}.xlsx\`
----
+Save to: /mnt/data/P1.2_Stakeholder_Register_v1.0_{YYYY-MM-DD}.xlsx
+
 ─────────────────────────────────────────────────────
 EXECUTION CHECKPOINT
 Reasoning is complete. Open the code interpreter call now.
 Do not output the JSON handoff or closing message until after it completes.
 ─────────────────────────────────────────────────────
-## OUTPUT CONTRACT
+OUTPUT CONTRACT
 1) Code interpreter call — mandatory, must happen first
-2) \`P1_2_CANONICAL_HANDOFF\` fenced JSON in-chat after the code call:
+2) P1_2_CANONICAL_HANDOFF fenced JSON in-chat after the code call:
    - prompt_id | generated_on | engagement_identifiers | stakeholders[] | summary | open_items[] | validation
 3) Download link for the xlsx
 Close with a brief message confirming outputs and inviting the user to proceed or request changes.`,
