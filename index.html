@@ -8560,9 +8560,11 @@ Objective: Ensure every artifact is visually consistent, PwC-aligned, accessible
 Copy code
 ### 3.1 Colour Tokens (Hex)
 Brand / Core:
-- --orange500 = #D04A02 (PwC primary orange; headings; table headers; key rules)
-- --orange300 = #E8895A (secondary accent; hover states; highlights)
-- --orange100 = #F9DFD3 (light orange fills; tinted backgrounds)
+- --orange500 = #FD5108 (PwC core Orange 500; headings; table headers; key rules)
+- --orange400 = #FE7C39 (secondary accent; active states; chart series 2)
+- --orange300 = #FFAA72 (tertiary accent; hover states; highlights)
+- --orange200 = #FFCDA8 (subtle highlight; tinted fills)
+- --orange100 = #FFE8D4 (lightest fill; section backgrounds; calloutKeyBg)
 - --black = #000000 (primary text)
 - --white = #FFFFFF
 - --grey100 = #EEEFF1 (light fills; alt rows; section dividers; backgrounds)
@@ -8578,7 +8580,7 @@ Status / Severity:
 - --info = #3B82F6 ; --infoBg = #EFF6FF (informational; closed/complete alt)
 
 Callout Fills:
-- --calloutKeyBg = #F9DFD3 (key points; --orange500 left rule)
+- --calloutKeyBg = #FFE8D4 (key points; --orange500 left rule)
 - --calloutWarnBg = #FEF3C7 (warnings/gaps; --warning left rule)
 - --calloutNoteBg = #EEEFF1 (notes/assumptions; --grey300 left rule)
 
@@ -8628,7 +8630,7 @@ Placeholders: write as _Not specified — to be confirmed_ (italic).
 ### 6.1 Approved Table Style Palette
 The engagement uses a restricted palette derived from the approved PwC Excel table style set.
 Only the following colour families are permitted in Excel workbooks:
-- **Primary:** Orange (#D04A02 = --orange500), Light orange (#E8895A = --orange300), Peach (#F9DFD3 = --orange100)
+- **Primary:** Orange (#FD5108 = --orange500), Light orange (#FFAA72 = --orange300), Peach (#FFE8D4 = --orange100)
 - **Neutral:** White (#FFFFFF), Light grey (#EEEFF1 = --grey100), Mid grey (#DFE3E6 = --grey200)
 - **Black/dark:** #000000 and #333333 for text only — NEVER as fill on data rows
 - **Status only (conditional formatting only):** --success (#22C55E / bg #DCFCE7), --warning (#EAB308 / bg #FEF3C7), --danger (#C62828 / bg #FFEBEE), --info (#3B82F6 / bg #EFF6FF)
@@ -8678,14 +8680,14 @@ Auto-fit is NOT sufficient. Apply these deterministic widths:
 
 ### 6.7 Table Header and Row Styling (manual, applied in addition to TableStyleInfo)
 Apply these fills and fonts explicitly to ensure consistency even if TableStyleInfo rendering varies:
-- Column header row: \`PatternFill(fgColor="D04A02")\` + \`Font(bold=True, color="FFFFFF", size=10, name="Arial")\`
-- Header row bottom border: \`Side(border_style="medium", color="D04A02")\`
+- Column header row: \`PatternFill(fgColor="FD5108")\` + \`Font(bold=True, color="FFFFFF", size=10, name="Arial")\`
+- Header row bottom border: \`Side(border_style="medium", color="FD5108")\`
 - Odd data rows: fill \`FFFFFF\`; Even data rows: fill \`EEEFF1\`
 - All cell borders: \`Side(border_style="thin", color="DFE3E6")\`
 
 ### 6.8 Info / Header Block (rows above each table)
 Every sheet MUST have an info block above its first table:
-- Row 1: "Client: {client_name}  |  Engagement: {engagement_name}" — Arial 12pt Bold --orange500; merged across used columns; fill --orange100 (#F9DFD3)
+- Row 1: "Client: {client_name}  |  Engagement: {engagement_name}" — Arial 12pt Bold --orange500; merged across used columns; fill --orange100 (#FFE8D4)
 - Row 2: "Generated: {YYYY-MM-DD}  |  Version: v1.0  |  Status: Draft" — Arial 10pt --grey500; fill --grey100 (#EEEFF1)
 - Row 3 (notices only): Arial 10pt Italic --danger (#C62828); fill --dangerBg (#FFEBEE). Only include if a warning is required (e.g. inferred data notice).
 - Blank separator row before table header row: height = 6pt
@@ -8697,7 +8699,7 @@ Every sheet MUST have an info block above its first table:
 - Always freeze at minimum: all header block rows + table column header row
 
 ### 6.10 Tab Colours
-- Primary/Operational sheets: #D04A02 (--orange500). Set via \`ws.sheet_properties.tabColor = "D04A02"\`
+- Primary/Operational sheets: #FD5108 (--orange500). Set via \`ws.sheet_properties.tabColor = "FD5108"\`
 - Reference/Log sheets: #EEEFF1 (--grey100). Set via \`ws.sheet_properties.tabColor = "EEEFF1"\`
 
 ### 6.11 Dates, Currency, Percentages
@@ -8714,7 +8716,7 @@ Every sheet MUST have an info block above its first table:
 - Use only status/severity tokens from Section 3.1 (--success, --warning, --danger, --info fills)
 - Every rule MUST set both PatternFill AND Font colour (colour alone is inaccessible)
 - Apply rules to the full table data range using explicit cell range (e.g. \`A5:W500\`)
-- Inferred/unconfirmed data rows: light italic fill using --orange100 (#F9DFD3) + --grey500 italic font
+- Inferred/unconfirmed data rows: light italic fill using --orange100 (#FFE8D4) + --grey500 italic font
 
 ### 6.14 Print Setup
 - \`ws.print_title_rows = "1:4"\` (repeat header block + table header on every printed page)
