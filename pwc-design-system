@@ -427,6 +427,57 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 .text-sm{font-size:13px}
 .fw-600{font-weight:600}
 .truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── STICKY SUB-HEADERS ── */
+.sub > div:first-child:has(.sub-title){position:sticky;top:64px;background:#fff;z-index:10;padding:10px 0;margin-bottom:8px}
+.chart-cat-header{position:sticky;top:64px;background:#fff;z-index:10}
+
+/* ── SIDEBAR SEARCH ── */
+.search-wrap{padding:10px 16px 12px;border-bottom:1px solid var(--g200);position:relative}
+.search-input-row{display:flex;align-items:center;gap:8px;background:var(--g100);padding:7px 10px}
+.search-input-row input{background:none;border:none;outline:none;font-size:12px;color:inherit;width:100%;min-width:0}
+.search-results{position:absolute;left:16px;right:16px;background:#fff;border:1px solid var(--g200);box-shadow:var(--shadow-md);z-index:300;max-height:220px;overflow-y:auto;display:none}
+.search-result{display:flex;align-items:center;gap:8px;padding:7px 12px;cursor:pointer;transition:background .1s}
+.search-result:hover{background:var(--g100)}
+.search-result-name{font-size:12px;color:var(--black);white-space:nowrap}
+.search-result-sec{font-size:11px;color:var(--g500);margin-left:auto;white-space:nowrap}
+
+/* ── SIDEBAR ACCORDION ── */
+.nav-sub-list{max-height:0;overflow:hidden;transition:max-height .22s ease}
+.nav-grp.open .nav-sub-list{max-height:600px}
+.nav-sub-item{display:flex;align-items:center;padding:6px 24px 6px 44px;font-size:12px;color:var(--g500);cursor:pointer;transition:all .15s;text-decoration:none;border-left:2px solid transparent}
+.nav-sub-item:hover{color:var(--black);background:var(--g100)}
+.nav-chev{transition:transform .2s ease;flex-shrink:0}
+.nav-grp.open > .nav-link-head .nav-chev{transform:rotate(90deg)}
+.nav-link-head{cursor:pointer}
+
+/* ── DARK MODE TOGGLE BUTTON ── */
+.theme-btn{background:none;border:1px solid var(--g200);padding:5px 10px;cursor:pointer;color:var(--g500);display:flex;align-items:center;gap:6px;font-size:12px;font-family:inherit;transition:all .15s}
+.theme-btn:hover{background:var(--g100);color:var(--black)}
+
+/* ── DARK MODE ── */
+[data-theme="dark"]{--g100:#242424;--g200:#333;--g300:#484848;--g400:#707070;--g500:#909090;--o100:#3a1505}
+[data-theme="dark"] body{background:#121212;color:#e8e8e8}
+[data-theme="dark"] .sidebar{background:#1a1a1a;border-right-color:#2a2a2a}
+[data-theme="dark"] .topbar{background:#1a1a1a;border-bottom-color:#2a2a2a}
+[data-theme="dark"] .demo-card{background:#1e1e1e}
+[data-theme="dark"] .section-title{color:#e8e8e8}
+[data-theme="dark"] .chart-cat-header{background:#121212;border-bottom-color:#333}
+[data-theme="dark"] .sub > div:first-child:has(.sub-title){background:#121212}
+[data-theme="dark"] .search-results{background:#1e1e1e;border-color:#333}
+[data-theme="dark"] .search-result:hover{background:#2a2a2a}
+[data-theme="dark"] .search-result-name{color:#e8e8e8}
+[data-theme="dark"] .nav-link.active,.nav-link-head.active{background:#3a1505}
+[data-theme="dark"] .topbar-title{color:#e8e8e8}
+[data-theme="dark"] .section-desc{color:#888}
+[data-theme="dark"] .sub-title{color:#777}
+[data-theme="dark"] .demo-card-label{color:#888}
+[data-theme="dark"] .comp-label{color:#777}
+[data-theme="dark"] .sidebar-label{color:#666}
+[data-theme="dark"] input:not(#compSearch),[data-theme="dark"] textarea,[data-theme="dark"] select{background:#2a2a2a;border-color:#3a3a3a;color:#e8e8e8}
+[data-theme="dark"] .copy-btn{border-color:#3a3a3a;color:#888}
+[data-theme="dark"] .copy-btn:hover{background:#2a2a2a;color:#e8e8e8}
+[data-theme="dark"] .chart-cat-count{background:#2a2a2a;color:#888}
 </style>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -444,51 +495,182 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
     </svg>
   </div>
   <div class="sidebar-label">Components</div>
-  <a class="nav-link active" href="#buttons" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="8" rx="1"/></svg>
-    Buttons
-  </a>
-  <a class="nav-link" href="#forms" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6M9 8h6M9 16h4"/><rect x="3" y="3" width="18" height="18" rx="1"/></svg>
-    Form Controls
-  </a>
-  <a class="nav-link" href="#cards" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="1"/><path d="M2 10h20"/></svg>
-    Cards
-  </a>
-  <a class="nav-link" href="#modals" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="5" width="14" height="14"/><path d="M5 5 2 2M19 5l3-3M5 19l-3 3M19 19l3 3"/></svg>
-    Modals & Overlays
-  </a>
-  <a class="nav-link" href="#navigation" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-    Navigation
-  </a>
-  <a class="nav-link" href="#feedback" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-    Feedback
-  </a>
-  <a class="nav-link" href="#progress" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-    Progress & Loading
-  </a>
-  <a class="nav-link" href="#data" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
-    Data Table
-  </a>
-  <a class="nav-link" href="#charts" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-    Charts
-    <span style="margin-left:auto;font-size:10px;background:var(--o100);color:var(--o500);padding:1px 6px;font-weight:600;border-radius:0">21</span>
-  </a>
-  <a class="nav-link" href="#chat" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    Chat & Assistant
-  </a>
-  <a class="nav-link" href="#foundations" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    Foundations
-  </a>
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <div class="search-input-row">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="compSearch" type="text" placeholder="Search components…" oninput="filterComps(this.value)" onkeydown="if(event.key==='Escape')clearSearch()">
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="nav-grp open" id="grp-buttons">
+    <a class="nav-link nav-link-head active" href="#buttons" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="8" rx="1"/></svg>
+      Buttons
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-buttons-sub">
+      <a class="nav-sub-item" onclick="jumpTo('btn-variants')">Variants</a>
+      <a class="nav-sub-item" onclick="jumpTo('btn-sizes')">Sizes</a>
+      <a class="nav-sub-item" onclick="jumpTo('btn-icons')">With Icons &amp; Loading</a>
+      <a class="nav-sub-item" onclick="jumpTo('btn-icon-only')">Icon Buttons</a>
+    </div>
+  </div>
+
+  <!-- Form Controls -->
+  <div class="nav-grp" id="grp-forms">
+    <a class="nav-link nav-link-head" href="#forms" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6M9 8h6M9 16h4"/><rect x="3" y="3" width="18" height="18" rx="1"/></svg>
+      Form Controls
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-forms-sub">
+      <a class="nav-sub-item" onclick="jumpTo('form-input')">Text Input</a>
+      <a class="nav-sub-item" onclick="jumpTo('form-textarea')">Textarea &amp; Search</a>
+      <a class="nav-sub-item" onclick="jumpTo('form-dropdown')">Dropdown Select</a>
+      <a class="nav-sub-item" onclick="jumpTo('form-checkbox')">Checkboxes &amp; Radio</a>
+      <a class="nav-sub-item" onclick="jumpTo('form-toggle')">Toggles</a>
+      <a class="nav-sub-item" onclick="jumpTo('form-slider')">Sliders</a>
+    </div>
+  </div>
+
+  <!-- Cards -->
+  <div class="nav-grp" id="grp-cards">
+    <a class="nav-link nav-link-head" href="#cards" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="1"/><path d="M2 10h20"/></svg>
+      Cards
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-cards-sub">
+      <a class="nav-sub-item" onclick="jumpTo('card-standard')">Standard Card</a>
+      <a class="nav-sub-item" onclick="jumpTo('card-panel')">Panel with Header</a>
+      <a class="nav-sub-item" onclick="jumpTo('card-stat')">Stat Cards</a>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div class="nav-grp" id="grp-modals">
+    <a class="nav-link nav-link-head" href="#modals" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="5" width="14" height="14"/><path d="M5 5 2 2M19 5l3-3M5 19l-3 3M19 19l3 3"/></svg>
+      Modals &amp; Overlays
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-modals-sub">
+      <a class="nav-sub-item" onclick="jumpTo('modal-dialog')">Modal Dialog</a>
+      <a class="nav-sub-item" onclick="jumpTo('modal-confirm')">Confirm Dialog</a>
+      <a class="nav-sub-item" onclick="jumpTo('modal-drawer')">Side Drawer</a>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav-grp" id="grp-nav">
+    <a class="nav-link nav-link-head" href="#navigation" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      Navigation
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-nav-sub">
+      <a class="nav-sub-item" onclick="jumpTo('nav-tabs-underline')">Underline Tabs</a>
+      <a class="nav-sub-item" onclick="jumpTo('nav-tabs-pill')">Pill Tabs</a>
+      <a class="nav-sub-item" onclick="jumpTo('nav-breadcrumb')">Breadcrumbs</a>
+      <a class="nav-sub-item" onclick="jumpTo('nav-pagination')">Pagination</a>
+      <a class="nav-sub-item" onclick="jumpTo('nav-accordion')">Accordion</a>
+      <a class="nav-sub-item" onclick="jumpTo('nav-sidebar')">Sidebar Navigation</a>
+      <a class="nav-sub-item" onclick="jumpTo('nav-avatar')">Avatar</a>
+    </div>
+  </div>
+
+  <!-- Feedback -->
+  <div class="nav-grp" id="grp-feedback">
+    <a class="nav-link nav-link-head" href="#feedback" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Feedback
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-feedback-sub">
+      <a class="nav-sub-item" onclick="jumpTo('feedback-alerts')">Alert Banners</a>
+      <a class="nav-sub-item" onclick="jumpTo('feedback-badges')">Badges &amp; Tags</a>
+      <a class="nav-sub-item" onclick="jumpTo('feedback-tooltip')">Tooltip</a>
+      <a class="nav-sub-item" onclick="jumpTo('feedback-toast')">Toast Notifications</a>
+      <a class="nav-sub-item" onclick="jumpTo('feedback-empty')">Empty State</a>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="nav-grp" id="grp-progress">
+    <a class="nav-link nav-link-head" href="#progress" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Progress &amp; Loading
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-progress-sub">
+      <a class="nav-sub-item" onclick="jumpTo('progress-linear')">Linear Progress</a>
+      <a class="nav-sub-item" onclick="jumpTo('progress-stepped')">Stepped Progress</a>
+      <a class="nav-sub-item" onclick="jumpTo('progress-spinner')">Spinners</a>
+      <a class="nav-sub-item" onclick="jumpTo('progress-skeleton')">Skeleton Loading</a>
+    </div>
+  </div>
+
+  <!-- Data Table -->
+  <div class="nav-grp" id="grp-data">
+    <a class="nav-link nav-link-head" href="#data" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+      Data Table
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-data-sub">
+      <a class="nav-sub-item" onclick="jumpTo('data-table')">Sortable Table</a>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="nav-grp" id="grp-charts">
+    <a class="nav-link nav-link-head" href="#charts" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Charts
+      <span style="font-size:10px;background:var(--o100);color:var(--o500);padding:1px 6px;font-weight:600">26</span>
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:4px"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-charts-sub">
+      <a class="nav-sub-item" onclick="jumpToChartCat('Area Charts')">Area Charts</a>
+      <a class="nav-sub-item" onclick="jumpToChartCat('Line Charts')">Line Charts</a>
+      <a class="nav-sub-item" onclick="jumpToChartCat('Bar Charts')">Bar Charts</a>
+      <a class="nav-sub-item" onclick="jumpToChartCat('Pie &amp; Donut Charts')">Pie &amp; Donut</a>
+      <a class="nav-sub-item" onclick="jumpToChartCat('Radar &amp; Radial Charts')">Radar &amp; Radial</a>
+      <a class="nav-sub-item" onclick="jumpToChartCat('Other Charts')">Other Charts</a>
+    </div>
+  </div>
+
+  <!-- Chat -->
+  <div class="nav-grp" id="grp-chat">
+    <a class="nav-link nav-link-head" href="#chat" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Chat &amp; Assistant
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-chat-sub">
+      <a class="nav-sub-item" onclick="jumpTo('chat-fab')">FAB Button</a>
+      <a class="nav-sub-item" onclick="jumpTo('chat-panel')">Chat Panel</a>
+    </div>
+  </div>
+
+  <!-- Foundations -->
+  <div class="nav-grp" id="grp-foundations">
+    <a class="nav-link nav-link-head" href="#foundations" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Foundations
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-foundations-sub">
+      <a class="nav-sub-item" onclick="jumpTo('foundations-colors')">Colour Palette</a>
+      <a class="nav-sub-item" onclick="jumpTo('foundations-typography')">Typography Scale</a>
+      <a class="nav-sub-item" onclick="jumpTo('foundations-spacing')">Spacing Scale</a>
+      <a class="nav-sub-item" onclick="jumpTo('foundations-animations')">Animation Tokens</a>
+    </div>
+  </div>
 </nav>
 
 <!-- ═══ MAIN ═══ -->
@@ -497,6 +679,11 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
     <div class="topbar-title">PwC Digital Design System <span style="font-weight:400;color:var(--g500)">— Component Catalogue</span></div>
     <div class="topbar-right">
       <span style="font-size:12px;color:var(--g500)">v2.0</span>
+      <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle dark mode">
+        <svg id="iconMoon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="iconSun" style="display:none" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <span id="themeLbl">Dark</span>
+      </button>
       <div class="avatar">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FD5108" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </div>
@@ -1967,20 +2154,168 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 <div id="toastContainer" style="position:fixed;top:24px;right:24px;z-index:1000;display:flex;flex-direction:column;gap:10px;pointer-events:none"></div>
 
 <script>
-// ── NAV ACTIVE ──
-function setActive(el){
-  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
-  el.classList.add('active');
+// ── NAV ACTIVE + ACCORDION ──
+const GRP_MAP = {
+  'buttons':'grp-buttons','forms':'grp-forms','cards':'grp-cards',
+  'modals':'grp-modals','navigation':'grp-nav','feedback':'grp-feedback',
+  'progress':'grp-progress','data':'grp-data','charts':'grp-charts',
+  'chat':'grp-chat','foundations':'grp-foundations'
+};
+function openGrp(id) {
+  document.querySelectorAll('.nav-grp').forEach(g => g.classList.remove('open'));
+  const g = document.getElementById(id);
+  if (g) g.classList.add('open');
 }
-window.addEventListener('scroll',()=>{
-  const sections=document.querySelectorAll('.section');
-  const links=document.querySelectorAll('.nav-link');
-  let cur='';
-  sections.forEach(s=>{if(window.scrollY>=s.offsetTop-120)cur=s.id});
-  links.forEach(l=>{
-    const href=l.getAttribute('href');
-    l.classList.toggle('active',href==='#'+cur);
+function setActive(el) {
+  document.querySelectorAll('.nav-link-head').forEach(l => l.classList.remove('active'));
+  el.classList.add('active');
+  const grp = el.closest('.nav-grp');
+  if (grp) openGrp(grp.id);
+}
+window.addEventListener('scroll', () => {
+  const secs = document.querySelectorAll('.section');
+  let cur = '';
+  secs.forEach(s => { if (window.scrollY >= s.offsetTop - 120) cur = s.id; });
+  document.querySelectorAll('.nav-link-head').forEach(l => {
+    l.classList.toggle('active', l.getAttribute('href') === '#' + cur);
   });
+  if (cur && GRP_MAP[cur]) openGrp(GRP_MAP[cur]);
+});
+
+// ── JUMP TO COMPONENT ──
+function jumpTo(key) {
+  const btn = document.querySelector('[onclick*="showCode(\'' + key + '\')"]');
+  if (btn) {
+    const t = btn.closest('.sub') || btn.closest('.demo-card') || btn.closest('.col-6');
+    if (t) t.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+function jumpToChartCat(name) {
+  document.querySelectorAll('.chart-cat-title').forEach(h => {
+    if (h.textContent.trim() === name) {
+      h.closest('.chart-cat-header').scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  });
+}
+
+// ── COMPONENT SEARCH ──
+const COMP_IDX = [
+  {n:'Button Variants',k:'btn-variants',s:'Buttons'},
+  {n:'Button Sizes',k:'btn-sizes',s:'Buttons'},
+  {n:'With Icons & Loading',k:'btn-icons',s:'Buttons'},
+  {n:'Icon Buttons',k:'btn-icon-only',s:'Buttons'},
+  {n:'Text Input',k:'form-input',s:'Form Controls'},
+  {n:'Textarea & Search',k:'form-textarea',s:'Form Controls'},
+  {n:'Dropdown Select',k:'form-dropdown',s:'Form Controls'},
+  {n:'Checkboxes & Radio',k:'form-checkbox',s:'Form Controls'},
+  {n:'Toggles',k:'form-toggle',s:'Form Controls'},
+  {n:'Sliders',k:'form-slider',s:'Form Controls'},
+  {n:'Standard Card',k:'card-standard',s:'Cards'},
+  {n:'Panel with Header',k:'card-panel',s:'Cards'},
+  {n:'Stat Card',k:'card-stat',s:'Cards'},
+  {n:'Modal Dialog',k:'modal-dialog',s:'Modals'},
+  {n:'Confirm Dialog',k:'modal-confirm',s:'Modals'},
+  {n:'Side Drawer',k:'modal-drawer',s:'Modals'},
+  {n:'Underline Tabs',k:'nav-tabs-underline',s:'Navigation'},
+  {n:'Pill Tabs',k:'nav-tabs-pill',s:'Navigation'},
+  {n:'Breadcrumbs',k:'nav-breadcrumb',s:'Navigation'},
+  {n:'Pagination',k:'nav-pagination',s:'Navigation'},
+  {n:'Accordion',k:'nav-accordion',s:'Navigation'},
+  {n:'Sidebar Navigation',k:'nav-sidebar',s:'Navigation'},
+  {n:'Avatar',k:'nav-avatar',s:'Navigation'},
+  {n:'Alert Banners',k:'feedback-alerts',s:'Feedback'},
+  {n:'Badges & Tags',k:'feedback-badges',s:'Feedback'},
+  {n:'Tooltip',k:'feedback-tooltip',s:'Feedback'},
+  {n:'Toast Notifications',k:'feedback-toast',s:'Feedback'},
+  {n:'Empty State',k:'feedback-empty',s:'Feedback'},
+  {n:'Linear Progress',k:'progress-linear',s:'Progress'},
+  {n:'Stepped Progress',k:'progress-stepped',s:'Progress'},
+  {n:'Spinners',k:'progress-spinner',s:'Progress'},
+  {n:'Skeleton Loading',k:'progress-skeleton',s:'Progress'},
+  {n:'Data Table',k:'data-table',s:'Data Table'},
+  {n:'Area Interactive',k:'area-interactive',s:'Charts'},
+  {n:'Area Stacked',k:'area-stacked',s:'Charts'},
+  {n:'Area Simple',k:'area-simple',s:'Charts'},
+  {n:'Area Step',k:'area-step',s:'Charts'},
+  {n:'Line Multi-series',k:'line-multi',s:'Charts'},
+  {n:'Line Step',k:'line-step',s:'Charts'},
+  {n:'Line with Dots',k:'line-dots',s:'Charts'},
+  {n:'Line with Labels',k:'line-labels',s:'Charts'},
+  {n:'Bar Grouped',k:'bar-grouped',s:'Charts'},
+  {n:'Bar Stacked',k:'bar-stacked',s:'Charts'},
+  {n:'Bar Horizontal',k:'bar-horizontal',s:'Charts'},
+  {n:'Bar with Labels',k:'bar-labels',s:'Charts'},
+  {n:'Bar Negative',k:'bar-negative',s:'Charts'},
+  {n:'Bar Composed',k:'bar-composed',s:'Charts'},
+  {n:'Bar Simple',k:'bar-simple',s:'Charts'},
+  {n:'Pie Simple',k:'pie-simple',s:'Charts'},
+  {n:'Pie with Labels',k:'pie-labels',s:'Charts'},
+  {n:'Donut with Text',k:'donut-text',s:'Charts'},
+  {n:'Donut Stacked',k:'donut-stacked',s:'Charts'},
+  {n:'Radar Default',k:'radar-default',s:'Charts'},
+  {n:'Radar Circular',k:'radar-circular',s:'Charts'},
+  {n:'Radial Bar',k:'radial-bar',s:'Charts'},
+  {n:'Radial with Text',k:'radial-text',s:'Charts'},
+  {n:'Scatter Chart',k:'scatter',s:'Charts'},
+  {n:'Treemap',k:'treemap',s:'Charts'},
+  {n:'Funnel Chart',k:'funnel',s:'Charts'},
+  {n:'FAB Button',k:'chat-fab',s:'Chat'},
+  {n:'Chat Panel',k:'chat-panel',s:'Chat'},
+  {n:'Colour Palette',k:'foundations-colors',s:'Foundations'},
+  {n:'Typography Scale',k:'foundations-typography',s:'Foundations'},
+  {n:'Spacing Scale',k:'foundations-spacing',s:'Foundations'},
+  {n:'Animation Tokens',k:'foundations-animations',s:'Foundations'},
+];
+function filterComps(q) {
+  const out = document.getElementById('searchResults');
+  if (!q.trim()) { out.style.display = 'none'; return; }
+  const r = COMP_IDX.filter(c =>
+    c.n.toLowerCase().includes(q.toLowerCase()) ||
+    c.s.toLowerCase().includes(q.toLowerCase())
+  );
+  out.innerHTML = r.length
+    ? r.slice(0, 8).map(c =>
+        '<div class="search-result" onclick="jumpTo(\''+c.k+'\');clearSearch()">' +
+        '<span class="search-result-name">'+c.n+'</span>' +
+        '<span class="search-result-sec">'+c.s+'</span></div>'
+      ).join('')
+    : '<div style="padding:8px 12px;font-size:12px;color:var(--g400)">No results</div>';
+  out.style.display = 'block';
+}
+function clearSearch() {
+  const el = document.getElementById('compSearch');
+  if (el) el.value = '';
+  const out = document.getElementById('searchResults');
+  if (out) out.style.display = 'none';
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-wrap')) clearSearch();
+});
+
+// ── DARK MODE ──
+(function() {
+  if (localStorage.getItem('pwc-theme') === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('iconMoon').style.display = isDark ? '' : 'none';
+  document.getElementById('iconSun').style.display = isDark ? 'none' : '';
+  document.getElementById('themeLbl').textContent = isDark ? 'Dark' : 'Light';
+  localStorage.setItem('pwc-theme', isDark ? 'light' : 'dark');
+}
+document.addEventListener('DOMContentLoaded', function() {
+  if (localStorage.getItem('pwc-theme') === 'dark') {
+    const moon = document.getElementById('iconMoon');
+    const sun = document.getElementById('iconSun');
+    const lbl = document.getElementById('themeLbl');
+    if (moon) moon.style.display = 'none';
+    if (sun) sun.style.display = '';
+    if (lbl) lbl.textContent = 'Light';
+  }
 });
 
 // ── BUTTONS ──
