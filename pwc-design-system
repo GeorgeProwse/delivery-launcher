@@ -489,9 +489,9 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 <!-- ═══ SIDEBAR ═══ -->
 <nav class="sidebar" id="sidebar">
   <div class="sidebar-logo">
-    <svg width="72" height="46" viewBox="0 0 104 67" xmlns="http://www.w3.org/2000/svg">
-      <path fill="#000" d="M69.26,30.74c-2.53.41-3.83,2.28-3.83,5.57s1.73,5.53,4.37,5.53c1.23,0,2.35-.41,4.7-1.56v2.68c-2.82,1.29-4.48,1.69-6.76,1.69-2.46,0-4.19-.65-5.61-2.09-1.45-1.45-2.17-3.36-2.17-5.5,0-4.74,3.51-7.95,8.64-7.95,3.41,0,5.75,1.56,5.75,3.84,0,1.47-1.09,2.48-2.71,2.48-.83,0-1.51-.22-2.39-.72v-3.98ZM56.76,37.06c2.27-2.86,3.07-4.02,3.07-5.42s-1.11-2.53-2.6-2.53c-.91,0-1.74.43-2.14.88v5.83l-3.72,4.96v-11.31h-3.54l-5.88,9.75v-9.75h-2.03l-5.34,1.3v1.36l2.91.3v11.96h3.76l5.64-9.27v9.27h4.12l5.74-7.34ZM23.34,32.52c.87-.11,1.29-.15,1.7-.15,2.45,0,3.78,1.63,3.78,4.7,0,3.62-1.63,5.51-4.66,5.51-.25,0-.43,0-.83-.02v-10.04ZM23.34,44.25c.98.11,1.93.15,2.5.15,5.04,0,8.24-3.23,8.24-8.03,0-4.15-2.4-7.15-5.65-7.15-1.41,0-2.35.29-5.09,1.92v-2h-1.52l-5.86,1.78v1.43h2.43v16.73l-2.18.54v1.39h9.58v-1.39s-2.44-.54-2.44-.54v-4.84Z"/>
-      <path fill="#fd5108" d="M66.54,24.97h-15.98l2.72-4.51h15.98l-2.72,4.51ZM87.96,15.94h-15.98l-2.72,4.51h15.98l2.72-4.51Z"/>
+    <svg width="152" height="73" viewBox="30 143 440 212" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M355.041 233.765C339.717 236.206 331.925 247.425 331.925 267.214C331.925 287.003 342.331 300.403 358.334 300.403C365.762 300.403 372.508 297.962 386.732 291.054V307.155C369.682 314.894 359.642 317.335 345.94 317.335C331.088 317.335 320.629 313.44 312.052 304.766C303.319 296.092 298.926 284.561 298.926 271.784C298.926 243.322 320.158 224.104 351.118 224.104C371.67 224.104 385.842 233.453 385.842 247.165C385.842 255.995 379.252 262.072 369.473 262.072C364.454 262.072 360.323 260.773 355.041 257.709V233.869V233.765ZM279.472 271.732C293.173 254.54 298.037 247.632 298.037 239.166C298.037 230.7 291.343 224 282.348 224C276.805 224 271.837 226.597 269.431 229.298V264.305L246.944 294.066V226.234H225.555L190.045 284.717V226.234H177.756L145.489 234.024V242.231L163.061 243.997V315.725H185.809L219.907 260.098V315.725H244.8L279.42 271.732H279.472ZM77.6086 244.464C82.8381 243.841 85.4532 243.529 87.9111 243.529C102.763 243.529 110.764 253.294 110.764 271.732C110.764 293.495 100.933 304.818 82.6291 304.818C81.1125 304.818 80.0143 304.818 77.6086 304.714V244.464ZM77.6086 314.894C83.518 315.569 89.2708 315.777 92.7223 315.777C123.211 315.777 142.508 296.404 142.508 267.629C142.508 242.75 128.022 224.727 108.359 224.727C99.8346 224.727 94.1867 226.441 77.6086 236.258V224.26H68.4046L33 234.959V243.581H47.6429V343.928L34.4643 347.2V355.511H92.304V347.2L77.5564 343.928V314.894H77.6086Z" fill="currentColor"/>
+      <path d="M338.568 199.173H242.029L258.45 172.112H354.99L338.568 199.173ZM468 145H371.463L355.042 172.06H451.579L468 145Z" fill="#FD5108"/>
     </svg>
   </div>
   <div class="sidebar-label">Components</div>
@@ -654,6 +654,19 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
     <div class="nav-sub-list" id="grp-chat-sub">
       <a class="nav-sub-item" onclick="jumpTo('chat-fab')">FAB Button</a>
       <a class="nav-sub-item" onclick="jumpTo('chat-panel')">Chat Panel</a>
+    </div>
+  </div>
+
+  <!-- Brand Assets -->
+  <div class="nav-grp" id="grp-brand">
+    <a class="nav-link nav-link-head" href="#brand" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Brand Assets
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-brand-sub">
+      <a class="nav-sub-item" onclick="jumpTo('brand-logo')">PwC Logo</a>
+      <a class="nav-sub-item" onclick="jumpTo('brand-momentum')">Momentum Mark</a>
     </div>
   </div>
 
@@ -2061,6 +2074,72 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 
 </section>
 
+<!-- ══════════════════════════════════════════
+     BRAND ASSETS
+══════════════════════════════════════════ -->
+<section class="section" id="brand">
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">Brand Assets</div>
+    <div class="section-desc">Official PwC brand marks. Use these SVGs as provided — never modify proportions, colour, or minimum clear space.</div>
+  </div>
+
+  <!-- PwC Logo -->
+  <div class="sub"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="sub-title" style="margin-bottom:0">PwC Logo</div><button class="copy-btn" onclick="showCode('brand-logo')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
+    <div class="row gap-16">
+      <div class="demo-card col-6">
+        <div class="demo-card-label">Standard — Black + Orange</div>
+        <div style="padding:32px 40px;background:#fff;border:1px solid var(--g200);display:flex;align-items:center;justify-content:center;margin-top:8px">
+          <svg width="200" height="96" viewBox="30 143 440 212" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M355.041 233.765C339.717 236.206 331.925 247.425 331.925 267.214C331.925 287.003 342.331 300.403 358.334 300.403C365.762 300.403 372.508 297.962 386.732 291.054V307.155C369.682 314.894 359.642 317.335 345.94 317.335C331.088 317.335 320.629 313.44 312.052 304.766C303.319 296.092 298.926 284.561 298.926 271.784C298.926 243.322 320.158 224.104 351.118 224.104C371.67 224.104 385.842 233.453 385.842 247.165C385.842 255.995 379.252 262.072 369.473 262.072C364.454 262.072 360.323 260.773 355.041 257.709V233.869V233.765ZM279.472 271.732C293.173 254.54 298.037 247.632 298.037 239.166C298.037 230.7 291.343 224 282.348 224C276.805 224 271.837 226.597 269.431 229.298V264.305L246.944 294.066V226.234H225.555L190.045 284.717V226.234H177.756L145.489 234.024V242.231L163.061 243.997V315.725H185.809L219.907 260.098V315.725H244.8L279.42 271.732H279.472ZM77.6086 244.464C82.8381 243.841 85.4532 243.529 87.9111 243.529C102.763 243.529 110.764 253.294 110.764 271.732C110.764 293.495 100.933 304.818 82.6291 304.818C81.1125 304.818 80.0143 304.818 77.6086 304.714V244.464ZM77.6086 314.894C83.518 315.569 89.2708 315.777 92.7223 315.777C123.211 315.777 142.508 296.404 142.508 267.629C142.508 242.75 128.022 224.727 108.359 224.727C99.8346 224.727 94.1867 226.441 77.6086 236.258V224.26H68.4046L33 234.959V243.581H47.6429V343.928L34.4643 347.2V355.511H92.304V347.2L77.5564 343.928V314.894H77.6086Z" fill="#000"/>
+            <path d="M338.568 199.173H242.029L258.45 172.112H354.99L338.568 199.173ZM468 145H371.463L355.042 172.06H451.579L468 145Z" fill="#FD5108"/>
+          </svg>
+        </div>
+      </div>
+      <div class="demo-card col-6">
+        <div class="demo-card-label">Reversed — White + Orange</div>
+        <div style="padding:32px 40px;background:#000;display:flex;align-items:center;justify-content:center;margin-top:8px">
+          <svg width="200" height="96" viewBox="30 143 440 212" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M355.041 233.765C339.717 236.206 331.925 247.425 331.925 267.214C331.925 287.003 342.331 300.403 358.334 300.403C365.762 300.403 372.508 297.962 386.732 291.054V307.155C369.682 314.894 359.642 317.335 345.94 317.335C331.088 317.335 320.629 313.44 312.052 304.766C303.319 296.092 298.926 284.561 298.926 271.784C298.926 243.322 320.158 224.104 351.118 224.104C371.67 224.104 385.842 233.453 385.842 247.165C385.842 255.995 379.252 262.072 369.473 262.072C364.454 262.072 360.323 260.773 355.041 257.709V233.869V233.765ZM279.472 271.732C293.173 254.54 298.037 247.632 298.037 239.166C298.037 230.7 291.343 224 282.348 224C276.805 224 271.837 226.597 269.431 229.298V264.305L246.944 294.066V226.234H225.555L190.045 284.717V226.234H177.756L145.489 234.024V242.231L163.061 243.997V315.725H185.809L219.907 260.098V315.725H244.8L279.42 271.732H279.472ZM77.6086 244.464C82.8381 243.841 85.4532 243.529 87.9111 243.529C102.763 243.529 110.764 253.294 110.764 271.732C110.764 293.495 100.933 304.818 82.6291 304.818C81.1125 304.818 80.0143 304.818 77.6086 304.714V244.464ZM77.6086 314.894C83.518 315.569 89.2708 315.777 92.7223 315.777C123.211 315.777 142.508 296.404 142.508 267.629C142.508 242.75 128.022 224.727 108.359 224.727C99.8346 224.727 94.1867 226.441 77.6086 236.258V224.26H68.4046L33 234.959V243.581H47.6429V343.928L34.4643 347.2V355.511H92.304V347.2L77.5564 343.928V314.894H77.6086Z" fill="#fff"/>
+            <path d="M338.568 199.173H242.029L258.45 172.112H354.99L338.568 199.173ZM468 145H371.463L355.042 172.06H451.579L468 145Z" fill="#FD5108"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Momentum Mark -->
+  <div class="sub"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="sub-title" style="margin-bottom:0">Momentum Mark</div><button class="copy-btn" onclick="showCode('brand-momentum')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
+    <div class="row gap-16">
+      <div class="demo-card col-4">
+        <div class="demo-card-label">Orange — Primary</div>
+        <div style="padding:28px 32px;background:#fff;border:1px solid var(--g200);display:flex;align-items:center;justify-content:center;margin-top:8px">
+          <svg width="192" height="40" viewBox="0 0 342 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M149.2854,72H.12l21.7146-36h149.1654l-21.7146,36ZM341.88,0h-149.1654l-21.7146,36h149.1654L341.88,0Z" fill="#FD5108"/>
+          </svg>
+        </div>
+      </div>
+      <div class="demo-card col-4">
+        <div class="demo-card-label">White — Reversed</div>
+        <div style="padding:28px 32px;background:#000;display:flex;align-items:center;justify-content:center;margin-top:8px">
+          <svg width="192" height="40" viewBox="0 0 342 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M149.2854,72H.12l21.7146-36h149.1654l-21.7146,36ZM341.88,0h-149.1654l-21.7146,36h149.1654L341.88,0Z" fill="#fff"/>
+          </svg>
+        </div>
+      </div>
+      <div class="demo-card col-4">
+        <div class="demo-card-label">Black — On Light</div>
+        <div style="padding:28px 32px;background:var(--g100);border:1px solid var(--g200);display:flex;align-items:center;justify-content:center;margin-top:8px">
+          <svg width="192" height="40" viewBox="0 0 342 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M149.2854,72H.12l21.7146-36h149.1654l-21.7146,36ZM341.88,0h-149.1654l-21.7146,36h149.1654L341.88,0Z" fill="#000"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
   </div><!-- /content -->
 </div><!-- /main -->
 </div><!-- /app -->
@@ -2159,7 +2238,7 @@ const GRP_MAP = {
   'buttons':'grp-buttons','forms':'grp-forms','cards':'grp-cards',
   'modals':'grp-modals','navigation':'grp-nav','feedback':'grp-feedback',
   'progress':'grp-progress','data':'grp-data','charts':'grp-charts',
-  'chat':'grp-chat','foundations':'grp-foundations'
+  'chat':'grp-chat','brand':'grp-brand','foundations':'grp-foundations'
 };
 function openGrp(id) {
   document.querySelectorAll('.nav-grp').forEach(g => g.classList.remove('open'));
@@ -2261,6 +2340,8 @@ const COMP_IDX = [
   {n:'Funnel Chart',k:'funnel',s:'Charts'},
   {n:'FAB Button',k:'chat-fab',s:'Chat'},
   {n:'Chat Panel',k:'chat-panel',s:'Chat'},
+  {n:'PwC Logo',k:'brand-logo',s:'Brand Assets'},
+  {n:'Momentum Mark',k:'brand-momentum',s:'Brand Assets'},
   {n:'Colour Palette',k:'foundations-colors',s:'Foundations'},
   {n:'Typography Scale',k:'foundations-typography',s:'Foundations'},
   {n:'Spacing Scale',k:'foundations-spacing',s:'Foundations'},
@@ -5787,6 +5868,92 @@ extend: {
   },
 }
 */`;
+
+COMPONENT_CODES['brand-logo'] = `// PwC Logo — inline SVG component (React + TypeScript)
+// Use inline SVG for full colour control; never rasterise below 32px wide.
+
+interface PwCLogoProps {
+  /** Width in pixels — height scales proportionally (aspect ≈ 2.08:1) */
+  width?: number;
+  /** White text + orange chevrons for dark backgrounds */
+  inverse?: boolean;
+  className?: string;
+}
+
+export function PwCLogo({ width = 160, inverse = false, className }: PwCLogoProps) {
+  const h = Math.round(width / 2.075);
+  return (
+    <svg
+      width={width}
+      height={h}
+      viewBox="30 143 440 212"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-label="PwC"
+      role="img"
+    >
+      {/* Wordmark — black or white */}
+      <path
+        d="M355.041 233.765C339.717 236.206 331.925 247.425 331.925 267.214C331.925 287.003 342.331 300.403 358.334 300.403C365.762 300.403 372.508 297.962 386.732 291.054V307.155C369.682 314.894 359.642 317.335 345.94 317.335C331.088 317.335 320.629 313.44 312.052 304.766C303.319 296.092 298.926 284.561 298.926 271.784C298.926 243.322 320.158 224.104 351.118 224.104C371.67 224.104 385.842 233.453 385.842 247.165C385.842 255.995 379.252 262.072 369.473 262.072C364.454 262.072 360.323 260.773 355.041 257.709V233.869V233.765ZM279.472 271.732C293.173 254.54 298.037 247.632 298.037 239.166C298.037 230.7 291.343 224 282.348 224C276.805 224 271.837 226.597 269.431 229.298V264.305L246.944 294.066V226.234H225.555L190.045 284.717V226.234H177.756L145.489 234.024V242.231L163.061 243.997V315.725H185.809L219.907 260.098V315.725H244.8L279.42 271.732H279.472ZM77.6086 244.464C82.8381 243.841 85.4532 243.529 87.9111 243.529C102.763 243.529 110.764 253.294 110.764 271.732C110.764 293.495 100.933 304.818 82.6291 304.818C81.1125 304.818 80.0143 304.818 77.6086 304.714V244.464ZM77.6086 314.894C83.518 315.569 89.2708 315.777 92.7223 315.777C123.211 315.777 142.508 296.404 142.508 267.629C142.508 242.75 128.022 224.727 108.359 224.727C99.8346 224.727 94.1867 226.441 77.6086 236.258V224.26H68.4046L33 234.959V243.581H47.6429V343.928L34.4643 347.2V355.511H92.304V347.2L77.5564 343.928V314.894H77.6086Z"
+        fill={inverse ? "#ffffff" : "#000000"}
+      />
+      {/* Momentum chevrons — always Orange 500 */}
+      <path
+        d="M338.568 199.173H242.029L258.45 172.112H354.99L338.568 199.173ZM468 145H371.463L355.042 172.06H451.579L468 145Z"
+        fill="#FD5108"
+      />
+    </svg>
+  );
+}
+
+// Usage
+<PwCLogo />                        // Standard — black wordmark
+<PwCLogo inverse />                // Reversed — white wordmark (dark bg)
+<PwCLogo width={240} />            // Larger
+<PwCLogo width={96} inverse />     // Small reversed`;
+
+COMPONENT_CODES['brand-momentum'] = `// PwC Momentum Mark — the dual-chevron brand device
+// Standalone usage; always maintain ≥ 16px height minimum.
+
+interface MomentumMarkProps {
+  /** Fill colour — default Orange 500 (#FD5108) */
+  color?: string;
+  /** Width in pixels — height scales proportionally (aspect ≈ 4.75:1) */
+  width?: number;
+  className?: string;
+}
+
+export function MomentumMark({
+  color = "#FD5108",
+  width = 192,
+  className,
+}: MomentumMarkProps) {
+  const h = Math.round(width / 4.75);
+  return (
+    <svg
+      width={width}
+      height={h}
+      viewBox="0 0 342 72"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      <path
+        d="M149.2854,72H.12l21.7146-36h149.1654l-21.7146,36ZM341.88,0h-149.1654l-21.7146,36h149.1654L341.88,0Z"
+        fill={color}
+      />
+    </svg>
+  );
+}
+
+// Usage
+<MomentumMark />                          // Orange (default)
+<MomentumMark color="#ffffff" />          // White — reversed on dark bg
+<MomentumMark color="#000000" />          // Black — on light neutral bg
+<MomentumMark width={96} />               // Small
+<MomentumMark width={320} color="#FD5108" className="my-8" />  // Large hero`;
 
 
 // ══════════════════════════════════════════════
