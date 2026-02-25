@@ -13089,6 +13089,7 @@ function loadExampleData() {
     showToast("Data is still loading \u2014 please wait a moment.", "warning");
     return;
   }
+  try { localStorage.removeItem(DRAFT_KEY); } catch(e) {}
   var sv = function (id, v) {
     var e = document.getElementById(id);
     if (e) e.value = v;
