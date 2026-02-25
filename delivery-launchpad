@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8246,891 +8245,123 @@ const INLINED_DATA = {
   },
 };
 const INLINED_PROMPTS = {
-  "wbs_schedule.json": {
-    prompt_id: "P2.1",
-    prompt_name: "WBS & Schedule",
-    artifact: "WBS & Project Schedule",
-    instruction:
-      `**Role & purpose** – Transform the engagement scope into a hierarchical work breakdown structure (WBS), develop a project schedule and milestone plan, and produce a WBS & Schedule workbook along with a canonical handoff.
 
-**Inputs**
-
-* \`P1_1_CANONICAL_HANDOFF\`, \`P1_2_CANONICAL_HANDOFF\`, \`P1_3_CANONICAL_HANDOFF\`, \`P1_4_CANONICAL_HANDOFF\` and \`P1_5_CANONICAL_HANDOFF\`.
-* SS‑1 and the following DD‑1 enumerations:
-  - \`element_type\` ∈ {Phase, Workstream, Deliverable, Work_Package}.
-  - \`owner_type\` ∈ {PwC, Client, Joint, Third_Party}.
-  - \`status\` ∈ {Not_Started, In_Progress, Complete, On_Hold, Cancelled}.
-  - Milestone types: \`Phase_Gate\`, \`Governance_Review\`, \`Deliverable_Sign_Off\`, \`Client_Approval\`, \`Reporting_Cycle\`, \`Sprint_Review\`, \`Other\`.
-
-**Instructions**
-
-1. Decompose the engagement into a WBS (levels 1–4).  For each element capture: \`wbs_id\`, \`element_name\`, \`parent_wbs_id\`, \`wbs_level\`, \`element_type\`, \`owner_type\`, \`responsible_role\`, \`estimated_effort_days\`, \`estimated_duration_working_days\`, \`predecessor_wbs_ids\`, \`fixed_date\`, \`priority\`, \`status\` and \`percent_complete\`.
-2. Identify deliverables and link them to WBS elements.  Record \`deliverable_id\`, \`workstream\`, \`owner_type\`, \`responsible_role\`, \`effort_days\`, \`planned_start\`, \`planned_end\`, \`acceptance_criteria\`, \`sign_off_required\`, \`sign_off_authority\`, \`scope_objective_trace\`, \`status\`.
-3. Define milestones: for each \`milestone_id\` capture \`milestone_name\`, \`phase_or_workstream\`, \`milestone_type\`, \`baseline_date\`, \`planned_date\`, \`forecast_date\`, \`actual_date\`, \`variance_from_baseline_days\`, \`milestone_status\`, \`owner_role\`, \`signoff_required\` and \`signoff_status\`.
-4. Build a schedule (task list) derived from WBS elements: \`task_id\`, \`wbs_id\`, \`task_name\`, \`level\`, \`workstream\`, \`owner_role\`, \`planned_start\`, \`planned_end\`, \`duration_days\`, \`predecessors\`, \`status\`, \`pct_complete\`, \`is_milestone\`, \`is_critical_path\`, \`sprint\` (if agile) and \`notes\`.
-5. Create a workbook with sheets: **WBS**, **Deliverables**, **Milestones**, **Schedule**, **Critical_Path** and **Change_Log**.  Use the Excel table style.
-6. In a single code‑interpreter call:
-   - Generate the workbook (\`P2_1_WBS_Schedule.xlsx\`) and compute the critical path using a network analysis (e.g. with networkx or a custom algorithm).
-   - Build \`P2_1_CANONICAL_HANDOFF\` summarising the WBS structure and schedule metadata and return both the workbook and JSON.
-7. After the code call, output the JSON handoff and a closing sentence.`,  },
-  "budget_cost_baseline.json": {
-    prompt_id: "P2.3",
-    prompt_name: "Budget & Cost Baseline",
-    artifact: "Budget Baseline & Cost Tracker",
-    instruction:
-      `**Role & purpose** – Develop the cost baseline and budget tracking tools.  Produce a Budget & Cost Baseline workbook and a canonical handoff.
-
-**Inputs**
-
-* \`P1_1_CANONICAL_HANDOFF\`, \`P1_4_CANONICAL_HANDOFF\`, \`P2_1_CANONICAL_HANDOFF\` and \`P2_2_CANONICAL_HANDOFF\`.
-* SS‑1 and DD‑1 enumerations:
-  - \`cost_type\` ∈ {Labour_PwC, Labour_Client, Labour_Alliance_Partner, Labour_Third_Party, Travel_and_Accommodation, Technology_and_Software, Training, Printing_and_Production, Contingency, Other}.
-  - \`confidence\` ∈ {High, Medium, Low, TBC}.
-  - \`reimbursable\` ∈ {Yes, No, N/A}.
-  - \`fixed_or_variable\` ∈ {Fixed, Variable, Capped}.
-  - \`invoice_status\` ∈ {Planned, Prepared, Sent, Paid, Overdue, Disputed, Cancelled}.
-  - \`evm_status\` ∈ {On_Track, Over_Budget_and_Behind_Schedule, Behind_Schedule, Over_Budget}.
-
-**Instructions**
-
-1. Build a **Budget_Baseline** sheet: each budget line (\`bl_id\`) includes \`cost_item_description\`, \`phase_or_workstream\`, \`cost_type\`, \`resource_role\`, \`seniority_level\`, \`effort_days\`, \`daily_rate\`, \`baseline_amount\`, \`confidence\`, \`reimbursable\`, \`fixed_or_variable\`, \`notes\`.
-2. Create a **Cost_Tracker** sheet: for each reporting period (e.g. monthly) record \`period_start\`, \`period_end\`, \`labour_cost_pwC\`, \`labour_cost_client\`, \`non_labour_cost\`, \`travel_cost\`, \`technology_cost\`, \`total_actual\`, \`variance_to_baseline\`, \`status\`.
-3. Make a **Cost_Profile** sheet showing monthly baseline vs actual costs for each category and cumulative totals.
-4. Produce an **Invoice_Schedule** sheet: \`invoice_id\`, \`description\`, \`billing_period_or_milestone\`, \`invoice_type\` (Time_and_Materials, Fixed_Price, Milestone_Based), \`planned_invoice_date\`, \`amount\`, \`gst\`, \`total_invoice_amount\`, \`status\`, \`invoice_number\`, \`date_sent\`, \`date_paid\`, \`outstanding_days\`, \`notes\`.
-5. Generate an **EVM_Metrics** sheet: for each period, compute planned value (PV), earned value (EV), actual cost (AC), schedule variance (SV = EV − PV), cost variance (CV = EV − AC), SPI, CPI, EAC = BAC/CPI, VAC = BAC − EAC, TCPI = (BAC − EV)/(BAC − AC), and assign \`evm_status\`.
-6. Include a **Change_Log** sheet for budget changes.
-7. Use a single code‑interpreter call to build the workbook (\`P2_3_Budget_Baseline.xlsx\`) with the Excel table style and produce \`P2_3_CANONICAL_HANDOFF\` summarising the baseline lines and key metrics.  Return the workbook and JSON.
-8. After the code call, output the JSON and a closing sentence.`,  },
-  "change_control_plan.json": {
-    prompt_id: "P2.7",
-    prompt_name: "Change Control Log",
-    artifact: "Change Control Workbook",
-    instruction:
-      `**Role & purpose** – Define the change control process, including request logging, classification thresholds, authorities and turnaround times.  Produce a Change Control Plan workbook and a canonical handoff.
-
-**Inputs**
-
-* \`P1_1_CANONICAL_HANDOFF\`, \`P1_3_CANONICAL_HANDOFF\`, \`P1_4_CANONICAL_HANDOFF\`, \`P1_5_CANONICAL_HANDOFF\`, \`P2_3_CANONICAL_HANDOFF\` and \`P2_4_CANONICAL_HANDOFF\`.
-* SS‑1 and DD‑1 enumerations:
-  - \`change_type\` ∈ {Scope_Addition, Scope_Reduction, Timeline_Extension, Timeline_Compression, Budget_Increase, Budget_Reduction, Resource_Addition, Resource_Removal, Deliverable_Addition, Deliverable_Removal, Other}.
-  - \`classification\` ∈ {Minor, Major, Emergency}.
-  - \`change_status\` ∈ {Pending_Assessment, Under_Review, Pending_Approval, Approved, Rejected, Deferred, Withdrawn, Implemented, Cancelled}.
-
-**Instructions**
-
-1. Define the **Change_Request_Log**: each request (\`cr_id\`) must record \`change_title\`, \`change_description\`, \`change_type\`, \`classification\`, \`requested_by\`, \`requestor_organisation_type\`, \`date_submitted\`, \`phase_or_workstream_affected\`, \`urgency\`, \`impact_assessment_owner_role\`, \`assessment_due_date\`, \`assessment_completed_date\`, \`change_status\`, \`approver_role\`, \`decision_date\`, \`decision_rationale\`, \`conditions_of_approval\`, \`schedule_impact_days\`, \`budget_impact_amount\`, \`resource_impact\`, \`risk_impact\`, \`scope_impact\`, \`contractual_amendment_required\`, \`commercial_amendment_required\`, \`baseline_updated\`, \`implementation_date\`, \`notes\`.
-2. Create a **Change_Classification_Thresholds** table specifying criteria for Minor, Major and Emergency changes (e.g. budget variance %, schedule variance days) and the required approval authority.
-3. Generate a **Change_Turnaround_Times** table mapping change type and classification to target assessment and approval timelines.
-4. Define a **Change_Authorities** table listing who is authorised to approve each type and classification of change.
-5. Set up a **Freeze_Periods** sheet: \`freeze_id\`, \`freeze_reason\`, \`start_date\`, \`end_date\`, \`affected_workstreams\`, \`notes\`.
-6. Draft a narrative section (Change Control Policy) summarising the process: submission, assessment, approval, implementation and communication.
-7. Use a single code‑interpreter call to assemble the workbook (\`P2_7_Change_Control.xlsx\`) with the Excel table style and build \`P2_7_CANONICAL_HANDOFF\` summarising the change control rules.  Return the workbook and JSON.
-8. After the code call, output the JSON and a closing sentence.`,  },
-  "communications_plan.json": {
-    prompt_id: "P2.5",
-    prompt_name: "Communications Plan",
-    artifact: "Communications Workbook",
-    instruction:
-      `**Role & purpose** – Define communication audiences, channels and cadences; develop message templates and a distribution list.  Produce a Communications Plan document, a Communications workbook and a canonical handoff.
-
-**Inputs**
-
-* \`P1_1_CANONICAL_HANDOFF\`, \`P1_2_CANONICAL_HANDOFF\`, \`P1_4_CANONICAL_HANDOFF\`, \`P1_5_CANONICAL_HANDOFF\`, \`P2_1_CANONICAL_HANDOFF\` and \`P2_2_CANONICAL_HANDOFF\`.
-* SS‑1 and relevant DD‑1 values:
-  - \`stakeholder_type\` and \`engagement_strategy\` (as defined previously).
-  - \`preferred_channel\` and \`communication_cadence\` (as in P1.2).
-  - Message \`type\` ∈ {Report, Meeting, Workshop, Email_Update, Dashboard, Other}.
-
-**Instructions**
-
-1. Group stakeholders into audience segments based on role, influence/interest and communication needs.  For each segment capture: \`audience_name\`, \`stakeholder_type\`, \`engagement_strategy\`, \`key_communication_needs\`, \`preferred_channel\`, \`sensitivity\`.
-2. Create a **Communications_Matrix** sheet: each row represents a planned communication (\`comm_id\`) with fields: \`communication_title\`, \`type\`, \`purpose\`, \`primary_audience_group\`, \`engagement_strategy\`, \`frequency\`, \`channel\`, \`format\`, \`owner_role\`, \`approver_role\`, \`next_due_date\`, \`last_sent_date\`, \`status\`, \`sensitive\`, \`approval_required\`, \`linked_governance_body\`, \`phase_or_workstream\`, \`notes\`.
-3. Draft a **Message_Library** sheet: each template (\`template_id\`) includes \`template_name\`, \`communication_type\`, \`audience\`, \`purpose\`, \`key_messages\`, \`tone\`, \`status\`, \`approved_by\`, \`last_updated\`, \`notes\`.
-4. Generate a **Distribution_List** sheet: list individual stakeholders with \`stakeholder_id\`, \`full_name\`, \`role_title\`, \`organisation\`, \`email\`, \`preferred_channel\`, \`sensitivity\`, \`restricted_comms_only\` flag.
-5. Prepare a Communications Plan document summarising the communication strategy and guidelines.  Use Linked Arial bold headings (18/16/14/11 pt) and 11 pt body text.  Format tables with orange header text, a thin orange rule beneath, grey horizontal lines and no vertical borders.
-6. Use a single code‑interpreter call to generate the workbook (\`P2_5_Communications_Plan.xlsx\`) with the Excel table style, create the Word document (\`P2_5_Communications_Plan.docx\`), and build \`P2_5_CANONICAL_HANDOFF\` summarising the plan.  Return both files and the JSON.
-7. After the code call, output the JSON and a closing sentence.`,  },
   "engagement_charter.json": {
     prompt_id: "P1.4",
     prompt_name: "Engagement Charter",
     artifact: "Engagement Charter",
     instruction:
-      `**Role & purpose** – Compile a high‑level charter summarising the engagement, including mission, objectives, scope summary, success criteria, stakeholders and decision rights.  Produce a Word document and a canonical handoff.
+      `**Role & purpose** – Consolidate the engagement context, stakeholder analysis and scope registers into a formal Engagement Charter that will serve as the initiation stage gate.
 
-**Inputs**
+<context>
+  **Enumerations and definitions.**
+  - priority ∈ {Critical, High, Medium, Low}
+  - decision_type ∈ {Scope_Change, Budget_Change, Schedule_Change, Deliverable_Signoff, Risk_Acceptance, Issue_Escalation, Commercial_Change}
+  - owner_org ∈ {PwC, Client, Joint, Third_Party, TBC}
+  - status ∈ {Draft, Proposed, Approved, Rejected, Deferred}
+  - yes_no ∈ {Yes, No, TBC}
+  - date fields use ISO 8601 format (YYYY MM DD).
+  Use the global style rules (Linked Arial headings, 11 pt body text, orange table headers, grey horizontal rules, no vertical borders).
 
-* \`P1_1_CANONICAL_HANDOFF\`, \`P1_2_CANONICAL_HANDOFF\` and \`P1_3_CANONICAL_HANDOFF\`.
-* SS‑1 and DD‑1 enumerations:
-  - Objective \`priority\` ∈ {Critical, High, Medium, Low}.
-  - Decision types: Scope Change, Budget Change, Schedule Change, Deliverable Sign‑off, Risk Acceptance, Issue Escalation, Commercial Amendment.
+  Example snippet for the Engagement Overview table:
+  Client Name | Engagement Name | Engagement Code | Delivery Methodology | Fee Structure | Total Budget | Start Date | End Date | Primary Workstreams
+  ACME Corp | Project Phoenix | ENG 001 | Agile | Time_and_Materials | AUD 1.2M | 2026 03 01 | 2026 10 31 | Core Build, Integration, Testing
+</context>
 
-**Instructions**
+<instructions>
+1. Extract and normalise data from the canonical handoffs: \`P1_1_CANONICAL_HANDOFF\`, \`P1_2_CANONICAL_HANDOFF\` and \`P1_3_CANONICAL_HANDOFF\`. Apply canonical field names and enumerations; unknown values become 'TBC'.
+2. Validate critical fields: \`client_name\` and \`engagement_name\` must be present; at least one objective must be defined. If missing, output \`P1_4_VALIDATION_ERRORS\` JSON and stop.
+3. Draft the charter narrative: write a concise purpose and introduction describing the engagement and the role of the charter; summarise the engagement overview in a table (see example).
+4. Derive and populate tables for objectives, success criteria and KPIs using the priority and owner role enumerations.
+5. Summarise the scope: include the boundary statement; list top inclusions and exclusions; summarise assumptions, constraints and dependencies; ensure each item is traced back to \`P1_3\`.
+6. Describe the delivery approach: reference the delivery methodology and identify primary workstreams; if unknown, insert 'TBC' and create an open item.
+7. Build team and role tables: list PwC and Client roles with names (or placeholders), responsibilities and owner_org.
+8. Create a decision rights table using decision_type enumerations and map Accountable, Consulted and Informed roles based on stakeholder responsibilities.
+9. Summarise commercial terms (billing frequency, invoicing contact, PO reference, payment terms, currency, GST treatment); unknown values are flagged as 'Proposed – to be confirmed'.
+10. Provide a brief risk, compliance and quality statement referencing the need for detailed registers (to be generated later).
+11. Outline the change control policy and note that formal change requests will be handled in \`P2.7\`.
+12. List all open items from upstream handoffs and any new items introduced in this step; assign each to an owner role with a priority.
+13. Create a sign off table for key roles (Client Sponsor, Project Owner, PwC Engagement Lead, Engagement Manager, Account Leader) with signature and date placeholders.
+14. Using python docx, generate a Word document with the sections above. Apply the style guidelines: Linked Arial headings (L1–4 at 18/16/14/11 pt), 11 pt body text at 1.5 spacing, orange header rows with white text for tables, grey horizontal rules and no vertical borders. Include the confidentiality footer on every page.
+15. Assemble \`P1_4_CANONICAL_HANDOFF\` JSON containing \`engagement_identifiers\`, \`engagement_context\`, \`scope_summary\`, \`objectives_refs\`, \`roles\`, \`decision_rights_summary\`, \`commercial_terms\`, \`open_items[]\` and \`validation\`, plus a link to the generated document.
+16. After the code call, output the JSON handoff and a closing sentence indicating that the charter has been generated.
+</instructions>`
+  },
 
-1. Summarise the engagement context: client name, engagement name and code, methodology, fee structure, total budget, start and end dates, key workstreams and deliverables, and a succinct engagement description.
-2. Present the objectives and success criteria from P1.3 in a table.  Use the Word table style: orange header text, thin orange rule beneath the header, grey horizontal lines, no vertical borders.
-3. Provide a scope summary highlighting the number of inclusions, exclusions, assumptions and constraints; refer readers to the full register for details.
-4. Draft a **Governance and Decision Rights** table: list key roles (e.g. Sponsor, Steering Committee Chair, Engagement Lead, PMO Lead) with their decision rights for each decision type.  Use RACI codes (R/A/C/I) where appropriate.
-5. Include a section on commercial terms (billing frequency, payment terms, PO reference).  Briefly note quality and compliance expectations and mention that detailed frameworks will follow in later steps.
-6. Use python‑docx in a single code‑interpreter call to assemble the charter.  Apply Linked Arial bold headings (L1–L4 sizes 18/16/14/11 pt) with reduced tracking and 1.2 line spacing.  Use 11 pt body text at 1.5 spacing and bullets with hanging indents.  Format tables per the Word table style.  Save the file as \`/mnt/data/P1_4_Engagement_Charter.docx\` and include the file in the response.  Construct \`P1_4_CANONICAL_HANDOFF\` summarising the charter’s sections and include a link to the document.
-7. After the code call, output the JSON handoff and a closing sentence stating that the charter is ready.`,  },
-  "engagement_intake.json": {
-    prompt_id: "P1.1",
-    prompt_name: "Engagement Intake",
-    artifact: "Engagement Intake Summary",
-    instruction:
-      `**Role & purpose** – You are the engagement‑planning assistant.  In this first step you must load the global standards provided below into working context and parse the engagement brief‑builder data supplied by the user.  Your goal is to output a single canonical JSON object that downstream prompts will consume.  Do not generate any files or call the code interpreter in this step.
-
-**Inputs**
-
-A) **Global standards** – load these into context for this and all downstream prompts.  Do not repeat or summarise them in your output.
-
-<ss-1>
-## SS‑1 – Global Style Standard
-
-### 1) Normative language
-- **MUST** – mandatory requirement.
-- **SHOULD** – strongly recommended; deviations require justification.
-- **MAY** – optional.
-
-### 2) Design principles
-1. **Clarity over decoration** – prioritise readability and scannability.
-2. **Consistency beats novelty** – use the same layout, styles and tokens across artefacts.
-3. **Traceability** – always include titles, IDs, versions, dates and confidentiality marks.
-4. **Accessibility** – ensure sufficient contrast and clear hierarchy; don’t rely on colour alone.
-5. **Executive‑ready** – no placeholder text unless marked “To be confirmed”.
-
-### 3) Core visual palette & typography
-- **Primary colour:** PwC orange (#FD5108) for headings, section rules and key highlights.
-- **Supporting tints:** lighter orange (#FFAA72) and peach (#FFE8D4) for backgrounds, hovers and subtle highlights.
-- **Neutral colours:** black (#000000) or dark grey (#333333) for primary text; light greys for fills and dividers.
-- **Status colours:** success (green #22C55E), warning (yellow #EAB308), danger (red #C62828), info (blue #3B82F6).  Use only for status indicators/conditional formatting.
-- **Call‑outs:** key‑point call‑outs use peach fill with an orange left rule; warnings use pale yellow with a yellow left rule; notes use light grey with a grey left rule.
-- **Typography:** headings use Linked Arial bold styles with sizes 18 pt (L1), 16 pt (L2), 14 pt (L3) and 11 pt (L4); headings use reduced tracking and 1.2 line spacing.  Body text uses Arial 11 pt with 1.5 line spacing.  Bullet lists use hanging indents.
-
-### 4) Layout & metadata
-- Every artefact must include client name, engagement name, document title, version, status, date and confidentiality statement.
-- File‑naming convention: \`{STEP_ID}_{ARTIFACT_NAME}_{YYYY-MM-DD}_v{VERSION}.{ext}\`.
-- Use the confidentiality footer: “PwC Private and Confidential — prepared for [Client Name] only” on each page/slide/sheet.
-
-### 5) Word guidelines
-- A4 page size; 2 cm margins.
-- Header: document title on left; client + engagement on right; grey 9 pt text.
-- Footer: confidentiality statement on left; page number on right; grey 9 pt text.
-- Body text: Arial 11 pt, black.  Headings: PwC orange (#FD5108).  Number headings when multiple levels.
-- **Tables:** header row text is orange; there is a thin orange rule beneath the header.  Separate data rows with thin grey horizontal lines.  Do not use vertical borders.  Use black text for data.  Cell padding should be 4 pt.
-- **Call‑outs:** key‑point call‑outs use peach fill with an orange left rule; warnings use pale yellow with a yellow left rule; notes use light grey fill with a grey left rule.  Unknown values should be written as *Not specified — to be confirmed* in italics.
-
-### 6) Excel guidelines
-- Restricted palette: orange (#FD5108) and its lighter tints, whites and greys.  Do **not** use blue, green, purple, teal or other colours for table fills.
-- **Table styles:** use orange header rows with white bold text; use horizontal borders only (no vertical borders).  Avoid default blue table styles.  Preferred styles: TableStyleMedium3 for main data tables (orange header, banded rows), TableStyleLight16 for reference/log tables (light banding), TableStyleMedium2 for dashboard KPI tables (orange border, white fill).  Set \`showFirstColumn=False\`.
-- Text: Arial 10 pt in Excel; headings may use bold or slightly larger sizes.  Use status colours only via conditional formatting (success, warning, danger, info).
-</ss-1>
-
-<dd-1>
-## DD‑1 – Data Dictionary and Naming Conventions
-
-### Canonical data representation rules
-- **Field naming** – canonical keys use \`snake_case\` (e.g., \`engagement_name\`, \`risk_rating\`); display labels use Title Case (e.g., “Engagement Name”, “Risk Rating”).  Do not create synonyms; each concept has exactly one canonical key.
-- **Data types** – \`string\`: UTF‑8 trimmed; \`date\`: ISO 8601 \`YYYY-MM-DD\`; \`datetime\`: ISO 8601 with timezone offset; \`integer\`: whole numbers only; \`decimal\`: numeric with defined precision; \`boolean\`: Yes/No in user‑facing text, true/false in JSON.
-- **Unknown values** – in structured data (Excel/JSON): optional fields are blank/null; required but unknown fields are \`"TBC"\`.  In narrative (Word/PowerPoint), unknown values should be written as *Not specified — to be confirmed* in italics.
-- **Units and precision** – Effort is recorded in \`person_days\` (decimal).  One person‑day equals eight hours.  Duration is recorded in \`working_days\` (integer).  Currency is recorded with two decimal places; default currency is AUD (ISO 4217).  Percent values are stored as decimal fractions in JSON (e.g., 0.25) and displayed as percentages (e.g., 25%).
-- **Timezone and calendar** – Use timezone Australia/Melbourne (AEDT/AEST).  The working week is Monday through Friday.
-</dd-1>
-
-B) **Engagement brief‑builder data:** fields may include \`client_name\`, \`engagement_name\`, \`engagement_code\`, \`engagement_manager\`, \`partner\`, \`industry\`, \`sector\`, \`sub_sector\`, \`delivery_methodology\`, \`fee_structure\`, \`start_date\`, \`end_date\`, \`total_budget\`, \`engagement_description\`, roles and decision rights, commercial terms and open items.
-
-**Instructions**
-
-1. Read and apply the global standards (SS‑1) and data dictionary rules (DD‑1) included above.  Do not output these standards or repeat them in your response.
-2. Read the engagement brief‑builder data.  For optional fields that are missing, set them to \`null\`; for required fields that are unknown, set them to \`"TBC"\`.
-3. Create \`P1_1_CANONICAL_HANDOFF\` as a JSON object with keys:
-   - \`client_name\`, \`engagement_name\`, \`engagement_code\`, \`engagement_manager\`, \`partner\`.
-   - \`industry\`, \`sector\`, \`sub_sector\`.
-   - \`delivery_methodology\`, \`fee_structure\`, \`start_date\`, \`end_date\`, \`total_budget\`.
-   - \`engagement_description\` and any high‑level objectives or services captured in the brief.
-   - \`roles_decision_rights\`: list roles with their decision authority.
-   - \`commercial_terms\`: key financial and contractual points.
-   - \`open_items\`: list of items requiring follow‑up.
-   - \`validation\`: summary of any issues encountered during parsing.
-4. Output the \`P1_1_CANONICAL_HANDOFF\` JSON object as your entire response.  Do not call the code interpreter or include any other text.`,  },
   "governance_framework.json": {
     prompt_id: "P1.5",
     prompt_name: "Governance Framework",
     artifact: "Governance Framework",
     instruction:
-      `**Role & purpose** – Design the detailed governance structure, including bodies, decision matrices, meeting cadences and reporting schedules.  Produce a Word document, a governance workbook and a canonical handoff.
+      `**Role & purpose** – Define the governance framework that will govern the engagement, including governance bodies, decision matrix, escalation paths, reporting cadence and meeting schedules.
 
-**Inputs**
+<context>
+  **Enumerations and definitions.**
+  - governance_body_type ∈ {Steering_Committee, Project_Board, Working_Group, PMO, Stakeholder_Forum, Other}
+  - meeting_type ∈ {Kickoff, Steering_Committee, Working_Group, Workshop, Weekly_Status, Fortnightly_Status, Monthly_Report, Quarterly_Review, Other}
+  - frequency ∈ {Weekly, Fortnightly, Monthly, Quarterly, As_Needed}
+  - decision_scope ∈ {Scope_Change, Budget_Change, Schedule_Change, Deliverable_Signoff, Risk_Acceptance, Issue_Escalation, Commercial_Change}
+  - escalation_level ∈ {Project_Manager, Programme_Manager, Steering_Committee, Board, Executive}
+  Use the global style rules; tables follow the orange header / grey horizontal rule style.
 
-* \`P1_1_CANONICAL_HANDOFF\`, \`P1_2_CANONICAL_HANDOFF\`, \`P1_3_CANONICAL_HANDOFF\` and \`P1_4_CANONICAL_HANDOFF\`.
-* SS‑1 and the following DD‑1 values:
-  - Governance body types: Steering Committee, Delivery Working Group, PMO/Reporting Forum, Workstream Lead Forum, RAID Forum, Change Control Board, Technical Design Authority, Quality Review Board.
-  - Meeting frequency: Weekly, Fortnightly, Monthly, Ad_Hoc, One_Off.
-  - RACI codes: R, A, C, I.
+  Example snippet for the Governance Bodies table:
+  Governance Body | Purpose | Chair Role | Member Roles | Frequency | Quorum | Decision Scope
+  Steering Committee | Provide strategic direction and approve major changes | Client Sponsor | PwC Engagement Lead; Client Project Owner; PwC Programme Manager | Monthly | 60% of members | Scope, Budget, Schedule
+</context>
 
-**Instructions**
+<instructions>
+1. Consolidate inputs from \`P1_1_CANONICAL_HANDOFF\`, \`P1_2_CANONICAL_HANDOFF\`, \`P1_3_CANONICAL_HANDOFF\` and \`P1_4_CANONICAL_HANDOFF\`. Identify required governance bodies and their purposes based on engagement size, complexity and regulatory requirements.
+2. For each governance body, define: \`body_name\`, \`purpose\`, \`chair_role\`, \`member_roles\`, \`frequency\`, \`quorum\` and \`decision_scope\` (one or more items from the enumeration) and any delegated authority.
+3. Create an escalation ladder: list escalation triggers (e.g., schedule variance > 10%), escalation level, responsible role and target resolution time.
+4. Define a reporting cadence: for each report type (e.g., Status Report, Risk Report, Budget Report, Milestone Report, Steering Deck), specify audience, frequency, owner_role, approval_role, delivery format and due dates.
+5. Build a meeting schedule table: \`meeting_id\`, \`governance_body\`, \`meeting_type\`, \`frequency\`, \`day_of_week\`, \`time\`, \`chair_role\`, \`agenda_owner_role\`, \`minutes_owner_role\`, \`attendee_roles\` and \`status\` (Planned, Completed, Cancelled, TBC).
+6. Construct a decision/action log template: \`record_id\`, \`record_type\` (Decision/Action), \`date\`, \`title\`, \`description\`, \`source_body\`, \`owner_role\`, \`due_date\`, \`status\`, \`decision_outcome\` (if decision) and \`notes\`. Include this as a sheet in the workbook.
+7. Assemble a RACI matrix for key governance activities (e.g., change approval, risk review, milestone signoff): list tasks down the rows and roles across columns, with R/A/C/I assignments.
+8. Generate a Terms of Reference (TOR) sheet: for each governance body, list the decision scope, membership, quorum requirement and escalation path.
+9. Use pandas and openpyxl to create a multi sheet workbook (\`P1_5_Governance_Framework.xlsx\`) containing sheets for Governance_Bodies, Meeting_Schedule, Reporting_Cadence, RACI_Matrix, Decision_Action_Log and TOR. Apply the standard table formatting.
+10. Produce \`P1_5_CANONICAL_HANDOFF\` summarising governance bodies, escalation ladder, reporting cadence and a link to the workbook.
+11. After the code call, output only the JSON handoff and a sentence indicating that the governance framework has been created.
+</instructions>`
+  },
 
-1. Assess the engagement’s size and complexity (small < 6 months; medium 6–12 months; large > 12 months) to decide whether bodies can be combined or separated.
-2. Define each governance body: assign \`body_id\`, \`body_name\`, \`purpose\`, \`chair_role\`, \`membership_roles\`, \`quorum_requirements\`, \`decision_scope\` and \`meeting_frequency\`.
-3. Create a **Decision Authority Matrix** that maps decision types (Scope Change, Budget Change, Schedule Change, Deliverable Sign‑off, Risk Acceptance, Issue Escalation, Commercial Amendment) to accountable/consulted/informed roles.
-4. Develop an **Escalation Ladder** listing triggers, escalation level, owner role, response timeframe and destination.
-5. Produce a **Reporting & Meeting Cadence** table mapping each governance body to report types, frequency, audience, owner and approver roles.
-6. Assemble a governance workbook with sheets:
-   - **Governance_Bodies** – list of bodies and their attributes.
-   - **Decision_Matrix** – decision types vs roles (R/A/C/I).
-   - **Meeting_Schedule** – \`meeting_id\`, \`body_name\`, \`meeting_type\`, \`frequency\`, \`day\`, \`time\`, \`chair_role\`, \`agenda_owner_role\`, \`minutes_owner_role\`, \`status\`.
-   - **Decision_Action_Log** – \`record_id\`, \`type\` (decision/action), \`date\`, \`title\`, \`description\`, \`source_body\`, \`owner_role\`, \`due_date\`, \`status\`, \`outcome\`, \`notes\`.
-   - **Change_Log** – records of changes to governance arrangements.
-7. Make a single code‑interpreter call that:
-   - Generates the workbook (\`P1_5_Governance_Framework.xlsx\`) with the Excel table style (orange headers, white text, horizontal borders only).
-   - Creates a Word document (\`P1_5_Governance_Framework.docx\`) using python‑docx, applying Linked Arial headings and table style.  Summarise the governance design and decision matrix.
-   - Constructs \`P1_5_CANONICAL_HANDOFF\` summarising the bodies, decision matrix and cadence, and returns both files.
-8. After the code call, output the JSON handoff and a closing sentence.`,  },
-  "pmo_playbook.json": {
-    prompt_id: "P2.8",
-    prompt_name: "PMO Playbook",
-    artifact: "PMO Playbook",
+  
+  "wbs_schedule.json": {
+    prompt_id: "P2.1",
+    prompt_name: "WBS & Schedule",
+    artifact: "WBS & Project Schedule",
     instruction:
-      `**Role & purpose** – Consolidate all deliverables into a cohesive PMO playbook, consisting of a PowerPoint deck and a PMO Master Tracker workbook.  This is the final output; no canonical JSON handoff is required.
-
-**Inputs**
-
-* All previous canonical handoffs (\`P1_1\` through \`P2_7\`).
-* SS‑1 for guidance on aesthetics and design.
-
-**Instructions**
-
-1. Design a PowerPoint template aligned with SS‑1: use orange accents, dark text on light backgrounds, and Linked Arial bold headings for slide titles.  The deck should not exceed 55 slides.
-2. Create slides that summarise each component:
-   - **Title slide** – engagement name, client name, date.
-   - **Charter** – mission, objectives, scope summary.
-   - **Governance** – bodies, decision matrix, meeting cadence.
-   - **WBS & Schedule** – WBS hierarchy, schedule overview and critical path.
-   - **Resource & RACI** – resource plan highlights and RACI matrix.
-   - **Budget & EVM** – baseline versus actual costs and earned‑value metrics.
-   - **Risks** – top risks, heat map and trend dashboard.
-   - **Communications** – audience segments and matrix.
-   - **Quality** – review schedule and quality gates.
-   - **Change Control** – thresholds and process summary.
-   - **Readiness Assessments** – evaluate preparedness across dimensions.
-   - **Open Items & Next Steps** – summarise outstanding actions and owners.
-3. Build a **PMO Master Tracker** workbook with sheets:
-   - **Document_Index** – list artifacts with ID, name, status, version and generation date.
-   - **Readiness_Assessments** – \`dimension\`, \`score\` (1–5), \`RAG\` (Green/Amber/Red), \`evidence\`, \`gaps\`, \`owner_role\`, \`action_plan\`.
-   - **RAID_and_Changes** – consolidated log of risks, issues, assumptions, dependencies and change requests.
-   - **Budget_and_Milestone_Summaries** – aggregated cost and milestone status.
-   - **Open_Items** – list outstanding actions across all areas.
-   - **Change_Log** – central change log.
-4. In a single code‑interpreter call:
-   - Use python‑pptx to assemble the PowerPoint (\`P2_8_PMO_Playbook.pptx\`), embedding tables, charts and diagrams drawn from the previous handoffs.  Format tables with orange header text and underline, grey horizontal lines and no vertical borders.
-   - Create the PMO Master Tracker workbook (\`P2_8_PMO_Master_Tracker.xlsx\`) using the Excel table style.
-   - Return both files.
-5. After the code call, output a closing message confirming that the playbook and tracker are ready.  No JSON handoff is required.`,  },
-  "quality_plan.json": {
-    prompt_id: "P2.6",
-    prompt_name: "Quality Plan",
-    artifact: "Quality Plan & Deliverable Review Schedule",
-    instruction:
-      `**Role & purpose** – Define the quality management approach, including review schedules, quality gates, checklists and non‑conformance tracking.  Produce a Quality Plan document, a Quality workbook and a canonical handoff.
-
-**Inputs**
-
-* \`P1_1_CANONICAL_HANDOFF\`, \`P1_5_CANONICAL_HANDOFF\`, \`P2_1_CANONICAL_HANDOFF\`, \`P2_2_CANONICAL_HANDOFF\` and \`P2_5_CANONICAL_HANDOFF\`.
-* SS‑1 and DD‑1 enumerations:
-  - \`gate_status\` ∈ {Not_Yet_Due, Pending_Review, Passed, Failed, Blocked, Waived}.
-  - \`criteria_met\` ∈ {All_Met, Partially_Met, Not_Met}.
-  - \`non_conformance_status\` ∈ {Open, In_Rework, Resolved, Closed, Accepted_as_Risk}.
-
-**Instructions**
-
-1. Define a **Review_Schedule**: for each deliverable (\`deliverable_id\`) capture \`deliverable_name\`, \`phase_or_workstream\`, \`deliverable_type\`, \`author_role\`, \`peer_reviewer_role\`, \`internal_qa_reviewer_role\`, \`client_reviewer_role\`, \`approver_role\`, \`review_due_date\`, \`client_review_due_date\`, \`approval_due_date\`, \`status\`, \`approved_first_pass\`, \`rework_cycles\`, \`actual_approval_date\`, \`days_to_approve\`, \`signoff_required\`, \`signoff_status\`, \`linked_gate_id\`, \`notes\`.
-2. Define **Quality_Gates**: each \`gate_id\` has \`gate_name\`, \`phase_boundary\`, \`description\`, \`criteria\`, \`approver_role\`, \`target_date\`, \`actual_date\`, \`gate_status\`, \`criteria_met\`, \`outstanding_criteria\`, \`waiver_reason\`, \`waiver_approved_by\`, \`notes\`.
-3. Build a **Checklist_Library**: for each deliverable_type list \`checklist_item_number\`, \`checklist_item\`, \`category\`, \`mandatory\` and \`notes\`.
-4. Create a **Non_Conformance_Log**: each record (\`nc_id\`) includes \`deliverable_id\`, \`nc_description\`, \`category\`, \`severity\`, \`date_raised\`, \`raised_by\`, \`assigned_to\`, \`target_resolution_date\`, \`status\`, \`days_open\`, \`resolution\`, \`root_cause\`, \`preventive_action\`, \`closed_by\`, \`closure_date\`, \`notes\`.
-5. Write a Quality Plan document summarising the review process, gate criteria and escalation paths.  Use Linked Arial bold headings and 11 pt body text; apply the Word table style to any tables.
-6. Use a single code‑interpreter call to build the workbook (\`P2_6_Quality_Plan.xlsx\`), generate the document (\`P2_6_Quality_Plan.docx\`) and create \`P2_6_CANONICAL_HANDOFF\` summarising the quality plan.  Return both files and the JSON.
-7. After the code call, output the JSON and a closing sentence.`,  },
-  "resource_plan.json": {
-    prompt_id: "P2.2",
-    prompt_name: "Resource Plan & RACI",
-    artifact: "Resource & RACI Workbook",
-    instruction:
-      `**Role & purpose** – Derive the resource requirements from the WBS and schedule, forecast capacity and produce a RACI matrix.  Deliver a resource plan workbook and a canonical handoff.
-
-**Inputs**
-
-* \`P1_1_CANONICAL_HANDOFF\`, \`P1_4_CANONICAL_HANDOFF\`, \`P1_5_CANONICAL_HANDOFF\` and \`P2_1_CANONICAL_HANDOFF\`.
-* SS‑1 and DD‑1 enumerations:
-  - \`seniority_level\` ∈ {Partner, Director, Senior_Manager, Manager, Senior_Associate, Associate, Analyst, Specialist, Other}.
-  - \`organisation_type\` ∈ {PwC, Client, Alliance_Partner, Third_Party, Joint, TBC}.
-  - \`confirmed_status\` ∈ {Confirmed, Proposed, TBC}.
-  - \`location\` ∈ {Onshore, Offshore, Near_Shore, Client_Site, Remote}.
-  - Utilisation statuses: {Over_allocated, Near_Capacity, Optimal, Under_utilised}.
-  - RACI codes: R, A, C, I.
-
-**Instructions**
-
-1. Map WBS tasks to roles and estimate effort by week.  For each resource record include: \`resource_id\`, \`full_name\`, \`role_title\`, \`seniority_level\`, \`organisation_type\`, \`primary_workstream\`, \`secondary_workstream\`, \`location\`, \`start_date\`, \`end_date\`, \`total_effort_days\`, \`fte_allocation\`, \`availability_percent\`, \`average_daily_rate\`, \`confirmed_status\`, \`security_clearance_required\`, \`notes\`.
-2. Build a **Weekly_Loading** sheet: columns represent week commencing dates; rows list resources; cells contain demand in person‑days; compute capacity (8 h/day × working days) and variance; calculate utilisation percentage and assign utilisation statuses.
-3. Create a **Capacity_Summary** sheet summarising capacity, demand and variance for each week, plus breakdowns by organisation.
-4. Prepare a **Seniority_Mix** sheet summarising resource counts, total effort, percentage of total effort and average daily rate by seniority level and organisation.
-5. Construct a **RACI_Matrix** sheet: each row corresponds to a high‑level WBS element or deliverable; columns list roles; cells contain R, A, C or I.
-6. Add a **Change_Log** sheet to track changes in resource allocations or roles.
-7. Use one code‑interpreter call to generate the workbook (\`P2_2_Resource_RACI.xlsx\`) using the Excel table style.  Create \`P2_2_CANONICAL_HANDOFF\` summarising resource assignments and RACI entries and return both.
-8. After the code call, output the JSON handoff and a closing sentence.`,  },
-  "risk_register.json": {
-    prompt_id: "P2.4",
-    prompt_name: "Risk Register",
-    artifact: "Risk Register",
-    instruction:
-      `**Role & purpose** – Identify and assess project risks and produce a multi‑sheet risk register workbook with a canonical handoff.
-
-**Inputs**
-
-* \`P1_1_CANONICAL_HANDOFF\`, \`P1_3_CANONICAL_HANDOFF\`, \`P1_4_CANONICAL_HANDOFF\`, \`P1_5_CANONICAL_HANDOFF\`, \`P2_1_CANONICAL_HANDOFF\`, \`P2_2_CANONICAL_HANDOFF\` and \`P2_3_CANONICAL_HANDOFF\`.
-* SS‑1 and DD‑1 enumerations:
-  - \`risk_category\` ∈ {Strategic, Financial, Operational, Schedule, Resource, Technology, Regulatory_and_Compliance, Stakeholder, Scope, Quality, Third_Party, Cyber_and_Security, People, Environmental_and_ESG, Other}.
-  - \`likelihood\` ∈ {High, Medium, Low}; \`impact\` ∈ {High, Medium, Low}; \`rating\` ∈ {Critical, High, Medium, Low}.
-  - \`response_strategy\` ∈ {Avoid, Mitigate, Transfer, Accept}.
-  - \`risk_status\` ∈ {Open, Mitigated, Accepted, Closed, Transferred, Eventuated}.
-
-**Instructions**
-
-1. Compile risks from previous steps (e.g. high‑risk assumptions, stakeholder concerns) and identify additional risks.  For each risk record:
-   - \`risk_id\`, \`risk_title\`, \`risk_category\`, \`risk_description\` (cause → event → effect), \`risk_source\`, \`risk_owner_role\`, \`owner_organisation_type\`, \`likelihood\`, \`impact\`, \`risk_score\` (likelihood × impact), \`risk_rating\`, \`response_strategy\`, \`mitigation_actions\`, \`contingency_plan\`, \`residual_likelihood\`, \`residual_impact\`, \`residual_score\`, \`residual_rating\`, \`risk_status\`, \`escalation_required\` (Yes/No), \`next_review_date\`, \`restricted_distribution\` (Yes/No), \`date_raised\`, \`raised_by\`, \`notes\`.
-2. Create a **Risk_Register** sheet listing all risks with the fields above.
-3. Produce a **Risk_Response_Plan** sheet linking each risk to specific actions: \`action_id\`, \`risk_id\`, \`specific_action\`, \`action_type\` (Mitigation/Contingency), \`action_owner_role\`, \`due_date\`, \`status\`.
-4. Build a **Risk_Heat_Map** sheet summarising counts of risks by likelihood and impact using a 3×3 matrix.
-5. Generate a **Risk_Trend_Dashboard** to track changes in risk ratings over time.
-6. Add a **Change_Log** sheet.
-7. Use a single code‑interpreter call to assemble the workbook (\`P2_4_Risk_Register.xlsx\`) with the Excel table style and create \`P2_4_CANONICAL_HANDOFF\` summarising the risks.  Return the workbook and JSON.
-8. After the code call, output the JSON and a closing sentence.`,  },
-  "scope_statement.json": {
-    prompt_id: "P1.3",
-    prompt_name: "Scope, Objectives & Success Criteria",
-    artifact: "Scope & Objectives Workbook",
-    instruction:
-      `**Role & purpose** – Translate the engagement context and stakeholder analysis into a detailed scope register, objectives list and success criteria.  Produce a Scope & Objectives workbook and a canonical handoff.
-
-**Inputs**
-
-* \`P1_1_CANONICAL_HANDOFF\` and \`P1_2_CANONICAL_HANDOFF\`.
-* SS‑1 and DD‑1 enumerations:
-  - \`type\` ∈ {Inclusion, Exclusion, Assumption, Constraint}.
-  - \`category\` ∈ {Scope, Resource, Technology, Timeline, Budget, Regulatory, Stakeholder, Other}.
-  - \`source\` ∈ {Provided, Inferred_Objectives, Inferred_Services, Inferred_Industry, Inferred_Regulatory, Override, Other}.
-  - \`confidence\` ∈ {High, Medium, Low}.
-  - \`owner_org\` ∈ {PwC, Client, Joint, Third_Party, TBC}.
-  - \`status\` ∈ {Open, Confirmed, Invalidated, Deferred}.
-  - \`change_type\` ∈ {Add, Remove, Modify, Reclassify, Confirm, Invalidate, Defer}; \`change_decision\` ∈ {Approved, Rejected, Deferred, Pending}.
-
-**Instructions**
-
-1. Derive scope items from the engagement description and objectives.  For each item, record:
-   - \`scope_id\`, \`type\`, \`item_title\`, \`description\`, \`category\`, \`source\`, \`confidence\`, \`owner_org\`, \`owner_role\`, \`status\`, \`date_confirmed\`, \`notes\`, \`linked_objective_ids\`, \`linked_stakeholder_ids\`.
-2. Define objectives: each \`objective\` should have \`objective_id\`, \`objective_title\`, \`description\`, \`priority\` (Critical/High/Medium/Low), \`owner_role\`, \`target_date\`, \`status\` and links to success criteria.
-3. Create success criteria for each objective: \`criterion_id\`, \`objective_id\`, \`measure\`, \`target_value\`, \`unit\`, \`data_source\`, \`owner_role\`, \`status\`.
-4. Build a workbook with four sheets:
-   - **Scope_Register** – all scope items.
-   - **Objectives_Register** – list of objectives with priorities and linked scope items.
-   - **Success_Criteria** – criteria linked to objectives.
-   - **Change_Log** – records of scope change requests with fields \`change_id\`, \`date\`, \`change_type\`, \`changed_item_id\`, \`description\`, \`decision\`, \`decision_date\`, \`approver_role\`, \`notes\`.
-5. Write the workbook to \`/mnt/data/P1_3_Scope_Objectives.xlsx\` using the table style: orange header row with white text and horizontal borders; no vertical borders.
-6. Construct \`P1_3_CANONICAL_HANDOFF\` – a JSON object containing arrays of scope items, objectives and success criteria along with a link to the workbook.  Use one code‑interpreter call to generate the workbook and JSON handoff.
-7. After the code call, output the JSON and a closing sentence indicating that the scope and objectives are documented.`,  },
-  "stakeholder_analysis.json": {
-    prompt_id: "P1.2",
-    prompt_name: "Stakeholder Analysis",
-    artifact: "Stakeholder Analysis Workbook",
-    instruction:
-      `**Role & purpose** – Use the canonical handoff from P1.1 to identify stakeholders and produce a stakeholder analysis workbook.  You must make exactly one code‑interpreter call in this step to generate the workbook and the handoff JSON.
-
-**Inputs**
-
-* \`P1_1_CANONICAL_HANDOFF\` from the previous step.
-* SS‑1 and the following DD‑1 enumerations:
-  - \`stakeholder_type\` ∈ {PwC, Client, Alliance_Partner, Third_Party, Regulator, Vendor, Other}.
-  - \`decision_authority\` ∈ {Yes, No, TBC}.
-  - \`preferred_channel\` ∈ {Email, Teams, Workshop, Meeting, Phone, Other}.
-  - \`communication_cadence\` ∈ {Weekly, Fortnightly, Monthly, Ad_Hoc, TBC}.
-  - \`sensitivity\` ∈ {Standard, Sensitive, Restricted}.
-  - \`source\` ∈ {P1_1_Intake, Inferred, Override, Manual, Other}.
-
-**Instructions**
-
-1. Extract named roles from \`P1_1_CANONICAL_HANDOFF\` (e.g. engagement lead, partner) as initial stakeholders.  Infer additional stakeholders based on objectives, scope and typical project roles (sponsors, decision makers, programme managers, SMEs, approvers, informed parties).  Add inferred stakeholders only if logically necessary.
-2. For each stakeholder, capture:
-   - \`stakeholder_id\` (unique identifier).
-   - \`full_name\` (or a meaningful placeholder if unknown).
-   - \`organisation_name\` and \`stakeholder_type\` (choose from enumeration).
-   - \`role_title\` and \`group\` or \`function\`.
-   - \`decision_authority\`.
-   - \`influence_score\` and \`interest_score\` (1–5).  Derive \`influence_level\` and \`interest_level\` (High ≥4, Medium =3, Low ≤2).
-   - \`engagement_strategy\` (Manage_Closely, Keep_Satisfied, Keep_Informed, Monitor).
-   - \`workstream\` (if applicable), \`preferred_channel\`, \`communication_cadence\`, \`sensitivity\`.
-   - Contact fields (email, phone) and \`source\` indicating how you identified them.
-3. Prepare an Excel workbook with three sheets:
-   - **Stakeholder_Register**: each row describes a stakeholder with the fields above.  Use an orange header row with white text and horizontal borders only; no vertical borders.
-   - **Stakeholder_Summary**: counts of stakeholders by \`stakeholder_type\` and by \`engagement_strategy\`, plus an influence vs interest matrix.
-   - **Change_Log**: columns \`change_id\`, \`timestamp\`, \`change_description\` (initially empty).
-4. In your code‑interpreter call:
-   - Build the DataFrames using pandas.
-   - Write the workbook to \`/mnt/data/P1_2_Stakeholder_Register.xlsx\` using openpyxl; apply the Excel table style described above.
-   - Return the file via \`files={'filename': 'P1_2_Stakeholder_Register.xlsx'}\`.
-   - Construct \`P1_2_CANONICAL_HANDOFF\` – a JSON object containing the stakeholder list with their IDs and a link to the workbook.
-5. After the code call, output only the \`P1_2_CANONICAL_HANDOFF\` JSON and a closing sentence indicating that the stakeholder register is complete.`,  },
-};
-const GLOBAL_STANDARDS = {
-  SS1: `## SS-1 — Global Style Standard (v1.0)
-Applies to: All prompts in the engagement planning chain; all generated Word (.docx), Excel (.xlsx), PowerPoint (.pptx) artifacts.
-Objective: Ensure every artifact is visually consistent, PwC-aligned, accessible, and production-ready without per-prompt style repetition.
-
-## 1) Normative Language
-- MUST = mandatory requirement.
-- SHOULD = strongly recommended; deviations require explicit justification in the artifact notes.
-- MAY = optional.
-
-## 2) Design Principles
-1. Clarity over decoration: Prioritise readability and scannability. Avoid visual noise.
-2. Consistency beats novelty: Use the same layout, styles, and tokens across all artifacts.
-3. Traceability: Titles, IDs, versions, dates, and confidentiality marks must be present and consistent.
-4. Accessibility by default: Sufficient contrast, clear hierarchy, avoid relying on colour alone to convey meaning.
-5. Executive-ready: No placeholder text left behind unless explicitly labelled as "To be confirmed" and captured as an open item.
-
-## 3) Global Visual Tokens
-
-Copy code
-### 3.1 Colour Tokens (Hex)
-Brand / Core:
-- --orange500 = #FD5108 (PwC core Orange 500; headings; table headers; key rules)
-- --orange400 = #FE7C39 (secondary accent; active states; chart series 2)
-- --orange300 = #FFAA72 (tertiary accent; hover states; highlights)
-- --orange200 = #FFCDA8 (subtle highlight; tinted fills)
-- --orange100 = #FFE8D4 (lightest fill; section backgrounds; calloutKeyBg)
-- --black = #000000 (primary text)
-- --white = #FFFFFF
-- --grey100 = #EEEFF1 (light fills; alt rows; section dividers; backgrounds)
-- --grey200 = #DFE3E6 (borders/rules)
-- --grey300 = #CBD1D6 (subtle borders; dividers)
-- --grey400 = #B5BCC4 (inactive; disabled)
-- --grey500 = #A1A8B3 (secondary/tertiary text; notes)
-
-Status / Severity:
-- --success = #22C55E ; --successBg = #DCFCE7 (on track; complete; positive)
-- --warning = #EAB308 ; --warningBg = #FEF3C7 (at risk; attention required)
-- --danger = #C62828 ; --dangerBg = #FFEBEE (critical; off track; errors)
-- --info = #3B82F6 ; --infoBg = #EFF6FF (informational; closed/complete alt)
-
-Callout Fills:
-- --calloutKeyBg = #FFE8D4 (key points; --orange500 left rule)
-- --calloutWarnBg = #FEF3C7 (warnings/gaps; --warning left rule)
-- --calloutNoteBg = #EEEFF1 (notes/assumptions; --grey300 left rule)
-
-### 3.2 Typography Tokens
-Word body: Arial > Calibri
-Word/PPT headings: Helvetica Neue > Arial > Calibri
-Excel: Arial 10pt
-PPT: Helvetica Neue > Arial
-
-### 3.3 Type Scale and Spacing
-Word: Body 10pt | H1 20pt Bold | H2 14pt Bold | H3 12pt Bold | Line spacing 1.15 | Para spacing 6pt after
-PPT (16:9): Title 28pt Bold | Subtitle 18pt | Section label 11pt uppercase | Body 11-12pt | Table body 10pt | Caption 9pt | Footer 8pt
-Excel: Headers Arial 10pt Bold | Body Arial 10pt | Notes Arial 9pt
-
-### 3.4 Borders, Rules, and Shapes
-- Standard border: 0.5pt --grey200
-- Section rule: full-width 1pt --orange500
-- Callout left rule: 3pt (colour depends on callout type; see 3.1)
-- Avoid heavy borders; use fill + thin borders.
-
-## 4) Global Layout and Metadata Standards
-
-### 4.1 Document Metadata (All Artifacts)
-Every artifact MUST include: Client Name, Engagement Name, Document/Artifact Title, Version, Status, Date, Confidentiality statement.
-
-### 4.2 Naming Conventions
-File names: {STEP_ID}_{ARTIFACT_NAME}_{YYYY-MM-DD}_v{VERSION}.{ext}
-Example: P2.1_WBS_Schedule_2026-02-21_v1.0.xlsx
-Sheet names: <= 31 chars, no trailing spaces.
-
-### 4.3 Confidentiality Marking
-Use: "PwC Private and Confidential — prepared for [Client Name] only"
-Word: footer every page. Excel: footer every sheet. PPT: footer every slide.
-
-## 5) Word (.docx) Style Standard
-Page size: A4. Margins: 2.0cm all sides.
-Header: doc title left | client + engagement right | --grey500 9pt
-Footer: confidentiality left | Page X of Y right | --grey500 9pt
-Headings: heading font, --orange500, numbered where multiple sections.
-Body: body font, 10pt, --black.
-Tables: header --orange500 fill / --white text / bold 10pt; alternating --white/--grey100; borders 0.5pt --grey200; cell padding 4pt.
-Callouts: Key=--calloutKeyBg + 3pt --orange500 left rule; Warning=--calloutWarnBg + 3pt --warning left rule; Note=--calloutNoteBg + 3pt --grey300 left rule.
-Placeholders: write as _Not specified — to be confirmed_ (italic).
-
-## 6) Excel (.xlsx) Style Standard
-
-### 6.1 Approved Table Style Palette
-The engagement uses a restricted palette derived from the approved PwC Excel table style set.
-Only the following colour families are permitted in Excel workbooks:
-- **Primary:** Orange (#FD5108 = --orange500), Light orange (#FFAA72 = --orange300), Peach (#FFE8D4 = --orange100)
-- **Neutral:** White (#FFFFFF), Light grey (#EEEFF1 = --grey100), Mid grey (#DFE3E6 = --grey200)
-- **Black/dark:** #000000 and #333333 for text only — NEVER as fill on data rows
-- **Status only (conditional formatting only):** --success (#22C55E / bg #DCFCE7), --warning (#EAB308 / bg #FEF3C7), --danger (#C62828 / bg #FFEBEE), --info (#3B82F6 / bg #EFF6FF)
-- **Prohibited fills:** Blue, green, purple, teal, red, yellow or any colour outside this palette — including default Excel blue table styles
-
-### 6.2 Preferred openpyxl Table Style
-When applying a TableStyleInfo to an Excel Table (ListObject), use these in priority order:
-1. **Primary operational tables** (main data tables): \`TableStyleMedium3\` — orange header, white/light-orange banded rows
-2. **Reference / log tables** (change log, lookup tables): \`TableStyleLight16\` — light orange/peach banding, no heavy header
-3. **Dashboard KPI tables** (small 2-col summary tables): \`TableStyleMedium2\` — orange border, white fill, orange header
-4. Do NOT use any blue, green or default Excel table styles.
-5. Set \`showFirstColumn=False\`, \`showLastColumn=False\`, \`showRowStripes=True\`, \`showColumnStripes=False\` on all tables.
-
-### 6.3 Fonts and Type Hierarchy
-Apply these sizes consistently — do NOT mix sizes within a tier:
-- Sheet title / engagement header (info block row 1): Arial 12pt Bold, --orange500
-- Sub-header labels (info block rows 2+): Arial 10pt Bold, --grey500
-- Table column headers: Arial 10pt Bold, --white on --orange500 fill
-- Data rows: Arial 10pt, --black
-- Notes / secondary text: Arial 9pt Italic, --grey500
-- Section separator labels (between tables): Arial 10pt Bold, --orange500, no fill
-
-### 6.4 Row Heights
-- Info block rows (engagement header): 20pt minimum
-- Table column header row: 30pt (allows wrapped text to be readable)
-- Data rows: do NOT set explicit height on data rows — leave as None to allow Excel to auto-size based on content. Exception: for sheets where ALL columns are short/enum (no wrap_text columns), you MAY set height = 15 to prevent blank row inflation.
-- Section label rows: 18pt
-- NEVER leave row height at openpyxl default (None) — always set explicitly
-
-### 6.5 Column Widths
-Auto-fit is NOT sufficient. Apply these deterministic widths:
-- ID columns (stakeholder_id, risk_id, etc.): width = 12
-- Short enum/dropdown columns (status, RAG, type, Yes/No): width = 14
-- Name columns (full_name, role_title): width = 28
-- Organisation / group columns: width = 22
-- Description / narrative / notes columns: width = 45, wrap_text = True
-- Date columns: width = 14
-- Score / numeric columns: width = 10
-- All other columns: width = 20
-- Do NOT call \`auto_fit\` after setting widths — it overrides explicit values
-
-### 6.6 Text Wrapping and Alignment
-- \`wrap_text = True\` + \`vertical = 'top'\`: all description, notes, narrative, free-text columns
-- \`wrap_text = False\` + \`vertical = 'center'\`: all ID, date, status, score, short enum columns
-- Table column header row: \`wrap_text = True\` + \`vertical = 'center'\` + \`horizontal = 'center'\`
-- Set alignment explicitly on every cell written — do not rely on openpyxl defaults
-
-### 6.7 Table Header and Row Styling (manual, applied in addition to TableStyleInfo)
-Apply these fills and fonts explicitly to ensure consistency even if TableStyleInfo rendering varies:
-- Column header row: \`PatternFill(fgColor="FD5108")\` + \`Font(bold=True, color="FFFFFF", size=10, name="Arial")\`
-- Header row bottom border: \`Side(border_style="medium", color="FD5108")\`
-- Odd data rows: fill \`FFFFFF\`; Even data rows: fill \`EEEFF1\`
-- All cell borders: \`Side(border_style="thin", color="DFE3E6")\`
-
-### 6.8 Info / Header Block (rows above each table)
-Every sheet MUST have an info block above its first table:
-- Row 1: "Client: {client_name}  |  Engagement: {engagement_name}" — Arial 12pt Bold --orange500; merged across used columns; fill --orange100 (#FFE8D4)
-- Row 2: "Generated: {YYYY-MM-DD}  |  Version: v1.0  |  Status: Draft" — Arial 10pt --grey500; fill --grey100 (#EEEFF1)
-- Row 3 (notices only): Arial 10pt Italic --danger (#C62828); fill --dangerBg (#FFEBEE). Only include if a warning is required (e.g. inferred data notice).
-- Blank separator row before table header row: height = 6pt
-- Info block rows must NOT be part of the Excel Table — they sit above the table start row
-
-### 6.9 Freeze Panes
-- Freeze AFTER all header block rows AND the table column header row
-- Example: if table starts at row 4 (cols A–W), header in row 4: \`ws.freeze_panes = "C5"\` (freezes cols A:B + rows 1:4)
-- Always freeze at minimum: all header block rows + table column header row
-
-### 6.10 Tab Colours
-- Primary/Operational sheets: #FD5108 (--orange500). Set via \`ws.sheet_properties.tabColor = "FD5108"\`
-- Reference/Log sheets: #EEEFF1 (--grey100). Set via \`ws.sheet_properties.tabColor = "EEEFF1"\`
-
-### 6.11 Dates, Currency, Percentages
-- Dates: \`number_format = "YYYY-MM-DD"\` — set explicitly on all date cells and columns
-- Currency: \`number_format = '#,##0.00'\`
-- Percentages: \`number_format = '0.0%'\`
-
-### 6.12 Dropdowns and Data Validation
-- All enum columns MUST have \`DataValidation(type="list", ...)\` applied to the full table column range
-- Use inline comma-separated lists or named ranges — NOT formula-based sources
-- Apply validation to the full column range of the table, not just the first row
-
-### 6.13 Conditional Formatting
-- Use only status/severity tokens from Section 3.1 (--success, --warning, --danger, --info fills)
-- Every rule MUST set both PatternFill AND Font colour (colour alone is inaccessible)
-- Apply rules to the full table data range using explicit cell range (e.g. \`A5:W500\`)
-- Inferred/unconfirmed data rows: light italic fill using --orange100 (#FFE8D4) + --grey500 italic font
-
-### 6.14 Print Setup
-- \`ws.print_title_rows = "1:4"\` (repeat header block + table header on every printed page)
-- Fit to page width: \`ws.page_setup.fitToWidth = 1; ws.page_setup.fitToHeight = 0\`
-- Confidentiality footer: \`ws.oddFooter.center.text = "PwC Private and Confidential — prepared for {client_name} only"\`
-
-## 7) PowerPoint (.pptx) Style Standard
-Size: 16:9. Background: --white for content slides.
-Every slide: PwC logo text-placeholder top-left (use a text box with "PwC" in --orange500 bold 11pt — do not attempt to embed an image file); 2pt --orange500 top rule; section label top-right uppercase --orange500 11pt; confidentiality bottom; slide number bottom-right.
-Title slide: --orange500 background; --white title 28pt bold; --white subtitle 18pt.
-Section divider: --grey100 background; --orange500 heading 28pt bold.
-Content slide: max 5 bullets; split if exceeded.
-Tables: --orange500 header (--white bold text); data rows --white fill; row dividers 0.5pt --grey200; no banding; max 8 rows per slide.
-RAG indicators: filled circles; Red=--danger; Amber=--warning; Green=--success; Blue=--info; Grey=--grey500. Meaning per DD-1.
-
-## 8) Cross-Artifact Consistency Rules
-Colour tokens, status colours, confidentiality statement, dates, versioning, and titles MUST match across all artifacts for the same step.
-"To be confirmed": italic in Word; grey italic in Excel; bracketed placeholder in PPT.
-
-## 9) Non-Negotiable Prohibitions
-- Do NOT invert RAG colours or redefine meanings (meanings live in DD-1).
-- Do NOT use fixed magic row numbers for section boundaries (engineering lives in WE-1).
-- Do NOT introduce additional palettes per prompt.
-- Do NOT leave unlabelled placeholder tokens in final outputs.
-
-## 10) Style QA Checklist (SS-1 Compliance)
-Artifact is SS-1 compliant only if: metadata present; confidentiality applied; headings correct font/size/colour using --orange500; tables correct header styling using --orange500/--white/--grey100; callouts correct fill+rule using defined tokens; status colours use --success/--warning/--danger/--info tokens only; no mixed palettes; readable layout.
-
-End SS-1.`,
-  DD1: `## DD-1 — Global Data Dictionary and Naming Conventions (v1.0)
-Scope: Canonical field names, data types, enumerations, ID formats, and calculation semantics used across P1.1-P2.8 and all generated artifacts.
-Authority: DD-1 is the single source of truth for data semantics. If any step specifies a conflicting meaning, DD-1 prevails unless an explicit override is declared in that step's Spec Precedence section.
-
-## 1) Canonical Data Representation Rules
-
-### 1.1 Field naming
-- Canonical keys (machine): snake_case (e.g., engagement_name, risk_rating).
-- Display labels (human): Title Case (e.g., "Engagement Name", "Risk Rating").
-- No synonyms: each concept has exactly one canonical key.
-
-### 1.2 Data types
-- string: UTF-8, trimmed.
-- date: ISO 8601 YYYY-MM-DD.
-- datetime: ISO 8601 with timezone offset.
-- integer: whole numbers only.
-- decimal: numeric with defined precision.
-- boolean: Yes/No user-facing; true/false JSON.
-
-### 1.3 Unknown / not provided handling
-- Structured data (XLSX/JSON): optional fields = blank/null; required but unknown = TBC.
-- Narrative (DOCX/PPTX): use _Not specified — to be confirmed_ (italicised per SS-1).
-
-### 1.4 Units and precision
-- Effort: person_days (decimal). 1 person-day = 8 hours.
-- Duration: working_days (integer).
-- Currency: 2 decimal places; ISO 4217 (default AUD).
-- Percent: decimal fraction in JSON (e.g., 0.25); display as % (e.g., 25%).
-
-### 1.5 Timezone and calendar
-- Timezone: Australia/Melbourne (AEDT/AEST).
-- Working week: Monday-Friday.
-
-## 2) Canonical Enumerations
-
-### 2.1 delivery_methodology: Waterfall | Agile | Hybrid
-### 2.2 fee_structure: Fixed_Price | Time_and_Materials | Capped_T_and_M
-### 2.3 engagement_complexity: Low | Medium | High | Very_High
-### 2.4 organisation_type: PwC | Client | Joint | Alliance_Partner | Third_Party | Regulator | Vendor | Other
-### 2.5 yes_no: Yes | No
-
-### 2.6 rag_status (non-negotiable meanings):
-- Green: On Track
-- Amber: At Risk (action in progress)
-- Red: Off Track (requires intervention/escalation)
-- Blue: Complete / Closed / Achieved
-- Grey: Not Started / Not Assessed / N/A
-
-### 2.7 priority: Critical | High | Medium | Low
-### 2.8 confidence_level: High | Medium | Low | TBC
-### 2.9 influence_level / interest_level: High | Medium | Low
-
-### 2.10 engagement_strategy (derived from influence + interest):
-- High influence + High interest = Manage_Closely
-- High influence + Low/Medium interest = Keep_Satisfied
-- Low/Medium influence + High interest = Keep_Informed
-- Low/Medium influence + Low/Medium interest = Monitor
-
-### 2.11 risk_response_strategy: Avoid | Mitigate | Transfer | Accept
-
-### 2.12 risk_category: Strategic | Financial | Operational | Schedule | Resource | Technology | Regulatory_and_Compliance | Stakeholder | Scope | Quality | Third_Party | Cyber_and_Security | People | Environmental_and_ESG | Other
-
-### 2.13 likelihood_level / impact_level: High=3 | Medium=2 | Low=1
-
-### 2.14 risk_rating (derived from likelihood_score * impact_score):
-- 9 = Critical | 6 = High | 3-4 = Medium | 1-2 = Low
-
-### 2.15 Status codes:
-- deliverable_status: Not_Started | In_Progress | Draft_Complete | In_Review | Approved | On_Hold | Cancelled
-- milestone_status: Not_Started | On_Track | At_Risk | Off_Track | Complete | Cancelled
-- task_status: Not_Started | In_Progress | Complete | On_Hold | Cancelled | Blocked
-- action_status: Open | In_Progress | Complete | Deferred | Cancelled
-- change_request_status: Pending_Assessment | Under_Review | Pending_Approval | Approved | Rejected | Deferred | Withdrawn | Implemented | Cancelled
-- risk_status: Open | Mitigated | Accepted | Closed | Transferred | Eventuated
-- issue_status: Open | In_Progress | Resolved | Escalated | Closed
-- non_conformance_status: Open | In_Rework | Resolved | Closed | Accepted_as_Risk
-
-## 3) Canonical ID Formats
-STK-### | OBJ-### | SC-### | KPI-### | BEN-### | WBS hierarchical numeric | MS-### | SP-### | RES-### | BL-### | INV-### | DEC-### | ACT-### | RSK-### | ISS-### | DEP-### | ASM-### | CR-### | QG-### | NC-### | COM-### | TPL-### | OI-### | CHG-### (change log entries)
-
-## 4) Core Entity Dictionaries
-
-### 4.1 Engagement Context (brief-builder fields only)
-The engagement context is sourced exclusively from the PwC Delivery Launchpad brief-builder form. Only the following fields will ever be present. Do not flag the absence of any other field as a gap, warning, or open item — they are not collected by design.
-client_name (string, required) | engagement_name (string, required) | engagement_lead (string) | industry (string, required) | sector (string) | sub_sector (string) | delivery_methodology (enum) | fee_structure (enum) | start_date (date) | end_date (date) | total_budget (string) | engagement_description (string)
-Required for chain to proceed: client_name, engagement_name, industry. All other fields are optional — if absent, set to null and do not raise an open item.
-
-### 4.2 Stakeholder: stakeholder_id | full_name | role_title | organisation_name | organisation_type | engagement_role (Sponsor|Decision_Maker|Project_Owner|Programme_Manager|SME|End_User|Approver|Informed_Only|Other) | influence_level | interest_level | engagement_strategy | confirmed_or_placeholder | onboarded_to_engagement
-
-### 4.3 WBS element: wbs_id | element_name | parent_wbs_id | wbs_level (1-4) | element_type (Engagement|Phase|Workstream|Deliverable|Work_Package) | owner_organisation_type | responsible_role | estimated_effort_days | estimated_duration_working_days | predecessor_wbs_ids | fixed_date | priority | task_status | percent_complete
-
-### 4.4 Milestone: milestone_id | milestone_name | phase_or_workstream | wbs_reference | milestone_type (Phase_Gate|Deliverable_Signoff|Client_Approval|Regulatory_Submission|Go_Live|Review_Point|Steering_Committee|Sprint_Review|Other) | baseline_date | planned_date | forecast_date | actual_date | variance_from_baseline_days | milestone_status | owner | signoff_required | signoff_status
-
-### 4.5 Sprint: sprint_id | sprint_name | sprint_number | start_date | end_date | duration_working_days | sprint_goals | key_deliverables | sprint_status | story_points_planned | story_points_completed | velocity_ratio | sprint_lead
-
-### 4.6 Resource: resource_id | full_name | role_title | seniority_level (Partner|Director|Senior_Manager|Manager|Senior_Associate|Associate|Analyst|Specialist|Other) | organisation_type | primary_workstream | secondary_workstream | location (Onshore|Offshore|Near_Shore|Client_Site|Remote) | start_date | end_date | total_effort_days | fte_allocation | availability_percent | daily_rate | total_cost | confirmed_status (Confirmed|TBC|Proposed) | security_clearance_required
-
-### 4.7 Budget line: budget_line_id | cost_item_description | phase_or_workstream | cost_type (Labour_PwC|Labour_Client|Labour_Alliance_Partner|Labour_Third_Party|Travel_and_Accommodation|Technology_and_Software|Training|Printing_and_Production|Contingency|Other) | resource_role | seniority_level | effort_days | daily_rate | baseline_amount | confidence_level | reimbursable | fixed_or_variable | notes
-
-### 4.8 Risk: risk_id | risk_title | risk_category | risk_description | risk_source | risk_owner | owner_organisation_type | likelihood_level | impact_level | risk_score | risk_rating | risk_response_strategy | mitigation_actions | contingency_plan | residual_likelihood_level | residual_impact_level | residual_score | residual_rating | risk_status | escalation_required | next_review_date | restricted_distribution | date_raised | raised_by
-
-### 4.9 Issue: issue_id | issue_title | issue_category | priority | issue_description | owner | target_resolution_date | issue_status | escalated | linked_risk_id
-
-### 4.10 Dependency: dependency_id | dependency_title | dependency_description | dependency_type (Client|Third_Party|Internal_PwC|Regulator|Other) | owner | due_date | status | critical_path_related
-
-### 4.11 Assumption: assumption_id | assumption_text | category (Scope|Resource|Technology|Timeline|Budget|Regulatory|Stakeholder|Other) | impact_if_wrong | confidence_level | status (Open|Confirmed|Invalidated) | owner | date_raised | date_confirmed_or_invalidated
-
-### 4.12 Change request: change_request_id | change_title | change_description | change_type | classification (Minor|Major|Emergency) | requested_by | requestor_organisation_type | date_submitted | phase_or_workstream_affected | urgency | impact_assessment_owner | assessment_due_date | assessment_completed_date | change_request_status | approver | decision_date | schedule_impact_days | budget_impact_amount | resource_impact | contractual_amendment_required | baseline_updated | implementation_date
-
-### 4.13 Quality gate: quality_gate_id | gate_name | phase_boundary | gate_criteria | approver | target_date | actual_date | gate_status (Not_Yet_Due|Pending_Review|Passed|Failed|Blocked|Waived) | criteria_met (All_Met|Partially_Met|Not_Met) | outstanding_criteria
-
-## 5) Canonical Calculations
-- working_days = NETWORKDAYS(start_date, end_date, HolidayList)
-- fte_allocation = total_effort_days / working_days
-- effective_fte = fte_allocation * (availability_percent / 100)
-- variance_days = forecast_date - planned_date (positive = slip)
-- utilisation: >100% Over-allocated | 80-100% Near capacity | 60-80% Optimal | <60% Under-utilised
-- EVM: sv=ev-pv | cv=ev-ac | spi=ev/pv | cpi=ev/ac | eac=bac/cpi | vac=bac-eac | tcpi=(bac-ev)/(bac-ac)
-
-## 6) Canonical Prompt Tokens (placeholders in prompts only)
-[CLIENT_NAME] | [ENGAGEMENT_NAME] | [ENGAGEMENT_CODE] | [ENGAGEMENT_MANAGER] | [PARTNER] | [INDUSTRY] | [SERVICE_LINE] | [START_DATE] | [END_DATE] | [BUDGET]
-Rule: tokens must not leak into generated structured datasets.
-
-## 7) Controlled Vocabulary Mapping
-"Start Date" = engagement_start_date | "End Date" = engagement_end_date | "Budget/Fee" = total_budget | "EM" = engagement_manager | "RAG"/"Status" = rag_status | "T&M" = Time_and_Materials | "Fixed Fee" = Fixed_Price
-
-End DD-1.`,
-  WE1: `## WE-1 — Global Workbook Engineering Rules (Canonical XLSX Engineering Standard)
-
-## 0) Purpose
-WE-1 defines non-negotiable engineering rules for all XLSX outputs to prevent brittle spreadsheets, reduce prompt duplication, and eliminate contradictions across the chain.
-WE-1 is engineering-first: it may override prompt-level implementation details if those details would produce an unstable workbook.
-
-## 1) Applicability and Precedence
-Apply WE-1 only when XLSX is in ArtifactTypes.
-Conflict resolution order: (1) STEP 3 output list + rationalisation constraints, (2) WE-1, (3) SS-1, (4) prompt-level sheet mechanics.
-If a prompt requires a fixed row number and WE-1 forbids it, ignore the fixed row requirement and implement using WE-1 anchors and section headers instead.
-
-## 2) Structural Engineering Rules (No brittleness)
-
-### 2.1 No fixed coordinates
-Do not hardcode row numbers (e.g., "row 501", "B4:B1000") as the structural basis of the workbook.
-Fixed coordinates are allowed only for: small deliberate header areas (rows 1-2), constant-position summary KPI cells, table header rows.
-All data regions must be anchored and discoverable by section headers and/or Excel tables.
-
-### 2.2 Section headers as anchors (mandatory)
-Every sheet with more than one logical area must use explicit section headers (single-row, full-width, styled per SS-1).
-Each section header must be unique within the sheet.
-Downstream logic must locate sections by: Excel Table name, Named range, or searching for the section header text and offsetting from it.
-
-### 2.3 Prefer Excel Tables (ListObjects) and Structured References
-All primary registers/logs must be implemented as Excel Tables.
-Use structured references for formulas (e.g., =COUNTIF(RiskTable[Status],"Open")).
-Each table must have: deterministic Table Name (see 2.5), header row, banded rows, filters enabled.
-
-### 2.4 Prefer Named Ranges
-Create named ranges for: key scalar values, threshold constants, lists used by validation, any non-table summary bar inputs.
-
-### 2.5 Deterministic naming convention
-Table names: {PromptID}_{SheetKey}_{Entity} (no spaces). Example: P2_7_RiskRegister_Risks
-Named ranges: {PromptID}_{Name}. Example: P2_2_EngagementStartDate
-
-### 2.6 Merges are restricted
-Avoid merged cells inside data tables entirely.
-Merged cells permitted only for: title blocks, section header rows, wide callout banner cells.
-
-## 3) Formula and Reference Rules
-
-### 3.1 No brittle ranges for growable data
-Formulas that adapt to new rows must use structured references or dynamic named ranges, not static ranges.
-
-### 3.2 Reconciliation after rationalisation merges (mandatory)
-If rationalisation merges sheets: update all formulas to reference new table names/columns or named ranges.
-Do not leave orphan references to deleted/merged sheets.
-
-### 3.3 Consistent ID generation
-IDs should use table-row logic where possible. Prefer deterministic ID formats from DD-1.
-
-### 3.4 Calculation integrity
-All formulas must avoid #REF!, #NAME?, circular references, and broken structured refs.
-
-## 4) Data Validation and Conditional Formatting Rules
-
-### 4.1 Validations must bind to canonical lists
-Dropdown validations must reference a named range or explicit list table.
-Do not embed long inline validation lists repeatedly across columns.
-
-### 4.2 Conditional formatting scope discipline
-Apply conditional formatting to table columns or dynamically computed ranges anchored to tables/section headers.
-Avoid applying to large fixed blank ranges.
-
-### 4.3 Input vs formula cell discipline
-Inputs: unlocked (if protection enabled), styled per SS-1.
-Formula cells: locked, protected.
-
-## 5) Standard Sheet Engineering Defaults
-Freeze panes: table sheets = freeze header row + key left identifier columns; dashboard sheets = freeze top header and left label column.
-Filters: enable on every Excel Table and register-like range.
-Column widths: set to content with sensible min/max.
-Print: landscape for wide tables; repeat header row; fit to 1 page wide if reasonable.
-Protection: protect sheets with formulas; unlock input cells; allow sorting/filtering.
-
-## 6) QA Gates (XLSX must pass before returning)
-1. Structure QA: no fixed row dependency; all growable datasets are Excel Tables with deterministic names; section headers unique.
-2. Reference QA: no broken references; no orphan references to deleted sheets; named ranges exist for required constants/lists.
-3. Validation QA: all required dropdowns exist and point to canonical list sources.
-4. Formatting QA: freeze panes correct; filters enabled; protection applied.
-5. Rationalisation QA: sheet count and names match rationalisation maximum; merged sections maintain anchor headers.
-
-If any QA gate fails, STOP and output only: XLSX QA FAILED: followed by compact list of failures and locations.
-
-## 7) Authoring Guidance for Codex Execution
-Build order: tables first, then validations, then formulas, then conditional formatting, then protection.
-When a prompt specifies "merge sheets" or "divider rows": implement as a single sheet with multiple Excel Tables separated by section header rows; all summaries reference table structured references, not fixed ranges.
-Prefer deterministic table/range names.
-
-End WE-1.`,
-};
-
-// ── UTILITIES ──
-function slugify(str) {
-  if (!str) return "";
-  return String(str)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-function showLoading(msg) {
-  document.getElementById("loadingText").textContent = msg || "Loading...";
-  document.getElementById("loadingOverlay").classList.add("visible");
-}
-function hideLoading() {
-  document.getElementById("loadingOverlay").classList.remove("visible");
-}
-function showError(msg) {
-  var _de = document.getElementById("dataError");
-  if (_de) _de.innerHTML = `<div class="error-msg">${msg}</div>`;
-  else console.warn("Form error:", msg);
-}
-function toggleSection(id) {
-  setTimeout(function () {
-    if (typeof updateSectionDot === "function") updateSectionDot(id);
-  }, 100);
+      `**Role & purpose** – Build a hierarchical Work Breakdown Structure (WBS) and project schedule from scope items and objectives. Produce a multi sheet WBS & Schedule workbook and a canonical handoff.
+
+<context>
+  **Enumerations and definitions.**
+  - element_type ∈ {Engagement, Phase, Workstream, Deliverable, Work_Package}
+  - owner_organisation_type ∈ {PwC, Client, Joint, Third_Party}
+  - priority ∈ {Critical, High, Medium, Low}
+  - milestone_type ∈ {Phase_Gate, Deliverable_Signoff, Client_Approval, Regulatory_Submission, Go_Live, Review_Point, Steering_Committee, Sprint_Review, Other}
+  - task_status ∈ {Not_Started, In_Progress, Complete, On_Hold, Cancelled, Blocked}
+  - yes_no ∈ {Yes, No}
+  Working days are Monday–Friday; person days assume 8 hours/day; use ISO 8601 dates.
+
+  Example snippet for the WBS table:
+  wbs_id | element_name | parent_wbs_id | wbs_level | element_type | owner_organisation_type | responsible_role | estimated_effort_days | estimated_duration_days | predecessor_wbs_ids | priority | task_status
+  ENG 01 | Project Phoenix | — | 1 | Engagement | Joint | Engagement Manager | 150 | 180 | — | High | In_Progress
+  PH 01 | Initiation Phase | ENG 01 | 2 | Phase | PwC | Project Manager | 20 | 30 | — | Medium | Not_Started
+</context>
+
+<instructions>
+1. Import data from \`P1_3_CANONICAL_HANDOFF\` (scope and objectives) and \`P1_4_CANONICAL_HANDOFF\` (workstreams and roles). Identify phases and workstreams based on objectives and delivery approach.
+2. Construct a hierarchical WBS: level 1 = Engagement; level 2 = phases; level 3 = workstreams; level 4 = deliverables or work packages. Assign unique ids (e.g. ENG 01, PH 01, WS 01, DL 01).
+3. For each WBS element, capture: \`wbs_id\`, \`element_name\`, \`parent_wbs_id\`, \`wbs_level\`, \`element_type\`, \`owner_organisation_type\`, \`responsible_role\`, \`estimated_effort_days\`, \`estimated_duration_days\`, \`predecessor_wbs_ids\`, \`fixed_date\`, \`priority\` and \`task_status\`. Estimate durations using working days and reasonable defaults when missing. Use \`NETWORKDAYS()\` to compute durations from dates.
+4. Create a **Deliverable_Register** sheet: for each deliverable record \`deliverable_id\`, \`workstream_id\`, \`owner_organisation_type\`, \`responsible_role\`, \`estimated_effort_days\`, \`planned_start_date\`, \`planned_end_date\`, \`acceptance_criteria\`, \`sign_off_required\` (Yes/No), \`sign_off_authority\`, \`linked_objective_ids\`, \`scope_objective_trace\` and \`status\`.
+5. Build a **Milestone_Plan** sheet: \`milestone_id\`, \`milestone_name\`, \`phase_or_workstream\`, \`milestone_type\`, \`planned_date\`, \`actual_date\`, \`status\`, \`owner_role\`.
+6. Generate a **Schedule** sheet: \`task_id\` (same as wbs_id), \`task_name\`, \`wbs_level\`, \`workstream_id\`, \`owner_role\`, \`planned_start_date\`, \`planned_end_date\`, \`duration_days\`, \`predecessors\`, \`status\`, \`percent_complete\`, \`is_milestone\` (Yes/No), \`is_critical_path\` (Yes/No), \`sprint\` (if Agile) and \`notes\`. Calculate start and end dates based on predecessor relationships and working days; mark critical path tasks using network analysis.
+7. (Optional) Create a **Gantt_Chart** sheet to visualise the schedule (one bar per task) sorted by start date.
+8. Include a **Change_Log** sheet: \`change_id\`, \`date\`, \`changed_item_id\`, \`description\`, \`decision\`, \`decision_date\`, \`approver_role\` and \`notes\`.
+9. Use a single code interpreter call with pandas and openpyxl to create the workbook (\`P2_1_WBS_Schedule.xlsx\`) with the defined tables and formatting (orange headers, grey horizontal rules, no vertical borders). Construct \`P2_1_CANONICAL_HANDOFF\` capturing \`wbs_structure\`, \`deliverables\`, \`milestones\`, \`schedule_summary\` and a link to the workbook.
+10. After the code call, output the JSON handoff and a closing statement indicating that the WBS and schedule have been generated.
+</instructions>`
+  },
+, 100);
   const el = document.getElementById(id);
   el.classList.toggle("open");
   if (el.classList.contains("open")) {
