@@ -8361,7 +8361,8 @@ const INLINED_PROMPTS = {
 10. After the code call, output the JSON handoff and a closing statement indicating that the WBS and schedule have been generated.
 </instructions>`
   },
-, 100);
+};
+function toggleSection(id) {
   const el = document.getElementById(id);
   el.classList.toggle("open");
   if (el.classList.contains("open")) {
