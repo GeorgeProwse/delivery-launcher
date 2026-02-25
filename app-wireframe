@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cashless Gaming — Interactive Flow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'pwc-orange': {
+                500: '#FD5108',
+                400: '#FE7C39',
+                300: '#FFAA72',
+                200: '#FFCDA8',
+                100: '#FFE8D4',
+                50: '#FFF5ED'
+              },
+              'pwc-grey': {
+                600: '#5C6370',
+                500: '#6B7280',
+                400: '#7D8694',
+                300: '#9CA3AF',
+                200: '#DFE3E6',
+                100: '#EEEFF1',
+                50: '#F5F7F8'
+              }
+            },
+            fontFamily: {
+              'charter': ['Georgia', 'Charter', 'serif'],
+              'helvetica': ['Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif']
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      .scrollbar-hide::-webkit-scrollbar { display: none; }
+      .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+      .screen { 
+        transition: opacity 0.5s ease, transform 0.5s ease;
+        position: absolute;
+        inset: 0;
+      }
+      .screen.hidden { 
+        opacity: 0; 
+        pointer-events: none; 
+        transform: translateX(30px); 
+      }
+      .screen.active { 
+        opacity: 1; 
+        pointer-events: auto; 
+        transform: translateX(0); 
+      }
+      .description-panel {
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      }
+      .step-indicator {
+        transition: all 0.3s ease;
+      }
+      .step-indicator.active {
+        background: #FD5108;
+      }
+      .step-indicator.completed {
+        background: #FE7C39;
+      }
+      .fade-in {
+        animation: fadeIn 0.5s ease forwards;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .shimmer {
+        background: linear-gradient(90deg, transparent, rgba(0,0,0,0.05), transparent);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+      }
+      @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+      }
+      .progress-fill {
+        transition: width 0.5s ease;
+      }
+      .interactive-btn {
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .interactive-btn:hover {
+        opacity: 0.9;
+      }
+      .interactive-btn:active {
+        transform: scale(0.98);
+      }
+      input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 8px;
+        border-radius: 4px;
+        background: #DFE3E6;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #FD5108;
+        cursor: pointer;
+        border: 2px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+      input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #FD5108;
+        cursor: pointer;
+        border: 2px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+    </style>
+  </head>
+
+<body class="antialiased bg-pwc-grey-100 min-h-screen flex items-center justify-center p-4 overflow-auto font-helvetica">
+<div class="relative flex items-center justify-center gap-16 max-w-6xl w-full" style="margin-top: -40px;">      
+      <!-- Left: Description Panel -->
+      <div class="flex-1 max-w-md">
+        
+        <!-- Play Controls -->
+        <div class="flex items-center gap-3 mb-6">
+          <button id="play-button" onclick="togglePlayback()" class="h-10 w-10 rounded-full bg-white border border-pwc-grey-200 flex items-center justify-center hover:bg-pwc-grey-50 transition-all shadow-sm">
+            <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none" class="text-pwc-grey-600 ml-0.5">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none" class="text-pwc-grey-600 hidden">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+          </button>
+          <span id="playback-status" class="text-sm text-pwc-grey-600">Click to start tour</span>
+          <button onclick="resetPlayback()" class="text-sm text-pwc-grey-500 hover:text-pwc-grey-600 transition-colors ml-auto underline">Reset</button>
+        </div>
+        
+        <!-- Step Indicators -->
+        <div class="flex items-center gap-2 mb-8">
+          <button onclick="jumpToScreen(1)" id="step-1" class="step-indicator active h-2 w-12 rounded-full bg-pwc-grey-300 cursor-pointer hover:opacity-80 transition-opacity"></button>
+          <button onclick="jumpToScreen(2)" id="step-2" class="step-indicator h-2 w-12 rounded-full bg-pwc-grey-300 cursor-pointer hover:opacity-80 transition-opacity"></button>
+          <button onclick="jumpToScreen(3)" id="step-3" class="step-indicator h-2 w-12 rounded-full bg-pwc-grey-300 cursor-pointer hover:opacity-80 transition-opacity"></button>
+          <button onclick="jumpToScreen(4)" id="step-4" class="step-indicator h-2 w-12 rounded-full bg-pwc-grey-300 cursor-pointer hover:opacity-80 transition-opacity"></button>
+          <button onclick="jumpToScreen(5)" id="step-5" class="step-indicator h-2 w-12 rounded-full bg-pwc-grey-300 cursor-pointer hover:opacity-80 transition-opacity"></button>
+          <button onclick="jumpToScreen(6)" id="step-6" class="step-indicator h-2 w-12 rounded-full bg-pwc-grey-300 cursor-pointer hover:opacity-80 transition-opacity"></button>
+        </div>
+
+        <!-- Description Content -->
+        <div class="relative min-h-[300px]">
+          
+          <div id="desc-1" class="description-panel">
+            <p class="text-base font-semibold text-pwc-orange-500 mb-3 font-helvetica">Step 1</p>
+            <h1 class="text-4xl font-bold text-black tracking-tight leading-tight mb-5 font-charter">
+              Become a member through the app
+            </h1>
+            <p class="text-xl text-pwc-grey-600 leading-relaxed font-helvetica">
+              Sign up with your email to create a gaming membership. This is your single account across all participating venues.
+            </p>
+          </div>
+
+          <div id="desc-2" class="description-panel absolute inset-0 opacity-0 pointer-events-none">
+            <p class="text-base font-semibold text-pwc-orange-500 mb-3 font-helvetica">Step 2</p>
+            <h1 class="text-4xl font-bold text-black tracking-tight leading-tight mb-5 font-charter">
+              Complete the ID verification
+            </h1>
+            <p class="text-xl text-pwc-grey-600 leading-relaxed font-helvetica">
+              Upload a valid form of ID. We check your identity and confirm you're not on any self-exclusion registers.
+            </p>
+          </div>
+
+          <div id="desc-3" class="description-panel absolute inset-0 opacity-0 pointer-events-none">
+            <p class="text-base font-semibold text-pwc-orange-500 mb-3 font-helvetica">Step 3</p>
+            <h1 class="text-4xl font-bold text-black tracking-tight leading-tight mb-5 font-charter">
+              Link your bank account
+            </h1>
+            <p class="text-xl text-pwc-grey-600 leading-relaxed font-helvetica">
+              Connect your everyday bank account using Open Banking. All deposits and withdrawals go through this account.
+            </p>
+          </div>
+
+          <div id="desc-4" class="description-panel absolute inset-0 opacity-0 pointer-events-none">
+            <p class="text-base font-semibold text-pwc-orange-500 mb-3 font-helvetica">Step 4</p>
+            <h1 class="text-4xl font-bold text-black tracking-tight leading-tight mb-5 font-charter">
+              Set limits on time and spend
+            </h1>
+            <p class="text-xl text-pwc-grey-600 leading-relaxed font-helvetica">
+              Choose your daily deposit limit, session time cap, and weekly loss limit before you start playing.
+            </p>
+          </div>
+
+          <div id="desc-5" class="description-panel absolute inset-0 opacity-0 pointer-events-none">
+            <p class="text-base font-semibold text-pwc-orange-500 mb-3 font-helvetica">Step 5</p>
+            <h1 class="text-4xl font-bold text-black tracking-tight leading-tight mb-5 font-charter">
+              Load funds to your gaming wallet
+            </h1>
+            <p class="text-xl text-pwc-grey-600 leading-relaxed font-helvetica">
+              Transfer money from your bank into your wallet. You can only deposit up to your daily limit, and withdraw your balance at any time.
+            </p>
+          </div>
+
+          <div id="desc-6" class="description-panel absolute inset-0 opacity-0 pointer-events-none">
+            <p class="text-base font-semibold text-pwc-orange-500 mb-3 font-helvetica">Step 6</p>
+            <h1 class="text-4xl font-bold text-black tracking-tight leading-tight mb-5 font-charter">
+              Connect to a machine and play safely
+            </h1>
+            <p class="text-xl text-pwc-grey-600 leading-relaxed font-helvetica">
+              Scan a venue QR code to link to a poker machine. Your credits, time, and spending are tracked live. Finish whenever you're ready.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Glow behind phone -->
+<div class="absolute right-0 w-[420px] h-[870px] rounded-[80px] bg-pwc-orange-500/10 blur-3xl animate-pulse" style="transform: translateX(-50px);"></div>
+
+<!-- Right: iPhone 15 Pro Frame -->
+<div class="relative shrink-0" style="transform: scale(0.8); transform-origin: center center;">
+  <!-- Outer titanium frame -->
+  <div class="relative w-[390px] h-[844px] rounded-[60px] p-[2px] bg-gradient-to-br from-[#E3E3E8] via-[#B8B8BD] to-[#9D9DA3]" style="box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5), 0 30px 60px -30px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1);">
+    
+    <!-- Inner black bezel -->
+    <div class="relative w-full h-full rounded-[58px] bg-[#1A1A1C] p-[10px]">
+      
+      <!-- Side buttons - left -->
+      <!-- Silent switch -->
+      <div class="absolute left-[-3px] top-[120px] w-[3px] h-[28px] rounded-l-sm bg-gradient-to-b from-[#C5C5CA] via-[#9D9DA3] to-[#C5C5CA]"></div>
+      <!-- Volume up -->
+      <div class="absolute left-[-3px] top-[175px] w-[3px] h-[55px] rounded-l-sm bg-gradient-to-b from-[#C5C5CA] via-[#9D9DA3] to-[#C5C5CA]"></div>
+      <!-- Volume down -->
+      <div class="absolute left-[-3px] top-[240px] w-[3px] h-[55px] rounded-l-sm bg-gradient-to-b from-[#C5C5CA] via-[#9D9DA3] to-[#C5C5CA]"></div>
+      
+      <!-- Side button - right -->
+      <!-- Power button -->
+      <div class="absolute right-[-3px] top-[200px] w-[3px] h-[80px] rounded-r-sm bg-gradient-to-b from-[#C5C5CA] via-[#9D9DA3] to-[#C5C5CA]"></div>
+      
+      <!-- Top speaker grille -->
+      <div class="absolute top-[58px] left-1/2 -translate-x-1/2 flex gap-[2px]">
+        <div class="w-[3px] h-[3px] rounded-full bg-[#2a2a2a]"></div>
+        <div class="w-[3px] h-[3px] rounded-full bg-[#2a2a2a]"></div>
+        <div class="w-[3px] h-[3px] rounded-full bg-[#2a2a2a]"></div>
+        <div class="w-[3px] h-[3px] rounded-full bg-[#2a2a2a]"></div>
+        <div class="w-[3px] h-[3px] rounded-full bg-[#2a2a2a]"></div>
+        <div class="w-[3px] h-[3px] rounded-full bg-[#2a2a2a]"></div>
+      </div>
+
+      <!-- Bottom speaker grille - left -->
+      <div class="absolute bottom-[18px] left-[80px] flex gap-[3px]">
+        <div class="w-[4px] h-[4px] rounded-full bg-[#2a2a2a]"></div>
+        <div class="w-[4px] h-[4px] rounded-full bg-[#2a2a2a]"></div>
+        <div class="w-[4px] h-[4px] rounded-full bg-[#2a2a2a]"></div>
+        <div class="w-[4px] h-[4px] rounded-full bg-[#2a2a2a]"></div>
+        <div class="w-[4px] h-[4px] rounded-full bg-[#2a2a2a]"></div>
+        <div class="w-[4px] h-[4px] rounded-full bg-[#2a2a2a]"></div>
+      </div>
+
+      <!-- Bottom speaker grille - right -->
+      <div class="absolute bottom-[18px] right-[80px] flex gap-[3px]">
+        <div class="w-[4px] h-[4px] rounded-full bg-[#2a2a2a]"></div>
+        <div class="w-[4px] h-[4px] rounded-full bg-[#2a2a2a]"></div>
+        <div class="w-[4px] h-[4px] rounded-full bg-[#2a2a2a]"></div>
+        <div class="w-[4px] h-[4px] rounded-full bg-[#2a2a2a]"></div>
+        <div class="w-[4px] h-[4px] rounded-full bg-[#2a2a2a]"></div>
+        <div class="w-[4px] h-[4px] rounded-full bg-[#2a2a2a]"></div>
+      </div>
+      
+      <!-- Screen container -->
+      <div class="relative w-full h-full bg-white rounded-[48px] overflow-hidden">
+        
+        <!-- Dynamic Island -->
+        <div class="absolute top-[12px] left-1/2 -translate-x-1/2 w-[126px] h-[37px] rounded-full z-10 flex items-center justify-center" style="background: linear-gradient(145deg, #1a1a1a 0%, #0a0a0a 100%); box-shadow: inset 0 1px 2px rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.3);">
+          <!-- Front camera dot -->
+          <div class="absolute right-[18px] w-[10px] h-[10px] rounded-full bg-[#1A1A2E] ring-1 ring-[#2A2A3E]">
+            <div class="absolute top-[2px] left-[2px] w-[3px] h-[3px] rounded-full bg-[#3A3A5E] opacity-60"></div>
+          </div>
+        </div>
+
+          <!-- Screen 1: Welcome -->
+          <div id="screen-1" class="screen active overflow-y-auto scrollbar-hide bg-white text-black font-helvetica">
+            <nav class="flex items-center justify-between p-5 pt-14">
+              <button class="h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path></svg>
+              </button>
+            </nav>
+
+            <div class="px-6 pt-0 pb-8 space-y-6">
+              
+
+              <div class="space-y-3">
+                <h1 class="text-3xl font-bold text-black tracking-tight leading-tight font-charter">Create your gaming membership</h1>
+                <p class="text-base text-pwc-grey-600 leading-relaxed">One account for all participating venues. Set limits, track spending, and play responsibly.</p>
+              </div>
+
+              <div class="space-y-4">
+                <input id="s1-email" type="email" placeholder="Enter your email" class="w-full h-14 rounded-xl bg-pwc-grey-50 border border-pwc-grey-200 px-4 text-base text-black placeholder-pwc-grey-400 focus:outline-none focus:ring-2 focus:ring-pwc-orange-500/30 focus:border-pwc-orange-500 transition-all">
+                <button id="s1-cta" onclick="handleManualAction(1, 'submit')" class="interactive-btn w-full h-14 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold flex items-center justify-center gap-2 hover:bg-pwc-orange-400 transition-all">
+                  <span id="s1-cta-text">Get started</span>
+                  <svg id="s1-cta-arrow" xmlns="http://www.w3 .org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                  <svg id="s1-cta-spinner" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hidden animate-spin"><circle cx="12" cy="12" r="10" stroke-opacity="0.3"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>
+                </button>
+              </div>
+
+              <div class="pt-5 border-t border-pwc-grey-200">
+                <p class="text-sm text-pwc-grey-600 font-medium mb-4">What you'll need:</p>
+                <div class="space-y-3">
+                  <div class="flex items-center gap-4 text-base text-pwc-grey-600">
+                    <div class="h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M7 8h4"></path><path d="M7 12h2"></path><circle cx="15" cy="10" r="2"></circle></svg>
+                    </div>
+                    <span>Valid ID for verification</span>
+                  </div>
+                  <div class="flex items-center gap-4 text-base text-pwc-grey-600">
+                    <div class="h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M2 9h20"></path></svg>
+                    </div>
+                    <span>Bank account for deposits</span>
+                  </div>
+                  <div class="flex items-center gap-4 text-base text-pwc-grey-600">
+                    <div class="h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                    </div>
+                    <span>About 5 minutes to complete</span>
+                  </div>
+                </div>
+              </div>
+
+              <div id="s1-confirmation" class="hidden rounded-xl bg-pwc-orange-50 p-5 border border-pwc-orange-100">
+                <div class="flex items-center gap-4 mb-4">
+                  <div class="h-12 w-12 rounded-full bg-pwc-orange-100 flex items-center justify-center shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500"><path d="M20 6 9 17l-5-5"></path></svg>
+                  </div>
+                  <div>
+                    <p class="text-base font-semibold text-black">Account created</p>
+                    <p class="text-sm text-pwc-grey-600">Let's verify your identity</p>
+                  </div>
+                </div>
+                <button onclick="handleManualAction(1, 'next')" class="interactive-btn w-full h-12 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold hover:bg-pwc-orange-400 transition-all">
+                  Continue
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Screen 2: ID Verification -->
+          <div id="screen-2" class="screen hidden overflow-y-auto scrollbar-hide bg-white text-black p-6 font-helvetica">
+            <div class="flex items-center justify-between mb-6 pt-10">
+              <button onclick="handleManualAction(2, 'back')" class="interactive-btn h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><path d="m15 18-6-6 6-6"></path></svg>
+              </button>
+              <span class="text-sm font-medium text-pwc-grey-600">Step 2 of 6</span>
+              <div class="w-10"></div>
+            </div>
+
+            <div class="space-y-6">
+              <div>
+                <h1 class="text-2xl font-bold text-black mb-2 font-charter">Verify your identity</h1>
+                <p class="text-base text-pwc-grey-600">Select your ID type to begin.</p>
+              </div>
+
+              <div id="s2-id-selection" class="space-y-3">
+                <button id="s2-licence-btn" onclick="handleManualAction(2, 'selectId')" class="interactive-btn w-full flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200 transition-all text-left">
+                  <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 rounded-xl bg-white border border-pwc-grey-200 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M7 8h4"></path><path d="M7 12h2"></path><circle cx="15" cy="10" r="2"></circle></svg>
+                    </div>
+                    <div>
+                      <p class="text-base font-semibold text-black">Driver Licence</p>
+                      <p class="text-sm text-pwc-grey-600">Australian state or territory</p>
+                    </div>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-400 shrink-0"><path d="m9 18 6-6-6-6"></path></svg>
+                </button>
+
+                <div class="flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200 opacity-50">
+                  <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 rounded-xl bg-white border border-pwc-grey-200 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M9 10h6"></path><path d="M9 14h4"></path></svg>
+                    </div>
+                    <div>
+                      <p class="text-base font-semibold text-black">Passport</p>
+                      <p class="text-sm text-pwc-grey-600">Australian passport</p>
+                    </div>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-400 shrink-0"><path d="m9 18 6-6-6-6"></path></svg>
+                </div>
+
+                <div class="flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200 opacity-50">
+                  <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 rounded-xl bg-white border border-pwc-grey-200 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M7 8h10"></path><path d="M7 12h6"></path></svg>
+                    </div>
+                    <div>
+                      <p class="text-base font-semibold text-black">Medicare Card</p>
+                      <p class="text-sm text-pwc-grey-600">With other ID</p>
+                    </div>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-400 shrink-0"><path d="m9 18 6-6-6-6"></path></svg>
+                </div>
+              </div>
+
+              <div id="s2-scanning" class="hidden space-y-4">
+                <div class="rounded-xl bg-pwc-orange-50 border border-pwc-orange-100 p-5">
+                  <div class="flex items-center gap-4 mb-4">
+                    <div class="h-12 w-12 rounded-xl bg-pwc-orange-100 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-orange-500 animate-pulse"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M7 8h4"></path><circle cx="15" cy="10" r="2"></circle></svg>
+                    </div>
+                    <div>
+                      <p class="text-base font-semibold text-black">Scanning licence...</p>
+                      <p class="text-sm text-pwc-grey-600">Hold steady</p>
+                    </div>
+                  </div>
+                  <div class="h-36 rounded-xl bg-pwc-grey-100 flex items-center justify-center border-2 border-dashed border-pwc-grey-300">
+                    <div class="text-center">
+                      <div class="w-20 h-12 border-2 border-pwc-orange-400 rounded-lg mx-auto mb-2 shimmer"></div>
+                      <p class="text-sm text-pwc-grey-600">Capturing ID</p>
+                    </div>
+                  </div>
+                </div>
+                <button onclick="handleManualAction(2, 'scanned')" class="interactive-btn w-full h-12 rounded-xl bg-pwc-grey-100 text-pwc-grey-600 text-base font-medium hover:bg-pwc-grey-200 transition-all">
+                  Skip (demo)
+                </button>
+              </div>
+
+              <div id="s2-verifying" class="hidden space-y-4">
+                <div class="rounded-xl bg-pwc-grey-50 border border-pwc-grey-200 p-5">
+                  <div class="flex items-center gap-4 mb-5">
+                    <div class="h-12 w-12 rounded-xl bg-pwc-grey-100 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-grey-600 animate-spin"><circle cx="12" cy="12" r="10" stroke-opacity="0.3"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>
+                    </div>
+                    <div>
+                      <p class="text-base font-semibold text-black">Checking registers...</p>
+                      <p class="text-sm text-pwc-grey-600">This takes a moment</p>
+                    </div>
+                  </div>
+                  <div class="space-y-3">
+                    <div class="flex items-center gap-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500 shrink-0"><path d="M20 6 9 17l-5-5"></path></svg>
+                      <span class="text-base text-pwc-grey-600">Identity confirmed</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500 shrink-0"><path d="M20 6 9 17l-5-5"></path></svg>
+                      <span class="text-base text-pwc-grey-600">Age verified (18+)</span>
+                    </div>
+                    <div id="s2-exclusion-check" class="flex items-center gap-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-grey-400 animate-spin shrink-0"><circle cx="12" cy="12" r="10" stroke-opacity="0.3"></circle><path d="M12 2a 10 10 0 0 1 10 10"></path></svg>
+                      <span class="text-base text-pwc-grey-500">Checking exclusion registers...</span>
+                    </div>
+                  </div>
+                </div>
+                <button onclick="handleManualAction(2, 'verified')" class="interactive-btn w-full h-12 rounded-xl bg-pwc-grey-100 text-pwc-grey-600 text-base font-medium hover:bg-pwc-grey-200 transition-all">
+                  Skip (demo)
+                </button>
+              </div>
+
+              <div id="s2-verified" class="hidden space-y-4">
+                <div class="rounded-xl bg-pwc-orange-50 border border-pwc-orange-100 p-5">
+                  <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 rounded-xl bg-pwc-orange-100 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500"><path d="M20 6 9 17l-5-5"></path></svg>
+                    </div>
+                    <div>
+                      <p class="text-base font-semibold text-black">Verification complete</p>
+                      <p class="text-sm text-pwc-grey-600">All checks passed</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="rounded-xl bg-pwc-grey-50 border border-pwc-grey-200 p-5 space-y-3">
+                  <div class="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500 shrink-0"><path d="M20 6 9 17l-5-5"></path></svg>
+                    <span class="text-base text-pwc-grey-600">Identity confirmed</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500 shrink-0"><path d="M20 6 9 17l-5-5"></path></svg>
+                    <span class="text-base text-pwc-grey-600">Age verified (18+)</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500 shrink-0"><path d="M20 6 9 17l-5-5"></path></svg>
+                    <span class="text-base text-pwc-grey-600">No exclusions found</span>
+                  </div>
+                </div>
+                <button onclick="handleManualAction(2, 'next')" class="interactive-btn w-full h-14 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold hover:bg-pwc-orange-400 transition-all">
+                  Continue
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Screen 3: Bank Linking -->
+          <div id="screen-3" class="screen hidden overflow-y-auto scrollbar-hide bg-white text-black p-6 font-helvetica">
+            <div class="flex items-center justify-between mb-6 pt-10">
+              <button onclick="handleManualAction(3, 'back')" class="interactive-btn h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><path d="m15 18-6-6 6-6"></path></svg>
+              </button>
+              <span class="text-sm font-medium text-pwc-grey-600">Step 3 of 6</span>
+              <div class="w-10"></div>
+            </div>
+
+            <div class="space-y-6">
+              <div>
+                <h1 class="text-2xl font-bold text-black mb-2 font-charter">Link your bank account</h1>
+                <p class="text-base text-pwc-grey-600">Select your bank to connect securely.</p>
+              </div>
+
+              <div id="s3-bank-selection" class="space-y-3">
+                <button id="s3-bank-1" onclick="handleManualAction(3, 'selectBank')" class="interactive-btn w-full flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200 transition-all text-left">
+                  <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 rounded-xl bg-pwc-orange-100 flex items-center justify-center shrink-0">
+                      <span class="text-lg font-bold text-pwc-orange-500">G</span>
+                    </div>
+                    <p class="text-base font-semibold text-black">Greenstone Bank</p>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-400 shrink-0"><path d="m9 18 6-6-6-6"></path></svg>
+                </button>
+
+                <div class="flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200 opacity-50">
+                  <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                      <span class="text-lg font-bold text-blue-600">H</span>
+                    </div>
+                    <p class="text-base font-semibold text-black">Horizon Bank</p>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-400 shrink-0"><path d="m9 18 6-6-6-6"></path></svg>
+                </div>
+
+                <div class="flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200 opacity-50">
+                  <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 rounded-xl bg-cyan-100 flex items-center justify-center shrink-0">
+                      <span class="text-lg font-bold text-cyan-600">C</span>
+                    </div>
+                    <p class="text-base font-semibold text-black">Clearwater Bank</p>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-400 shrink-0"><path d="m9 18 6-6-6-6"></path></svg>
+                </div>
+
+                <div class="flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200 opacity-50">
+                  <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 rounded-xl bg-violet-100 flex items-center justify-center shrink-0">
+                      <span class="text-lg font-bold text-violet-600">S</span>
+                    </div>
+                    <p class="text-base font-semibold text-black">Summit Bank</p>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-400 shrink-0"><path d="m9 18 6-6-6-6"></path></svg>
+                </div>
+              </div>
+
+              <div id="s3-connecting" class="hidden space-y-4">
+                <div class="rounded-xl bg-pwc-grey-50 border border-pwc-grey-200 p-5">
+                  <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 rounded-xl bg-pwc-grey-100 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-grey-600 animate-spin"><circle cx="12" cy="12" r="10" stroke-opacity="0.3"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>
+                    </div>
+                    <div>
+                      <p class="text-base font-semibold text-black">Connecting to Greenstone...</p>
+                      <p class="text-sm text-pwc-grey-600">Secure Open Banking</p>
+                    </div>
+                  </div>
+                </div>
+                <button onclick="handleManualAction(3, 'showAccounts')" class="interactive-btn w-full h-12 rounded-xl bg-pwc-grey-100 text-pwc-grey-600 text-base font-medium hover:bg-pwc-grey-200 transition-all">
+                  Skip (demo)
+                </button>
+              </div>
+
+              <div id="s3-accounts" class="hidden space-y-4">
+                <p class="text-base font-medium text-pwc-grey-600">Select an account</p>
+                <button id="s3-account-1" onclick="handleManualAction(3, 'selectAccount')" class="interactive-btn w-full flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200 transition-all text-left">
+                  <div>
+                    <p class="text-base font-semibold text-black">Everyday Account</p>
+                    <p class="text-sm text-pwc-grey-600">••••4892</p>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-400 shrink-0"><path d="m9 18 6-6-6-6"></path></svg>
+                </button>
+                <div class="flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200 opacity-50">
+                  <div>
+                    <p class="text-base font-semibold text-black">Savings Account</p>
+                    <p class="text-sm text-pwc-grey-600">••••7621</p>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-400 shrink-0"><path d="m9 18 6-6-6-6"></path></svg>
+                </div>
+              </div>
+
+              <div id="s3-connected" class="hidden space-y-4">
+                <div class="rounded-xl bg-pwc-orange-50 border border-pwc-orange-100 p-5">
+                  <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 rounded-xl bg-pwc-orange-100 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500"><path d="M20 6 9 17l-5-5"></path></svg>
+                    </div>
+                    <div>
+                      <p class="text-base font-semibold text-black">Account linked</p>
+                      <p class="text-sm text-pwc-grey-600">Greenstone ••••4892</p>
+                    </div>
+                  </div>
+                </div>
+                <button onclick="handleManualAction(3, 'next')" class="interactive-btn w-full h-14 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold hover:bg-pwc-orange-400 transition-all">
+                  Continue
+                </button>
+              </div>
+
+              <div class="rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200">
+                <div class="flex items-center gap-4">
+                  <div class="h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-black">Open Banking</p>
+                    <p class="text-sm text-pwc-grey-600">Read-only secure connection</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Screen 4: Set Limits -->
+          <div id="screen-4" class="screen hidden overflow-y-auto scrollbar-hide bg-white text-black p-6 font-helvetica">
+            <div class="flex items-center justify-between mb-6 pt-10">
+              <button onclick="handleManualAction(4, 'back')" class="interactive-btn h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke=" currentColor" stroke-width="1.5" class="text-pwc-grey-600"><path d="m15 18-6-6 6-6"></path></svg>
+              </button>
+              <span class="text-sm font-medium text-pwc-grey-600">Step 4 of 6</span>
+              <div class="w-10"></div>
+            </div>
+
+            <div class="space-y-6">
+              <div>
+                <h1 class="text-2xl font-bold text-black mb-2 font-charter">Set your limits</h1>
+                <p class="text-base text-pwc-grey-600">These apply before you start playing.</p>
+              </div>
+
+              <div class="space-y-5">
+                <div class="rounded-xl bg-pwc-grey-50 p-5 border border-pwc-grey-200">
+                  <div class="flex justify-between items-center mb-4">
+                    <span class="text-base font-semibold text-black">Daily deposit</span>
+                    <span id="s4-daily-value" class="text-base font-bold text-pwc-orange-500">$50</span>
+                  </div>
+                  <input type="range" id="s4-daily-slider" min="50" max="500" value="50" step="10" class="w-full" onchange="updateSlider('daily')" oninput="updateSlider('daily')">
+                  <div class="flex justify-between text-sm text-pwc-grey-600 mt-2">
+                    <span>$50</span>
+                    <span>$500</span>
+                  </div>
+                </div>
+
+                <div class="rounded-xl bg-pwc-grey-50 p-5 border border-pwc-grey-200">
+                  <div class="flex justify-between items-center mb-4">
+                    <span class="text-base font-semibold text-black">Session time</span>
+                    <span id="s4-time-value" class="text-base font-bold text-pwc-orange-500">30 min</span>
+                  </div>
+                  <input type="range" id="s4-time-slider" min="30" max="240" value="30" step="15" class="w-full" onchange="updateSlider('time')" oninput="updateSlider('time')">
+                  <div class="flex justify-between text-sm text-pwc-grey-600 mt-2">
+                    <span>30 min</span>
+                    <span>4 hours</span>
+                  </div>
+                </div>
+
+                <div class="rounded-xl bg-pwc-grey-50 p-5 border border-pwc-grey-200">
+                  <div class="flex justify-between items-center mb-4">
+                    <span class="text-base font-semibold text-black">Weekly loss</span>
+                    <span id="s4-weekly-value" class="text-base font-bold text-pwc-orange-500">$100</span>
+                  </div>
+                  <input type="range" id="s4-weekly-slider" min="100" max="1000" value="100" step="50" class="w-full" onchange="updateSlider('weekly')" oninput="updateSlider('weekly')">
+                  <div class="flex justify-between text-sm text-pwc-grey-600 mt-2">
+                    <span>$100</span>
+                    <span>$1,000</span>
+                  </div>
+                </div>
+              </div>
+
+              <div id="s4-confirmed" class="hidden">
+                <div class="rounded-xl bg-pwc-orange-50 border border-pwc-orange-100 p-5">
+                  <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 rounded-xl bg-pwc-orange-100 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500"><path d="M20 6 9 17l-5-5"></path></svg>
+                    </div>
+                    <div>
+                      <p class="text-base font-semibold text-black">Limits saved</p>
+                      <p class="text-sm text-pwc-grey-600">You're ready to add funds</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button id="s4-complete-btn" onclick="handleManualAction(4, 'confirm')" class="interactive-btn w-full h-14 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold hover:bg-pwc-orange-400 transition-all">
+                Confirm limits
+              </button>
+
+              <div class="rounded-xl bg-pwc-orange-50 p-4 border border-pwc-orange-100">
+                <div class="flex items-start gap-4">
+                  <div class="h-10 w-10 rounded-xl bg-pwc-orange-100 flex items-center justify-center shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-orange-500"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-black">Cooling-off period</p>
+                    <p class="text-sm text-pwc-grey-600">Increasing limits takes 24-72 hours to take effect.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Screen 5: Wallet -->
+          <div id="screen-5" class="screen hidden overflow-y-auto scrollbar-hide bg-white text-black p-6 font-helvetica">
+            <div class="flex items-center justify-between mb-6 pt-10">
+              <button onclick="handleManualAction(5, 'back')" class="interactive-btn h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><path d="m15 18-6-6 6-6"></path></svg>
+              </button>
+              <span class="text-sm font-medium text-pwc-grey-600">Step 5 of 6</span>
+              <div class="w-10"></div>
+            </div>
+
+            <div class="space-y-6">
+              <div>
+                <h1 class="text-2xl font-bold text-black mb-2 font-charter">Your wallet</h1>
+                <p class="text-base text-pwc-grey-600">Add funds to start playing.</p>
+              </div>
+
+              <div class="rounded-2xl bg-gradient-to-br from-pwc-orange-500 to-pwc-orange-400 p-6 text-white">
+                <p class="text-sm text-white/80 mb-1">Available balance</p>
+                <p class="text-4xl font-bold font-charter" id="s5-balance">$0.00</p>
+                <div class="mt-5 pt-4 border-t border-white/20">
+                  <div class="flex justify-between text-sm">
+                    <span class="text-white/80">Daily limit remaining</span>
+                    <span id="s5-remaining" class="text-white font-semibold">$200.00</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex gap-3">
+                <button id="s5-add-funds-btn" onclick="handleManualAction(5, 'addFunds')" class="interactive-btn flex-1 h-12 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold flex items-center justify-center gap-2 hover:bg-pwc-orange-400 transition-all">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+                  Add funds
+                </button>
+                <button class="flex-1 h-12 rounded-xl bg-pwc-grey-100 text-pwc-grey-400 text-base font-semibold flex items-center justify-center gap-2">
+                  Withdraw
+                </button>
+              </div>
+
+              <div id="s5-add-funds-modal" class="hidden">
+                <div class="rounded-xl bg-pwc-grey-50 border border-pwc-grey-200 p-5">
+                  <p class="text-base font-medium text-pwc-grey-600 mb-4">Select amount</p>
+                  <div class="grid grid-cols-3 gap-3">
+                    <button onclick="handleManualAction(5, 'select20')" class="interactive-btn h-12 rounded-xl bg-white border border-pwc-grey-200 flex items-center justify-center text-base font-semibold text-black hover:border-pwc-orange-300">$20</button>
+                    <button onclick="handleManualAction(5, 'select50')" class="interactive-btn h-12 rounded-xl bg-white border border-pwc-grey-200 flex items-center justify-center text-base font-semibold text-black hover:border-pwc-orange-300">$50</button>
+                    <button id="s5-100-btn" onclick="handleManualAction(5, 'select100')" class="interactive-btn h-12 rounded-xl bg-pwc-orange-50 border-2 border-pwc-orange-300 flex items-center justify-center text-base font-semibold text-pwc-orange-500">$100</button>
+                  </div>
+                </div>
+              </div>
+
+              <div id="s5-processing" class="hidden">
+                <div class="rounded-xl bg-pwc-grey-50 border border-pwc-grey-200 p-5">
+                  <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 rounded-xl bg-pwc-grey-100 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-grey-600 animate-spin"><circle cx="12" cy="12" r="10" stroke-opacity="0.3"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>
+                    </div>
+                    <div>
+                      <p class="text-base font-semibold text-black">Processing deposit...</p>
+                      <p class="text-sm text-pwc-grey-600" id="s5-processing-amount">$100.00 from Greenstone</p>
+                    </div>
+                  </div>
+                </div>
+                <button onclick="handleManualAction(5, 'deposited')" class="interactive-btn w-full h-12 mt-4 rounded-xl bg-pwc-grey-100 text-pwc-grey-600 text-base font-medium hover:bg-pwc-grey-200 transition-all">
+                  Skip (demo)
+                </button>
+              </div>
+
+              <div id="s5-deposit-complete" class="hidden">
+                <div class="rounded-xl bg-pwc-orange-50 border border-pwc-orange-100 p-5">
+                  <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 rounded-xl bg-pwc-orange-100 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500"><path d="M20 6 9 17l-5-5"></path></svg>
+                    </div>
+                    <div>
+                      <p class="text-base font-semibold text-black">Deposit complete</p>
+                      <p class="text-sm text-pwc-grey-600" id="s5-deposit-amount">+$100.00 added</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button id="s5-scan-btn" onclick="handleManualAction(5, 'next')" class="interactive-btn w-full h-14 rounded-xl bg-pwc-grey-100 text-pwc-grey-400 text-base font-semibold flex items-center justify-center gap-2 transition-all" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
+                <span id="s5-scan-text">Add funds to continue</span>
+              </button>
+
+              <div id="s5-activity">
+                <p class="text-sm font-medium text-pwc-grey-600 mb-3">Recent activity</p>
+                <div class="rounded-xl bg-pwc-grey-50 border border-pwc-grey-200 p-5 text-center">
+                  <p class="text-base text-pwc-grey-500">No transactions yet</p>
+                </div>
+              </div>
+
+              <div id="s5-transaction" class="hidden">
+                <p class="text-sm font-medium text-pwc-grey-600 mb-3">Recent activity</p>
+                <div class="flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200">
+                  <div class="flex items-center gap-4">
+                    <div class="h-10 w-10 rounded-xl bg-pwc-orange-100 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-orange-500"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+                    </div>
+                    <div>
+                      <p class="text-base font-semibold text-black">Deposit</p>
+                      <p class="text-sm text-pwc-grey-600">Just now</p>
+                    </div>
+                  </div>
+                  <span id="s5-transaction-amount" class="text-base font-bold text-pwc-orange-500">+$100.00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Screen 6: Active Session -->
+          <div id="screen-6" class="screen hidden overflow-y-auto scrollbar-hide bg-white text-black p-6 font-helvetica">
+            <div class="flex items-center justify-between mb-6 pt-10">
+              <button onclick="handleManualAction(6, 'back')" class="interactive-btn h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><path d="m15 18-6-6 6-6"></path></svg>
+              </button>
+              <span class="text-sm font-medium text-pwc-grey-600">Step 6 of 6</span>
+              <div class="w-10"></div>
+            </div>
+
+            <div class="space-y-6">
+              <div id="s6-scanning">
+                <div class="rounded-xl bg-pwc-grey-50 border border-pwc-grey-200 p-5">
+                  <div class="flex items-center gap-4 mb-5">
+                    <div class="h-12 w-12 rounded-xl bg-pwc-grey-100 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
+                    </div>
+                    <div>
+                      <p class="text-base font-semibold text-black">Scan venue QR code</p>
+                      <p class="text-sm text-pwc-grey-600">Point camera at machine</p>
+                    </div>
+                  </div>
+                  <div class="h-44 rounded-xl bg-pwc-grey-100 flex items-center justify-center border-2 border-dashed border-pwc-grey-300">
+                    <div class="text-center">
+                      <div class="w-24 h-24 border-2 border-pwc-grey-400 rounded-xl mx-auto mb-3 flex items-center justify-center shimmer">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" class="text-pwc-grey-400"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
+                      </div>
+                      <p class="text-base text-pwc-grey-600">Scanning...</p>
+                    </div>
+                  </div>
+                </div>
+                <button onclick="handleManualAction(6, 'scanned')" class="interactive-btn w-full h-12 mt-4 rounded-xl bg-pwc-grey-100 text-pwc-grey-600 text-base font-medium hover:bg-pwc-grey-200 transition-all">
+                  Simulate scan (demo)
+                </button>
+              </div>
+
+              <div id="s6-connecting" class="hidden space-y-4">
+                <div class="rounded-xl bg-pwc-grey-50 border border-pwc-grey-200 p-5">
+                  <div class="flex items-center gap-4 mb-5">
+                    <div class="h-12 w-12 rounded-xl bg-pwc-grey-100 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-grey-600 animate-spin"><circle cx="12" cy="12" r="10" stroke-opacity="0.3"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>
+                    </div>
+                    <div>
+                      <p class="text-base font-semibold text-black">Connecting to machine...</p>
+                      <p class="text-sm text-pwc-grey-600">Harbour View Hotel · Machine 12</p>
+                    </div>
+                  </div>
+                  <div class="space-y-3">
+                    <div class="flex items-center gap-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500 shrink-0"><path d="M20 6 9 17l-5-5"></path></svg>
+                      <span class="text-base text-pwc-grey-600">QR code verified</span>
+                    </div>
+                    <div id="s6-auth-check" class="flex items-center gap-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-grey-400 animate-spin shrink-0"><circle cx="12" cy="12" r="10" stroke-opacity="0.3"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>
+                      <span class="text-base text-pwc-grey-500">Authenticating...</span>
+                    </div>
+                  </div>
+                </div>
+                <button onclick="handleManualAction(6, 'connected')" class="interactive-btn w-full h-12 rounded-xl bg-pwc-grey-100 text-pwc-grey-600 text-base font-medium hover:bg-pwc-grey-200 transition-all">
+                  Skip (demo)
+                </button>
+              </div>
+
+              <div id="s6-active" class="hidden space-y-5">
+                <div class="rounded-2xl bg-gradient-to-br from-pwc-orange-500 to-pwc-orange-400 p-6 text-white">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm text-white/80">Machine credits</span>
+                    <span class="inline-flex items-center gap-2 text-sm text-white/80">
+                      <span class="inline-flex h-2 w-2 rounded-full bg-white animate-pulse"></span>
+                      Live
+                    </span>
+                  </div>
+                  <p class="text-4xl font-bold font-charter" id="s6-credits">$100.00</p>
+                  <div class="mt-5 pt-4 border-t border-white/20">
+                    <div class="flex justify-between text-sm">
+                      <span class="text-white/80">Session time</span>
+                      <span id="s6-time" class="text-white font-semibold">0 min</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="rounded-xl bg-pwc-grey-50 border border-pwc-grey-200 p-5">
+                  <div class="flex items-center justify-between mb-4">
+                    <div>
+                      <p class="text-base font-semibold text-black">Harbour View Hotel</p>
+                      <p class="text-sm text-pwc-grey-600">Machine 12 · Ocean Jackpots</p>
+                    </div>
+                  </div>
+                  <div class="mb-4">
+                    <div class="flex justify-between text-sm mb-2">
+                      <span class="text-pwc-grey-600">Time remaining</span>
+                      <span id="s6-remaining" class="text-black font-semibold">2 hr</span>
+                    </div>
+                    <div class="h-2 w-full rounded-full bg-pwc-grey-200">
+                      <div id="s6-time-bar" class="h-2 rounded-full bg-pwc-orange-500 progress-fill" style="width: 0%"></div>
+                    </div>
+                  </div>
+                  <div class="flex gap-3">
+                    <button class="interactive-btn flex-1 h-12 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold hover:bg-pwc-orange-400 transition-all">Add credits</button>
+                    <button onclick="handleManualAction(6, 'cashout')" class="interactive-btn flex-1 h-12 rounded-xl bg-pwc-grey-100 text-pwc-grey-600 text-base font-semibold hover:bg-pwc-grey-200 transition-all">Cash out</button>
+                  </div>
+                </div>
+
+                <div id="s6-win" class="hidden">
+                  <div class="rounded-xl bg-pwc-orange-50 border border-pwc-orange-100 p-5">
+                    <div class="flex items-center gap-4">
+                      <div class="h-12 w-12 rounded-xl bg-pwc-orange-100 flex items-center justify-center shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-orange-500"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
+                      </div>
+                      <div>
+                        <p class="text-base font-semibold text-black">Winner!</p>
+                        <p class="text-sm text-pwc-grey-600">+$85.20 credits</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200">
+                  <div class="flex items-center gap-4">
+                    <div class="h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                    </div>
+                    <div>
+                      <p class="text-sm font-semibold text-black">Play responsibly</p>
+                      <p class="text-sm text-pwc-grey-600" id="s6-reminder">Take breaks when you need them</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        </div>
+        
+        <!-- Screen shine -->
+<div class="absolute inset-0 pointer-events-none z-20 rounded-[48px] overflow-hidden">
+  <div class="absolute -top-[300px] -left-[100px] w-[150px] h-[600px] bg-gradient-to-b from-transparent via-white/20 to-transparent rotate-[30deg]"></div>
+</div>
+        
+      </div>
+    </div>
+  </div>
+  
+<!-- Frame reflection/shine -->
+  <div class="absolute inset-0 rounded-[60px] bg-gradient-to-tr from-transparent via-white/10 to-white/20 pointer-events-none"></div>
+  
+  <!-- Dramatic diagonal shine -->
+  <div class="absolute inset-0 rounded-[60px] overflow-hidden pointer-events-none">
+    <div class="absolute -top-[200px] -left-[100px] w-[80px] h-[400px] bg-gradient-to-b from-transparent via-white/40 to-transparent rotate-[25deg]"></div>
+  </div>
+</div>
+
+    </div>
+
+    <script>
+      var currentScreen = 1;
+      var isPlaying = false;
+      var playbackTimeout = null;
+      var stageTimeouts = [];
+      var depositAmount = 100;
+      
+      var screenDurations = {
+        1: 12000,
+        2: 14000,
+        3: 12000,
+        4: 10000,
+        5: 12000,
+        6: 14000
+      };
+
+      function clearStageTimeouts() {
+        stageTimeouts.forEach(function(t) { clearTimeout(t); });
+        stageTimeouts = [];
+        if (playbackTimeout) {
+          clearTimeout(playbackTimeout);
+          playbackTimeout = null;
+        }
+      }
+
+      function pauseAndHandle() {
+        if (isPlaying) {
+          pausePlayback();
+        }
+      }
+
+      function handleManualAction(screen, action) {
+        pauseAndHandle();
+        
+        if (screen === 1) {
+          if (action === 'submit') {
+            document.getElementById('s1-email').value = 'j.smith@email.com';
+            document.getElementById('s1-cta-text').textContent = 'Creating...';
+            document.getElementById('s1-cta-arrow').classList.add('hidden');
+            document.getElementById('s1-cta-spinner').classList.remove('hidden');
+            setTimeout(function() {
+              document.getElementById('s1-cta-text').textContent = 'Account created';
+              document.getElementById('s1-cta-spinner').classList.add('hidden');
+              document.getElementById('s1-confirmation').classList.remove('hidden');
+              document.getElementById('s1-confirmation').classList.add('fade-in');
+            }, 1500);
+          } else if (action === 'next') {
+            goToScreen(2);
+          }
+        } else if (screen === 2) {
+          if (action === 'back') {
+            goToScreen(1);
+          } else if (action === 'selectId') {
+            document.getElementById('s2-licence-btn').classList.add('bg-pwc-orange-50', 'border-pwc-orange-200');
+            document.getElementById('s2-id-selection').classList.add('hidden');
+            document.getElementById('s2-scanning').classList.remove('hidden');
+          } else if (action === 'scanned') {
+            document.getElementById('s2-scanning').classList.add('hidden');
+            document.getElementById('s2-verifying').classList.remove('hidden');
+          } else if (action === 'verified') {
+            document.getElementById('s2-exclusion-check').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500 shrink-0"><path d="M20 6 9 17l-5-5"></path></svg><span class="text-base text-pwc-grey-600">No exclusions found</span>';
+            document.getElementById('s2-verifying').classList.add('hidden');
+            document.getElementById('s2-verified').classList.remove('hidden');
+          } else if (action === 'next') {
+            goToScreen(3);
+          }
+        } else if (screen === 3) {
+          if (action === 'back') {
+            goToScreen(2);
+          } else if (action === 'selectBank') {
+            document.getElementById('s3-bank-1').classList.add('bg-pwc-orange-50', 'border-pwc-orange-200');
+            document.getElementById('s3-bank-selection').classList.add('hidden');
+            document.getElementById('s3-connecting').classList.remove('hidden');
+          } else if (action === 'showAccounts') {
+            document.getElementById('s3-connecting').classList.add('hidden'); document.getElementById('s3-accounts').classList.remove('hidden');
+          } else if (action === 'selectAccount') {
+            document.getElementById('s3-account-1').classList.add('bg-pwc-orange-50', 'border-pwc-orange-200');
+            document.getElementById('s3-accounts').classList.add('hidden');
+            document.getElementById('s3-connected').classList.remove('hidden');
+          } else if (action === 'next') {
+            goToScreen(4);
+          }
+        } else if (screen === 4) {
+          if (action === 'back') {
+            goToScreen(3);
+          } else if (action === 'confirm') {
+            document.getElementById('s4-confirmed').classList.remove('hidden');
+            document.getElementById('s4-confirmed').classList.add('fade-in');
+            document.getElementById('s4-complete-btn').textContent = 'Continue';
+            document.getElementById('s4-complete-btn').onclick = function() { handleManualAction(4, 'next'); };
+          } else if (action === 'next') {
+            goToScreen(5);
+          }
+        } else if (screen === 5) {
+          if (action === 'back') {
+            goToScreen(4);
+          } else if (action === 'addFunds') {
+            document.getElementById('s5-add-funds-modal').classList.remove('hidden');
+            document.getElementById('s5-add-funds-modal').classList.add('fade-in');
+          } else if (action === 'select20' || action === 'select50' || action === 'select100') {
+            depositAmount = action === 'select20' ? 20 : (action === 'select50' ? 50 : 100);
+            document.getElementById('s5-add-funds-modal').classList.add('hidden');
+            document.getElementById('s5-processing').classList.remove('hidden');
+            document.getElementById('s5-processing-amount').textContent = '$' + depositAmount + '.00 from Greenstone';
+          } else if (action === 'deposited') {
+            document.getElementById('s5-processing').classList.add('hidden');
+            document.getElementById('s5-deposit-complete').classList.remove('hidden');
+            document.getElementById('s5-deposit-complete').classList.add('fade-in');
+            document.getElementById('s5-deposit-amount').textContent = '+$' + depositAmount + '.00 added';
+            document.getElementById('s5-balance').textContent = '$' + depositAmount + '.00';
+            document.getElementById('s5-remaining').textContent = '$' + (200 - depositAmount) + '.00';
+            document.getElementById('s5-activity').classList.add('hidden');
+            document.getElementById('s5-transaction').classList.remove('hidden');
+            document.getElementById('s5-transaction-amount').textContent = '+$' + depositAmount + '.00';
+            document.getElementById('s5-scan-btn').disabled = false;
+            document.getElementById('s5-scan-btn').classList.remove('bg-pwc-grey-100', 'text-pwc-grey-400');
+            document.getElementById('s5-scan-btn').classList.add('bg-pwc-orange-500', 'text-white', 'hover:bg-pwc-orange-400');
+            document.getElementById('s5-scan-text').textContent = 'Scan to connect';
+          } else if (action === 'next') {
+            goToScreen(6);
+          }
+        } else if (screen === 6) {
+          if (action === 'back') {
+            goToScreen(5);
+          } else if (action === 'scanned') {
+            document.getElementById('s6-scanning').classList.add('hidden');
+            document.getElementById('s6-connecting').classList.remove('hidden');
+          } else if (action === 'connected') {
+            document.getElementById('s6-auth-check').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500 shrink-0"><path d="M20 6 9 17l-5-5"></path></svg><span class="text-base text-pwc-grey-600">Authenticated</span>';
+            document.getElementById('s6-connecting').classList.add('hidden');
+            document.getElementById('s6-active').classList.remove('hidden');
+            document.getElementById('s6-active').classList.add('fade-in');
+          } else if (action === 'cashout') {
+            document.getElementById('s6-win').classList.remove('hidden');
+            document.getElementById('s6-win').classList.add('fade-in');
+            document.getElementById('s6-credits').textContent = '$185.20';
+          }
+        }
+      }
+
+      function updateSlider(type) {
+        pauseAndHandle();
+        if (type === 'daily') {
+          var val = document.getElementById('s4-daily-slider').value;
+          document.getElementById('s4-daily-value').textContent = '$' + val;
+        } else if (type === 'time') {
+          var val = parseInt(document.getElementById('s4-time-slider').value);
+          var hours = Math.floor(val / 60);
+          var mins = val % 60;
+          var display = hours > 0 ? (hours + ' hr' + (mins > 0 ? ' ' + mins + ' min' : '')) : (mins + ' min');
+          document.getElementById('s4-time-value').textContent = display;
+        } else if (type === 'weekly') {
+          var val = document.getElementById('s4-weekly-slider').value;
+          document.getElementById('s4-weekly-value').textContent = '$' + val;
+        }
+      }
+
+      function goToScreen(num) {
+        document.getElementById('screen-' + currentScreen).classList.remove('active');
+        document.getElementById('screen-' + currentScreen).classList.add('hidden');
+        document.getElementById('desc-' + currentScreen).style.opacity = '0';
+        document.getElementById('desc-' + currentScreen).style.pointerEvents = 'none';
+
+        document.getElementById('screen-' + num).classList.remove('hidden');
+        document.getElementById('screen-' + num).classList.add('active');
+        document.getElementById('desc-' + num).style.opacity = '1';
+        document.getElementById('desc-' + num).style.pointerEvents = 'auto';
+
+        for (var i = 1; i <= 6; i++) {
+          var step = document.getElementById('step-' + i);
+          step.classList.remove('active', 'completed');
+          if (i < num) step.classList.add('completed');
+          else if (i === num) step.classList.add('active');
+        }
+
+        currentScreen = num;
+        document.getElementById('playback-status').textContent = 'Step ' + num + ' of 6';
+      }
+
+      function jumpToScreen(num) {
+        pauseAndHandle();
+        resetScreenState(currentScreen);
+        goToScreen(num);
+        resetScreenState(num);
+      }
+
+      function togglePlayback() {
+        if (isPlaying) pausePlayback();
+        else startPlayback();
+      }
+      
+      function startPlayback() {
+        isPlaying = true;
+        document.getElementById('play-icon').classList.add('hidden');
+        document.getElementById('pause-icon').classList.remove('hidden');
+        playScreen(currentScreen);
+      }
+      
+      function pausePlayback() {
+        isPlaying = false;
+        document.getElementById('play-icon').classList.remove('hidden');
+        document.getElementById('pause-icon').classList.add('hidden');
+        clearStageTimeouts();
+        document.getElementById('playback-status').textContent = 'Paused — Step ' + currentScreen + ' of 6';
+      }
+      
+      function resetPlayback() {
+        pausePlayback();
+        resetAllScreens();
+        goToScreen(1);
+        document.getElementById('playback-status').textContent = 'Click to start tour';
+      }
+
+      function resetScreenState(num) {
+        if (num === 1) {
+          document.getElementById('s1-email').value = '';
+          document.getElementById('s1-cta-text').textContent = 'Get started';
+          document.getElementById('s1-cta-arrow').classList.remove('hidden');
+          document.getElementById('s1-cta-spinner').classList.add('hidden');
+          document.getElementById('s1-confirmation').classList.add('hidden');
+        } else if (num === 2) {
+          document.getElementById('s2-id-selection').classList.remove('hidden');
+          document.getElementById('s2-scanning').classList.add('hidden');
+          document.getElementById('s2-verifying').classList.add('hidden');
+          document.getElementById('s2-verified').classList.add('hidden');
+          document.getElementById('s2-licence-btn').classList.remove('bg-pwc-orange-50', 'border-pwc-orange-200');
+          document.getElementById('s2-exclusion-check').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-grey-400 animate-spin shrink-0"><circle cx="12" cy="12" r="10" stroke-opacity="0.3"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg><span class="text-base text-pwc-grey-500">Checking exclusion registers...</span>';
+        } else if (num === 3) {
+          document.getElementById('s3-bank-selection').classList.remove('hidden');
+          document.getElementById('s3-connecting').classList.add('hidden');
+          document.getElementById('s3-accounts').classList.add('hidden');
+          document.getElementById('s3-connected').classList.add('hidden');
+          document.getElementById('s3-bank-1').classList.remove('bg-pwc-orange-50', 'border-pwc-orange-200');
+          document.getElementById('s3-account-1').classList.remove('bg-pwc-orange-50', 'border-pwc-orange-200');
+        } else if (num === 4) {
+          document.getElementById('s4-daily-slider').value = 50;
+          document.getElementById('s4-daily-value').textContent = '$50';
+          document.getElementById('s4-time-slider').value = 30;
+          document.getElementById('s4-time-value').textContent = '30 min';
+          document.getElementById('s4-weekly-slider').value = 100;
+          document.getElementById('s4-weekly-value').textContent = '$100';
+          document.getElementById('s4-confirmed').classList.add('hidden');
+          document.getElementById('s4-complete-btn').textContent = 'Confirm limits';
+          document.getElementById('s4-complete-btn').onclick = function() { handleManualAction(4, 'confirm'); };
+        } else if (num === 5) {
+          depositAmount = 100;
+          document.getElementById('s5-balance').textContent = '$0.00';
+          document.getElementById('s5-remaining').textContent = '$200.00';
+          document.getElementById('s5-add-funds-modal').classList.add('hidden');
+          document.getElementById('s5-processing').classList.add('hidden');
+          document.getElementById('s5-deposit-complete').classList.add('hidden');
+          document.getElementById('s5-transaction').classList.add('hidden');
+          document.getElementById('s5-activity').classList.remove('hidden');
+          document.getElementById('s5-scan-btn').disabled = true;
+          document.getElementById('s5-scan-btn').classList.add('bg-pwc-grey-100', 'text-pwc-grey-400');
+          document.getElementById('s5-scan-btn').classList.remove('bg-pwc-orange-500', 'text-white', 'hover:bg-pwc-orange-400');
+          document.getElementById('s5-scan-text').textContent = 'Add funds to continue';
+        } else if (num === 6) {
+          document.getElementById('s6-scanning').classList.remove('hidden');
+          document.getElementById('s6-connecting').classList.add('hidden');
+          document.getElementById('s6-active').classList.add('hidden');
+          document.getElementById('s6-win').classList.add('hidden');
+          document.getElementById('s6-credits').textContent = '$100.00';
+          document.getElementById('s6-time').textContent = '0 min';
+          document.getElementById('s6-time-bar').style.width = '0%';
+          document.getElementById('s6-remaining').textContent = '2 hr';
+          document.getElementById('s6-auth-check').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-grey-400 animate-spin shrink-0"><circle cx="12" cy="12" r="10" stroke-opacity="0.3"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg><span class="text-base text-pwc-grey-500">Authenticating...</span>';
+        }
+      }
+
+      function resetAllScreens() {
+        for (var i = 1; i <= 6; i++) resetScreenState(i);
+      }
+
+      function playScreen(num) {
+        if (!isPlaying) return;
+        resetScreenState(num);
+        document.getElementById('playback-status').textContent = 'Playing — Step ' + num + ' of 6';
+        
+        if (num === 1) playScreen1();
+        else if (num === 2) playScreen2();
+        else if (num === 3) playScreen3();
+        else if (num === 4) playScreen4();
+        else if (num === 5) playScreen5();
+        else if (num === 6) playScreen6();
+      }
+
+      function scheduleNext(num) {
+        playbackTimeout = setTimeout(function() {
+          if (!isPlaying) return;
+          if (num < 6) {
+            goToScreen(num + 1);
+            playScreen(num + 1);
+          } else {
+            pausePlayback();
+            document.getElementById('playback-status').textContent = 'Tour complete';
+          }
+        }, screenDurations[num]);
+      }
+
+      function playScreen1() {
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s1-email').value = 'j.smith';
+        }, 1500));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s1-email').value = 'j.smith@email.com';
+        }, 3000));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s1-cta-text').textContent = 'Creating...';
+          document.getElementById('s1-cta-arrow').classList.add('hidden');
+          document.getElementById('s1-cta-spinner').classList.remove('hidden');
+        }, 5000));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s1-cta-text').textContent = 'Account created';
+          document.getElementById('s1-cta-spinner').classList.add('hidden');
+          document.getElementById('s1-confirmation').classList.remove('hidden');
+          document.getElementById('s1-confirmation').classList.add('fade-in');
+        }, 7500));
+        scheduleNext(1);
+      }
+
+      function playScreen2() {
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s2-licence-btn').classList.add('bg-pwc-orange-50', 'border-pwc-orange-200');
+        }, 1500));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s2-id-selection').classList.add('hidden');
+          document.getElementById('s2-scanning').classList .remove('hidden');
+        }, 2500));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s2-scanning').classList.add('hidden');
+          document.getElementById('s2-verifying').classList.remove('hidden');
+        }, 5500));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s2-exclusion-check').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500 shrink-0"><path d="M20 6 9 17l-5-5"></path></svg><span class="text-base text-pwc-grey-600">No exclusions found</span>';
+        }, 9000));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s2-verifying').classList.add('hidden');
+          document.getElementById('s2-verified').classList.remove('hidden');
+        }, 11000));
+        scheduleNext(2);
+      }
+
+      function playScreen3() {
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s3-bank-1').classList.add('bg-pwc-orange-50', 'border-pwc-orange-200');
+        }, 1500));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s3-bank-selection').classList.add('hidden');
+          document.getElementById('s3-connecting').classList.remove('hidden');
+        }, 2500));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s3-connecting').classList.add('hidden');
+          document.getElementById('s3-accounts').classList.remove('hidden');
+        }, 5000));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s3-account-1').classList.add('bg-pwc-orange-50', 'border-pwc-orange-200');
+        }, 6500));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s3-accounts').classList.add('hidden');
+          document.getElementById('s3-connected').classList.remove('hidden');
+        }, 8500));
+        scheduleNext(3);
+      }
+
+      function playScreen4() {
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s4-daily-slider').value = 200;
+          document.getElementById('s4-daily-value').textContent = '$200';
+        }, 1500));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s4-time-slider').value = 120;
+          document.getElementById('s4-time-value').textContent = '2 hr';
+        }, 3000));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s4-weekly-slider').value = 500;
+          document.getElementById('s4-weekly-value').textContent = '$500';
+        }, 4500));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s4-confirmed').classList.remove('hidden');
+          document.getElementById('s4-confirmed').classList.add('fade-in');
+          document.getElementById('s4-complete-btn').textContent = 'Continue';
+          document.getElementById('s4-complete-btn').onclick = function() { handleManualAction(4, 'next'); };
+        }, 7000));
+        scheduleNext(4);
+      }
+
+      function playScreen5() {
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s5-add-funds-modal').classList.remove('hidden');
+          document.getElementById('s5-add-funds-modal').classList.add('fade-in');
+        }, 2000));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s5-add-funds-modal').classList.add('hidden');
+          document.getElementById('s5-processing').classList.remove('hidden');
+        }, 4000));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s5-processing').classList.add('hidden');
+          document.getElementById('s5-deposit-complete').classList.remove('hidden');
+          document.getElementById('s5-deposit-complete').classList.add('fade-in');
+          document.getElementById('s5-balance').textContent = '$100.00';
+          document.getElementById('s5-remaining').textContent = '$100.00';
+          document.getElementById('s5-activity').classList.add('hidden');
+          document.getElementById('s5-transaction').classList.remove('hidden');
+        }, 6500));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s5-scan-btn').disabled = false;
+          document.getElementById('s5-scan-btn').classList.remove('bg-pwc-grey-100', 'text-pwc-grey-400');
+          document.getElementById('s5-scan-btn').classList.add('bg-pwc-orange-500', 'text-white');
+          document.getElementById('s5-scan-text').textContent = 'Scan to connect';
+        }, 8500));
+        scheduleNext(5);
+      }
+
+      function playScreen6() {
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s6-scanning').classList.add('hidden');
+          document.getElementById('s6-connecting').classList.remove('hidden');
+        }, 2000));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s6-auth-check').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500 shrink-0"><path d="M20 6 9 17l-5-5"></path></svg><span class="text-base text-pwc-grey-600">Authenticated</span>';
+        }, 4000));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s6-connecting').classList.add('hidden');
+          document.getElementById('s6-active').classList.remove('hidden');
+          document.getElementById('s6-active').classList.add('fade-in');
+        }, 6000));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s6-time').textContent = '5 min';
+          document.getElementById('s6-time-bar').style.width = '4%';
+          document.getElementById('s6-remaining').textContent = '1 hr 55 min';
+        }, 9000));
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s6-win').classList.remove('hidden');
+          document.getElementById('s6-win').classList.add('fade-in');
+          document.getElementById('s6-credits').textContent = '$185.20';
+        }, 11500));
+        scheduleNext(6);
+      }
+    </script>
+ <div class="fixed bottom-0 left-0 right-0 bg-pwc-grey-200 text-pwc-grey-600 text-center py-2 px-4">
+  <p class="text-xs font-helvetica">Prototype for demonstration purposes only — not a real application. Contact george.prowse@au.pwc.com to recreate or edit this file. </p>
+</div>
+ </body>
+</html>
