@@ -41,7 +41,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 
 /* Sidebar */
 .sidebar{width:224px;flex-shrink:0;background:#fff;border-right:1px solid var(--g200);position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column}
-.sidebar-logo{padding:24px 24px 16px;border-bottom:1px solid var(--g200);display:flex;align-items:center;gap:12px}
+.sidebar-logo{padding:16px 20px 12px;border-bottom:1px solid var(--g200);display:flex;align-items:center;gap:10px}
 .sidebar-label{font-size:11px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.08em;padding:20px 24px 6px}
 .nav-link{display:flex;align-items:center;gap:10px;padding:9px 24px;font-size:13px;color:var(--g500);text-decoration:none;border-left:2px solid transparent;transition:all .15s ease;cursor:pointer}
 .nav-link:hover{color:var(--black);background:var(--g100)}
@@ -345,6 +345,8 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 /* ── CHART CONTAINERS ── */
 /* Every chart card is fixed height so they align in grid */
 .chart-card{background:#fff;border:1px solid var(--g200);padding:20px;display:flex;flex-direction:column}
+/* Recharts mount targets — ensure they always have enough height for ResponsiveContainer */
+[id^="rc-"]{min-height:310px}
 .chart-title{font-size:14px;font-weight:600;margin-bottom:4px}
 .chart-sub{font-size:12px;color:var(--g500);margin-bottom:16px}
 .chart-area{flex:1;position:relative;min-height:0}
@@ -467,7 +469,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 [data-theme="dark"] .search-results{background:#1e1e1e;border-color:#333}
 [data-theme="dark"] .search-result:hover{background:#2a2a2a}
 [data-theme="dark"] .search-result-name{color:#e8e8e8}
-[data-theme="dark"] .nav-link.active,.nav-link-head.active{background:#3a1505}
+[data-theme="dark"] .nav-link.active,[data-theme="dark"] .nav-link-head.active{background:#3a1505}
 [data-theme="dark"] .topbar-title{color:#e8e8e8}
 [data-theme="dark"] .section-desc{color:#888}
 [data-theme="dark"] .sub-title{color:#777}
@@ -479,9 +481,9 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 [data-theme="dark"] .copy-btn:hover{background:#2a2a2a;color:#e8e8e8}
 [data-theme="dark"] .chart-cat-count{background:#2a2a2a;color:#888}
 </style>
-<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
 </head>
 <body>
 <div class="app">
@@ -489,7 +491,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 <!-- ═══ SIDEBAR ═══ -->
 <nav class="sidebar" id="sidebar">
   <div class="sidebar-logo">
-    <svg width="152" height="73" viewBox="30 143 440 212" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="80" height="38" viewBox="30 143 440 212" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M355.041 233.765C339.717 236.206 331.925 247.425 331.925 267.214C331.925 287.003 342.331 300.403 358.334 300.403C365.762 300.403 372.508 297.962 386.732 291.054V307.155C369.682 314.894 359.642 317.335 345.94 317.335C331.088 317.335 320.629 313.44 312.052 304.766C303.319 296.092 298.926 284.561 298.926 271.784C298.926 243.322 320.158 224.104 351.118 224.104C371.67 224.104 385.842 233.453 385.842 247.165C385.842 255.995 379.252 262.072 369.473 262.072C364.454 262.072 360.323 260.773 355.041 257.709V233.869V233.765ZM279.472 271.732C293.173 254.54 298.037 247.632 298.037 239.166C298.037 230.7 291.343 224 282.348 224C276.805 224 271.837 226.597 269.431 229.298V264.305L246.944 294.066V226.234H225.555L190.045 284.717V226.234H177.756L145.489 234.024V242.231L163.061 243.997V315.725H185.809L219.907 260.098V315.725H244.8L279.42 271.732H279.472ZM77.6086 244.464C82.8381 243.841 85.4532 243.529 87.9111 243.529C102.763 243.529 110.764 253.294 110.764 271.732C110.764 293.495 100.933 304.818 82.6291 304.818C81.1125 304.818 80.0143 304.818 77.6086 304.714V244.464ZM77.6086 314.894C83.518 315.569 89.2708 315.777 92.7223 315.777C123.211 315.777 142.508 296.404 142.508 267.629C142.508 242.75 128.022 224.727 108.359 224.727C99.8346 224.727 94.1867 226.441 77.6086 236.258V224.26H68.4046L33 234.959V243.581H47.6429V343.928L34.4643 347.2V355.511H92.304V347.2L77.5564 343.928V314.894H77.6086Z" fill="currentColor"/>
       <path d="M338.568 199.173H242.029L258.45 172.112H354.99L338.568 199.173ZM468 145H371.463L355.042 172.06H451.579L468 145Z" fill="#FD5108"/>
     </svg>
@@ -2120,18 +2122,10 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
         </div>
       </div>
       <div class="demo-card col-4">
-        <div class="demo-card-label">White — Reversed</div>
+        <div class="demo-card-label">Orange — On Black</div>
         <div style="padding:28px 32px;background:#000;display:flex;align-items:center;justify-content:center;margin-top:8px">
           <svg width="192" height="40" viewBox="0 0 342 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M149.2854,72H.12l21.7146-36h149.1654l-21.7146,36ZM341.88,0h-149.1654l-21.7146,36h149.1654L341.88,0Z" fill="#fff"/>
-          </svg>
-        </div>
-      </div>
-      <div class="demo-card col-4">
-        <div class="demo-card-label">Black — On Light</div>
-        <div style="padding:28px 32px;background:var(--g100);border:1px solid var(--g200);display:flex;align-items:center;justify-content:center;margin-top:8px">
-          <svg width="192" height="40" viewBox="0 0 342 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M149.2854,72H.12l21.7146-36h149.1654l-21.7146,36ZM341.88,0h-149.1654l-21.7146,36h149.1654L341.88,0Z" fill="#000"/>
+            <path d="M149.2854,72H.12l21.7146-36h149.1654l-21.7146,36ZM341.88,0h-149.1654l-21.7146,36h149.1654L341.88,0Z" fill="#FD5108"/>
           </svg>
         </div>
       </div>
@@ -6805,437 +6799,21 @@ document.addEventListener('keydown', e => {
     'rc-bar-simple':       ChartBarSimple,
   };
 
-  document.addEventListener('DOMContentLoaded', function() {
+  function mountCharts() {
     Object.keys(CHART_MAP).forEach(function(id) {
-      const el = document.getElementById(id);
-      if (el) ReactDOM.createRoot(el).render(h(CHART_MAP[id]));
+      var el = document.getElementById(id);
+      if (el) {
+        try { ReactDOM.createRoot(el).render(h(CHART_MAP[id])); } catch(e) { console.warn('Chart mount failed:', id, e); }
+      }
     });
-  });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountCharts);
+  } else {
+    mountCharts();
+  }
 
 })();
-
-</script>
-
-<!-- ════════════════════ CHAT + FOUNDATIONS ════════════════════ -->
-<section class="section" id="chat">
-  <div class="section-eyebrow"><div class="section-eyebrow-line"></div><div class="section-eyebrow-text">10 — AI</div></div>
-  <div class="section-title">Chat &amp; Virtual Assistant</div>
-  <div class="section-desc">FAB opens the chat panel. AI messages display icon above text. Type and press Enter. Typing indicator shows before AI replies.</div>
-  <div class="grid g2" style="gap:16px">
-    <div>
-      <div style="font-size:11px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">FAB — Trigger Button</div>
-      <div style="height:140px;background:var(--g1);border:1px solid var(--g2);display:flex;align-items:center;justify-content:center;position:relative">
-        <button class="fab" aria-label="Open assistant">
-          <svg width="22" height="22" style="color:#fff"><use href="#ic-spark"/></svg>
-        </button>
-        <span style="position:absolute;bottom:12px;font-size:11px;color:var(--g4)">Click to open chat panel</span>
-      </div>
-    </div>
-    <div>
-      <div style="font-size:11px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Chat Panel</div>
-      <div class="chat-panel">
-        <div class="chat-hd">
-          <div class="chat-hd-left">
-            <div class="chat-hd-avatar"><svg width="18" height="18" style="color:#fff"><use href="#ic-spark"/></svg></div>
-            <div>
-              <div style="font-size:13px;font-weight:700">PwC Assistant</div>
-              <div class="chat-hd-status"><span class="status-dot"></span>Online — responds instantly</div>
-            </div>
-          </div>
-          <div style="display:flex;gap:8px">
-            <button class="btn-icon" style="border:none;width:28px;height:28px"><svg width="14" height="14"><use href="#ic-morev"/></svg></button>
-            <button class="btn-icon" style="border:none;width:28px;height:28px"><svg width="14" height="14"><use href="#ic-x"/></svg></button>
-          </div>
-        </div>
-        <div class="chat-msgs" id="chatMsgs">
-          <div class="ai-msg">
-            <svg width="14" height="14" style="color:var(--o5)"><use href="#ic-spark"/></svg>
-            <div class="ai-bubble">Hello! I'm your PwC design system assistant. How can I help you build better digital experiences today?</div>
-          </div>
-          <div class="user-msg"><div class="user-bubble">What's the primary button spec?</div></div>
-          <div class="ai-msg">
-            <svg width="14" height="14" style="color:var(--o5)"><use href="#ic-spark"/></svg>
-            <div class="ai-bubble">Primary buttons use <strong>Orange 300 (#FFAA72)</strong> background with black text — never Orange 500. This ensures WCAG AA compliance. Padding: 10px 22px, font-weight: 600, no border-radius (sharp corners).</div>
-          </div>
-        </div>
-        <div class="chat-inp-wrap">
-          <div class="chat-inp-inner">
-            <svg width="16" height="16" style="color:var(--g4)"><use href="#ic-clip"/></svg>
-            <input class="chat-inp" id="chatInp" placeholder="Ask about the design system..." onkeydown="sendChat(event)"/>
-            <svg width="16" height="16" style="color:var(--g4)"><use href="#ic-mic"/></svg>
-            <button class="chat-send" onclick="sendChatBtn()"><svg width="14" height="14" style="color:#fff"><use href="#ic-send"/></svg></button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ════════════════════ FOUNDATIONS ════════════════════ -->
-<section class="section" id="foundations">
-  <div class="section-eyebrow"><div class="section-eyebrow-line"></div><div class="section-eyebrow-text">11 — Tokens</div></div>
-  <div class="section-title">Design Foundations</div>
-  <div class="section-desc">Colour tokens, typographic scale, spacing system, and shape principles that underpin every component in this catalogue.</div>
-
-  <div class="sub">
-    <div class="sub-header"><div><div class="sub-title">Brand Colours</div></div></div>
-    <div class="swatch-grid">
-      <div class="swatch"><div class="swatch-col" style="background:#FD5108"></div><div class="swatch-info"><div class="swatch-name">Orange 500</div><div class="swatch-hex">#FD5108</div></div></div>
-      <div class="swatch"><div class="swatch-col" style="background:#FFAA72"></div><div class="swatch-info"><div class="swatch-name">Orange 300</div><div class="swatch-hex">#FFAA72</div></div></div>
-      <div class="swatch"><div class="swatch-col" style="background:#FFE8D4"></div><div class="swatch-info"><div class="swatch-name">Orange 100</div><div class="swatch-hex">#FFE8D4</div></div></div>
-      <div class="swatch"><div class="swatch-col" style="background:#000"></div><div class="swatch-info"><div class="swatch-name">Black</div><div class="swatch-hex">#000000</div></div></div>
-      <div class="swatch"><div class="swatch-col" style="background:#fff;border:1px solid #DFE3E6"></div><div class="swatch-info"><div class="swatch-name">White</div><div class="swatch-hex">#FFFFFF</div></div></div>
-      <div class="swatch"><div class="swatch-col" style="background:#EEEFF1"></div><div class="swatch-info"><div class="swatch-name">Grey 100</div><div class="swatch-hex">#EEEFF1</div></div></div>
-      <div class="swatch"><div class="swatch-col" style="background:#DFE3E6"></div><div class="swatch-info"><div class="swatch-name">Grey 200</div><div class="swatch-hex">#DFE3E6</div></div></div>
-    </div>
-    <div class="swatch-grid" style="margin-top:10px">
-      <div class="swatch"><div class="swatch-col" style="background:#CBD1D6"></div><div class="swatch-info"><div class="swatch-name">Grey 300</div><div class="swatch-hex">#CBD1D6</div></div></div>
-      <div class="swatch"><div class="swatch-col" style="background:#B5BCC4"></div><div class="swatch-info"><div class="swatch-name">Grey 400</div><div class="swatch-hex">#B5BCC4</div></div></div>
-      <div class="swatch"><div class="swatch-col" style="background:#A1A8B3"></div><div class="swatch-info"><div class="swatch-name">Grey 500</div><div class="swatch-hex">#A1A8B3</div></div></div>
-      <div class="swatch"><div class="swatch-col" style="background:#22C55E"></div><div class="swatch-info"><div class="swatch-name">Success</div><div class="swatch-hex">#22C55E</div></div></div>
-      <div class="swatch"><div class="swatch-col" style="background:#EAB308"></div><div class="swatch-info"><div class="swatch-name">Warning</div><div class="swatch-hex">#EAB308</div></div></div>
-      <div class="swatch"><div class="swatch-col" style="background:#EF4444"></div><div class="swatch-info"><div class="swatch-name">Error</div><div class="swatch-hex">#EF4444</div></div></div>
-      <div class="swatch"><div class="swatch-col" style="background:#3B82F6"></div><div class="swatch-info"><div class="swatch-name">Info</div><div class="swatch-hex">#3B82F6</div></div></div>
-    </div>
-  </div>
-
-  <div class="sub">
-    <div class="sub-header"><div><div class="sub-title">Typography Scale</div></div></div>
-    <div style="border:1px solid var(--g2);background:#fff">
-      <div class="type-row"><div class="type-spec">H1 · 32px · 700</div><div class="type-sample" style="font-size:32px;font-weight:700;letter-spacing:-.03em">Heading One</div></div>
-      <div class="type-row"><div class="type-spec">H2 · 24px · 700</div><div class="type-sample" style="font-size:24px;font-weight:700;letter-spacing:-.02em">Heading Two</div></div>
-      <div class="type-row"><div class="type-spec">H3 · 18px · 600</div><div class="type-sample" style="font-size:18px;font-weight:600">Heading Three</div></div>
-      <div class="type-row"><div class="type-spec">H4 · 16px · 600</div><div class="type-sample" style="font-size:16px;font-weight:600">Heading Four</div></div>
-      <div class="type-row"><div class="type-spec">Body · 14px · 400</div><div class="type-sample" style="font-size:14px;font-weight:400;line-height:1.7;color:var(--g5)">The quick brown fox jumps over the lazy dog. Body text is set in system-ui at 14px for optimal on-screen legibility across all devices and resolutions.</div></div>
-      <div class="type-row"><div class="type-spec">Label · 13px · 500</div><div class="type-sample" style="font-size:13px;font-weight:500">Form Label · Table Header · Navigation</div></div>
-      <div class="type-row"><div class="type-spec">Caption · 12px · 400</div><div class="type-sample" style="font-size:12px;font-weight:400;color:var(--g5)">Helper text, hints, and supporting captions beneath inputs</div></div>
-      <div class="type-row"><div class="type-spec">Micro · 11px · 600</div><div class="type-sample" style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g4)">SECTION LABEL · EYEBROW TEXT · TABLE HEADERS</div></div>
-    </div>
-  </div>
-
-  <div class="grid g2" style="gap:16px">
-    <div>
-      <div class="sub-header"><div><div class="sub-title">Spacing Scale (8px base)</div></div></div>
-      <div class="space-demo">
-        <div><div class="space-block" style="width:4px;height:4px"></div><div class="space-meta">xs 4px</div></div>
-        <div><div class="space-block" style="width:8px;height:8px"></div><div class="space-meta">sm 8px</div></div>
-        <div><div class="space-block" style="width:12px;height:12px"></div><div class="space-meta">md 12px</div></div>
-        <div><div class="space-block" style="width:16px;height:16px"></div><div class="space-meta">lg 16px</div></div>
-        <div><div class="space-block" style="width:24px;height:24px"></div><div class="space-meta">xl 24px</div></div>
-        <div><div class="space-block" style="width:32px;height:32px"></div><div class="space-meta">2xl 32px</div></div>
-        <div><div class="space-block" style="width:48px;height:48px"></div><div class="space-meta">3xl 48px</div></div>
-      </div>
-    </div>
-    <div>
-      <div class="sub-header"><div><div class="sub-title">Shape Principles</div></div></div>
-      <div class="col" style="gap:12px">
-        <div style="display:flex;gap:12px;align-items:center">
-          <div style="width:56px;height:32px;background:var(--o3)"></div>
-          <div><div style="font-size:13px;font-weight:600">Branded — Sharp (0px)</div><div style="font-size:11px;color:var(--g5)">Buttons, cards, badges, modals, panels</div></div>
-        </div>
-        <div style="display:flex;gap:12px;align-items:center">
-          <div style="width:56px;height:32px;background:var(--g1);border:1.5px solid var(--g2);border-radius:4px"></div>
-          <div><div style="font-size:13px;font-weight:600">Functional — 4px radius</div><div style="font-size:11px;color:var(--g5)">Inputs, dropdowns, search, tooltips</div></div>
-        </div>
-        <div style="display:flex;gap:12px;align-items:center">
-          <div style="width:32px;height:32px;background:var(--o1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--o5)">SC</div>
-          <div><div style="font-size:13px;font-weight:600">Circle — 50%</div><div style="font-size:11px;color:var(--g5)">Avatars, toggle thumbs, spinners, confirm icons</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-</div><!-- /content -->
-</div><!-- /main -->
-</div><!-- /shell -->
-
-<!-- ════ OVERLAYS ════ -->
-<div id="m1" style="display:none" class="overlay" onclick="closeM('m1',event)">
-  <div class="modal">
-    <div class="mh"><div class="mh-left"><div class="mh-title">Edit Project</div><div class="mh-sub">Digital Transformation Q3</div></div><button class="m-close" onclick="closeM('m1')"><svg width="18" height="18"><use href="#ic-x"/></svg></button></div>
-    <div class="mb"><div class="col" style="gap:14px">
-      <div class="field"><label class="lbl">Project Name</label><input class="inp" value="Digital Transformation Q3"/></div>
-      <div class="grid g2" style="gap:10px">
-        <div class="field"><label class="lbl">Service Line</label><select class="inp"><option>Consulting</option><option>Advisory</option></select></div>
-        <div class="field"><label class="lbl">Priority</label><select class="inp"><option>High</option><option>Medium</option></select></div>
-      </div>
-      <div class="field"><label class="lbl">Description</label><textarea class="inp inp-area" style="min-height:72px">Comprehensive digital modernisation across 14 business units.</textarea></div>
-    </div></div>
-    <div class="mf"><button class="btn btn-ghost btn-sm" onclick="closeM('m1')">Cancel</button><button class="btn btn-p btn-sm" onclick="closeM('m1');showToast('ok','Project updated','Changes saved successfully.')">Save Changes</button></div>
-  </div>
-</div>
-
-<div id="m2" style="display:none" class="overlay" onclick="closeM('m2',event)">
-  <div class="confirm">
-    <div class="confirm-icon-wrap"><svg width="22" height="22" style="color:var(--er)"><use href="#ic-warn"/></svg></div>
-    <div style="font-size:16px;font-weight:700;margin-bottom:8px">Delete Project?</div>
-    <p style="font-size:13px;color:var(--g5);line-height:1.7;margin-bottom:22px">This will permanently delete <strong>Digital Transformation Q3</strong> and all associated files, milestones, and comments. This action cannot be undone.</p>
-    <div style="display:flex;justify-content:flex-end;gap:10px">
-      <button class="btn btn-ghost btn-sm" onclick="closeM('m2')">Cancel</button>
-      <button class="btn btn-sm" style="background:var(--er);color:#fff;border:none;padding:7px 16px;font-weight:700;cursor:pointer" onclick="closeM('m2');showToast('er','Project deleted','Digital Transformation Q3 was removed.')">Delete Project</button>
-    </div>
-  </div>
-</div>
-
-<div id="drawerEl" style="display:none">
-  <div class="drawer-overlay" onclick="closeDrawer()"></div>
-  <div class="drawer">
-    <div class="dh"><span class="dh-title">Project Details</span><button class="m-close" onclick="closeDrawer()"><svg width="18" height="18"><use href="#ic-x"/></svg></button></div>
-    <div class="db"><div class="col" style="gap:14px">
-      <div class="field"><label class="lbl">Project Name</label><input class="inp" value="Digital Transformation Q3"/></div>
-      <div class="field"><label class="lbl">Owner</label><input class="inp" value="Sarah Chen — Partner"/></div>
-      <div class="field"><label class="lbl">Status</label>
-        <div class="sel-wrap" id="dsel">
-          <button class="sel-btn" id="dsel-btn" onclick="toggleSel('dsel')"><span id="dsel-val">Active</span><svg class="sel-chev" id="dsel-c" width="16" height="16"><use href="#ic-chev-d"/></svg></button>
-          <div class="sel-list" id="dsel-list" style="display:none">
-            <div class="sel-item sel" onclick="pickSel('dsel','Active')">Active<svg width="14" height="14" style="color:var(--o5)"><use href="#ic-check"/></svg></div>
-            <div class="sel-item" onclick="pickSel('dsel','On Hold')">On Hold</div>
-            <div class="sel-item" onclick="pickSel('dsel','Completed')">Completed</div>
-          </div>
-        </div>
-      </div>
-      <div class="field"><label class="lbl">Notes</label><textarea class="inp inp-area">Phase 2 commenced August 2024. Cloud migration on track.</textarea></div>
-    </div></div>
-    <div class="df"><button class="btn btn-ghost btn-sm" onclick="closeDrawer()">Cancel</button><button class="btn btn-p btn-sm" onclick="closeDrawer();showToast('ok','Saved','Project details updated.')">Save Changes</button></div>
-  </div>
-</div>
-
-<div id="toastStack" style="position:fixed;top:22px;right:22px;z-index:1000;display:flex;flex-direction:column;gap:8px;pointer-events:none"></div>
-
-<script>
-// ──────────────────────────────────────────────
-// SIDEBAR SCROLL SPY
-// ──────────────────────────────────────────────
-window.addEventListener('scroll',()=>{
-  const secs=document.querySelectorAll('.section');
-  const links=document.querySelectorAll('.sb-link');
-  let cur='';
-  secs.forEach(s=>{if(window.scrollY>=s.offsetTop-100)cur=s.id});
-  links.forEach(l=>{l.classList.toggle('active',l.getAttribute('href')==='#'+cur)});
-});
-
-// ──────────────────────────────────────────────
-// BUTTONS
-// ──────────────────────────────────────────────
-function simulateLoad(b){
-  b.querySelector('.btn-text').style.display='none';
-  const sp=b.querySelector('.btn-spin');sp.style.display='flex';b.disabled=true;
-  setTimeout(()=>{sp.style.display='none';b.querySelector('.btn-text').style.display='';b.disabled=false;showToast('ok','Done','Report generated successfully.');},2800);
-}
-
-// ──────────────────────────────────────────────
-// FORM CONTROLS
-// ──────────────────────────────────────────────
-function toggleSel(id){
-  const list=document.getElementById(id+'-list');
-  const chev=document.getElementById(id+'-c');
-  const btn=document.getElementById(id+'-btn');
-  const open=list.style.display!=='none';
-  document.querySelectorAll('.sel-list').forEach(l=>l.style.display='none');
-  document.querySelectorAll('.sel-chev').forEach(c=>c.classList.remove('open'));
-  document.querySelectorAll('.sel-btn').forEach(b=>b.classList.remove('open'));
-  if(!open){list.style.display='block';chev.classList.add('open');btn.classList.add('open');}
-}
-function pickSel(id,val){
-  document.getElementById(id+'-val').textContent=val;
-  document.getElementById(id+'-btn').classList.remove('placeholder','open');
-  document.getElementById(id+'-list').style.display='none';
-  document.getElementById(id+'-c').classList.remove('open');
-  document.querySelectorAll('#'+id+'-list .sel-item').forEach(i=>{
-    const isMatch=i.textContent.trim().startsWith(val);
-    i.classList.toggle('sel',isMatch);
-    if(isMatch&&!i.querySelector('svg')){const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.style.color='var(--o5)';s.setAttribute('width','14');s.setAttribute('height','14');s.innerHTML='<use href="#ic-check"/>';i.appendChild(s);}
-  });
-}
-document.addEventListener('click',e=>{if(!e.target.closest('.sel-wrap')){document.querySelectorAll('.sel-list').forEach(l=>l.style.display='none');document.querySelectorAll('.sel-chev').forEach(c=>c.classList.remove('open'));document.querySelectorAll('.sel-btn').forEach(b=>b.classList.remove('open'));}});
-
-function toggleCb(id){
-  const b=document.getElementById(id);const on=b.classList.toggle('on');
-  b.innerHTML=on?'<svg width="11" height="11" style="color:#fff"><use href="#ic-check"/></svg>':'';
-}
-const rbs=['rb1','rb2','rb3'];
-function pickRb(id){rbs.forEach(r=>{const el=document.getElementById(r);el.classList.toggle('on',r===id);});}
-
-function toggleTg(id){
-  const t=document.getElementById(id);const on=t.classList.toggle('on');
-  const lbl=id+'-l',sub=id+'-sub';
-  const name=document.getElementById(lbl).textContent;
-  document.getElementById(sub).textContent=on?'Currently enabled':'Currently disabled';
-}
-
-function moveSlider(id,v,col){
-  const c=col||'var(--o5)';
-  document.getElementById(id+'-f').style.width=v+'%';
-  document.getElementById(id+'-f').style.background=c;
-  document.getElementById(id+'-th').style.left=v+'%';
-  document.getElementById(id+'-th').style.borderColor=c;
-  const dispCol=col?col.replace('var(','').replace(')',''):'var(--o5)';
-  document.getElementById(id+'-v').style.color=c;
-  document.getElementById(id+'-v').textContent=v+'%';
-}
-
-// ──────────────────────────────────────────────
-// NAVIGATION
-// ──────────────────────────────────────────────
-function switchUl(gid,el){
-  document.querySelectorAll('#'+gid+' .tab-u').forEach(t=>t.classList.remove('on'));
-  el.classList.add('on');
-  const c=document.getElementById(gid+'-con');
-  if(c)c.textContent='Displaying: '+el.textContent.trim()+' content';
-}
-function switchPill(gid,el){
-  document.querySelectorAll('#'+gid+' .tab-p').forEach(t=>t.classList.remove('on'));
-  el.classList.add('on');
-}
-function toggleAcc(btn){
-  const body=btn.nextElementSibling;
-  const chev=btn.querySelector('.acc-chev');
-  const on=body.classList.toggle('on');
-  btn.classList.toggle('on',on);chev.classList.toggle('on',on);
-}
-let pgCur=1;
-function pgClick(btn){
-  document.querySelectorAll('#pg1 .pg-btn:not(.pg-ctrl)').forEach(b=>b.classList.remove('pg-on'));
-  btn.classList.add('pg-on');
-  pgCur=parseInt(btn.textContent)||pgCur;
-  document.getElementById('pg-prev').classList.toggle('pg-dis',pgCur===1);
-  document.getElementById('pg-next').classList.toggle('pg-dis',pgCur===8);
-}
-function pgPrev(){if(pgCur>1){const btns=[...document.querySelectorAll('#pg1 .pg-btn:not(.pg-ctrl)')];const cur=btns.findIndex(b=>b.classList.contains('pg-on'));if(cur>0)pgClick(btns[cur-1]);}}
-function pgNext(){if(pgCur<8){const btns=[...document.querySelectorAll('#pg1 .pg-btn:not(.pg-ctrl)')];const cur=btns.findIndex(b=>b.classList.contains('pg-on'));if(cur<btns.length-1)pgClick(btns[cur+1]);}}
-function switchSn(el,id){document.querySelectorAll('#'+id+' .sn-item').forEach(i=>i.classList.remove('on'));el.classList.add('on');const c=document.getElementById(id+'-con');if(c)c.textContent=el.textContent.trim()+' — main content area';}
-
-// ──────────────────────────────────────────────
-// MODALS
-// ──────────────────────────────────────────────
-function openM(id){document.getElementById(id).style.display='flex';}
-function closeM(id,e){if(!e||e.target===document.getElementById(id))document.getElementById(id).style.display='none';}
-function openDrawer(){document.getElementById('drawerEl').style.display='block';}
-function closeDrawer(){document.getElementById('drawerEl').style.display='none';}
-
-// ──────────────────────────────────────────────
-// TOAST
-// ──────────────────────────────────────────────
-const TICONS={ok:'#ic-ok',er:'#ic-err',wa:'#ic-warn',in:'#ic-info'};
-const TCOLORS={ok:'var(--ok)',er:'var(--er)',wa:'var(--wa)',in:'var(--in)'};
-function showToast(type,title,msg){
-  const s=document.getElementById('toastStack');
-  const t=document.createElement('div');t.className='toast';t.style.pointerEvents='all';
-  t.style.borderLeft='3px solid '+TCOLORS[type];
-  t.innerHTML=`<div class="toast-accent" style="background:${TCOLORS[type]}"></div>
-    <svg width="16" height="16" style="color:${TCOLORS[type]};flex-shrink:0"><use href="${TICONS[type]}"/></svg>
-    <div class="toast-body"><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div>
-    <button class="toast-close" onclick="this.closest('.toast').remove()"><svg width="13" height="13"><use href="#ic-x"/></svg></button>`;
-  s.appendChild(t);setTimeout(()=>{if(t.parentElement)t.remove();},4500);
-}
-
-// ──────────────────────────────────────────────
-// PROGRESS
-// ──────────────────────────────────────────────
-function animateProg(){
-  let v=0;const f=document.getElementById('p1f');const vl=document.getElementById('p1v');
-  f.style.width='0%';f.style.background='var(--o5)';vl.style.color='var(--o5)';
-  const iv=setInterval(()=>{v+=1.5;f.style.width=v+'%';vl.textContent=Math.round(v)+'%';
-    if(v>=100){clearInterval(iv);f.style.background='var(--ok)';vl.style.color='var(--ok)';showToast('ok','Upload complete','analysis.pdf uploaded successfully.');}
-  },40);
-}
-
-// ──────────────────────────────────────────────
-// TABLE
-// ──────────────────────────────────────────────
-function selRow(tr){
-  const on=tr.classList.toggle('row-sel');
-  tr.querySelector('.row-ck').checked=on;
-  updateSelBar();
-}
-function rowCk(cb){cb.closest('tr').classList.toggle('row-sel',cb.checked);updateSelBar();}
-function selAll(master){
-  document.querySelectorAll('.row-ck').forEach(c=>{c.checked=master.checked;c.closest('tr').classList.toggle('row-sel',master.checked);});
-  updateSelBar();
-}
-function updateSelBar(){
-  const n=document.querySelectorAll('.row-sel').length;
-  const bar=document.getElementById('sel-bar');
-  bar.style.display=n>0?'flex':'none';
-  document.getElementById('sel-count').textContent=n+' client'+(n!==1?'s':'')+' selected';
-}
-function filterTbl(q){
-  let shown=0;
-  document.querySelectorAll('#tblBody tr').forEach(r=>{
-    const m=r.textContent.toLowerCase().includes(q.toLowerCase());
-    r.style.display=m?'':'none';if(m)shown++;
-  });
-  document.getElementById('tbl-info').textContent='Showing '+shown+' of 5 clients';
-}
-function sortTbl(col){
-  const tbody=document.getElementById('tblBody');
-  const rows=[...tbody.querySelectorAll('tr')];
-  rows.sort((a,b)=>(a.cells[col]?.textContent||'').localeCompare(b.cells[col]?.textContent||''));
-  rows.forEach(r=>tbody.appendChild(r));
-}
-
-// ──────────────────────────────────────────────
-// CHAT
-// ──────────────────────────────────────────────
-const REPLIES=[
-  "Primary buttons use Orange 300 (#FFAA72) — never Orange 500 as background.",
-  "All branded elements use sharp corners (border-radius: 0). Only functional elements like inputs get 4px radius.",
-  "The spacing scale is 8px-based: xs=4, sm=8, md=12, lg=16, xl=24, 2xl=32, 3xl=48.",
-  "Dark mode uses: background #1a1a1a, card #242424, text #ffffff, border #333333.",
-  "Charts use Orange 500 as the primary series colour, Orange 300 for secondary, Grey 400 for tertiary."
-];
-let rIdx=0;
-function sendChat(e){if(e.key==='Enter')doSend();}
-function sendChatBtn(){doSend();}
-function doSend(){
-  const inp=document.getElementById('chatInp');const msg=inp.value.trim();if(!msg)return;
-  const msgs=document.getElementById('chatMsgs');
-  const u=document.createElement('div');u.className='user-msg';
-  u.innerHTML='<div class="user-bubble">'+msg+'</div>';msgs.appendChild(u);inp.value='';
-  // typing
-  const typing=document.createElement('div');typing.className='ai-msg';
-  typing.innerHTML='<svg width="14" height="14" style="color:var(--o5)"><use href="#ic-spark"/></svg><div class="chat-typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
-  msgs.appendChild(typing);msgs.scrollTop=msgs.scrollHeight;
-  setTimeout(()=>{
-    typing.remove();
-    const a=document.createElement('div');a.className='ai-msg';
-    a.innerHTML='<svg width="14" height="14" style="color:var(--o5)"><use href="#ic-spark"/></svg><div class="ai-bubble">'+REPLIES[rIdx%REPLIES.length]+'</div>';
-    msgs.appendChild(a);rIdx++;msgs.scrollTop=msgs.scrollHeight;
-  },800);
-}
-
-// ──────────────────────────────────────────────
-// CHART HELPERS
-// ──────────────────────────────────────────────
-function mkSVG(W,H){
-  const s=document.createElementNS('http://www.w3.org/2000/svg','svg');
-  s.setAttribute('viewBox','0 0 '+W+' '+H);s.style.cssText='width:100%;height:100%;display:block;overflow:visible';return s;
-}
-function el(tag,a){const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const[k,v]of Object.entries(a))e.setAttribute(k,v);return e;}
-function mkTip(parent){
-  const t=document.createElement('div');t.className='ct';parent.style.position='relative';parent.appendChild(t);return t;
-}
-function tip(t,x,y,html,W,H,elW,elH){t.innerHTML=html;t.style.left=(x/W*elW)+'px';t.style.top=((y-10)/H*elH)+'px';t.style.opacity='1';}
-function hideTip(t){t.style.opacity='0';}
-function axes(svg,W,H,pL,pR,pT,pB,yTks,xLbls){
-  const iW=W-pL-pR,iH=H-pT-pB;
-  yTks.forEach(tk=>{
-    const y=pT+iH-tk.n*iH;
-    svg.appendChild(el('line',{x1:pL,y1:y,x2:pL+iW,y2:y,stroke:'#DFE3E6','stroke-width':'1','stroke-dasharray':'3,3'}));
-    const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',pL-6);t.setAttribute('y',y+3);t.setAttribute('text-anchor','end');t.setAttribute('font-size','9');t.setAttribute('fill','#A1A8B3');t.setAttribute('font-family','system-ui');t.textContent=tk.l;svg.appendChild(t);
-  });
-  xLbls.forEach((l,i)=>{
-    const x=pL+(i/(xLbls.length-1||1))*iW;
-    const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',x);t.setAttribute('y',H-pB+13);t.setAttribute('text-anchor','middle');t.setAttribute('font-size','9');t.setAttribute('fill','#A1A8B3');t.setAttribute('font-family','system-ui');t.textContent=l;svg.appendChild(t);
-  });
-}
-function legToggle(legId,cls){
-  const l=document.getElementById(legId);
-  if(!l)return;
-  const off=l.classList.toggle('off');
-  document.querySelectorAll('.'+cls).forEach(e=>e.style.opacity=off?'0':'1');
-}
 
 </script>
 </body>
