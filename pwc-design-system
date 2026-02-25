@@ -512,7 +512,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
   </div>
 
   <!-- Row 1: Variants -->
-  <div class="sub"><div class="sub-title">Variants</div>
+  <div class="sub"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="sub-title" style="margin-bottom:0">Variants</div><button class="copy-btn" onclick="showCode('btn-variants')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
     <div class="row center gap-16">
       <div class="label-wrap">
         <button class="btn btn-primary">Primary</button>
@@ -538,7 +538,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
   </div>
 
   <!-- Row 2: Sizes -->
-  <div class="sub"><div class="sub-title">Sizes</div>
+  <div class="sub"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="sub-title" style="margin-bottom:0">Sizes</div><button class="copy-btn" onclick="showCode('btn-sizes')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
     <div class="row center gap-16">
       <div class="label-wrap">
         <button class="btn btn-primary btn-sm">Small</button>
@@ -556,7 +556,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
   </div>
 
   <!-- Row 3: With Icons + Loading -->
-  <div class="sub"><div class="sub-title">With Icons &amp; Loading</div>
+  <div class="sub"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="sub-title" style="margin-bottom:0">With Icons &amp; Loading</div><button class="copy-btn" onclick="showCode('btn-icons')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
     <div class="row center gap-16">
       <button class="btn btn-primary" style="gap:8px">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -577,7 +577,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
   </div>
 
   <!-- Row 4: Icon Buttons -->
-  <div class="sub"><div class="sub-title">Icon Buttons</div>
+  <div class="sub"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="sub-title" style="margin-bottom:0">Icon Buttons</div><button class="copy-btn" onclick="showCode('btn-icon-only')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
     <div class="row center gap-12">
       <div class="label-wrap">
         <button class="btn btn-icon" aria-label="Add">
@@ -634,7 +634,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
     <!-- Text Input -->
     <div class="col-6">
       <div class="demo-card" style="height:100%">
-        <div class="demo-card-label">Text Input</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Text Input</div><button class="copy-btn" onclick="showCode('form-input')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
         <div class="field">
           <label class="label" for="inp1">Full Name</label>
           <input class="input" id="inp1" type="text" placeholder="Enter your full name"/>
@@ -654,7 +654,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
     <!-- Textarea + Search -->
     <div class="col-6">
       <div class="demo-card" style="height:100%">
-        <div class="demo-card-label">Textarea &amp; Search</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Textarea &amp; Search</div><button class="copy-btn" onclick="showCode('form-textarea')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
         <div class="field">
           <label class="label" for="ta1">Message</label>
           <textarea class="input textarea" id="ta1" placeholder="Describe the issue in detail..."></textarea>
@@ -673,7 +673,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
     <!-- Dropdown -->
     <div class="col-6">
       <div class="demo-card" style="height:100%">
-        <div class="demo-card-label">Dropdown Select</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Dropdown Select</div><button class="copy-btn" onclick="showCode('form-dropdown')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
         <div class="field">
           <label class="label">Service Line</label>
           <div class="dropdown" id="dd1">
@@ -709,7 +709,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
     <!-- Checkbox + Radio -->
     <div class="col-6">
       <div class="demo-card" style="height:100%">
-        <div class="demo-card-label">Checkboxes &amp; Radio</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Checkboxes &amp; Radio</div><button class="copy-btn" onclick="showCode('form-checkbox')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
         <div style="font-size:13px;font-weight:500;margin-bottom:10px">Notifications</div>
         <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
           <label class="check-wrap" onclick="toggleCheck('cb1')">
@@ -750,7 +750,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
     <!-- Toggle + Slider -->
     <div class="col-6">
       <div class="demo-card" style="height:100%">
-        <div class="demo-card-label">Toggles</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Toggles</div><button class="copy-btn" onclick="showCode('form-toggle')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
         <div style="display:flex;flex-direction:column;gap:16px">
           <label class="toggle-wrap" onclick="toggleSwitch('t1')">
             <div class="toggle-track on" id="t1"><div class="toggle-thumb"></div></div>
@@ -770,7 +770,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 
     <div class="col-6">
       <div class="demo-card" style="height:100%">
-        <div class="demo-card-label">Sliders</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Sliders</div><button class="copy-btn" onclick="showCode('form-slider')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
         <div style="display:flex;flex-direction:column;gap:24px">
           <div class="field">
             <label class="label">Budget allocation — <span id="s1-val">65</span>%</label>
@@ -811,7 +811,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 
   <div class="row stretch gap-16">
     <div class="col-4">
-      <div class="demo-card-label">Standard Card</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Standard Card</div><button class="copy-btn" onclick="showCode('card-standard')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
       <div class="card" style="margin-top:8px">
         <div style="font-size:15px;font-weight:600;margin-bottom:8px">Card Title</div>
         <p style="font-size:14px;color:var(--g500);line-height:1.6;margin-bottom:16px">Card content with 24px padding. Sharp corners reflect PwC brand identity throughout.</p>
@@ -819,7 +819,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
       </div>
     </div>
     <div class="col-4">
-      <div class="demo-card-label">Panel with Header</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Panel with Header</div><button class="copy-btn" onclick="showCode('card-panel')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
       <div class="panel" style="margin-top:8px">
         <div class="panel-hd">
           <span class="panel-hd-title">Panel Title</span>
@@ -833,7 +833,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
       </div>
     </div>
     <div class="col-4">
-      <div class="demo-card-label">Stat Card</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Stat Card</div><button class="copy-btn" onclick="showCode('card-stat')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
       <div class="stat-card" style="margin-top:8px">
         <div class="stat-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--o500)" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
@@ -895,7 +895,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
   <div class="row gap-16">
     <!-- Static preview of modal -->
     <div class="col-6">
-      <div class="demo-card-label">Modal Dialog</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Modal Dialog</div><button class="copy-btn" onclick="showCode('modal-dialog')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
       <div style="border:1px solid var(--g200);margin-top:8px">
         <div style="padding:20px 24px;border-bottom:1px solid var(--g200);display:flex;justify-content:space-between;align-items:center">
           <span style="font-size:17px;font-weight:600">Edit Project</span>
@@ -921,7 +921,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 
     <!-- Confirm dialog -->
     <div class="col-6">
-      <div class="demo-card-label">Confirm / Destructive Dialog</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Confirm / Destructive Dialog</div><button class="copy-btn" onclick="showCode('modal-confirm')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
       <div style="border:1px solid var(--g200);padding:24px;margin-top:8px">
         <div style="display:flex;gap:16px;margin-bottom:20px">
           <div class="confirm-icon">
@@ -942,7 +942,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 
     <!-- Drawer preview -->
     <div class="col-12">
-      <div class="demo-card-label">Side Panel / Drawer</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Side Panel / Drawer</div><button class="copy-btn" onclick="showCode('modal-drawer')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
       <div style="display:flex;border:1px solid var(--g200);height:280px;overflow:hidden;margin-top:8px">
         <div style="flex:1;background:var(--g100);display:flex;align-items:center;justify-content:center">
           <span style="font-size:13px;color:var(--g500)">Main content area</span>
@@ -984,7 +984,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
   </div>
 
   <!-- Underline tabs -->
-  <div class="sub"><div class="sub-title">Underline Tabs</div>
+  <div class="sub"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="sub-title" style="margin-bottom:0">Underline Tabs</div><button class="copy-btn" onclick="showCode('nav-tabs-underline')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
     <div class="tabs-underline" id="tabs1">
       <button class="tab-ul active" onclick="switchTab('tabs1',0,this)">Overview</button>
       <button class="tab-ul" onclick="switchTab('tabs1',1,this)">Analytics <span class="tab-count">12</span></button>
@@ -995,7 +995,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
   </div>
 
   <!-- Pill tabs -->
-  <div class="sub"><div class="sub-title">Pill Tabs</div>
+  <div class="sub"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="sub-title" style="margin-bottom:0">Pill Tabs</div><button class="copy-btn" onclick="showCode('nav-tabs-pill')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
     <div class="tabs-pill" id="tabs2">
       <button class="tab-pill active" onclick="switchPill('tabs2',this)">All</button>
       <button class="tab-pill" onclick="switchPill('tabs2',this)">Active</button>
@@ -1005,7 +1005,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
   </div>
 
   <!-- Breadcrumbs -->
-  <div class="sub"><div class="sub-title">Breadcrumbs</div>
+  <div class="sub"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="sub-title" style="margin-bottom:0">Breadcrumbs</div><button class="copy-btn" onclick="showCode('nav-breadcrumb')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
     <nav class="breadcrumb">
       <a class="bc-item" href="#">Home</a>
       <svg class="bc-sep" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
@@ -1018,7 +1018,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
   </div>
 
   <!-- Pagination -->
-  <div class="sub"><div class="sub-title">Pagination</div>
+  <div class="sub"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="sub-title" style="margin-bottom:0">Pagination</div><button class="copy-btn" onclick="showCode('nav-pagination')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
     <div class="pagination" id="pgn">
       <button class="pg-btn pg-prev disabled" onclick="pgPrev()" id="pg-prev">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
@@ -1037,7 +1037,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
   </div>
 
   <!-- Accordion -->
-  <div class="sub"><div class="sub-title">Accordion</div>
+  <div class="sub"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="sub-title" style="margin-bottom:0">Accordion</div><button class="copy-btn" onclick="showCode('nav-accordion')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
     <div class="accordion">
       <div class="acc-item">
         <button class="acc-hd" onclick="toggleAcc(this)">
@@ -1070,7 +1070,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
   </div>
 
   <!-- Sidebar nav demo -->
-  <div class="sub"><div class="sub-title">Sidebar Navigation</div>
+  <div class="sub"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="sub-title" style="margin-bottom:0">Sidebar Navigation</div><button class="copy-btn" onclick="showCode('nav-sidebar')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
     <div style="display:flex;border:1px solid var(--g200);height:260px;overflow:hidden">
       <div class="sidenav" id="sidenav1">
         <div class="sidenav-item active" onclick="switchSidenav(this,'sidenav1')">
@@ -1101,7 +1101,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
   </div>
 
   <!-- Avatar -->
-  <div class="sub"><div class="sub-title">Avatar</div>
+  <div class="sub"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="sub-title" style="margin-bottom:0">Avatar</div><button class="copy-btn" onclick="showCode('nav-avatar')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
     <div class="row center gap-16">
       <div class="label-wrap">
         <div style="width:28px;height:28px;border-radius:50%;background:var(--o100);display:flex;align-items:center;justify-content:center">
@@ -1139,7 +1139,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 
     <!-- Alerts -->
     <div class="col-6">
-      <div class="demo-card-label">Alert Banners</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Alert Banners</div><button class="copy-btn" onclick="showCode('feedback-alerts')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
       <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
         <div class="alert alert-success">
           <svg class="alert-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -1180,7 +1180,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
     <div class="col-6" style="display:flex;flex-direction:column;gap:24px">
       <!-- Badges -->
       <div>
-        <div class="demo-card-label">Badges &amp; Tags</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Badges &amp; Tags</div><button class="copy-btn" onclick="showCode('feedback-badges')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
           <span class="badge badge-brand">Brand New</span>
           <span class="badge badge-success">Active</span>
@@ -1195,7 +1195,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 
       <!-- Tooltip -->
       <div>
-        <div class="demo-card-label">Tooltip</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Tooltip</div><button class="copy-btn" onclick="showCode('feedback-tooltip')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
         <div style="margin-top:8px">
           <div class="tooltip-wrap">
             <button class="btn btn-secondary btn-sm">
@@ -1209,7 +1209,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 
       <!-- Toast triggers -->
       <div>
-        <div class="demo-card-label">Toast Notifications</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Toast Notifications</div><button class="copy-btn" onclick="showCode('feedback-toast')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
         <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px">
           <button class="btn btn-secondary btn-sm" onclick="showToast('success','Changes saved successfully!')">Success</button>
           <button class="btn btn-secondary btn-sm" onclick="showToast('error','Upload failed. Try again.')">Error</button>
@@ -1220,7 +1220,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 
       <!-- Empty state -->
       <div>
-        <div class="demo-card-label">Empty State</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Empty State</div><button class="copy-btn" onclick="showCode('feedback-empty')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
         <div class="card" style="margin-top:8px">
           <div class="empty" style="padding:32px 24px">
             <div class="empty-icon">
@@ -1251,7 +1251,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 
     <!-- Linear progress -->
     <div class="col-6">
-      <div class="demo-card-label">Linear Progress</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Linear Progress</div><button class="copy-btn" onclick="showCode('progress-linear')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
       <div class="card" style="margin-top:8px;gap:20px;display:flex;flex-direction:column">
         <div>
           <div style="display:flex;justify-content:space-between;margin-bottom:8px">
@@ -1280,7 +1280,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 
     <!-- Stepped progress -->
     <div class="col-6">
-      <div class="demo-card-label">Stepped Progress</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Stepped Progress</div><button class="copy-btn" onclick="showCode('progress-stepped')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
       <div class="card" style="margin-top:8px">
         <div class="steps">
           <div class="step">
@@ -1308,7 +1308,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 
     <!-- Spinners -->
     <div class="col-6">
-      <div class="demo-card-label">Spinners</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Spinners</div><button class="copy-btn" onclick="showCode('progress-spinner')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
       <div class="card" style="margin-top:8px;display:flex;gap:32px;align-items:center;flex-wrap:wrap">
         <div class="label-wrap">
           <svg class="spinner" width="16" height="16" viewBox="0 0 24 24">
@@ -1343,7 +1343,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 
     <!-- Skeleton -->
     <div class="col-6">
-      <div class="demo-card-label">Skeleton Loading</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Skeleton Loading</div><button class="copy-btn" onclick="showCode('progress-skeleton')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
       <div class="card" style="margin-top:8px">
         <div style="display:flex;gap:12px;margin-bottom:16px;align-items:center">
           <div class="skel skel-circle" style="width:44px;height:44px;flex-shrink:0"></div>
@@ -1374,6 +1374,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
     <div class="section-divider"></div>
     <div class="section-title">Data Table</div>
     <div class="section-desc">Click rows to select. Orange 100 selected state. Sort columns, use checkboxes. Status badges use semantic colours.</div>
+  <div style="margin-top:12px"><button class="copy-btn" onclick="showCode('data-table')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
   </div>
 
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
@@ -2001,7 +2002,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
       <div class="code-modal-title">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
         <span id="codeModalTitle">Component Code</span>
-        <span class="code-modal-badge">React · Recharts · PwC</span>
+        <span class="code-modal-badge">React · shadcn/ui · PwC</span>
       </div>
       <div class="code-modal-actions">
         <button class="code-copy-btn" id="codeCopyBtn" onclick="copyModalCode()">Copy</button>
@@ -2027,7 +2028,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
   </div>
   <div class="row gap-16">
     <div class="col-4">
-      <div class="demo-card-label">FAB — Closed State</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">FAB — Closed State</div><button class="copy-btn" onclick="showCode('chat-fab')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
       <div style="height:120px;background:var(--g100);border:1px solid var(--g200);display:flex;align-items:center;justify-content:center;margin-top:8px">
         <button class="fab" aria-label="Open chat">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg>
@@ -2035,7 +2036,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
       </div>
     </div>
     <div class="col-8">
-      <div class="demo-card-label">Chat Panel</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div class="demo-card-label" style="margin-bottom:0">Chat Panel</div><button class="copy-btn" onclick="showCode('chat-panel')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
       <div class="chat-panel" style="margin-top:8px">
         <div class="chat-hd">
           <div style="display:flex;align-items:center;gap:8px">
@@ -2084,7 +2085,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
   </div>
 
   <!-- Colour palette — equal swatches in 7-col grid -->
-  <div class="sub"><div class="sub-title">Colour Palette</div>
+  <div class="sub"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="sub-title" style="margin-bottom:0">Colour Palette</div><button class="copy-btn" onclick="showCode('foundations-colors')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
     <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:12px">
       <div><div class="colour-swatch" style="background:var(--o500)"></div><div class="colour-meta"><div class="colour-name">Orange 500</div><div class="colour-hex">#FD5108</div></div></div>
       <div><div class="colour-swatch" style="background:var(--o300)"></div><div class="colour-meta"><div class="colour-name">Orange 300</div><div class="colour-hex">#FFAA72</div></div></div>
@@ -2106,7 +2107,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
   </div>
 
   <!-- Typography -->
-  <div class="sub"><div class="sub-title">Typography Scale</div>
+  <div class="sub"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="sub-title" style="margin-bottom:0">Typography Scale</div><button class="copy-btn" onclick="showCode('foundations-typography')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
     <div style="border:1px solid var(--g200)">
       <div class="type-row"><span class="type-spec">H1 · 32px · 600</span><span style="font-size:32px;font-weight:600">Heading One</span></div>
       <div class="type-row"><span class="type-spec">H2 · 24px · 600</span><span style="font-size:24px;font-weight:600">Heading Two</span></div>
@@ -2120,7 +2121,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
   </div>
 
   <!-- Spacing -->
-  <div class="sub"><div class="sub-title">Spacing Scale (8px grid)</div>
+  <div class="sub"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="sub-title" style="margin-bottom:0">Spacing Scale (8px grid)</div><button class="copy-btn" onclick="showCode('foundations-spacing')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
     <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end">
       <div class="label-wrap"><div class="space-block" style="width:4px;height:4px"></div><div class="comp-label">xs · 4px</div></div>
       <div class="label-wrap"><div class="space-block" style="width:8px;height:8px"></div><div class="comp-label">sm · 8px</div></div>
@@ -2134,7 +2135,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
   </div>
 
   <!-- Animations -->
-  <div class="sub"><div class="sub-title">Animation Keyframes</div>
+  <div class="sub"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="sub-title" style="margin-bottom:0">Animation Keyframes</div><button class="copy-btn" onclick="showCode('foundations-animations')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
     <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:center">
       <div class="label-wrap">
         <svg class="spinner" width="32" height="32" viewBox="0 0 24 24">
@@ -4002,12 +4003,1746 @@ export function ChartFunnel() {
   )
 }`;
 
+
+// ══════════════════════════════════════════════
+// COMPONENT CODE TITLES & SNIPPETS
+// ══════════════════════════════════════════════
+const COMPONENT_CODE_TITLES = {
+  'btn-variants':          'Button Variants',
+  'btn-sizes':             'Button Sizes',
+  'btn-icons':             'Buttons with Icons & Loading',
+  'btn-icon-only':         'Icon Buttons',
+  'form-input':            'Text Input',
+  'form-textarea':         'Textarea & Search',
+  'form-dropdown':         'Dropdown Select',
+  'form-checkbox':         'Checkboxes & Radio',
+  'form-toggle':           'Toggle Switch',
+  'form-slider':           'Range Slider',
+  'card-standard':         'Standard Card',
+  'card-panel':            'Panel with Header',
+  'card-stat':             'Stat Card',
+  'modal-dialog':          'Modal Dialog',
+  'modal-confirm':         'Confirm / Destructive Dialog',
+  'modal-drawer':          'Side Panel / Drawer',
+  'nav-tabs-underline':    'Underline Tabs',
+  'nav-tabs-pill':         'Pill Tabs',
+  'nav-breadcrumb':        'Breadcrumbs',
+  'nav-pagination':        'Pagination',
+  'nav-accordion':         'Accordion',
+  'nav-sidebar':           'Sidebar Navigation',
+  'nav-avatar':            'Avatar',
+  'feedback-alerts':       'Alert Banners',
+  'feedback-badges':       'Badges & Tags',
+  'feedback-tooltip':      'Tooltip',
+  'feedback-toast':        'Toast Notifications',
+  'feedback-empty':        'Empty State',
+  'progress-linear':       'Linear Progress',
+  'progress-stepped':      'Stepped Progress',
+  'progress-spinner':      'Spinner',
+  'progress-skeleton':     'Skeleton Loading',
+  'data-table':            'Data Table',
+  'chat-fab':              'FAB — Chat Trigger',
+  'chat-panel':            'Chat Panel',
+  'foundations-colors':    'Colour Palette Tokens',
+  'foundations-typography':'Typography Scale',
+  'foundations-spacing':   'Spacing Scale',
+  'foundations-animations':'Animation Keyframes',
+};
+
+const COMPONENT_CODES = {};
+
+COMPONENT_CODES['btn-variants'] = `import { Button } from "@/components/ui/button";
+
+// PwC Button Variants
+// Primary: Orange 300 background, black text
+// Secondary: transparent, black border
+// Tertiary: orange text, underline
+// Destructive: red border, red text
+
+export function ButtonVariants() {
+  return (
+    <div className="flex flex-wrap gap-4 items-center">
+      {/* Primary */}
+      <Button
+        className="rounded-none bg-[#FFAA72] text-black font-semibold
+                   hover:bg-[#f09a5e] focus-visible:ring-[#FD5108]"
+      >
+        Primary
+      </Button>
+
+      {/* Secondary */}
+      <Button
+        variant="outline"
+        className="rounded-none border-black text-black
+                   hover:bg-[#EEEFF1] focus-visible:ring-[#FD5108]"
+      >
+        Secondary
+      </Button>
+
+      {/* Tertiary / Link */}
+      <Button
+        variant="link"
+        className="rounded-none text-[#FD5108] underline p-0
+                   hover:text-[#d94000]"
+      >
+        Tertiary
+      </Button>
+
+      {/* Destructive */}
+      <Button
+        variant="outline"
+        className="rounded-none border-red-500 text-red-500
+                   hover:bg-red-50 focus-visible:ring-red-500"
+      >
+        Destructive
+      </Button>
+
+      {/* Disabled */}
+      <Button disabled className="rounded-none opacity-40 cursor-not-allowed">
+        Disabled
+      </Button>
+    </div>
+  );
+}`;
+
+COMPONENT_CODES['btn-sizes'] = `import { Button } from "@/components/ui/button";
+
+// PwC Button Sizes
+// Small: py-1.5 px-3.5 text-xs
+// Medium (default): py-2.5 px-5 text-sm
+// Large: py-3.5 px-7 text-base
+
+export function ButtonSizes() {
+  return (
+    <div className="flex flex-wrap gap-4 items-center">
+      <Button
+        size="sm"
+        className="rounded-none bg-[#FFAA72] text-black font-semibold
+                   py-1.5 px-3.5 text-xs hover:bg-[#f09a5e]"
+      >
+        Small
+      </Button>
+
+      <Button
+        className="rounded-none bg-[#FFAA72] text-black font-semibold
+                   py-2.5 px-5 text-sm hover:bg-[#f09a5e]"
+      >
+        Medium
+      </Button>
+
+      <Button
+        size="lg"
+        className="rounded-none bg-[#FFAA72] text-black font-semibold
+                   py-3.5 px-7 text-base hover:bg-[#f09a5e]"
+      >
+        Large
+      </Button>
+    </div>
+  );
+}`;
+
+COMPONENT_CODES['btn-icons'] = `import { Button } from "@/components/ui/button";
+import { Plus, Download, Loader2 } from "lucide-react";
+import { useState } from "react";
+
+export function ButtonsWithIcons() {
+  const [loading, setLoading] = useState(false);
+
+  const handleLoad = () => {
+    setLoading(true);
+    setTimeout(() => setLoading(false), 2000);
+  };
+
+  return (
+    <div className="flex flex-wrap gap-4 items-center">
+      <Button className="rounded-none bg-[#FFAA72] text-black font-semibold hover:bg-[#f09a5e] gap-2">
+        <Plus className="h-4 w-4" />
+        Add Item
+      </Button>
+
+      <Button
+        variant="outline"
+        className="rounded-none border-black text-black hover:bg-[#EEEFF1] gap-2"
+      >
+        <Download className="h-4 w-4" />
+        Download
+      </Button>
+
+      <Button
+        className="rounded-none bg-[#FFAA72] text-black font-semibold hover:bg-[#f09a5e]"
+        onClick={handleLoad}
+        disabled={loading}
+      >
+        {loading ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            Loading...
+          </>
+        ) : (
+          "Click to Load"
+        )}
+      </Button>
+    </div>
+  );
+}`;
+
+COMPONENT_CODES['btn-icon-only'] = `import { Button } from "@/components/ui/button";
+import { Plus, Pencil, Trash2, Share2, Settings, MoreVertical } from "lucide-react";
+
+export function IconButtons() {
+  return (
+    <div className="flex flex-wrap gap-3 items-center">
+      {[
+        { icon: Plus,         label: "Add" },
+        { icon: Pencil,       label: "Edit" },
+        { icon: Trash2,       label: "Delete" },
+        { icon: Share2,       label: "Share" },
+        { icon: Settings,     label: "Settings" },
+        { icon: MoreVertical, label: "More" },
+      ].map(({ icon: Icon, label }) => (
+        <Button
+          key={label}
+          variant="ghost"
+          size="icon"
+          aria-label={label}
+          className="rounded-none h-9 w-9 text-[#A1A8B3]
+                     hover:bg-[#EEEFF1] hover:text-black"
+        >
+          <Icon className="h-4.5 w-4.5" />
+        </Button>
+      ))}
+    </div>
+  );
+}`;
+
+COMPONENT_CODES['form-input'] = `import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+// PwC Text Input
+// Focus ring: Orange 500 (#FD5108)
+// Border: Grey 200 → Orange 500 on focus
+
+export function TextInput() {
+  return (
+    <div className="space-y-4 max-w-sm">
+      <div className="space-y-1.5">
+        <Label htmlFor="name" className="text-sm font-medium">
+          Full Name
+        </Label>
+        <Input
+          id="name"
+          placeholder="Enter your full name"
+          className="rounded-sm border-[#DFE3E6]
+                     focus-visible:ring-[#FD5108] focus-visible:border-[#FD5108]"
+        />
+        <p className="text-xs text-[#A1A8B3]">This will appear on your profile</p>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="email" className="text-sm font-medium">
+          Email Address
+        </Label>
+        <Input
+          id="email"
+          type="email"
+          placeholder="you@pwc.com"
+          className="rounded-sm border-[#DFE3E6]
+                     focus-visible:ring-[#FD5108] focus-visible:border-[#FD5108]"
+        />
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="disabled" className="text-sm font-medium">
+          Disabled Field
+        </Label>
+        <Input
+          id="disabled"
+          value="Cannot edit this"
+          disabled
+          className="rounded-sm bg-[#EEEFF1] text-[#B5BCC4] cursor-not-allowed"
+        />
+      </div>
+    </div>
+  );
+}`;
+
+
+COMPONENT_CODES['form-textarea'] = `import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Search } from "lucide-react";
+
+export function TextareaAndSearch() {
+  return (
+    <div className="space-y-4 max-w-sm">
+      <div className="space-y-1.5">
+        <Label htmlFor="message" className="text-sm font-medium">Message</Label>
+        <Textarea
+          id="message"
+          placeholder="Describe the issue in detail..."
+          className="rounded-sm border-[#DFE3E6] min-h-[100px]
+                     focus-visible:ring-[#FD5108] focus-visible:border-[#FD5108]"
+        />
+        <p className="text-xs text-[#A1A8B3]">Maximum 500 characters</p>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label className="text-sm font-medium">Search</Label>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#B5BCC4]" />
+          <Input
+            placeholder="Search components..."
+            className="rounded-sm pl-9 border-[#DFE3E6]
+                       focus-visible:ring-[#FD5108] focus-visible:border-[#FD5108]"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}`;
+
+COMPONENT_CODES['form-dropdown'] = `import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+
+export function DropdownSelect() {
+  return (
+    <div className="space-y-4 max-w-xs">
+      <div className="space-y-1.5">
+        <Label className="text-sm font-medium">Service Line</Label>
+        <Select>
+          <SelectTrigger className="rounded-sm border-[#DFE3E6] focus:ring-[#FD5108]">
+            <SelectValue placeholder="Select service line" />
+          </SelectTrigger>
+          <SelectContent className="rounded-sm">
+            <SelectItem value="consulting">Consulting</SelectItem>
+            <SelectItem value="advisory">Advisory</SelectItem>
+            <SelectItem value="tax">Tax & Legal</SelectItem>
+            <SelectItem value="assurance">Assurance</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label className="text-sm font-medium">Region</Label>
+        <Select>
+          <SelectTrigger className="rounded-sm border-[#DFE3E6] focus:ring-[#FD5108]">
+            <SelectValue placeholder="Select region" />
+          </SelectTrigger>
+          <SelectContent className="rounded-sm">
+            <SelectItem value="emea">EMEA</SelectItem>
+            <SelectItem value="americas">Americas</SelectItem>
+            <SelectItem value="apac">Asia Pacific</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
+}`;
+
+COMPONENT_CODES['form-checkbox'] = `import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+
+export function CheckboxAndRadio() {
+  const [notifications, setNotifications] = useState({
+    email: true, sms: false, inapp: true,
+  });
+
+  return (
+    <div className="space-y-6">
+      {/* Checkboxes */}
+      <div className="space-y-3">
+        <p className="text-sm font-medium">Notifications</p>
+        {[
+          { id: "email", label: "Email notifications" },
+          { id: "sms",   label: "SMS notifications" },
+          { id: "inapp", label: "In-app alerts" },
+        ].map(({ id, label }) => (
+          <div key={id} className="flex items-center gap-3">
+            <Checkbox
+              id={id}
+              checked={notifications[id]}
+              onCheckedChange={(v) =>
+                setNotifications((p) => ({ ...p, [id]: !!v }))
+              }
+              className="rounded-none border-[#DFE3E6]
+                         data-[state=checked]:bg-[#FD5108]
+                         data-[state=checked]:border-[#FD5108]"
+            />
+            <Label htmlFor={id} className="text-sm font-normal cursor-pointer">
+              {label}
+            </Label>
+          </div>
+        ))}
+      </div>
+
+      {/* Radio */}
+      <div className="space-y-3">
+        <p className="text-sm font-medium">Priority</p>
+        <RadioGroup defaultValue="high" className="space-y-2">
+          {["High priority", "Medium priority", "Low priority"].map((opt, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <RadioGroupItem
+                value={opt.toLowerCase().split(" ")[0]}
+                id={\`r-\${i}\`}
+                className="border-[#DFE3E6] text-[#FD5108]"
+              />
+              <Label htmlFor={\`r-\${i}\`} className="text-sm font-normal cursor-pointer">
+                {opt}
+              </Label>
+            </div>
+          ))}
+        </RadioGroup>
+      </div>
+    </div>
+  );
+}`;
+
+COMPONENT_CODES['form-toggle'] = `import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+
+const toggles = [
+  { id: "dark-mode",  label: "Dark mode",  default: true },
+  { id: "analytics",  label: "Analytics",  default: false },
+  { id: "auto-save",  label: "Auto-save",  default: true },
+];
+
+export function ToggleSwitches() {
+  const [states, setStates] = useState(
+    Object.fromEntries(toggles.map((t) => [t.id, t.default]))
+  );
+
+  return (
+    <div className="space-y-4">
+      {toggles.map(({ id, label }) => (
+        <div key={id} className="flex items-center justify-between gap-4">
+          <Label htmlFor={id} className="text-sm cursor-pointer">
+            {label} — {states[id] ? "On" : "Off"}
+          </Label>
+          <Switch
+            id={id}
+            checked={states[id]}
+            onCheckedChange={(v) => setStates((p) => ({ ...p, [id]: v }))}
+            className="data-[state=checked]:bg-[#FD5108]"
+          />
+        </div>
+      ))}
+    </div>
+  );
+}`;
+
+COMPONENT_CODES['form-slider'] = `import { Slider } from "@/components/ui/slider";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+
+export function RangeSliders() {
+  const [budget, setBudget]  = useState([65]);
+  const [risk, setRisk]      = useState([30]);
+
+  return (
+    <div className="space-y-6 max-w-sm">
+      <div className="space-y-2">
+        <Label className="text-sm">
+          Budget allocation — <span className="font-semibold">{budget[0]}%</span>
+        </Label>
+        <Slider
+          value={budget}
+          onValueChange={setBudget}
+          min={0} max={100}
+          className="[&_[role=slider]]:rounded-none
+                     [&_[role=slider]]:border-[#FD5108]
+                     [&_.range]:bg-[#FD5108]"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-sm">
+          Risk tolerance — <span className="font-semibold">{risk[0]}%</span>
+        </Label>
+        <Slider
+          value={risk}
+          onValueChange={setRisk}
+          min={0} max={100}
+          className="[&_[role=slider]]:rounded-none
+                     [&_[role=slider]]:border-[#FD5108]
+                     [&_.range]:bg-[#FD5108]"
+        />
+      </div>
+    </div>
+  );
+}`;
+
+
+COMPONENT_CODES['card-standard'] = `import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
+export function StandardCard() {
+  return (
+    <Card className="rounded-none border-[#DFE3E6] shadow-sm max-w-xs">
+      <CardContent className="p-6">
+        <h3 className="text-[15px] font-semibold mb-2">Card Title</h3>
+        <p className="text-sm text-[#A1A8B3] leading-relaxed">
+          Card content with 24px padding. Sharp corners reflect
+          PwC brand identity throughout.
+        </p>
+      </CardContent>
+      <CardFooter className="px-6 pb-6 pt-0">
+        <Button className="rounded-none bg-[#FFAA72] text-black text-xs font-semibold
+                           py-1.5 px-3.5 hover:bg-[#f09a5e]">
+          View Details
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+}`;
+
+COMPONENT_CODES['card-panel'] = `import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
+export function PanelWithHeader() {
+  return (
+    <Card className="rounded-none border-[#DFE3E6] max-w-sm">
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-[#DFE3E6]">
+        <span className="text-sm font-semibold">Panel Title</span>
+        <Button variant="outline" size="sm"
+          className="rounded-none border-black text-xs font-semibold h-7">
+          Action
+        </Button>
+      </div>
+
+      {/* Body */}
+      <div className="p-5 text-sm text-[#A1A8B3] leading-relaxed">
+        Panel body with 20px padding. Header uses 1px divider at Grey 200.
+      </div>
+
+      {/* Footer */}
+      <div className="flex justify-end gap-2 px-5 py-3 border-t border-[#DFE3E6]">
+        <Button variant="outline" size="sm"
+          className="rounded-none border-black text-xs font-semibold h-7">
+          Cancel
+        </Button>
+        <Button size="sm"
+          className="rounded-none bg-[#FFAA72] text-black text-xs font-semibold h-7 hover:bg-[#f09a5e]">
+          Save
+        </Button>
+      </div>
+    </Card>
+  );
+}`;
+
+COMPONENT_CODES['card-stat'] = `import { Card, CardContent } from "@/components/ui/card";
+import { TrendingUp, Users, FileText, Clock, Activity } from "lucide-react";
+
+const stats = [
+  { label: "Total Revenue",  value: "$45,231",  change: "↑ 12.5%", trend: "up",  icon: TrendingUp },
+  { label: "Active Users",   value: "2,345",    change: "↑ 8.2%",  trend: "up",  icon: Users },
+  { label: "Documents",      value: "1,234",    change: "↓ 2.4%",  trend: "down",icon: FileText },
+  { label: "Avg. Response",  value: "4m 32s",   change: "→ No change",trend: "neutral",icon: Clock },
+  { label: "Uptime",         value: "99.9%",    change: "↑ 0.1%",  trend: "up",  icon: Activity },
+];
+
+export function StatCards() {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      {stats.map(({ label, value, change, trend, icon: Icon }) => (
+        <Card key={label} className="rounded-none border-[#DFE3E6]">
+          <CardContent className="p-5">
+            <div className="w-8 h-8 bg-[#FFE8D4] flex items-center justify-center mb-3">
+              <Icon className="h-4 w-4 text-[#FD5108]" />
+            </div>
+            <p className="text-xs text-[#A1A8B3] uppercase tracking-wide mb-1">{label}</p>
+            <p className="text-xl font-semibold mb-2">{value}</p>
+            <p className={
+              "text-xs font-medium " +
+              (trend === "up" ? "text-green-600" : trend === "down" ? "text-red-500" : "text-[#A1A8B3]")
+            }>
+              {change}
+            </p>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}`;
+
+COMPONENT_CODES['modal-dialog'] = `import {
+  Dialog, DialogContent, DialogHeader,
+  DialogTitle, DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+
+export function ModalDialog() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button
+        className="rounded-none bg-[#FFAA72] text-black font-semibold hover:bg-[#f09a5e]"
+        onClick={() => setOpen(true)}
+      >
+        Open Modal
+      </Button>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="rounded-none border-[#DFE3E6] max-w-md gap-0 p-0">
+          <DialogHeader className="px-6 py-5 border-b border-[#DFE3E6]">
+            <DialogTitle className="text-[17px] font-semibold">Edit Project</DialogTitle>
+          </DialogHeader>
+
+          <div className="px-6 py-5 space-y-4">
+            <div className="space-y-1.5">
+              <Label className="text-sm">Project Name</Label>
+              <Input defaultValue="Digital Transformation Q3"
+                className="rounded-sm border-[#DFE3E6] focus-visible:ring-[#FD5108]" />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm">Description</Label>
+              <Textarea defaultValue="Initiatives for the third quarter digital programme."
+                className="rounded-sm border-[#DFE3E6] focus-visible:ring-[#FD5108] min-h-[80px]" />
+            </div>
+          </div>
+
+          <DialogFooter className="px-6 py-4 border-t border-[#DFE3E6]">
+            <Button variant="outline" onClick={() => setOpen(false)}
+              className="rounded-none border-black text-sm font-semibold">Cancel</Button>
+            <Button onClick={() => setOpen(false)}
+              className="rounded-none bg-[#FFAA72] text-black text-sm font-semibold hover:bg-[#f09a5e]">
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}`;
+
+COMPONENT_CODES['modal-confirm'] = `import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel,
+  AlertDialogContent, AlertDialogDescription,
+  AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle } from "lucide-react";
+
+export function ConfirmDialog() {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline"
+          className="rounded-none border-red-500 text-red-500 hover:bg-red-50">
+          Delete Project
+        </Button>
+      </AlertDialogTrigger>
+
+      <AlertDialogContent className="rounded-none border-[#DFE3E6] max-w-md">
+        <AlertDialogHeader>
+          <div className="flex gap-4 mb-2">
+            <div className="w-10 h-10 bg-red-50 flex items-center justify-center flex-shrink-0">
+              <AlertTriangle className="h-5 w-5 text-red-500" />
+            </div>
+            <div>
+              <AlertDialogTitle className="text-[15px] font-semibold mb-1">
+                Delete Project?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-sm text-[#A1A8B3]">
+                This will permanently delete <strong className="text-black">Digital Transformation Q3</strong>{" "}
+                and all associated data. This action cannot be undone.
+              </AlertDialogDescription>
+            </div>
+          </div>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel className="rounded-none border-black font-semibold">
+            Cancel
+          </AlertDialogCancel>
+          <AlertDialogAction className="rounded-none bg-red-500 text-white font-semibold hover:bg-red-600">
+            Delete Project
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}`;
+
+COMPONENT_CODES['modal-drawer'] = `import {
+  Sheet, SheetContent, SheetHeader, SheetTitle,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+
+export function SideDrawer() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button
+        className="rounded-none bg-[#FFAA72] text-black font-semibold hover:bg-[#f09a5e]"
+        onClick={() => setOpen(true)}
+      >
+        Open Drawer
+      </Button>
+
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetContent
+          side="right"
+          className="rounded-none border-l border-[#DFE3E6] w-80 p-0"
+        >
+          <SheetHeader className="px-5 py-4 border-b border-[#DFE3E6]">
+            <SheetTitle className="text-[15px] font-semibold">Project Details</SheetTitle>
+          </SheetHeader>
+
+          <div className="p-4 space-y-4 flex-1 overflow-y-auto">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium">Project Name</Label>
+              <Input defaultValue="Digital Transformation Q3"
+                className="rounded-sm text-sm border-[#DFE3E6] focus-visible:ring-[#FD5108]" />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium">Owner</Label>
+              <Input defaultValue="Sarah Chen"
+                className="rounded-sm text-sm border-[#DFE3E6] focus-visible:ring-[#FD5108]" />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 px-4 py-3 border-t border-[#DFE3E6]">
+            <Button variant="outline" size="sm" onClick={() => setOpen(false)}
+              className="rounded-none border-black text-xs font-semibold h-7">Cancel</Button>
+            <Button size="sm" onClick={() => setOpen(false)}
+              className="rounded-none bg-[#FFAA72] text-black text-xs font-semibold h-7 hover:bg-[#f09a5e]">
+              Save
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
+    </>
+  );
+}`;
+
+
+COMPONENT_CODES['nav-tabs-underline'] = `import { useState } from "react";
+import { cn } from "@/lib/utils";
+
+const tabs = [
+  { label: "Overview" },
+  { label: "Analytics", count: 12 },
+  { label: "Reports" },
+  { label: "Settings" },
+];
+
+export function UnderlineTabs() {
+  const [active, setActive] = useState(0);
+
+  return (
+    <div>
+      <div className="flex border-b border-[#DFE3E6]">
+        {tabs.map((tab, i) => (
+          <button
+            key={i}
+            onClick={() => setActive(i)}
+            className={cn(
+              "px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors",
+              active === i
+                ? "border-[#FD5108] text-[#FD5108]"
+                : "border-transparent text-[#A1A8B3] hover:text-black hover:border-[#DFE3E6]"
+            )}
+          >
+            {tab.label}
+            {tab.count && (
+              <span className="ml-1.5 text-xs bg-[#EEEFF1] text-[#A1A8B3] px-1.5 py-0.5">
+                {tab.count}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+      <div className="pt-4 text-sm text-[#A1A8B3]">
+        Showing: {tabs[active].label} content area
+      </div>
+    </div>
+  );
+}`;
+
+COMPONENT_CODES['nav-tabs-pill'] = `import { useState } from "react";
+import { cn } from "@/lib/utils";
+
+const tabs = ["All", "Active", "Pending", "Archived"];
+
+export function PillTabs() {
+  const [active, setActive] = useState("All");
+
+  return (
+    <div className="flex gap-1 bg-[#EEEFF1] p-1 w-fit">
+      {tabs.map((tab) => (
+        <button
+          key={tab}
+          onClick={() => setActive(tab)}
+          className={cn(
+            "px-4 py-1.5 text-sm font-medium transition-colors",
+            active === tab
+              ? "bg-white text-black shadow-sm"
+              : "text-[#A1A8B3] hover:text-black"
+          )}
+        >
+          {tab}
+        </button>
+      ))}
+    </div>
+  );
+}`;
+
+COMPONENT_CODES['nav-breadcrumb'] = `import {
+  Breadcrumb, BreadcrumbItem, BreadcrumbLink,
+  BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { ChevronRight } from "lucide-react";
+
+export function BreadcrumbNav() {
+  return (
+    <Breadcrumb>
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink href="#"
+            className="text-[#A1A8B3] hover:text-[#FD5108] text-sm">Home</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator><ChevronRight className="h-3.5 w-3.5" /></BreadcrumbSeparator>
+        <BreadcrumbItem>
+          <BreadcrumbLink href="#"
+            className="text-[#A1A8B3] hover:text-[#FD5108] text-sm">Projects</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator><ChevronRight className="h-3.5 w-3.5" /></BreadcrumbSeparator>
+        <BreadcrumbItem>
+          <BreadcrumbLink href="#"
+            className="text-[#A1A8B3] hover:text-[#FD5108] text-sm">Digital</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator><ChevronRight className="h-3.5 w-3.5" /></BreadcrumbSeparator>
+        <BreadcrumbItem>
+          <BreadcrumbPage className="text-black font-medium text-sm">
+            Q3 Transformation
+          </BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
+  );
+}`;
+
+COMPONENT_CODES['nav-pagination'] = `import {
+  Pagination, PaginationContent, PaginationItem,
+  PaginationLink, PaginationNext, PaginationPrevious,
+} from "@/components/ui/pagination";
+import { useState } from "react";
+
+export function PaginationNav() {
+  const [page, setPage] = useState(1);
+  const total = 5;
+
+  return (
+    <Pagination>
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious
+            href="#"
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            className={page === 1 ? "pointer-events-none opacity-40" : ""}
+          />
+        </PaginationItem>
+        {Array.from({ length: total }, (_, i) => i + 1).map((n) => (
+          <PaginationItem key={n}>
+            <PaginationLink
+              href="#"
+              isActive={n === page}
+              onClick={() => setPage(n)}
+              className={n === page
+                ? "rounded-none bg-black text-white border-black hover:bg-black"
+                : "rounded-none border-[#DFE3E6] hover:bg-[#EEEFF1]"}
+            >
+              {n}
+            </PaginationLink>
+          </PaginationItem>
+        ))}
+        <PaginationItem>
+          <PaginationNext
+            href="#"
+            onClick={() => setPage((p) => Math.min(total, p + 1))}
+            className={page === total ? "pointer-events-none opacity-40" : ""}
+          />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
+  );
+}`;
+
+COMPONENT_CODES['nav-accordion'] = `import {
+  Accordion, AccordionContent,
+  AccordionItem, AccordionTrigger,
+} from "@/components/ui/accordion";
+
+const items = [
+  {
+    value: "start",
+    title: "Getting Started",
+    content: "Begin by installing the design system package and importing the required CSS tokens. Works across React, Angular, Vue, and plain HTML.",
+  },
+  {
+    value: "config",
+    title: "Configuration Options",
+    content: "Configure theme tokens, spacing scale, and component overrides via CSS custom properties. Dark mode supported via class toggle.",
+  },
+  {
+    value: "advanced",
+    title: "Advanced Features",
+    content: "Advanced usage includes composable chart primitives, data table virtualisation, and integration with authentication services.",
+  },
+];
+
+export function AccordionNav() {
+  return (
+    <Accordion type="single" collapsible defaultValue="start"
+      className="border border-[#DFE3E6]">
+      {items.map(({ value, title, content }) => (
+        <AccordionItem key={value} value={value}
+          className="border-b border-[#DFE3E6] last:border-b-0 px-5">
+          <AccordionTrigger
+            className="text-sm font-medium py-4
+                       hover:no-underline hover:text-[#FD5108]
+                       [&[data-state=open]>svg]:text-[#FD5108]">
+            {title}
+          </AccordionTrigger>
+          <AccordionContent className="text-sm text-[#A1A8B3] pb-4 leading-relaxed">
+            {content}
+          </AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  );
+}`;
+
+COMPONENT_CODES['nav-sidebar'] = `import { cn } from "@/lib/utils";
+import { LayoutDashboard, Users, FileText, Activity, Settings } from "lucide-react";
+import { useState } from "react";
+
+const navItems = [
+  { icon: LayoutDashboard, label: "Dashboard" },
+  { icon: Users,           label: "Users" },
+  { icon: FileText,        label: "Documents" },
+  { icon: Activity,        label: "Analytics" },
+  { icon: Settings,        label: "Settings" },
+];
+
+export function SidebarNav() {
+  const [active, setActive] = useState("Dashboard");
+
+  return (
+    <nav className="w-56 border-r border-[#DFE3E6] flex flex-col py-2">
+      {navItems.map(({ icon: Icon, label }) => (
+        <button
+          key={label}
+          onClick={() => setActive(label)}
+          className={cn(
+            "flex items-center gap-2.5 px-6 py-2 text-sm transition-colors border-l-2",
+            active === label
+              ? "text-[#FD5108] font-semibold border-[#FD5108] bg-[#FFE8D4]"
+              : "text-[#A1A8B3] border-transparent hover:text-black hover:bg-[#EEEFF1]"
+          )}
+        >
+          <Icon className="h-4 w-4 flex-shrink-0" />
+          {label}
+        </button>
+      ))}
+    </nav>
+  );
+}`;
+
+COMPONENT_CODES['nav-avatar'] = `// PwC Avatar — circular, Orange 100 background, Orange 500 icon
+// Three standard sizes: 28px, 36px, 48px
+
+export function Avatar({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
+  const dims = { sm: "w-7 h-7", md: "w-9 h-9", lg: "w-12 h-12" };
+  const icons = { sm: 14, md: 18, lg: 24 };
+  const dim = dims[size];
+  const iconSize = icons[size];
+
+  return (
+    <div className={\`\${dim} rounded-full bg-[#FFE8D4] flex items-center justify-center flex-shrink-0\`}>
+      <svg
+        width={iconSize} height={iconSize}
+        viewBox="0 0 24 24" fill="none"
+        stroke="#FD5108" strokeWidth="2"
+      >
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+    </div>
+  );
+}
+
+// Usage
+// <Avatar size="sm" />   // 28px
+// <Avatar size="md" />   // 36px (default)
+// <Avatar size="lg" />   // 48px`;
+
+
+COMPONENT_CODES['feedback-alerts'] = `import { AlertCircle, CheckCircle2, Info, XCircle, X } from "lucide-react";
+import { useState } from "react";
+
+const variants = [
+  { type: "success", title: "Changes saved",   msg: "Your project settings have been updated successfully.", icon: CheckCircle2, color: "#22C55E", bg: "#DCFCE7" },
+  { type: "error",   title: "Upload failed",   msg: "File size exceeds the 10MB limit. Please compress and retry.", icon: XCircle, color: "#EF4444", bg: "#FEE2E2" },
+  { type: "warning", title: "Session expiring",msg: "Your session will expire in 5 minutes. Save your work.", icon: AlertCircle, color: "#EAB308", bg: "#FEF3C7" },
+  { type: "info",    title: "Update available",msg: "Version 2.4.1 is ready. Refresh to apply the update.", icon: Info, color: "#3B82F6", bg: "#DBEAFE" },
+];
+
+export function AlertBanners() {
+  const [dismissed, setDismissed] = useState<string[]>([]);
+
+  return (
+    <div className="space-y-2">
+      {variants.filter((v) => !dismissed.includes(v.type)).map(({ type, title, msg, icon: Icon, color, bg }) => (
+        <div key={type}
+          className="flex items-start gap-3 p-3.5 pr-4"
+          style={{ backgroundColor: bg, borderLeft: \`3px solid \${color}\` }}>
+          <Icon className="h-4.5 w-4.5 flex-shrink-0 mt-0.5" style={{ color }} />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold">{title}</p>
+            <p className="text-xs text-[#A1A8B3] mt-0.5">{msg}</p>
+          </div>
+          <button onClick={() => setDismissed((d) => [...d, type])}
+            className="text-[#A1A8B3] hover:text-black flex-shrink-0">
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}`;
+
+COMPONENT_CODES['feedback-badges'] = `// PwC Badge variants
+// Uses semantic colours + brand orange
+
+const badges = [
+  { label: "Brand New", bg: "#FFE8D4", color: "#FD5108" },
+  { label: "Active",    bg: "#DCFCE7", color: "#16A34A" },
+  { label: "Pending",   bg: "#FEF3C7", color: "#CA8A04" },
+  { label: "Urgent",    bg: "#FEE2E2", color: "#DC2626" },
+  { label: "Info",      bg: "#DBEAFE", color: "#2563EB" },
+  { label: "Default",   bg: "#EEEFF1", color: "#A1A8B3" },
+  { label: "Draft",     bg: "#EEEFF1", color: "#A1A8B3" },
+  { label: "Approved",  bg: "#DCFCE7", color: "#16A34A" },
+];
+
+export function BadgesAndTags() {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {badges.map(({ label, bg, color }) => (
+        <span
+          key={label}
+          className="inline-flex items-center px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide"
+          style={{ backgroundColor: bg, color }}
+        >
+          {label}
+        </span>
+      ))}
+    </div>
+  );
+}`;
+
+COMPONENT_CODES['feedback-tooltip'] = `import {
+  Tooltip, TooltipContent,
+  TooltipProvider, TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import { Info } from "lucide-react";
+
+export function TooltipDemo() {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button variant="outline"
+            className="rounded-none border-[#DFE3E6] text-sm gap-2">
+            <Info className="h-3.5 w-3.5" />
+            Hover for tooltip
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent
+          className="rounded-none bg-black text-white text-xs px-3 py-1.5 border-0">
+          Appears above the trigger element
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}`;
+
+COMPONENT_CODES['feedback-toast'] = `import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Toaster } from "@/components/ui/toaster";
+
+// Add <Toaster /> once to your app root (e.g., layout.tsx)
+
+export function ToastDemo() {
+  const { toast } = useToast();
+
+  const show = (variant: "success" | "error" | "warning" | "info", msg: string) => {
+    toast({
+      title: variant.charAt(0).toUpperCase() + variant.slice(1),
+      description: msg,
+      className: "rounded-none border-l-4 " + {
+        success: "border-l-green-500",
+        error:   "border-l-red-500",
+        warning: "border-l-yellow-500",
+        info:    "border-l-blue-500",
+      }[variant],
+    });
+  };
+
+  return (
+    <>
+      <Toaster />
+      <div className="flex flex-wrap gap-2">
+        <Button variant="outline" size="sm" onClick={() => show("success", "Changes saved successfully!")}
+          className="rounded-none border-[#DFE3E6]">Success</Button>
+        <Button variant="outline" size="sm" onClick={() => show("error", "Upload failed. Try again.")}
+          className="rounded-none border-[#DFE3E6]">Error</Button>
+        <Button variant="outline" size="sm" onClick={() => show("warning", "Session expires in 5 min.")}
+          className="rounded-none border-[#DFE3E6]">Warning</Button>
+        <Button variant="outline" size="sm" onClick={() => show("info", "Version 2.4.1 available.")}
+          className="rounded-none border-[#DFE3E6]">Info</Button>
+      </div>
+    </>
+  );
+}`;
+
+COMPONENT_CODES['feedback-empty'] = `import { Folder } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+export function EmptyState({
+  title       = "No projects yet",
+  description = "Get started by creating your first project. It only takes a moment.",
+  action      = "Create Project",
+  onAction,
+}: {
+  title?:       string;
+  description?: string;
+  action?:      string;
+  onAction?:    () => void;
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+      <div className="w-14 h-14 bg-[#EEEFF1] flex items-center justify-center mb-5">
+        <Folder className="h-6 w-6 text-[#B5BCC4]" />
+      </div>
+      <h3 className="text-[15px] font-semibold mb-2">{title}</h3>
+      <p className="text-sm text-[#A1A8B3] max-w-xs mb-6 leading-relaxed">{description}</p>
+      {action && (
+        <Button
+          onClick={onAction}
+          className="rounded-none bg-[#FFAA72] text-black font-semibold hover:bg-[#f09a5e] text-sm"
+        >
+          {action}
+        </Button>
+      )}
+    </div>
+  );
+}`;
+
+
+COMPONENT_CODES['progress-linear'] = `import { useState, useEffect } from "react";
+
+export function LinearProgress({ value, label, color = "#FD5108" }:
+  { value: number; label: string; color?: string }) {
+  return (
+    <div>
+      <div className="flex justify-between mb-2">
+        <span className="text-sm">{label}</span>
+        <span className="text-sm text-[#A1A8B3]">{value}%</span>
+      </div>
+      <div className="h-1.5 bg-[#EEEFF1] w-full overflow-hidden">
+        <div
+          className="h-full transition-all duration-500"
+          style={{ width: \`\${value}%\`, backgroundColor: color }}
+        />
+      </div>
+    </div>
+  );
+}
+
+export function ProgressBars() {
+  const [upload, setUpload] = useState(68);
+
+  const simulate = () => {
+    setUpload(0);
+    let v = 0;
+    const id = setInterval(() => {
+      v += Math.random() * 15;
+      if (v >= 100) { v = 100; clearInterval(id); }
+      setUpload(Math.round(v));
+    }, 300);
+  };
+
+  return (
+    <div className="space-y-5 max-w-sm">
+      <LinearProgress value={upload} label="Uploading files" />
+      <LinearProgress value={35}     label="Processing data" />
+      <LinearProgress value={100}    label="Complete" color="#22C55E" />
+      <button
+        onClick={simulate}
+        className="text-xs font-semibold border border-[#DFE3E6]
+                   px-3 py-1.5 hover:bg-[#EEEFF1] transition-colors"
+      >
+        Simulate Upload
+      </button>
+    </div>
+  );
+}`;
+
+COMPONENT_CODES['progress-stepped'] = `import { Check } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+type StepState = "done" | "active" | "future";
+
+const steps: { label: string; state: StepState }[] = [
+  { label: "Account",  state: "done" },
+  { label: "Profile",  state: "active" },
+  { label: "Settings", state: "future" },
+  { label: "Review",   state: "future" },
+];
+
+export function SteppedProgress() {
+  return (
+    <div className="flex items-center gap-0">
+      {steps.map(({ label, state }, i) => (
+        <div key={label} className="flex items-center">
+          {/* Connector line */}
+          {i > 0 && (
+            <div className={\`h-0.5 w-12 \${state === "done" ? "bg-[#FD5108]" : "bg-[#DFE3E6]"}\`} />
+          )}
+          {/* Step */}
+          <div className="flex flex-col items-center gap-1.5">
+            <div className={cn(
+              "w-7 h-7 flex items-center justify-center text-xs font-semibold",
+              state === "done"   && "bg-[#FD5108] text-white",
+              state === "active" && "border-2 border-[#FD5108] text-[#FD5108]",
+              state === "future" && "border border-[#DFE3E6] text-[#A1A8B3]",
+            )}>
+              {state === "done" ? <Check className="h-3.5 w-3.5" /> : i + 1}
+            </div>
+            <span className={cn(
+              "text-xs font-medium",
+              state === "done"   && "text-[#FD5108]",
+              state === "active" && "text-[#FD5108]",
+              state === "future" && "text-[#A1A8B3]",
+            )}>
+              {label}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}`;
+
+COMPONENT_CODES['progress-spinner'] = `// PwC Spinner — SVG arc, Orange 500 on Grey 200 track
+
+export function Spinner({ size = 24 }: { size?: number }) {
+  const r = 10;
+  const circ = 2 * Math.PI * r; // 62.83
+
+  return (
+    <svg
+      width={size} height={size}
+      viewBox="0 0 24 24"
+      className="animate-spin"
+      style={{ animation: "spin 1s linear infinite" }}
+    >
+      {/* Track */}
+      <circle cx="12" cy="12" r={r} stroke="#DFE3E6" strokeWidth="3" fill="none" />
+      {/* Arc */}
+      <circle
+        cx="12" cy="12" r={r}
+        stroke="#FD5108" strokeWidth="3" fill="none"
+        strokeDasharray={circ}
+        strokeDashoffset={circ * 0.75}
+        strokeLinecap="round"
+        transform="rotate(-90 12 12)"
+      />
+    </svg>
+  );
+}
+
+// Usage at different sizes:
+// <Spinner size={16} />
+// <Spinner size={24} />
+// <Spinner size={32} />
+// <Spinner size={48} />`;
+
+COMPONENT_CODES['progress-skeleton'] = `// PwC Skeleton — pulses on Grey 100 background
+
+import { cn } from "@/lib/utils";
+
+export function Skeleton({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn(
+        "animate-pulse bg-[#EEEFF1]",
+        className
+      )}
+    />
+  );
+}
+
+// Card skeleton example:
+export function CardSkeleton() {
+  return (
+    <div className="p-5 border border-[#DFE3E6] space-y-4">
+      {/* Avatar + name row */}
+      <div className="flex items-center gap-3">
+        <Skeleton className="w-11 h-11 rounded-full flex-shrink-0" />
+        <div className="flex-1 space-y-1.5">
+          <Skeleton className="h-3.5 w-2/5" />
+          <Skeleton className="h-3 w-3/5" />
+        </div>
+      </div>
+      {/* Body lines */}
+      <Skeleton className="h-3 w-full" />
+      <Skeleton className="h-3 w-11/12" />
+      <Skeleton className="h-3 w-4/5" />
+      {/* Grid blocks */}
+      <div className="grid grid-cols-3 gap-2 pt-1">
+        <Skeleton className="h-16" />
+        <Skeleton className="h-16" />
+        <Skeleton className="h-16" />
+      </div>
+    </div>
+  );
+}`;
+
+COMPONENT_CODES['data-table'] = `import {
+  Table, TableBody, TableCell,
+  TableHead, TableHeader, TableRow,
+} from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { MoreVertical, Plus, Search } from "lucide-react";
+import { useState } from "react";
+
+const users = [
+  { name: "Sarah Chen",    email: "s.chen@pwc.com",    role: "Partner",         status: "Active",   joined: "Jan 2022" },
+  { name: "James Okafor",  email: "j.okafor@pwc.com",  role: "Senior Manager",  status: "Active",   joined: "Mar 2021" },
+  { name: "Priya Nair",    email: "p.nair@pwc.com",    role: "Manager",         status: "Pending",  joined: "Aug 2023" },
+  { name: "Tom Willis",    email: "t.willis@pwc.com",  role: "Associate",       status: "Inactive", joined: "Nov 2020" },
+  { name: "Elena Vasquez", email: "e.vasquez@pwc.com", role: "Director",        status: "Active",   joined: "Jun 2019" },
+];
+
+const statusStyle: Record<string, string> = {
+  Active:   "bg-[#DCFCE7] text-[#16A34A]",
+  Pending:  "bg-[#FEF3C7] text-[#CA8A04]",
+  Inactive: "bg-[#EEEFF1] text-[#A1A8B3]",
+};
+
+export function DataTable() {
+  const [query, setQuery] = useState("");
+  const [selected, setSelected] = useState<string[]>([]);
+
+  const rows = users.filter((u) =>
+    u.name.toLowerCase().includes(query.toLowerCase())
+  );
+
+  const toggle = (name: string) =>
+    setSelected((s) => s.includes(name) ? s.filter((n) => n !== name) : [...s, name]);
+
+  return (
+    <div className="space-y-3">
+      {/* Toolbar */}
+      <div className="flex justify-between items-center">
+        <div className="relative w-64">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#B5BCC4]" />
+          <Input
+            placeholder="Search users..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="rounded-none pl-8 h-8 text-sm border-[#DFE3E6]"
+          />
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm"
+            className="rounded-none border-[#DFE3E6] text-xs h-8">Export</Button>
+          <Button size="sm"
+            className="rounded-none bg-[#FFAA72] text-black text-xs font-semibold h-8 gap-1.5 hover:bg-[#f09a5e]">
+            <Plus className="h-3.5 w-3.5" /> Add User
+          </Button>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="border border-[#DFE3E6]">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-[#EEEFF1] hover:bg-[#EEEFF1]">
+              <TableHead className="w-10">
+                <Checkbox className="rounded-none border-[#DFE3E6]" />
+              </TableHead>
+              <TableHead className="text-xs font-semibold text-black uppercase tracking-wide">Name</TableHead>
+              <TableHead className="text-xs font-semibold text-black uppercase tracking-wide">Email</TableHead>
+              <TableHead className="text-xs font-semibold text-black uppercase tracking-wide">Role</TableHead>
+              <TableHead className="text-xs font-semibold text-black uppercase tracking-wide">Status</TableHead>
+              <TableHead className="text-xs font-semibold text-black uppercase tracking-wide">Joined</TableHead>
+              <TableHead className="w-10" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.map((user) => (
+              <TableRow
+                key={user.name}
+                data-selected={selected.includes(user.name)}
+                className="cursor-pointer border-b border-[#DFE3E6]
+                           data-[selected=true]:bg-[#FFE8D4]
+                           hover:bg-[#EEEFF1]"
+                onClick={() => toggle(user.name)}
+              >
+                <TableCell>
+                  <Checkbox
+                    checked={selected.includes(user.name)}
+                    className="rounded-none border-[#DFE3E6]
+                               data-[state=checked]:bg-[#FD5108]
+                               data-[state=checked]:border-[#FD5108]"
+                    onClick={(e) => e.stopPropagation()}
+                    onCheckedChange={() => toggle(user.name)}
+                  />
+                </TableCell>
+                <TableCell className="text-sm font-medium">{user.name}</TableCell>
+                <TableCell className="text-sm text-[#A1A8B3]">{user.email}</TableCell>
+                <TableCell className="text-sm">{user.role}</TableCell>
+                <TableCell>
+                  <span className={\`text-[11px] font-semibold px-2 py-0.5 uppercase \${statusStyle[user.status]}\`}>
+                    {user.status}
+                  </span>
+                </TableCell>
+                <TableCell className="text-sm text-[#A1A8B3]">{user.joined}</TableCell>
+                <TableCell>
+                  <Button variant="ghost" size="icon"
+                    className="h-7 w-7 text-[#A1A8B3] hover:text-black">
+                    <MoreVertical className="h-3.5 w-3.5" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
+}`;
+
+
+COMPONENT_CODES['chat-fab'] = `import { MessageCircle, X } from "lucide-react";
+import { useState } from "react";
+
+// PwC FAB — Fixed action button to trigger chat panel
+// Orange 500 background, white icon, sharp corners
+
+export function ChatFAB({ onOpen }: { onOpen: () => void }) {
+  return (
+    <button
+      onClick={onOpen}
+      aria-label="Open chat"
+      className="fixed bottom-6 right-6 w-14 h-14 bg-[#FD5108]
+                 flex items-center justify-center shadow-lg
+                 hover:bg-[#d94000] transition-colors z-50"
+      style={{ borderRadius: 0 }}
+    >
+      <MessageCircle className="h-6 w-6 text-white" stroke="white" strokeWidth={2} />
+    </button>
+  );
+}
+
+// Wrap in your layout:
+// <ChatFAB onOpen={() => setOpen(true)} />`;
+
+COMPONENT_CODES['chat-panel'] = `import { MessageCircle, Paperclip, Mic, MoreHorizontal, X } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+
+type Message = { role: "ai" | "user"; text: string };
+
+const INITIAL: Message[] = [
+  { role: "ai",   text: "Hello! I'm your PwC digital assistant. How can I help you today?" },
+  { role: "user", text: "Can you show me the design system components?" },
+  { role: "ai",   text: "Of course! The catalogue covers buttons, forms, navigation, charts, and more — all following PwC brand standards. Use the sidebar to navigate." },
+];
+
+export function ChatPanel({ onClose }: { onClose?: () => void }) {
+  const [msgs, setMsgs] = useState<Message[]>(INITIAL);
+  const [input, setInput] = useState("");
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [msgs]);
+
+  const send = () => {
+    const text = input.trim();
+    if (!text) return;
+    setMsgs((m) => [...m, { role: "user", text }]);
+    setInput("");
+    setTimeout(() => {
+      setMsgs((m) => [...m, { role: "ai", text: "I'm processing your request. In production this would call your AI backend." }]);
+    }, 600);
+  };
+
+  return (
+    <div className="flex flex-col border border-[#DFE3E6] w-80 h-[480px] shadow-lg">
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[#DFE3E6] flex-shrink-0">
+        <div className="flex items-center gap-2">
+          <MessageCircle className="h-4 w-4 text-[#FD5108]" />
+          <span className="text-sm font-semibold">PwC Assistant</span>
+          <span className="text-[10px] font-semibold bg-[#DCFCE7] text-[#16A34A] px-1.5 py-0.5 uppercase">
+            Online
+          </span>
+        </div>
+        <div className="flex gap-1">
+          <button className="h-7 w-7 flex items-center justify-center text-[#A1A8B3] hover:text-black">
+            <MoreHorizontal className="h-4 w-4" />
+          </button>
+          {onClose && (
+            <button onClick={onClose} className="h-7 w-7 flex items-center justify-center text-[#A1A8B3] hover:text-black">
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {msgs.map((m, i) =>
+          m.role === "ai" ? (
+            <div key={i} className="flex items-start gap-2">
+              <MessageCircle className="h-4 w-4 text-[#FD5108] flex-shrink-0 mt-0.5" />
+              <p className="text-sm leading-relaxed max-w-[85%]">{m.text}</p>
+            </div>
+          ) : (
+            <div key={i} className="flex justify-end">
+              <div className="text-sm leading-relaxed bg-[#EEEFF1] px-3 py-2 max-w-[85%]">
+                {m.text}
+              </div>
+            </div>
+          )
+        )}
+        <div ref={bottomRef} />
+      </div>
+
+      {/* Input */}
+      <div className="flex-shrink-0 p-3 border-t border-[#DFE3E6]">
+        <div className="flex items-center gap-2 border border-[#DFE3E6] px-3 py-2">
+          <Paperclip className="h-4 w-4 text-[#B5BCC4] flex-shrink-0" />
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && send()}
+            placeholder="Type a message..."
+            className="flex-1 text-sm outline-none bg-transparent min-w-0"
+          />
+          <Mic className="h-4 w-4 text-[#B5BCC4] flex-shrink-0" />
+        </div>
+      </div>
+    </div>
+  );
+}`;
+
+COMPONENT_CODES['foundations-colors'] = `/* ═══════════════════════════════════════════════
+   PwC Digital Design System — Colour Tokens
+   Add to your global CSS or tailwind.config.ts
+═══════════════════════════════════════════════ */
+
+:root {
+  /* ── Brand Oranges ── */
+  --o500: #FD5108;   /* Primary interactive / active state */
+  --o300: #FFAA72;   /* Primary button background (WCAG AA) */
+  --o100: #FFE8D4;   /* Hover backgrounds / selected rows */
+
+  /* ── Neutral Greys ── */
+  --black: #000000;
+  --white: #ffffff;
+  --g100:  #EEEFF1;  /* Page background / skeleton */
+  --g200:  #DFE3E6;  /* Border / divider */
+  --g300:  #CBD1D6;  /* Inactive elements */
+  --g400:  #B5BCC4;  /* Placeholder text */
+  --g500:  #A1A8B3;  /* Secondary text */
+
+  /* ── Semantic ── */
+  --success:    #22C55E;
+  --successBg:  #DCFCE7;
+  --warning:    #EAB308;
+  --warningBg:  #FEF3C7;
+  --error:      #EF4444;
+  --errorBg:    #FEE2E2;
+  --info:       #3B82F6;
+  --infoBg:     #DBEAFE;
+}
+
+/* Tailwind mapping (tailwind.config.ts):
+extend: {
+  colors: {
+    brand: {
+      500: '#FD5108',
+      300: '#FFAA72',
+      100: '#FFE8D4',
+    },
+    grey: {
+      100: '#EEEFF1',
+      200: '#DFE3E6',
+      300: '#CBD1D6',
+      400: '#B5BCC4',
+      500: '#A1A8B3',
+    },
+  },
+}
+*/`;
+
+COMPONENT_CODES['foundations-typography'] = `/* ═══════════════════════════════════════════════
+   PwC Digital Design System — Typography Scale
+═══════════════════════════════════════════════ */
+
+/* Base: system-ui stack, 14px body, 1.6 line-height */
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #000;
+}
+
+/* Headings */
+h1 { font-size: 32px; font-weight: 600; line-height: 1.2; }
+h2 { font-size: 24px; font-weight: 600; line-height: 1.3; }
+h3 { font-size: 18px; font-weight: 600; line-height: 1.4; }
+h4 { font-size: 16px; font-weight: 600; line-height: 1.4; }
+
+/* Body variants */
+.body     { font-size: 14px; font-weight: 400; line-height: 1.6; }
+.label    { font-size: 14px; font-weight: 500; }
+.caption  { font-size: 12px; font-weight: 400; color: #A1A8B3; }
+.micro    { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* Tailwind classes mapping:
+   H1:       text-[32px] font-semibold
+   H2:       text-2xl font-semibold
+   H3:       text-lg font-semibold
+   H4:       text-base font-semibold
+   Body:     text-sm leading-relaxed
+   Label:    text-sm font-medium
+   Caption:  text-xs text-[#A1A8B3]
+   Micro:    text-[11px] font-semibold uppercase tracking-wide
+*/`;
+
+COMPONENT_CODES['foundations-spacing'] = `/* ═══════════════════════════════════════════════
+   PwC Digital Design System — Spacing Scale (8px grid)
+═══════════════════════════════════════════════ */
+
+/* All spacing is based on an 8px grid */
+:root {
+  --space-xs:  4px;   /*  0.5 × 8 */
+  --space-sm:  8px;   /*  1   × 8 */
+  --space-md: 12px;   /*  1.5 × 8 */
+  --space-lg: 16px;   /*  2   × 8 */
+  --space-xl: 20px;   /*  2.5 × 8 */
+  --space-2xl:24px;   /*  3   × 8 */
+  --space-3xl:32px;   /*  4   × 8 */
+  --space-4xl:48px;   /*  6   × 8 */
+  --space-5xl:64px;   /*  8   × 8 */
+}
+
+/* Component padding standards:
+   Buttons:        10px 20px (md)  |  6px 14px (sm)  |  14px 28px (lg)
+   Cards:          24px all sides
+   Panel header:   16px–20px top/bottom, 20px–24px left/right
+   Section header: 48px margin-bottom
+   Section gap:    80px between sections
+   Input:          10px 12px (md)  |  8px 10px (sm)
+*/
+
+/* Tailwind spacing usage:
+   p-1   =  4px    gap-1  =  4px
+   p-2   =  8px    gap-2  =  8px
+   p-3   = 12px    gap-3  = 12px
+   p-4   = 16px    gap-4  = 16px
+   p-5   = 20px    gap-5  = 20px
+   p-6   = 24px    gap-6  = 24px
+   p-8   = 32px    gap-8  = 32px
+   p-12  = 48px    gap-12 = 48px
+*/`;
+
+COMPONENT_CODES['foundations-animations'] = `/* ═══════════════════════════════════════════════
+   PwC Digital Design System — Animation Keyframes
+═══════════════════════════════════════════════ */
+
+/* spin — used on loading spinners */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.animate-spin { animation: spin 1s linear infinite; }
+
+/* pulse — used on skeleton loading blocks */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.45; }
+}
+.animate-pulse { animation: pulse 1.5s ease-in-out infinite; }
+
+/* fadeIn — used on section/panel entrance */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fadeIn 0.3s ease forwards; }
+
+/* shimmer — alternative skeleton effect */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, #EEEFF1 25%, #DFE3E6 50%, #EEEFF1 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Tailwind config (tailwind.config.ts):
+extend: {
+  animation: {
+    'fade-in': 'fadeIn 0.3s ease forwards',
+    'shimmer':  'shimmer 1.5s ease-in-out infinite',
+  },
+  keyframes: {
+    fadeIn:  { from: { opacity: '0', transform: 'translateY(6px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
+    shimmer: { '0%': { backgroundPosition: '-200% 0' }, '100%': { backgroundPosition: '200% 0' } },
+  },
+}
+*/`;
+
+
 // ══════════════════════════════════════════════
 // CODE MODAL FUNCTIONS
 // ══════════════════════════════════════════════
 function showCode(name) {
-  const code = CHART_CODES[name] || '// Code snippet not available for: ' + name;
-  const title = CHART_CODE_TITLES[name] || name;
+  const code = CHART_CODES[name] || COMPONENT_CODES[name] || '// Code snippet not available for: ' + name;
+  const title = CHART_CODE_TITLES[name] || COMPONENT_CODE_TITLES[name] || name;
   document.getElementById('codeModalTitle').textContent = title;
   document.getElementById('codeModalContent').textContent = code;
   document.getElementById('codeOverlay').style.display = 'flex';
