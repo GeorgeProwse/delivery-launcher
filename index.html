@@ -9773,211 +9773,59 @@ Close with a brief message confirming outputs and inviting the user to proceed o
   },
 };
 const GLOBAL_STANDARDS = {
-  SS1: `## SS-1 — Global Style Standard (v1.0)
-Applies to: All prompts in the engagement planning chain; all generated Word (.docx), Excel (.xlsx), PowerPoint (.pptx) artifacts.
-Objective: Ensure every artifact is visually consistent, PwC-aligned, accessible, and production-ready without per-prompt style repetition.
+  SS1: `## SS-1 — Global Style Standard
+Applies to: All prompts in the engagement‑planning chain; all generated Word (.docx), Excel (.xlsx) and PowerPoint (.pptx) artefacts.
 
-## 1) Normative Language
-- MUST = mandatory requirement.
-- SHOULD = strongly recommended; deviations require explicit justification in the artifact notes.
-- MAY = optional.
+### 1) Normative Language
+- **MUST** – mandatory requirement.
+- **SHOULD** – strongly recommended; deviations require justification.
+- **MAY** – optional.
 
-## 2) Design Principles
-1. Clarity over decoration: Prioritise readability and scannability. Avoid visual noise.
-2. Consistency beats novelty: Use the same layout, styles, and tokens across all artifacts.
-3. Traceability: Titles, IDs, versions, dates, and confidentiality marks must be present and consistent.
-4. Accessibility by default: Sufficient contrast, clear hierarchy, avoid relying on colour alone to convey meaning.
-5. Executive-ready: No placeholder text left behind unless explicitly labelled as "To be confirmed" and captured as an open item.
+### 2) Design Principles
+1. **Clarity over decoration** – prioritise readability and scannability.
+2. **Consistency beats novelty** – use the same layout, styles and tokens across artefacts.
+3. **Traceability** – always include titles, IDs, versions, dates and confidentiality marks.
+4. **Accessibility** – ensure sufficient contrast and clear hierarchy; don’t rely on colour alone.
+5. **Executive‑ready** – no placeholder text unless marked “To be confirmed”.
 
-## 3) Global Visual Tokens
+### 3) Core Visual Palette & Typography
+- **Primary colour:** PwC orange (#FD5108) for headings, section rules and key highlights.
+- **Supporting tints:** lighter orange (#FFAA72) and peach (#FFE8D4) for backgrounds, hovers and subtle highlights.
+- **Neutral colours:** black (#000000) or dark grey (#333333) for primary text; light greys for fills and dividers.
+- **Status colours:** success (green #22C55E), warning (yellow #EAB308), danger (red #C62828), info (blue #3B82F6). Use only for status indicators/conditional formatting.
+- **Call‑outs:** key‑point call‑outs use peach fill with an orange left rule; warnings use pale yellow with a yellow left rule; notes use light grey with a grey left rule.
+- **Typography:** body text in Arial (Word/Excel: 10 pt; PPT: 11–12 pt). Headings in Helvetica Neue if available, otherwise Arial. Maintain hierarchy: H1≈20 pt, H2≈14 pt, H3≈12 pt; PPT titles≈28 pt.
 
-Copy code
-### 3.1 Colour Tokens (Hex)
-Brand / Core:
-- --orange500 = #FD5108 (PwC core Orange 500; headings; table headers; key rules)
-- --orange400 = #FE7C39 (secondary accent; active states; chart series 2)
-- --orange300 = #FFAA72 (tertiary accent; hover states; highlights)
-- --orange200 = #FFCDA8 (subtle highlight; tinted fills)
-- --orange100 = #FFE8D4 (lightest fill; section backgrounds; calloutKeyBg)
-- --black = #000000 (primary text)
-- --white = #FFFFFF
-- --grey100 = #EEEFF1 (light fills; alt rows; section dividers; backgrounds)
-- --grey200 = #DFE3E6 (borders/rules)
-- --grey300 = #CBD1D6 (subtle borders; dividers)
-- --grey400 = #B5BCC4 (inactive; disabled)
-- --grey500 = #A1A8B3 (secondary/tertiary text; notes)
+### 4) Layout & Metadata
+- Every artefact must include client name, engagement name, document title, version, status, date and confidentiality statement.
+- File‑naming convention: `{STEP_ID}_{ARTIFACT_NAME}_{YYYY-MM-DD}_v{VERSION}.{ext}`.
+- Use the confidentiality footer: “PwC Private and Confidential — prepared for [Client Name] only” on each page/slide/sheet.
 
-Status / Severity:
-- --success = #22C55E ; --successBg = #DCFCE7 (on track; complete; positive)
-- --warning = #EAB308 ; --warningBg = #FEF3C7 (at risk; attention required)
-- --danger = #C62828 ; --dangerBg = #FFEBEE (critical; off track; errors)
-- --info = #3B82F6 ; --infoBg = #EFF6FF (informational; closed/complete alt)
+### 5) Word Guidelines
+- A4 page size; 2 cm margins.
+- Header: document title on left; client + engagement on right; grey 9 pt text.
+- Footer: confidentiality statement on left; page number on right; grey 9 pt text.
+- Body text: Arial 10 pt, black. Headings: PwC orange. Number headings when multiple levels.
+- Tables: orange header row with white text; alternate white and light‑grey rows; thin grey borders; 4 pt cell padding.
+- Use call‑out styles described above. Unknown values should be written as *Not specified — to be confirmed* in italics.
 
-Callout Fills:
-- --calloutKeyBg = #FFE8D4 (key points; --orange500 left rule)
-- --calloutWarnBg = #FEF3C7 (warnings/gaps; --warning left rule)
-- --calloutNoteBg = #EEEFF1 (notes/assumptions; --grey300 left rule)
+### 6) Excel Guidelines
+- Restricted palette: orange (#FD5108) and its lighter tints, whites and greys. Do **not** use blue, green, purple, teal or other colours for table fills.
+- Preferred table styles:
+ 1. **TableStyleMedium3** for main data tables (orange header, banded rows).
+ 2. **TableStyleLight16** for reference/log tables (light banding).
+ 3. **TableStyleMedium2** for dashboard KPI tables (orange border, white fill).
+ Set `showFirstColumn=False` and avoid default blue styles.
+- Text: Arial 10 pt; headings may use bold or slightly larger sizes. Use status colours only via conditional formatting (success/warning/danger/info).
 
-### 3.2 Typography Tokens
-Word body: Arial > Calibri
-Word/PPT headings: Helvetica Neue > Arial > Calibri
-Excel: Arial 10pt
-PPT: Helvetica Neue > Arial
-
-### 3.3 Type Scale and Spacing
-Word: Body 10pt | H1 20pt Bold | H2 14pt Bold | H3 12pt Bold | Line spacing 1.15 | Para spacing 6pt after
-PPT (16:9): Title 28pt Bold | Subtitle 18pt | Section label 11pt uppercase | Body 11-12pt | Table body 10pt | Caption 9pt | Footer 8pt
-Excel: Headers Arial 10pt Bold | Body Arial 10pt | Notes Arial 9pt
-
-### 3.4 Borders, Rules, and Shapes
-- Standard border: 0.5pt --grey200
-- Section rule: full-width 1pt --orange500
-- Callout left rule: 3pt (colour depends on callout type; see 3.1)
-- Avoid heavy borders; use fill + thin borders.
-
-## 4) Global Layout and Metadata Standards
-
-### 4.1 Document Metadata (All Artifacts)
-Every artifact MUST include: Client Name, Engagement Name, Document/Artifact Title, Version, Status, Date, Confidentiality statement.
-
-### 4.2 Naming Conventions
-File names: {STEP_ID}_{ARTIFACT_NAME}_{YYYY-MM-DD}_v{VERSION}.{ext}
-Example: P2.1_WBS_Schedule_2026-02-21_v1.0.xlsx
-Sheet names: <= 31 chars, no trailing spaces.
-
-### 4.3 Confidentiality Marking
-Use: "PwC Private and Confidential — prepared for [Client Name] only"
-Word: footer every page. Excel: footer every sheet. PPT: footer every slide.
-
-## 5) Word (.docx) Style Standard
-Page size: A4. Margins: 2.0cm all sides.
-Header: doc title left | client + engagement right | --grey500 9pt
-Footer: confidentiality left | Page X of Y right | --grey500 9pt
-Headings: heading font, --orange500, numbered where multiple sections.
-Body: body font, 10pt, --black.
-Tables: header --orange500 fill / --white text / bold 10pt; alternating --white/--grey100; borders 0.5pt --grey200; cell padding 4pt.
-Callouts: Key=--calloutKeyBg + 3pt --orange500 left rule; Warning=--calloutWarnBg + 3pt --warning left rule; Note=--calloutNoteBg + 3pt --grey300 left rule.
-Placeholders: write as _Not specified — to be confirmed_ (italic).
-
-## 6) Excel (.xlsx) Style Standard
-
-### 6.1 Approved Table Style Palette
-The engagement uses a restricted palette derived from the approved PwC Excel table style set.
-Only the following colour families are permitted in Excel workbooks:
-- **Primary:** Orange (#FD5108 = --orange500), Light orange (#FFAA72 = --orange300), Peach (#FFE8D4 = --orange100)
-- **Neutral:** White (#FFFFFF), Light grey (#EEEFF1 = --grey100), Mid grey (#DFE3E6 = --grey200)
-- **Black/dark:** #000000 and #333333 for text only — NEVER as fill on data rows
-- **Status only (conditional formatting only):** --success (#22C55E / bg #DCFCE7), --warning (#EAB308 / bg #FEF3C7), --danger (#C62828 / bg #FFEBEE), --info (#3B82F6 / bg #EFF6FF)
-- **Prohibited fills:** Blue, green, purple, teal, red, yellow or any colour outside this palette — including default Excel blue table styles
-
-### 6.2 Preferred openpyxl Table Style
-When applying a TableStyleInfo to an Excel Table (ListObject), use these in priority order:
-1. **Primary operational tables** (main data tables): \`TableStyleMedium3\` — orange header, white/light-orange banded rows
-2. **Reference / log tables** (change log, lookup tables): \`TableStyleLight16\` — light orange/peach banding, no heavy header
-3. **Dashboard KPI tables** (small 2-col summary tables): \`TableStyleMedium2\` — orange border, white fill, orange header
-4. Do NOT use any blue, green or default Excel table styles.
-5. Set \`showFirstColumn=False\`, \`showLastColumn=False\`, \`showRowStripes=True\`, \`showColumnStripes=False\` on all tables.
-
-### 6.3 Fonts and Type Hierarchy
-Apply these sizes consistently — do NOT mix sizes within a tier:
-- Sheet title / engagement header (info block row 1): Arial 12pt Bold, --orange500
-- Sub-header labels (info block rows 2+): Arial 10pt Bold, --grey500
-- Table column headers: Arial 10pt Bold, --white on --orange500 fill
-- Data rows: Arial 10pt, --black
-- Notes / secondary text: Arial 9pt Italic, --grey500
-- Section separator labels (between tables): Arial 10pt Bold, --orange500, no fill
-
-### 6.4 Row Heights
-- Info block rows (engagement header): 20pt minimum
-- Table column header row: 30pt (allows wrapped text to be readable)
-- Data rows: do NOT set explicit height on data rows — leave as None to allow Excel to auto-size based on content. Exception: for sheets where ALL columns are short/enum (no wrap_text columns), you MAY set height = 15 to prevent blank row inflation.
-- Section label rows: 18pt
-- NEVER leave row height at openpyxl default (None) — always set explicitly
-
-### 6.5 Column Widths
-Auto-fit is NOT sufficient. Apply these deterministic widths:
-- ID columns (stakeholder_id, risk_id, etc.): width = 12
-- Short enum/dropdown columns (status, RAG, type, Yes/No): width = 14
-- Name columns (full_name, role_title): width = 28
-- Organisation / group columns: width = 22
-- Description / narrative / notes columns: width = 45, wrap_text = True
-- Date columns: width = 14
-- Score / numeric columns: width = 10
-- All other columns: width = 20
-- Do NOT call \`auto_fit\` after setting widths — it overrides explicit values
-
-### 6.6 Text Wrapping and Alignment
-- \`wrap_text = True\` + \`vertical = 'top'\`: all description, notes, narrative, free-text columns
-- \`wrap_text = False\` + \`vertical = 'center'\`: all ID, date, status, score, short enum columns
-- Table column header row: \`wrap_text = True\` + \`vertical = 'center'\` + \`horizontal = 'center'\`
-- Set alignment explicitly on every cell written — do not rely on openpyxl defaults
-
-### 6.7 Table Header and Row Styling (manual, applied in addition to TableStyleInfo)
-Apply these fills and fonts explicitly to ensure consistency even if TableStyleInfo rendering varies:
-- Column header row: \`PatternFill(fgColor="FD5108")\` + \`Font(bold=True, color="FFFFFF", size=10, name="Arial")\`
-- Header row bottom border: \`Side(border_style="medium", color="FD5108")\`
-- Odd data rows: fill \`FFFFFF\`; Even data rows: fill \`EEEFF1\`
-- All cell borders: \`Side(border_style="thin", color="DFE3E6")\`
-
-### 6.8 Info / Header Block (rows above each table)
-Every sheet MUST have an info block above its first table:
-- Row 1: "Client: {client_name}  |  Engagement: {engagement_name}" — Arial 12pt Bold --orange500; merged across used columns; fill --orange100 (#FFE8D4)
-- Row 2: "Generated: {YYYY-MM-DD}  |  Version: v1.0  |  Status: Draft" — Arial 10pt --grey500; fill --grey100 (#EEEFF1)
-- Row 3 (notices only): Arial 10pt Italic --danger (#C62828); fill --dangerBg (#FFEBEE). Only include if a warning is required (e.g. inferred data notice).
-- Blank separator row before table header row: height = 6pt
-- Info block rows must NOT be part of the Excel Table — they sit above the table start row
-
-### 6.9 Freeze Panes
-- Freeze AFTER all header block rows AND the table column header row
-- Example: if table starts at row 4 (cols A–W), header in row 4: \`ws.freeze_panes = "C5"\` (freezes cols A:B + rows 1:4)
-- Always freeze at minimum: all header block rows + table column header row
-
-### 6.10 Tab Colours
-- Primary/Operational sheets: #FD5108 (--orange500). Set via \`ws.sheet_properties.tabColor = "FD5108"\`
-- Reference/Log sheets: #EEEFF1 (--grey100). Set via \`ws.sheet_properties.tabColor = "EEEFF1"\`
-
-### 6.11 Dates, Currency, Percentages
-- Dates: \`number_format = "YYYY-MM-DD"\` — set explicitly on all date cells and columns
-- Currency: \`number_format = '#,##0.00'\`
-- Percentages: \`number_format = '0.0%'\`
-
-### 6.12 Dropdowns and Data Validation
-- All enum columns MUST have \`DataValidation(type="list", ...)\` applied to the full table column range
-- Use inline comma-separated lists or named ranges — NOT formula-based sources
-- Apply validation to the full column range of the table, not just the first row
-
-### 6.13 Conditional Formatting
-- Use only status/severity tokens from Section 3.1 (--success, --warning, --danger, --info fills)
-- Every rule MUST set both PatternFill AND Font colour (colour alone is inaccessible)
-- Apply rules to the full table data range using explicit cell range (e.g. \`A5:W500\`)
-- Inferred/unconfirmed data rows: light italic fill using --orange100 (#FFE8D4) + --grey500 italic font
-
-### 6.14 Print Setup
-- \`ws.print_title_rows = "1:4"\` (repeat header block + table header on every printed page)
-- Fit to page width: \`ws.page_setup.fitToWidth = 1; ws.page_setup.fitToHeight = 0\`
-- Confidentiality footer: \`ws.oddFooter.center.text = "PwC Private and Confidential — prepared for {client_name} only"\`
-
-## 7) PowerPoint (.pptx) Style Standard
-Size: 16:9. Background: --white for content slides.
-Every slide: PwC logo text-placeholder top-left (use a text box with "PwC" in --orange500 bold 11pt — do not attempt to embed an image file); 2pt --orange500 top rule; section label top-right uppercase --orange500 11pt; confidentiality bottom; slide number bottom-right.
-Title slide: --orange500 background; --white title 28pt bold; --white subtitle 18pt.
-Section divider: --grey100 background; --orange500 heading 28pt bold.
-Content slide: max 5 bullets; split if exceeded.
-Tables: --orange500 header (--white bold text); data rows --white fill; row dividers 0.5pt --grey200; no banding; max 8 rows per slide.
-RAG indicators: filled circles; Red=--danger; Amber=--warning; Green=--success; Blue=--info; Grey=--grey500. Meaning per DD-1.
-
-## 8) Cross-Artifact Consistency Rules
-Colour tokens, status colours, confidentiality statement, dates, versioning, and titles MUST match across all artifacts for the same step.
-"To be confirmed": italic in Word; grey italic in Excel; bracketed placeholder in PPT.
-
-## 9) Non-Negotiable Prohibitions
-- Do NOT invert RAG colours or redefine meanings (meanings live in DD-1).
-- Do NOT use fixed magic row numbers for section boundaries (engineering lives in WE-1).
-- Do NOT introduce additional palettes per prompt.
-- Do NOT leave unlabelled placeholder tokens in final outputs.
-
-## 10) Style QA Checklist (SS-1 Compliance)
-Artifact is SS-1 compliant only if: metadata present; confidentiality applied; headings correct font/size/colour using --orange500; tables correct header styling using --orange500/--white/--grey100; callouts correct fill+rule using defined tokens; status colours use --success/--warning/--danger/--info tokens only; no mixed palettes; readable layout.
+### 7) PowerPoint Guidelines
+- **Aspect ratio:** 16:9.  Content slides use a white background; title slides use an orange background; section dividers use a light grey background.
+- **Slide header:** Place a PwC logo text placeholder (“PwC” in orange, bold 11 pt) at the top left; draw a 2 pt orange rule along the top edge; include a section label in uppercase orange 11 pt at the top right.  Add the confidentiality statement at the bottom and the slide number at the bottom right.
+- **Title slide:** Orange background; title in white 28 pt bold; subtitle in white 18 pt.
+- **Section divider slide:** Light grey background; heading in orange 28 pt bold.
+- **Content slides:** Limit to five bullet points; split content into multiple slides if necessary.  Use the standard typography (headings orange, body text black/dark grey).
+- **Tables:** Use an orange header row with white bold text; data rows have white fill; separate rows with thin grey lines; no banding; no more than eight data rows per slide.
+- **RAG indicators:** Represent status with filled circles—red for danger, amber for warning, green for success, blue for info, grey for neutral.  Meanings follow the DD‑1 definitions.
 
 End SS-1.`,
   DD1: `## DD-1 — Global Data Dictionary and Naming Conventions (v1.0)
