@@ -12,6 +12,11 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 
 /* ── TOKENS ── */
 :root{
+  --chart-1:#FD5108;
+  --chart-2:#FFAA72;
+  --chart-3:#FFE8D4;
+  --chart-4:#E84000;
+  --chart-5:#FF7A3D;
   --o500:#FD5108;--o300:#FFAA72;--o100:#FFE8D4;
   --black:#000;--white:#fff;
   --g100:#EEEFF1;--g200:#DFE3E6;--g300:#CBD1D6;--g400:#B5BCC4;--g500:#A1A8B3;
@@ -422,7 +427,61 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 .text-sm{font-size:13px}
 .fw-600{font-weight:600}
 .truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── STICKY SUB-HEADERS ── */
+.sub > div:first-child:has(.sub-title){position:sticky;top:64px;background:#fff;z-index:10;padding:10px 0;margin-bottom:8px}
+.chart-cat-header{position:sticky;top:64px;background:#fff;z-index:10}
+
+/* ── SIDEBAR SEARCH ── */
+.search-wrap{padding:10px 16px 12px;border-bottom:1px solid var(--g200);position:relative}
+.search-input-row{display:flex;align-items:center;gap:8px;background:var(--g100);padding:7px 10px}
+.search-input-row input{background:none;border:none;outline:none;font-size:12px;color:inherit;width:100%;min-width:0}
+.search-results{position:absolute;left:16px;right:16px;background:#fff;border:1px solid var(--g200);box-shadow:var(--shadow-md);z-index:300;max-height:220px;overflow-y:auto;display:none}
+.search-result{display:flex;align-items:center;gap:8px;padding:7px 12px;cursor:pointer;transition:background .1s}
+.search-result:hover{background:var(--g100)}
+.search-result-name{font-size:12px;color:var(--black);white-space:nowrap}
+.search-result-sec{font-size:11px;color:var(--g500);margin-left:auto;white-space:nowrap}
+
+/* ── SIDEBAR ACCORDION ── */
+.nav-sub-list{max-height:0;overflow:hidden;transition:max-height .22s ease}
+.nav-grp.open .nav-sub-list{max-height:600px}
+.nav-sub-item{display:flex;align-items:center;padding:6px 24px 6px 44px;font-size:12px;color:var(--g500);cursor:pointer;transition:all .15s;text-decoration:none;border-left:2px solid transparent}
+.nav-sub-item:hover{color:var(--black);background:var(--g100)}
+.nav-chev{transition:transform .2s ease;flex-shrink:0}
+.nav-grp.open > .nav-link-head .nav-chev{transform:rotate(90deg)}
+.nav-link-head{cursor:pointer}
+
+/* ── DARK MODE TOGGLE BUTTON ── */
+.theme-btn{background:none;border:1px solid var(--g200);padding:5px 10px;cursor:pointer;color:var(--g500);display:flex;align-items:center;gap:6px;font-size:12px;font-family:inherit;transition:all .15s}
+.theme-btn:hover{background:var(--g100);color:var(--black)}
+
+/* ── DARK MODE ── */
+[data-theme="dark"]{--g100:#242424;--g200:#333;--g300:#484848;--g400:#707070;--g500:#909090;--o100:#3a1505}
+[data-theme="dark"] body{background:#121212;color:#e8e8e8}
+[data-theme="dark"] .sidebar{background:#1a1a1a;border-right-color:#2a2a2a}
+[data-theme="dark"] .topbar{background:#1a1a1a;border-bottom-color:#2a2a2a}
+[data-theme="dark"] .demo-card{background:#1e1e1e}
+[data-theme="dark"] .section-title{color:#e8e8e8}
+[data-theme="dark"] .chart-cat-header{background:#121212;border-bottom-color:#333}
+[data-theme="dark"] .sub > div:first-child:has(.sub-title){background:#121212}
+[data-theme="dark"] .search-results{background:#1e1e1e;border-color:#333}
+[data-theme="dark"] .search-result:hover{background:#2a2a2a}
+[data-theme="dark"] .search-result-name{color:#e8e8e8}
+[data-theme="dark"] .nav-link.active,.nav-link-head.active{background:#3a1505}
+[data-theme="dark"] .topbar-title{color:#e8e8e8}
+[data-theme="dark"] .section-desc{color:#888}
+[data-theme="dark"] .sub-title{color:#777}
+[data-theme="dark"] .demo-card-label{color:#888}
+[data-theme="dark"] .comp-label{color:#777}
+[data-theme="dark"] .sidebar-label{color:#666}
+[data-theme="dark"] input:not(#compSearch),[data-theme="dark"] textarea,[data-theme="dark"] select{background:#2a2a2a;border-color:#3a3a3a;color:#e8e8e8}
+[data-theme="dark"] .copy-btn{border-color:#3a3a3a;color:#888}
+[data-theme="dark"] .copy-btn:hover{background:#2a2a2a;color:#e8e8e8}
+[data-theme="dark"] .chart-cat-count{background:#2a2a2a;color:#888}
 </style>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
 </head>
 <body>
 <div class="app">
@@ -430,57 +489,201 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 <!-- ═══ SIDEBAR ═══ -->
 <nav class="sidebar" id="sidebar">
   <div class="sidebar-logo">
-    <svg width="72" height="46" viewBox="0 0 104 67" xmlns="http://www.w3.org/2000/svg">
-      <path fill="#000" d="M69.26,30.74c-2.53.41-3.83,2.28-3.83,5.57s1.73,5.53,4.37,5.53c1.23,0,2.35-.41,4.7-1.56v2.68c-2.82,1.29-4.48,1.69-6.76,1.69-2.46,0-4.19-.65-5.61-2.09-1.45-1.45-2.17-3.36-2.17-5.5,0-4.74,3.51-7.95,8.64-7.95,3.41,0,5.75,1.56,5.75,3.84,0,1.47-1.09,2.48-2.71,2.48-.83,0-1.51-.22-2.39-.72v-3.98ZM56.76,37.06c2.27-2.86,3.07-4.02,3.07-5.42s-1.11-2.53-2.6-2.53c-.91,0-1.74.43-2.14.88v5.83l-3.72,4.96v-11.31h-3.54l-5.88,9.75v-9.75h-2.03l-5.34,1.3v1.36l2.91.3v11.96h3.76l5.64-9.27v9.27h4.12l5.74-7.34ZM23.34,32.52c.87-.11,1.29-.15,1.7-.15,2.45,0,3.78,1.63,3.78,4.7,0,3.62-1.63,5.51-4.66,5.51-.25,0-.43,0-.83-.02v-10.04ZM23.34,44.25c.98.11,1.93.15,2.5.15,5.04,0,8.24-3.23,8.24-8.03,0-4.15-2.4-7.15-5.65-7.15-1.41,0-2.35.29-5.09,1.92v-2h-1.52l-5.86,1.78v1.43h2.43v16.73l-2.18.54v1.39h9.58v-1.39s-2.44-.54-2.44-.54v-4.84Z"/>
-      <path fill="#fd5108" d="M66.54,24.97h-15.98l2.72-4.51h15.98l-2.72,4.51ZM87.96,15.94h-15.98l-2.72,4.51h15.98l2.72-4.51Z"/>
+    <svg width="152" height="73" viewBox="30 143 440 212" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M355.041 233.765C339.717 236.206 331.925 247.425 331.925 267.214C331.925 287.003 342.331 300.403 358.334 300.403C365.762 300.403 372.508 297.962 386.732 291.054V307.155C369.682 314.894 359.642 317.335 345.94 317.335C331.088 317.335 320.629 313.44 312.052 304.766C303.319 296.092 298.926 284.561 298.926 271.784C298.926 243.322 320.158 224.104 351.118 224.104C371.67 224.104 385.842 233.453 385.842 247.165C385.842 255.995 379.252 262.072 369.473 262.072C364.454 262.072 360.323 260.773 355.041 257.709V233.869V233.765ZM279.472 271.732C293.173 254.54 298.037 247.632 298.037 239.166C298.037 230.7 291.343 224 282.348 224C276.805 224 271.837 226.597 269.431 229.298V264.305L246.944 294.066V226.234H225.555L190.045 284.717V226.234H177.756L145.489 234.024V242.231L163.061 243.997V315.725H185.809L219.907 260.098V315.725H244.8L279.42 271.732H279.472ZM77.6086 244.464C82.8381 243.841 85.4532 243.529 87.9111 243.529C102.763 243.529 110.764 253.294 110.764 271.732C110.764 293.495 100.933 304.818 82.6291 304.818C81.1125 304.818 80.0143 304.818 77.6086 304.714V244.464ZM77.6086 314.894C83.518 315.569 89.2708 315.777 92.7223 315.777C123.211 315.777 142.508 296.404 142.508 267.629C142.508 242.75 128.022 224.727 108.359 224.727C99.8346 224.727 94.1867 226.441 77.6086 236.258V224.26H68.4046L33 234.959V243.581H47.6429V343.928L34.4643 347.2V355.511H92.304V347.2L77.5564 343.928V314.894H77.6086Z" fill="currentColor"/>
+      <path d="M338.568 199.173H242.029L258.45 172.112H354.99L338.568 199.173ZM468 145H371.463L355.042 172.06H451.579L468 145Z" fill="#FD5108"/>
     </svg>
   </div>
   <div class="sidebar-label">Components</div>
-  <a class="nav-link active" href="#buttons" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="8" rx="1"/></svg>
-    Buttons
-  </a>
-  <a class="nav-link" href="#forms" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6M9 8h6M9 16h4"/><rect x="3" y="3" width="18" height="18" rx="1"/></svg>
-    Form Controls
-  </a>
-  <a class="nav-link" href="#cards" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="1"/><path d="M2 10h20"/></svg>
-    Cards
-  </a>
-  <a class="nav-link" href="#modals" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="5" width="14" height="14"/><path d="M5 5 2 2M19 5l3-3M5 19l-3 3M19 19l3 3"/></svg>
-    Modals & Overlays
-  </a>
-  <a class="nav-link" href="#navigation" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-    Navigation
-  </a>
-  <a class="nav-link" href="#feedback" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-    Feedback
-  </a>
-  <a class="nav-link" href="#progress" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-    Progress & Loading
-  </a>
-  <a class="nav-link" href="#data" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
-    Data Table
-  </a>
-  <a class="nav-link" href="#charts" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-    Charts
-    <span style="margin-left:auto;font-size:10px;background:var(--o100);color:var(--o500);padding:1px 6px;font-weight:600;border-radius:0">21</span>
-  </a>
-  <a class="nav-link" href="#chat" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    Chat & Assistant
-  </a>
-  <a class="nav-link" href="#foundations" onclick="setActive(this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    Foundations
-  </a>
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <div class="search-input-row">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="compSearch" type="text" placeholder="Search components…" oninput="filterComps(this.value)" onkeydown="if(event.key==='Escape')clearSearch()">
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="nav-grp open" id="grp-buttons">
+    <a class="nav-link nav-link-head active" href="#buttons" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="8" rx="1"/></svg>
+      Buttons
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-buttons-sub">
+      <a class="nav-sub-item" onclick="jumpTo('btn-variants')">Variants</a>
+      <a class="nav-sub-item" onclick="jumpTo('btn-sizes')">Sizes</a>
+      <a class="nav-sub-item" onclick="jumpTo('btn-icons')">With Icons &amp; Loading</a>
+      <a class="nav-sub-item" onclick="jumpTo('btn-icon-only')">Icon Buttons</a>
+    </div>
+  </div>
+
+  <!-- Form Controls -->
+  <div class="nav-grp" id="grp-forms">
+    <a class="nav-link nav-link-head" href="#forms" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6M9 8h6M9 16h4"/><rect x="3" y="3" width="18" height="18" rx="1"/></svg>
+      Form Controls
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-forms-sub">
+      <a class="nav-sub-item" onclick="jumpTo('form-input')">Text Input</a>
+      <a class="nav-sub-item" onclick="jumpTo('form-textarea')">Textarea &amp; Search</a>
+      <a class="nav-sub-item" onclick="jumpTo('form-dropdown')">Dropdown Select</a>
+      <a class="nav-sub-item" onclick="jumpTo('form-checkbox')">Checkboxes &amp; Radio</a>
+      <a class="nav-sub-item" onclick="jumpTo('form-toggle')">Toggles</a>
+      <a class="nav-sub-item" onclick="jumpTo('form-slider')">Sliders</a>
+    </div>
+  </div>
+
+  <!-- Cards -->
+  <div class="nav-grp" id="grp-cards">
+    <a class="nav-link nav-link-head" href="#cards" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="1"/><path d="M2 10h20"/></svg>
+      Cards
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-cards-sub">
+      <a class="nav-sub-item" onclick="jumpTo('card-standard')">Standard Card</a>
+      <a class="nav-sub-item" onclick="jumpTo('card-panel')">Panel with Header</a>
+      <a class="nav-sub-item" onclick="jumpTo('card-stat')">Stat Cards</a>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div class="nav-grp" id="grp-modals">
+    <a class="nav-link nav-link-head" href="#modals" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="5" width="14" height="14"/><path d="M5 5 2 2M19 5l3-3M5 19l-3 3M19 19l3 3"/></svg>
+      Modals &amp; Overlays
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-modals-sub">
+      <a class="nav-sub-item" onclick="jumpTo('modal-dialog')">Modal Dialog</a>
+      <a class="nav-sub-item" onclick="jumpTo('modal-confirm')">Confirm Dialog</a>
+      <a class="nav-sub-item" onclick="jumpTo('modal-drawer')">Side Drawer</a>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav-grp" id="grp-nav">
+    <a class="nav-link nav-link-head" href="#navigation" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      Navigation
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-nav-sub">
+      <a class="nav-sub-item" onclick="jumpTo('nav-tabs-underline')">Underline Tabs</a>
+      <a class="nav-sub-item" onclick="jumpTo('nav-tabs-pill')">Pill Tabs</a>
+      <a class="nav-sub-item" onclick="jumpTo('nav-breadcrumb')">Breadcrumbs</a>
+      <a class="nav-sub-item" onclick="jumpTo('nav-pagination')">Pagination</a>
+      <a class="nav-sub-item" onclick="jumpTo('nav-accordion')">Accordion</a>
+      <a class="nav-sub-item" onclick="jumpTo('nav-sidebar')">Sidebar Navigation</a>
+      <a class="nav-sub-item" onclick="jumpTo('nav-avatar')">Avatar</a>
+    </div>
+  </div>
+
+  <!-- Feedback -->
+  <div class="nav-grp" id="grp-feedback">
+    <a class="nav-link nav-link-head" href="#feedback" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Feedback
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-feedback-sub">
+      <a class="nav-sub-item" onclick="jumpTo('feedback-alerts')">Alert Banners</a>
+      <a class="nav-sub-item" onclick="jumpTo('feedback-badges')">Badges &amp; Tags</a>
+      <a class="nav-sub-item" onclick="jumpTo('feedback-tooltip')">Tooltip</a>
+      <a class="nav-sub-item" onclick="jumpTo('feedback-toast')">Toast Notifications</a>
+      <a class="nav-sub-item" onclick="jumpTo('feedback-empty')">Empty State</a>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="nav-grp" id="grp-progress">
+    <a class="nav-link nav-link-head" href="#progress" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Progress &amp; Loading
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-progress-sub">
+      <a class="nav-sub-item" onclick="jumpTo('progress-linear')">Linear Progress</a>
+      <a class="nav-sub-item" onclick="jumpTo('progress-stepped')">Stepped Progress</a>
+      <a class="nav-sub-item" onclick="jumpTo('progress-spinner')">Spinners</a>
+      <a class="nav-sub-item" onclick="jumpTo('progress-skeleton')">Skeleton Loading</a>
+    </div>
+  </div>
+
+  <!-- Data Table -->
+  <div class="nav-grp" id="grp-data">
+    <a class="nav-link nav-link-head" href="#data" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+      Data Table
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-data-sub">
+      <a class="nav-sub-item" onclick="jumpTo('data-table')">Sortable Table</a>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="nav-grp" id="grp-charts">
+    <a class="nav-link nav-link-head" href="#charts" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Charts
+      <span style="font-size:10px;background:var(--o100);color:var(--o500);padding:1px 6px;font-weight:600">26</span>
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:4px"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-charts-sub">
+      <a class="nav-sub-item" onclick="jumpToChartCat('Area Charts')">Area Charts</a>
+      <a class="nav-sub-item" onclick="jumpToChartCat('Line Charts')">Line Charts</a>
+      <a class="nav-sub-item" onclick="jumpToChartCat('Bar Charts')">Bar Charts</a>
+      <a class="nav-sub-item" onclick="jumpToChartCat('Pie &amp; Donut Charts')">Pie &amp; Donut</a>
+      <a class="nav-sub-item" onclick="jumpToChartCat('Radar &amp; Radial Charts')">Radar &amp; Radial</a>
+      <a class="nav-sub-item" onclick="jumpToChartCat('Other Charts')">Other Charts</a>
+    </div>
+  </div>
+
+  <!-- Chat -->
+  <div class="nav-grp" id="grp-chat">
+    <a class="nav-link nav-link-head" href="#chat" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Chat &amp; Assistant
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-chat-sub">
+      <a class="nav-sub-item" onclick="jumpTo('chat-fab')">FAB Button</a>
+      <a class="nav-sub-item" onclick="jumpTo('chat-panel')">Chat Panel</a>
+    </div>
+  </div>
+
+  <!-- Brand Assets -->
+  <div class="nav-grp" id="grp-brand">
+    <a class="nav-link nav-link-head" href="#brand" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Brand Assets
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-brand-sub">
+      <a class="nav-sub-item" onclick="jumpTo('brand-logo')">PwC Logo</a>
+      <a class="nav-sub-item" onclick="jumpTo('brand-momentum')">Momentum Mark</a>
+    </div>
+  </div>
+
+  <!-- Foundations -->
+  <div class="nav-grp" id="grp-foundations">
+    <a class="nav-link nav-link-head" href="#foundations" onclick="setActive(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Foundations
+      <svg class="nav-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="nav-sub-list" id="grp-foundations-sub">
+      <a class="nav-sub-item" onclick="jumpTo('foundations-colors')">Colour Palette</a>
+      <a class="nav-sub-item" onclick="jumpTo('foundations-typography')">Typography Scale</a>
+      <a class="nav-sub-item" onclick="jumpTo('foundations-spacing')">Spacing Scale</a>
+      <a class="nav-sub-item" onclick="jumpTo('foundations-animations')">Animation Tokens</a>
+    </div>
+  </div>
 </nav>
 
 <!-- ═══ MAIN ═══ -->
@@ -489,6 +692,11 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
     <div class="topbar-title">PwC Digital Design System <span style="font-weight:400;color:var(--g500)">— Component Catalogue</span></div>
     <div class="topbar-right">
       <span style="font-size:12px;color:var(--g500)">v2.0</span>
+      <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle dark mode">
+        <svg id="iconMoon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="iconSun" style="display:none" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <span id="themeLbl">Dark</span>
+      </button>
       <div class="avatar">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FD5108" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </div>
@@ -1479,519 +1687,228 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
     <div class="section-desc">SVG charts for quick embedding, plus full Recharts component code (shadcn/ui pattern) ready to copy. All colours use the PwC palette. Click <strong>Copy Code</strong> on any card to get the React/Recharts implementation.</div>
   </div>
 
-  <!-- ── AREA CHARTS ── -->
   <div class="chart-cat-header">
     <span class="chart-cat-title">Area Charts</span>
     <span class="chart-cat-count">4 variants</span>
   </div>
   <div class="row stretch gap-16">
-
-    <!-- Interactive Area -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Interactive Area — Time Range</div>
-        <div class="chart-sub">Desktop vs Mobile visitors — toggle 90d / 30d / 7d</div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <button class="btn btn-sm" id="trBtn90" style="padding:4px 10px;font-size:11px;background:var(--black);color:#fff;border:none;cursor:pointer" onclick="setTimeRange('90d')">Last 3 months</button>
-          <button class="btn btn-sm" id="trBtn30" style="padding:4px 10px;font-size:11px;background:var(--g100);color:var(--g500);border:1px solid var(--g200);cursor:pointer" onclick="setTimeRange('30d')">Last 30 days</button>
-          <button class="btn btn-sm" id="trBtn7"  style="padding:4px 10px;font-size:11px;background:var(--g100);color:var(--g500);border:1px solid var(--g200);cursor:pointer" onclick="setTimeRange('7d')">Last 7 days</button>
-        </div>
-        <div class="chart-area" style="height:200px" id="interactiveAreaChart"></div>
-        <div class="chart-legend" style="margin-top:8px">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o500)"></div>Desktop</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o300)"></div>Mobile</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('area-interactive')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-area-interactive" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('area-interactive')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Stacked Area -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Stacked Area Chart</div>
-        <div class="chart-sub">Cumulative contribution of two series over time</div>
-        <div class="chart-area" style="height:220px" id="stackedAreaChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o500)"></div>Desktop</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o300)"></div>Mobile</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('area-stacked')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-area-stacked" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('area-stacked')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Simple Area -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Area Chart</div>
-        <div class="chart-sub">Single-series with gradient fill</div>
-        <div class="chart-area" style="height:220px" id="areaChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o500)"></div>Active Users</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('area-simple')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-area-simple" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('area-simple')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Step Area -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Step Area Chart</div>
-        <div class="chart-sub">Discrete step interpolation — ideal for tier data</div>
-        <div class="chart-area" style="height:220px" id="stepAreaChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o500)"></div>Desktop</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o300)"></div>Mobile</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('area-step')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-area-step" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('area-step')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
   </div>
 
-  <!-- ── LINE CHARTS ── -->
   <div class="chart-cat-header">
     <span class="chart-cat-title">Line Charts</span>
     <span class="chart-cat-count">4 variants</span>
   </div>
   <div class="row stretch gap-16">
-
-    <!-- Line Chart -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Revenue Trend</div>
-        <div class="chart-sub">Monthly performance — current vs previous year</div>
-        <div class="chart-area" style="height:220px" id="lineChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item" id="leg-line-1" onclick="toggleLegend('leg-line-1','line-series-1')">
-            <div class="legend-line" style="background:var(--o500)"></div>Current Year
-          </div>
-          <div class="legend-item" id="leg-line-2" onclick="toggleLegend('leg-line-2','line-series-2')">
-            <div class="legend-line" style="background:var(--g400)"></div>Previous Year
-          </div>
-        </div>
-        <button class="copy-btn" onclick="showCode('line-multi')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-line-multi" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('line-multi')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Step Line -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Step Line Chart</div>
-        <div class="chart-sub">Staircase interpolation between data points</div>
-        <div class="chart-area" style="height:220px" id="stepLineChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-line" style="background:var(--o500)"></div>Desktop</div>
-          <div class="legend-item"><div class="legend-line" style="background:var(--o300);border-top:2px dashed var(--o300);height:0"></div>Mobile</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('line-step')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-line-step" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('line-step')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Line with Dots -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Line Chart — With Dots</div>
-        <div class="chart-sub">Prominent data point markers on each value</div>
-        <div class="chart-area" style="height:220px" id="lineDotsChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-line" style="background:var(--o500)"></div>Desktop</div>
-          <div class="legend-item"><div class="legend-line" style="background:var(--o300)"></div>Mobile</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('line-dots')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-line-dots" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('line-dots')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Line with Labels -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Line Chart — With Labels</div>
-        <div class="chart-sub">Value labels displayed above each data point</div>
-        <div class="chart-area" style="height:220px" id="lineLabelChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-line" style="background:var(--o500)"></div>Desktop</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('line-labels')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-line-labels" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('line-labels')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
   </div>
 
-  <!-- ── BAR CHARTS ── -->
   <div class="chart-cat-header">
     <span class="chart-cat-title">Bar Charts</span>
-    <span class="chart-cat-count">5 variants</span>
+    <span class="chart-cat-count">6 variants</span>
   </div>
   <div class="row stretch gap-16">
-
-    <!-- Grouped Bar -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Grouped Bar — Budget vs Actual</div>
-        <div class="chart-sub">Side-by-side comparison per quarter</div>
-        <div class="chart-area" style="height:220px" id="groupedBarChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item" id="leg-g1" onclick="toggleLegend('leg-g1','grp-1')"><div class="legend-dot" style="background:var(--o500)"></div>Actual</div>
-          <div class="legend-item" id="leg-g2" onclick="toggleLegend('leg-g2','grp-2')"><div class="legend-dot" style="background:var(--o300)"></div>Budget</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('bar-grouped')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-bar-grouped" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('bar-grouped')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Stacked Bar -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Stacked Bar — Revenue by Segment</div>
-        <div class="chart-sub">Stacked contribution per quarter</div>
-        <div class="chart-area" style="height:220px" id="stackedBarChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item" id="leg-s1" onclick="toggleLegend('leg-s1','stack-1')"><div class="legend-dot" style="background:var(--o500)"></div>Consulting</div>
-          <div class="legend-item" id="leg-s2" onclick="toggleLegend('leg-s2','stack-2')"><div class="legend-dot" style="background:var(--o300)"></div>Advisory</div>
-          <div class="legend-item" id="leg-s3" onclick="toggleLegend('leg-s3','stack-3')"><div class="legend-dot" style="background:var(--g300)"></div>Tax</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('bar-stacked')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-bar-stacked" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('bar-stacked')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Horizontal Bar -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Horizontal Bar Chart</div>
-        <div class="chart-sub">Ranking view — great for category comparisons</div>
-        <div class="chart-area" style="height:220px" id="horizontalBarChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o500)"></div>Revenue (£M)</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('bar-horizontal')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-bar-horizontal" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('bar-horizontal')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Bar with Labels -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Bar Chart — With Labels</div>
-        <div class="chart-sub">Value labels displayed on top of each bar</div>
-        <div class="chart-area" style="height:220px" id="barLabelChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o500)"></div>Actual</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o300)"></div>Target</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('bar-labels')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-bar-labels" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('bar-labels')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Bar Negative Values -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Bar Chart — Negative Values</div>
-        <div class="chart-sub">Positive bars in orange, negative in grey — variance view</div>
-        <div class="chart-area" style="height:220px" id="barNegChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o500)"></div>Positive</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--g400)"></div>Negative</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('bar-negative')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-bar-negative" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('bar-negative')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Composed -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Composed — Volume &amp; Trend</div>
-        <div class="chart-sub">Bars show volume; line shows rolling average</div>
-        <div class="chart-area" style="height:220px" id="composedChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item" id="leg-c1" onclick="toggleLegend('leg-c1','comp-bars')"><div class="legend-dot" style="background:var(--o300)"></div>Volume</div>
-          <div class="legend-item" id="leg-c2" onclick="toggleLegend('leg-c2','comp-line')"><div class="legend-line" style="background:var(--o500)"></div>Trend</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('bar-composed')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-bar-composed" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('bar-composed')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
   </div>
 
-  <!-- ── PIE & DONUT CHARTS ── -->
   <div class="chart-cat-header">
-    <span class="chart-cat-title">Pie &amp; Donut Charts</span>
+    <span class="chart-cat-title">Pie & Donut Charts</span>
     <span class="chart-cat-count">4 variants</span>
   </div>
   <div class="row stretch gap-16">
-
-    <!-- Pie -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Pie Chart — Revenue Mix</div>
-        <div class="chart-sub">Proportional breakdown by service line</div>
-        <div class="chart-area" style="height:220px;display:flex;align-items:center;justify-content:center" id="pieChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item" id="leg-p1" onclick="toggleLegend('leg-p1','pie-1')"><div class="legend-dot" style="background:var(--o500)"></div>Consulting 45%</div>
-          <div class="legend-item" id="leg-p2" onclick="toggleLegend('leg-p2','pie-2')"><div class="legend-dot" style="background:var(--o300)"></div>Advisory 30%</div>
-          <div class="legend-item" id="leg-p3" onclick="toggleLegend('leg-p3','pie-3')"><div class="legend-dot" style="background:var(--g300)"></div>Tax 15%</div>
-          <div class="legend-item" id="leg-p4" onclick="toggleLegend('leg-p4','pie-4')"><div class="legend-dot" style="background:var(--g200)"></div>Other 10%</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('pie-simple')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-pie-simple" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('pie-simple')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Pie with Labels -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Pie Chart — With Labels</div>
-        <div class="chart-sub">Percentage labels shown outside each slice</div>
-        <div class="chart-area" style="height:220px;display:flex;align-items:center;justify-content:center" id="pieLabelChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o500)"></div>Consulting</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o300)"></div>Advisory</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--g300)"></div>Tax</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--g200)"></div>Other</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('pie-labels')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-pie-labels" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('pie-labels')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Donut with Text -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Donut — Project Status</div>
-        <div class="chart-sub">Completion overview with centre KPI</div>
-        <div class="chart-area" style="height:220px;display:flex;align-items:center;justify-content:center" id="donutChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item" id="leg-d1" onclick="toggleLegend('leg-d1','donut-1')"><div class="legend-dot" style="background:var(--o500)"></div>Complete 58%</div>
-          <div class="legend-item" id="leg-d2" onclick="toggleLegend('leg-d2','donut-2')"><div class="legend-dot" style="background:var(--o300)"></div>In Progress 26%</div>
-          <div class="legend-item" id="leg-d3" onclick="toggleLegend('leg-d3','donut-3')"><div class="legend-dot" style="background:var(--g300)"></div>Pending 16%</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('donut-text')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-donut-text" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('donut-text')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Stacked Donut -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Donut — Stacked Rings</div>
-        <div class="chart-sub">Concentric rings compare two datasets</div>
-        <div class="chart-area" style="height:220px;display:flex;align-items:center;justify-content:center" id="stackedDonutChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o500)"></div>Current Year</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o300)"></div>Prior Year</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('donut-stacked')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-donut-stacked" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('donut-stacked')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
   </div>
 
-  <!-- ── RADAR & RADIAL ── -->
   <div class="chart-cat-header">
-    <span class="chart-cat-title">Radar &amp; Radial Bar Charts</span>
+    <span class="chart-cat-title">Radar & Radial Charts</span>
     <span class="chart-cat-count">4 variants</span>
   </div>
   <div class="row stretch gap-16">
-
-    <!-- Radar Polygon -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Radar — Competency Assessment</div>
-        <div class="chart-sub">Team capability across six dimensions</div>
-        <div class="chart-area" style="height:220px;display:flex;align-items:center;justify-content:center" id="radarChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o500);opacity:.3;border:2px solid var(--o500)"></div>Current</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--g200);border:2px solid var(--g400)"></div>Target</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('radar-default')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-radar-default" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('radar-default')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Radar Circular -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Radar — Circular Grid</div>
-        <div class="chart-sub">Same data with circular concentric grid lines</div>
-        <div class="chart-area" style="height:220px;display:flex;align-items:center;justify-content:center" id="radarCircularChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o500);opacity:.3;border:2px solid var(--o500)"></div>Current</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--g200);border:2px solid var(--g400)"></div>Target</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('radar-circular')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-radar-circular" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('radar-circular')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Radial Bar -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Radial Bar Chart</div>
-        <div class="chart-sub">Arc bars per category — great for progress KPIs</div>
-        <div class="chart-area" style="height:220px;display:flex;align-items:center;justify-content:center" id="radialBarChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o500)"></div>Consulting</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o300)"></div>Advisory</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--g300)"></div>Tax</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--g200)"></div>Deals</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('radial-bar')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-radial-bar" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('radial-bar')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Radial Bar with Label -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Radial Bar — With Centre Text</div>
-        <div class="chart-sub">Single arc with KPI value displayed in centre</div>
-        <div class="chart-area" style="height:220px;display:flex;align-items:center;justify-content:center" id="radialTextChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o500)"></div>Completion Rate</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('radial-text')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-radial-text" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('radial-text')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
   </div>
 
-  <!-- ── OTHER CHARTS ── -->
   <div class="chart-cat-header">
-    <span class="chart-cat-title">Other Chart Types</span>
+    <span class="chart-cat-title">Other Charts</span>
     <span class="chart-cat-count">4 variants</span>
   </div>
   <div class="row stretch gap-16">
-
-    <!-- Scatter -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Scatter Plot — Risk vs Return</div>
-        <div class="chart-sub">Portfolio positioning — bubble size = AUM</div>
-        <div class="chart-area" style="height:220px" id="scatterChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o500)"></div>Core</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o300)"></div>Growth</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--g300)"></div>Speculative</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('scatter')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-scatter" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('scatter')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Treemap -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Treemap — Spend by Category</div>
-        <div class="chart-sub">Relative size = proportional spend</div>
-        <div class="chart-area" style="height:220px" id="treemapChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o500)"></div>Technology</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o300)"></div>People</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o100)"></div>Facilities</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--g200)"></div>Other</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('treemap')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-treemap" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('treemap')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Funnel -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Funnel — Sales Pipeline</div>
-        <div class="chart-sub">Conversion rate across deal stages</div>
-        <div class="chart-area" style="height:220px" id="funnelChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--o500)"></div>Conversion: 17.9%</div>
-        </div>
-        <button class="copy-btn" onclick="showCode('funnel')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-funnel" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('funnel')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
-    <!-- Bar Chart (simple) — kept for completeness -->
     <div class="col-6">
-      <div class="chart-card">
-        <div class="chart-title">Bar Chart — Quarterly Sales</div>
-        <div class="chart-sub">Revenue by quarter vs target</div>
-        <div class="chart-area" style="height:220px" id="barChart"></div>
-        <div class="chart-legend">
-          <div class="legend-item" id="leg-bar-1" onclick="toggleLegend('leg-bar-1','bar-series-1')">
-            <div class="legend-dot" style="background:var(--o500)"></div>Actual
-          </div>
-          <div class="legend-item" id="leg-bar-2" onclick="toggleLegend('leg-bar-2','bar-series-2')">
-            <div class="legend-dot" style="background:var(--o300)"></div>Target
-          </div>
-        </div>
-        <button class="copy-btn" onclick="showCode('bar-simple')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Code
-        </button>
-      </div>
+      <div id="rc-bar-simple" style="border:1px solid #DFE3E6;background:#fff;overflow:hidden;flex:1;min-width:0;"></div>
+      <button class="copy-btn" onclick="showCode('bar-simple')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Code
+      </button>
     </div>
-
   </div>
 </section>
 
@@ -2157,6 +2074,72 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 
 </section>
 
+<!-- ══════════════════════════════════════════
+     BRAND ASSETS
+══════════════════════════════════════════ -->
+<section class="section" id="brand">
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">Brand Assets</div>
+    <div class="section-desc">Official PwC brand marks. Use these SVGs as provided — never modify proportions, colour, or minimum clear space.</div>
+  </div>
+
+  <!-- PwC Logo -->
+  <div class="sub"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="sub-title" style="margin-bottom:0">PwC Logo</div><button class="copy-btn" onclick="showCode('brand-logo')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
+    <div class="row gap-16">
+      <div class="demo-card col-6">
+        <div class="demo-card-label">Standard — Black + Orange</div>
+        <div style="padding:32px 40px;background:#fff;border:1px solid var(--g200);display:flex;align-items:center;justify-content:center;margin-top:8px">
+          <svg width="200" height="96" viewBox="30 143 440 212" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M355.041 233.765C339.717 236.206 331.925 247.425 331.925 267.214C331.925 287.003 342.331 300.403 358.334 300.403C365.762 300.403 372.508 297.962 386.732 291.054V307.155C369.682 314.894 359.642 317.335 345.94 317.335C331.088 317.335 320.629 313.44 312.052 304.766C303.319 296.092 298.926 284.561 298.926 271.784C298.926 243.322 320.158 224.104 351.118 224.104C371.67 224.104 385.842 233.453 385.842 247.165C385.842 255.995 379.252 262.072 369.473 262.072C364.454 262.072 360.323 260.773 355.041 257.709V233.869V233.765ZM279.472 271.732C293.173 254.54 298.037 247.632 298.037 239.166C298.037 230.7 291.343 224 282.348 224C276.805 224 271.837 226.597 269.431 229.298V264.305L246.944 294.066V226.234H225.555L190.045 284.717V226.234H177.756L145.489 234.024V242.231L163.061 243.997V315.725H185.809L219.907 260.098V315.725H244.8L279.42 271.732H279.472ZM77.6086 244.464C82.8381 243.841 85.4532 243.529 87.9111 243.529C102.763 243.529 110.764 253.294 110.764 271.732C110.764 293.495 100.933 304.818 82.6291 304.818C81.1125 304.818 80.0143 304.818 77.6086 304.714V244.464ZM77.6086 314.894C83.518 315.569 89.2708 315.777 92.7223 315.777C123.211 315.777 142.508 296.404 142.508 267.629C142.508 242.75 128.022 224.727 108.359 224.727C99.8346 224.727 94.1867 226.441 77.6086 236.258V224.26H68.4046L33 234.959V243.581H47.6429V343.928L34.4643 347.2V355.511H92.304V347.2L77.5564 343.928V314.894H77.6086Z" fill="#000"/>
+            <path d="M338.568 199.173H242.029L258.45 172.112H354.99L338.568 199.173ZM468 145H371.463L355.042 172.06H451.579L468 145Z" fill="#FD5108"/>
+          </svg>
+        </div>
+      </div>
+      <div class="demo-card col-6">
+        <div class="demo-card-label">Reversed — White + Orange</div>
+        <div style="padding:32px 40px;background:#000;display:flex;align-items:center;justify-content:center;margin-top:8px">
+          <svg width="200" height="96" viewBox="30 143 440 212" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M355.041 233.765C339.717 236.206 331.925 247.425 331.925 267.214C331.925 287.003 342.331 300.403 358.334 300.403C365.762 300.403 372.508 297.962 386.732 291.054V307.155C369.682 314.894 359.642 317.335 345.94 317.335C331.088 317.335 320.629 313.44 312.052 304.766C303.319 296.092 298.926 284.561 298.926 271.784C298.926 243.322 320.158 224.104 351.118 224.104C371.67 224.104 385.842 233.453 385.842 247.165C385.842 255.995 379.252 262.072 369.473 262.072C364.454 262.072 360.323 260.773 355.041 257.709V233.869V233.765ZM279.472 271.732C293.173 254.54 298.037 247.632 298.037 239.166C298.037 230.7 291.343 224 282.348 224C276.805 224 271.837 226.597 269.431 229.298V264.305L246.944 294.066V226.234H225.555L190.045 284.717V226.234H177.756L145.489 234.024V242.231L163.061 243.997V315.725H185.809L219.907 260.098V315.725H244.8L279.42 271.732H279.472ZM77.6086 244.464C82.8381 243.841 85.4532 243.529 87.9111 243.529C102.763 243.529 110.764 253.294 110.764 271.732C110.764 293.495 100.933 304.818 82.6291 304.818C81.1125 304.818 80.0143 304.818 77.6086 304.714V244.464ZM77.6086 314.894C83.518 315.569 89.2708 315.777 92.7223 315.777C123.211 315.777 142.508 296.404 142.508 267.629C142.508 242.75 128.022 224.727 108.359 224.727C99.8346 224.727 94.1867 226.441 77.6086 236.258V224.26H68.4046L33 234.959V243.581H47.6429V343.928L34.4643 347.2V355.511H92.304V347.2L77.5564 343.928V314.894H77.6086Z" fill="#fff"/>
+            <path d="M338.568 199.173H242.029L258.45 172.112H354.99L338.568 199.173ZM468 145H371.463L355.042 172.06H451.579L468 145Z" fill="#FD5108"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Momentum Mark -->
+  <div class="sub"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="sub-title" style="margin-bottom:0">Momentum Mark</div><button class="copy-btn" onclick="showCode('brand-momentum')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code</button></div>
+    <div class="row gap-16">
+      <div class="demo-card col-4">
+        <div class="demo-card-label">Orange — Primary</div>
+        <div style="padding:28px 32px;background:#fff;border:1px solid var(--g200);display:flex;align-items:center;justify-content:center;margin-top:8px">
+          <svg width="192" height="40" viewBox="0 0 342 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M149.2854,72H.12l21.7146-36h149.1654l-21.7146,36ZM341.88,0h-149.1654l-21.7146,36h149.1654L341.88,0Z" fill="#FD5108"/>
+          </svg>
+        </div>
+      </div>
+      <div class="demo-card col-4">
+        <div class="demo-card-label">White — Reversed</div>
+        <div style="padding:28px 32px;background:#000;display:flex;align-items:center;justify-content:center;margin-top:8px">
+          <svg width="192" height="40" viewBox="0 0 342 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M149.2854,72H.12l21.7146-36h149.1654l-21.7146,36ZM341.88,0h-149.1654l-21.7146,36h149.1654L341.88,0Z" fill="#fff"/>
+          </svg>
+        </div>
+      </div>
+      <div class="demo-card col-4">
+        <div class="demo-card-label">Black — On Light</div>
+        <div style="padding:28px 32px;background:var(--g100);border:1px solid var(--g200);display:flex;align-items:center;justify-content:center;margin-top:8px">
+          <svg width="192" height="40" viewBox="0 0 342 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M149.2854,72H.12l21.7146-36h149.1654l-21.7146,36ZM341.88,0h-149.1654l-21.7146,36h149.1654L341.88,0Z" fill="#000"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
   </div><!-- /content -->
 </div><!-- /main -->
 </div><!-- /app -->
@@ -2250,20 +2233,170 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#000;f
 <div id="toastContainer" style="position:fixed;top:24px;right:24px;z-index:1000;display:flex;flex-direction:column;gap:10px;pointer-events:none"></div>
 
 <script>
-// ── NAV ACTIVE ──
-function setActive(el){
-  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
-  el.classList.add('active');
+// ── NAV ACTIVE + ACCORDION ──
+const GRP_MAP = {
+  'buttons':'grp-buttons','forms':'grp-forms','cards':'grp-cards',
+  'modals':'grp-modals','navigation':'grp-nav','feedback':'grp-feedback',
+  'progress':'grp-progress','data':'grp-data','charts':'grp-charts',
+  'chat':'grp-chat','brand':'grp-brand','foundations':'grp-foundations'
+};
+function openGrp(id) {
+  document.querySelectorAll('.nav-grp').forEach(g => g.classList.remove('open'));
+  const g = document.getElementById(id);
+  if (g) g.classList.add('open');
 }
-window.addEventListener('scroll',()=>{
-  const sections=document.querySelectorAll('.section');
-  const links=document.querySelectorAll('.nav-link');
-  let cur='';
-  sections.forEach(s=>{if(window.scrollY>=s.offsetTop-120)cur=s.id});
-  links.forEach(l=>{
-    const href=l.getAttribute('href');
-    l.classList.toggle('active',href==='#'+cur);
+function setActive(el) {
+  document.querySelectorAll('.nav-link-head').forEach(l => l.classList.remove('active'));
+  el.classList.add('active');
+  const grp = el.closest('.nav-grp');
+  if (grp) openGrp(grp.id);
+}
+window.addEventListener('scroll', () => {
+  const secs = document.querySelectorAll('.section');
+  let cur = '';
+  secs.forEach(s => { if (window.scrollY >= s.offsetTop - 120) cur = s.id; });
+  document.querySelectorAll('.nav-link-head').forEach(l => {
+    l.classList.toggle('active', l.getAttribute('href') === '#' + cur);
   });
+  if (cur && GRP_MAP[cur]) openGrp(GRP_MAP[cur]);
+});
+
+// ── JUMP TO COMPONENT ──
+function jumpTo(key) {
+  const btn = document.querySelector('[onclick*="showCode(\'' + key + '\')"]');
+  if (btn) {
+    const t = btn.closest('.sub') || btn.closest('.demo-card') || btn.closest('.col-6');
+    if (t) t.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+function jumpToChartCat(name) {
+  document.querySelectorAll('.chart-cat-title').forEach(h => {
+    if (h.textContent.trim() === name) {
+      h.closest('.chart-cat-header').scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  });
+}
+
+// ── COMPONENT SEARCH ──
+const COMP_IDX = [
+  {n:'Button Variants',k:'btn-variants',s:'Buttons'},
+  {n:'Button Sizes',k:'btn-sizes',s:'Buttons'},
+  {n:'With Icons & Loading',k:'btn-icons',s:'Buttons'},
+  {n:'Icon Buttons',k:'btn-icon-only',s:'Buttons'},
+  {n:'Text Input',k:'form-input',s:'Form Controls'},
+  {n:'Textarea & Search',k:'form-textarea',s:'Form Controls'},
+  {n:'Dropdown Select',k:'form-dropdown',s:'Form Controls'},
+  {n:'Checkboxes & Radio',k:'form-checkbox',s:'Form Controls'},
+  {n:'Toggles',k:'form-toggle',s:'Form Controls'},
+  {n:'Sliders',k:'form-slider',s:'Form Controls'},
+  {n:'Standard Card',k:'card-standard',s:'Cards'},
+  {n:'Panel with Header',k:'card-panel',s:'Cards'},
+  {n:'Stat Card',k:'card-stat',s:'Cards'},
+  {n:'Modal Dialog',k:'modal-dialog',s:'Modals'},
+  {n:'Confirm Dialog',k:'modal-confirm',s:'Modals'},
+  {n:'Side Drawer',k:'modal-drawer',s:'Modals'},
+  {n:'Underline Tabs',k:'nav-tabs-underline',s:'Navigation'},
+  {n:'Pill Tabs',k:'nav-tabs-pill',s:'Navigation'},
+  {n:'Breadcrumbs',k:'nav-breadcrumb',s:'Navigation'},
+  {n:'Pagination',k:'nav-pagination',s:'Navigation'},
+  {n:'Accordion',k:'nav-accordion',s:'Navigation'},
+  {n:'Sidebar Navigation',k:'nav-sidebar',s:'Navigation'},
+  {n:'Avatar',k:'nav-avatar',s:'Navigation'},
+  {n:'Alert Banners',k:'feedback-alerts',s:'Feedback'},
+  {n:'Badges & Tags',k:'feedback-badges',s:'Feedback'},
+  {n:'Tooltip',k:'feedback-tooltip',s:'Feedback'},
+  {n:'Toast Notifications',k:'feedback-toast',s:'Feedback'},
+  {n:'Empty State',k:'feedback-empty',s:'Feedback'},
+  {n:'Linear Progress',k:'progress-linear',s:'Progress'},
+  {n:'Stepped Progress',k:'progress-stepped',s:'Progress'},
+  {n:'Spinners',k:'progress-spinner',s:'Progress'},
+  {n:'Skeleton Loading',k:'progress-skeleton',s:'Progress'},
+  {n:'Data Table',k:'data-table',s:'Data Table'},
+  {n:'Area Interactive',k:'area-interactive',s:'Charts'},
+  {n:'Area Stacked',k:'area-stacked',s:'Charts'},
+  {n:'Area Simple',k:'area-simple',s:'Charts'},
+  {n:'Area Step',k:'area-step',s:'Charts'},
+  {n:'Line Multi-series',k:'line-multi',s:'Charts'},
+  {n:'Line Step',k:'line-step',s:'Charts'},
+  {n:'Line with Dots',k:'line-dots',s:'Charts'},
+  {n:'Line with Labels',k:'line-labels',s:'Charts'},
+  {n:'Bar Grouped',k:'bar-grouped',s:'Charts'},
+  {n:'Bar Stacked',k:'bar-stacked',s:'Charts'},
+  {n:'Bar Horizontal',k:'bar-horizontal',s:'Charts'},
+  {n:'Bar with Labels',k:'bar-labels',s:'Charts'},
+  {n:'Bar Negative',k:'bar-negative',s:'Charts'},
+  {n:'Bar Composed',k:'bar-composed',s:'Charts'},
+  {n:'Bar Simple',k:'bar-simple',s:'Charts'},
+  {n:'Pie Simple',k:'pie-simple',s:'Charts'},
+  {n:'Pie with Labels',k:'pie-labels',s:'Charts'},
+  {n:'Donut with Text',k:'donut-text',s:'Charts'},
+  {n:'Donut Stacked',k:'donut-stacked',s:'Charts'},
+  {n:'Radar Default',k:'radar-default',s:'Charts'},
+  {n:'Radar Circular',k:'radar-circular',s:'Charts'},
+  {n:'Radial Bar',k:'radial-bar',s:'Charts'},
+  {n:'Radial with Text',k:'radial-text',s:'Charts'},
+  {n:'Scatter Chart',k:'scatter',s:'Charts'},
+  {n:'Treemap',k:'treemap',s:'Charts'},
+  {n:'Funnel Chart',k:'funnel',s:'Charts'},
+  {n:'FAB Button',k:'chat-fab',s:'Chat'},
+  {n:'Chat Panel',k:'chat-panel',s:'Chat'},
+  {n:'PwC Logo',k:'brand-logo',s:'Brand Assets'},
+  {n:'Momentum Mark',k:'brand-momentum',s:'Brand Assets'},
+  {n:'Colour Palette',k:'foundations-colors',s:'Foundations'},
+  {n:'Typography Scale',k:'foundations-typography',s:'Foundations'},
+  {n:'Spacing Scale',k:'foundations-spacing',s:'Foundations'},
+  {n:'Animation Tokens',k:'foundations-animations',s:'Foundations'},
+];
+function filterComps(q) {
+  const out = document.getElementById('searchResults');
+  if (!q.trim()) { out.style.display = 'none'; return; }
+  const r = COMP_IDX.filter(c =>
+    c.n.toLowerCase().includes(q.toLowerCase()) ||
+    c.s.toLowerCase().includes(q.toLowerCase())
+  );
+  out.innerHTML = r.length
+    ? r.slice(0, 8).map(c =>
+        '<div class="search-result" onclick="jumpTo(\''+c.k+'\');clearSearch()">' +
+        '<span class="search-result-name">'+c.n+'</span>' +
+        '<span class="search-result-sec">'+c.s+'</span></div>'
+      ).join('')
+    : '<div style="padding:8px 12px;font-size:12px;color:var(--g400)">No results</div>';
+  out.style.display = 'block';
+}
+function clearSearch() {
+  const el = document.getElementById('compSearch');
+  if (el) el.value = '';
+  const out = document.getElementById('searchResults');
+  if (out) out.style.display = 'none';
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-wrap')) clearSearch();
+});
+
+// ── DARK MODE ──
+(function() {
+  if (localStorage.getItem('pwc-theme') === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('iconMoon').style.display = isDark ? '' : 'none';
+  document.getElementById('iconSun').style.display = isDark ? 'none' : '';
+  document.getElementById('themeLbl').textContent = isDark ? 'Dark' : 'Light';
+  localStorage.setItem('pwc-theme', isDark ? 'light' : 'dark');
+}
+document.addEventListener('DOMContentLoaded', function() {
+  if (localStorage.getItem('pwc-theme') === 'dark') {
+    const moon = document.getElementById('iconMoon');
+    const sun = document.getElementById('iconSun');
+    const lbl = document.getElementById('themeLbl');
+    if (moon) moon.style.display = 'none';
+    if (sun) sun.style.display = '';
+    if (lbl) lbl.textContent = 'Light';
+  }
 });
 
 // ── BUTTONS ──
@@ -5736,6 +5869,92 @@ extend: {
 }
 */`;
 
+COMPONENT_CODES['brand-logo'] = `// PwC Logo — inline SVG component (React + TypeScript)
+// Use inline SVG for full colour control; never rasterise below 32px wide.
+
+interface PwCLogoProps {
+  /** Width in pixels — height scales proportionally (aspect ≈ 2.08:1) */
+  width?: number;
+  /** White text + orange chevrons for dark backgrounds */
+  inverse?: boolean;
+  className?: string;
+}
+
+export function PwCLogo({ width = 160, inverse = false, className }: PwCLogoProps) {
+  const h = Math.round(width / 2.075);
+  return (
+    <svg
+      width={width}
+      height={h}
+      viewBox="30 143 440 212"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-label="PwC"
+      role="img"
+    >
+      {/* Wordmark — black or white */}
+      <path
+        d="M355.041 233.765C339.717 236.206 331.925 247.425 331.925 267.214C331.925 287.003 342.331 300.403 358.334 300.403C365.762 300.403 372.508 297.962 386.732 291.054V307.155C369.682 314.894 359.642 317.335 345.94 317.335C331.088 317.335 320.629 313.44 312.052 304.766C303.319 296.092 298.926 284.561 298.926 271.784C298.926 243.322 320.158 224.104 351.118 224.104C371.67 224.104 385.842 233.453 385.842 247.165C385.842 255.995 379.252 262.072 369.473 262.072C364.454 262.072 360.323 260.773 355.041 257.709V233.869V233.765ZM279.472 271.732C293.173 254.54 298.037 247.632 298.037 239.166C298.037 230.7 291.343 224 282.348 224C276.805 224 271.837 226.597 269.431 229.298V264.305L246.944 294.066V226.234H225.555L190.045 284.717V226.234H177.756L145.489 234.024V242.231L163.061 243.997V315.725H185.809L219.907 260.098V315.725H244.8L279.42 271.732H279.472ZM77.6086 244.464C82.8381 243.841 85.4532 243.529 87.9111 243.529C102.763 243.529 110.764 253.294 110.764 271.732C110.764 293.495 100.933 304.818 82.6291 304.818C81.1125 304.818 80.0143 304.818 77.6086 304.714V244.464ZM77.6086 314.894C83.518 315.569 89.2708 315.777 92.7223 315.777C123.211 315.777 142.508 296.404 142.508 267.629C142.508 242.75 128.022 224.727 108.359 224.727C99.8346 224.727 94.1867 226.441 77.6086 236.258V224.26H68.4046L33 234.959V243.581H47.6429V343.928L34.4643 347.2V355.511H92.304V347.2L77.5564 343.928V314.894H77.6086Z"
+        fill={inverse ? "#ffffff" : "#000000"}
+      />
+      {/* Momentum chevrons — always Orange 500 */}
+      <path
+        d="M338.568 199.173H242.029L258.45 172.112H354.99L338.568 199.173ZM468 145H371.463L355.042 172.06H451.579L468 145Z"
+        fill="#FD5108"
+      />
+    </svg>
+  );
+}
+
+// Usage
+<PwCLogo />                        // Standard — black wordmark
+<PwCLogo inverse />                // Reversed — white wordmark (dark bg)
+<PwCLogo width={240} />            // Larger
+<PwCLogo width={96} inverse />     // Small reversed`;
+
+COMPONENT_CODES['brand-momentum'] = `// PwC Momentum Mark — the dual-chevron brand device
+// Standalone usage; always maintain ≥ 16px height minimum.
+
+interface MomentumMarkProps {
+  /** Fill colour — default Orange 500 (#FD5108) */
+  color?: string;
+  /** Width in pixels — height scales proportionally (aspect ≈ 4.75:1) */
+  width?: number;
+  className?: string;
+}
+
+export function MomentumMark({
+  color = "#FD5108",
+  width = 192,
+  className,
+}: MomentumMarkProps) {
+  const h = Math.round(width / 4.75);
+  return (
+    <svg
+      width={width}
+      height={h}
+      viewBox="0 0 342 72"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      <path
+        d="M149.2854,72H.12l21.7146-36h149.1654l-21.7146,36ZM341.88,0h-149.1654l-21.7146,36h149.1654L341.88,0Z"
+        fill={color}
+      />
+    </svg>
+  );
+}
+
+// Usage
+<MomentumMark />                          // Orange (default)
+<MomentumMark color="#ffffff" />          // White — reversed on dark bg
+<MomentumMark color="#000000" />          // Black — on light neutral bg
+<MomentumMark width={96} />               // Small
+<MomentumMark width={320} color="#FD5108" className="my-8" />  // Large hero`;
+
 
 // ══════════════════════════════════════════════
 // CODE MODAL FUNCTIONS
@@ -5785,441 +6004,817 @@ document.addEventListener('keydown', e => {
 });
 
 // ══════════════════════════════════════════════
-// INTERACTIVE AREA CHART DATA + RENDERER
+// REACT + RECHARTS CHART MOUNTS
 // ══════════════════════════════════════════════
-const AREA_DATA_FULL = [
-  {date:'2024-04-01',desktop:222,mobile:150},{date:'2024-04-08',desktop:409,mobile:320},
-  {date:'2024-04-15',desktop:120,mobile:170},{date:'2024-04-22',desktop:224,mobile:170},
-  {date:'2024-04-29',desktop:315,mobile:240},{date:'2024-05-06',desktop:498,mobile:520},
-  {date:'2024-05-13',desktop:197,mobile:160},{date:'2024-05-20',desktop:177,mobile:230},
-  {date:'2024-05-27',desktop:420,mobile:460},{date:'2024-06-03',desktop:103,mobile:160},
-  {date:'2024-06-10',desktop:155,mobile:200},{date:'2024-06-17',desktop:475,mobile:520},
-  {date:'2024-06-24',desktop:132,mobile:180},{date:'2024-06-30',desktop:446,mobile:400}
-];
+(function () {
+  'use strict';
+  if (typeof React === 'undefined' || typeof ReactDOM === 'undefined' || typeof Recharts === 'undefined') return;
 
-function setTimeRange(r) {
-  ['90d','30d','7d'].forEach(id => {
-    const btn = document.getElementById('trBtn'+id.replace('d',''));
-    if (!btn) return;
-    const active = r === id;
-    btn.style.background = active ? 'var(--black)' : 'var(--g100)';
-    btn.style.color = active ? '#fff' : 'var(--g500)';
-    btn.style.borderColor = active ? 'var(--black)' : 'var(--g200)';
-  });
-  renderInteractiveArea(r);
-}
+  const h = React.createElement;
+  const { useState, useMemo } = React;
+  const {
+    AreaChart, Area, BarChart, Bar, LineChart, Line,
+    PieChart, Pie, RadarChart, Radar, RadialBarChart, RadialBar,
+    ScatterChart, Scatter, Treemap, FunnelChart, Funnel,
+    CartesianGrid, XAxis, YAxis, Tooltip, Legend,
+    ResponsiveContainer, Cell, LabelList, Sector,
+    PolarGrid, PolarAngleAxis, PolarRadiusAxis, ZAxis
+  } = Recharts;
 
-function renderInteractiveArea(range) {
-  const e = document.getElementById('interactiveAreaChart');
-  if (!e) return;
-  e.innerHTML = '';
-  const refDate = new Date('2024-06-30');
-  const days = range === '30d' ? 30 : range === '7d' ? 7 : 90;
-  const startDate = new Date(refDate);
-  startDate.setDate(startDate.getDate() - days);
-  const filtered = AREA_DATA_FULL.filter(d => new Date(d.date) >= startDate);
-  if (!filtered.length) return;
+  // ── PwC Brand Colours ──
+  const C1 = '#FD5108';
+  const C2 = '#FFAA72';
+  const C3 = '#CBD1D6';
+  const C4 = '#B5BCC4';
+  const C5 = '#DFE3E6';
+  const GRID_COLOR = '#DFE3E6';
+  const TICK_COLOR = '#A1A8B3';
+  const FONT = 'system-ui,-apple-system,sans-serif';
 
-  const W=560,H=180,pL=36,pR=12,pT=18,pB=26;
-  const svg = makeSVG(W,H);
-  const tip = makeChartTooltip(e);
-  e.appendChild(svg);
-  const maxV = Math.max(...filtered.flatMap(d=>[d.desktop,d.mobile]));
-  const tickMax = Math.ceil(maxV/100)*100 || 100;
-  const iW=W-pL-pR, iH=H-pT-pB;
-  const px = i => pL+(i/(filtered.length-1||1))*iW;
-  const py = v => pT+iH-(v/tickMax)*iH;
-
-  // grid + y-axis
-  [0,.25,.5,.75,1].forEach(n=>{
-    const y=pT+iH-n*iH;
-    svg.appendChild(svgEl('line',{x1:pL,y1:y,x2:pL+iW,y2:y,class:'grid-line'}));
-    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
-    t.setAttribute('x',pL-4);t.setAttribute('y',y+3);t.setAttribute('text-anchor','end');
-    t.setAttribute('font-size','9');t.setAttribute('fill','#A1A8B3');t.setAttribute('font-family','system-ui');
-    t.textContent=Math.round(n*tickMax);svg.appendChild(t);
-  });
-  // x-axis labels
-  const step = Math.max(1,Math.floor(filtered.length/4));
-  filtered.forEach((d,i)=>{
-    if(i%step===0||i===filtered.length-1){
-      const t=document.createElementNS('http://www.w3.org/2000/svg','text');
-      t.setAttribute('x',px(i));t.setAttribute('y',H-pB+14);t.setAttribute('text-anchor','middle');
-      t.setAttribute('font-size','9');t.setAttribute('fill','#A1A8B3');t.setAttribute('font-family','system-ui');
-      t.textContent=new Date(d.date).toLocaleDateString('en-GB',{month:'short',day:'numeric'});
-      svg.appendChild(t);
-    }
-  });
-  // gradients
-  const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
-  function mkGrad(id,col){
-    const g=document.createElementNS('http://www.w3.org/2000/svg','linearGradient');
-    g.id=id;g.setAttribute('x1','0');g.setAttribute('y1','0');g.setAttribute('x2','0');g.setAttribute('y2','1');
-    const s1=document.createElementNS('http://www.w3.org/2000/svg','stop');
-    s1.setAttribute('offset','5%');s1.setAttribute('stop-color',col);s1.setAttribute('stop-opacity','0.65');
-    const s2=document.createElementNS('http://www.w3.org/2000/svg','stop');
-    s2.setAttribute('offset','95%');s2.setAttribute('stop-color',col);s2.setAttribute('stop-opacity','0.04');
-    g.appendChild(s1);g.appendChild(s2);return g;
+  function CardWrap({ children }) {
+    return h('div', { style: { fontFamily: FONT, fontSize: '14px', lineHeight: 1.5 } }, children);
   }
-  defs.appendChild(mkGrad('iad','#FD5108'));defs.appendChild(mkGrad('iam','#FFAA72'));svg.appendChild(defs);
-  // stacked mobile + desktop
-  const bot = pT+iH;
-  const mStacked = filtered.map((d,i)=>({...d,stacked:d.mobile+d.desktop}));
-  const mPts = mStacked.map((d,i)=>px(i)+','+py(d.stacked)).join(' ')+' '+px(filtered.length-1)+','+bot+' '+px(0)+','+bot;
-  svg.appendChild(svgEl('polygon',{points:mPts,fill:'url(#iam)',stroke:'none'}));
-  svg.appendChild(svgEl('polyline',{points:mStacked.map((d,i)=>px(i)+','+py(d.stacked)).join(' '),fill:'none',stroke:'#FFAA72','stroke-width':'1.5'}));
-  const dPts = filtered.map((d,i)=>px(i)+','+py(d.desktop)).join(' ')+' '+px(filtered.length-1)+','+bot+' '+px(0)+','+bot;
-  svg.appendChild(svgEl('polygon',{points:dPts,fill:'url(#iad)',stroke:'none'}));
-  svg.appendChild(svgEl('polyline',{points:filtered.map((d,i)=>px(i)+','+py(d.desktop)).join(' '),fill:'none',stroke:'#FD5108','stroke-width':'2'}));
-  // hover dots
-  filtered.forEach((d,i)=>{
-    const c=svgEl('circle',{cx:px(i),cy:py(d.desktop),r:'3.5',fill:'#FD5108',stroke:'#fff','stroke-width':'1.5',style:'cursor:pointer'});
-    c.addEventListener('mouseenter',()=>{c.setAttribute('r','5.5');showTip(tip,px(i)*e.offsetWidth/W,py(d.desktop)*e.offsetHeight/H,new Date(d.date).toLocaleDateString('en-GB',{month:'short',day:'numeric'})+' · D:'+d.desktop+' M:'+d.mobile);});
-    c.addEventListener('mouseleave',()=>{c.setAttribute('r','3.5');hideTip(tip);});
-    svg.appendChild(c);
-  });
-}
-// init interactive area
-document.addEventListener('DOMContentLoaded',()=>renderInteractiveArea('90d'));
+  function CardHd({ children }) {
+    return h('div', { style: { padding: '16px 20px', borderBottom: '1px solid #DFE3E6' } }, children);
+  }
+  function CardHdRow({ left, right }) {
+    return h(CardHd, null,
+      h('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px', flexWrap: 'wrap' } },
+        h('div', null, left), right || null
+      )
+    );
+  }
+  function CardTitle({ children }) {
+    return h('div', { style: { fontSize: '14px', fontWeight: 600, color: '#000', marginBottom: '2px' } }, children);
+  }
+  function CardDesc({ children }) {
+    return h('div', { style: { fontSize: '12px', color: '#A1A8B3' } }, children);
+  }
+  function CardBody({ children, style }) {
+    return h('div', { style: { padding: '16px 20px', ...style } }, children);
+  }
+  function CardFoot({ children }) {
+    return h('div', { style: { padding: '12px 20px 16px', fontSize: '12px', color: '#A1A8B3', borderTop: '1px solid #DFE3E6' } }, children);
+  }
 
-// ══════════════════════════════════════════════
-// NEW CHART RENDERERS
-// ══════════════════════════════════════════════
+  function RcTooltip({ active, payload, label, fmt }) {
+    if (!active || !payload || !payload.length) return null;
+    const lbl = fmt ? fmt(label) : label;
+    return h('div', { style: { background: '#fff', border: '1px solid #DFE3E6', padding: '8px 12px', fontSize: '12px', borderRadius: '4px', boxShadow: '0 2px 8px rgba(0,0,0,.08)' } },
+      lbl && h('div', { style: { color: '#A1A8B3', marginBottom: '4px', fontWeight: 600 } }, lbl),
+      payload.map((e, i) =>
+        h('div', { key: i, style: { display: 'flex', alignItems: 'center', gap: '6px', color: '#000', marginBottom: '1px' } },
+          h('span', { style: { width: '8px', height: '8px', borderRadius: '50%', background: e.color || e.fill || C1, flexShrink: 0, display: 'inline-block' } }),
+          h('span', null, (e.name || e.dataKey) + ': ' + (typeof e.value === 'number' ? e.value.toLocaleString() : e.value))
+        )
+      )
+    );
+  }
 
-// ─── STACKED AREA CHART ───
-(function(){
-  const e = document.getElementById('stackedAreaChart');
-  if(!e) return;
-  const W=560,H=200,pL=36,pR=12,pT=12,pB=26;
-  const data=[
-    {m:'Jan',d:186,mb:80},{m:'Feb',d:305,mb:200},{m:'Mar',d:237,mb:120},
-    {m:'Apr',d:73,mb:190},{m:'May',d:209,mb:130},{m:'Jun',d:214,mb:140}
+  function RangeBtn({ label, active, onClick }) {
+    return h('button', {
+      onClick,
+      style: {
+        padding: '3px 10px', fontSize: '11px', cursor: 'pointer', fontFamily: FONT,
+        background: active ? '#000' : '#EEEFF1',
+        color: active ? '#fff' : '#A1A8B3',
+        border: active ? '1px solid #000' : '1px solid #DFE3E6'
+      }
+    }, label);
+  }
+
+  function TabBtn({ label, value, total, active, color, onClick }) {
+    return h('button', {
+      onClick,
+      style: {
+        flex: 1, padding: '12px 16px', cursor: 'pointer', fontFamily: FONT, textAlign: 'left',
+        background: active ? '#EEEFF1' : '#fff', border: 'none', borderLeft: '1px solid #DFE3E6'
+      }
+    },
+      h('div', { style: { fontSize: '11px', color: '#A1A8B3', marginBottom: '2px' } }, label),
+      h('div', { style: { fontSize: '22px', fontWeight: 700, color: active ? color : '#000' } }, total.toLocaleString())
+    );
+  }
+
+  function TrendFoot() {
+    return h(CardFoot, null,
+      h('div', { style: { fontWeight: 600, color: '#000', marginBottom: '2px' } }, '\u2191 Trending up by 5.2% this month'),
+      h('div', null, 'January \u2013 June 2024')
+    );
+  }
+
+  const MONTHLY6 = [
+    { month: 'Jan', desktop: 186, mobile: 80, visitors: 186 },
+    { month: 'Feb', desktop: 305, mobile: 200, visitors: 305 },
+    { month: 'Mar', desktop: 237, mobile: 120, visitors: 237 },
+    { month: 'Apr', desktop: 73,  mobile: 190, visitors: 73  },
+    { month: 'May', desktop: 209, mobile: 130, visitors: 209 },
+    { month: 'Jun', desktop: 214, mobile: 140, visitors: 214 },
   ];
-  const svg=makeSVG(W,H);const tip=makeChartTooltip(e);e.appendChild(svg);
-  const maxV=600,iW=W-pL-pR,iH=H-pT-pB;
-  const px=i=>pL+(i/(data.length-1))*iW;const py=v=>pT+iH-(v/maxV)*iH;
-  drawGrid(svg,W,H,pL,pR,pT,pB,[{norm:0,label:'0'},{norm:.33,label:'200'},{norm:.67,label:'400'},{norm:1,label:'600'}],data.map(d=>d.m));
-  const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
-  function mkG(id,col){const g=document.createElementNS('http://www.w3.org/2000/svg','linearGradient');g.id=id;g.setAttribute('x1','0');g.setAttribute('y1','0');g.setAttribute('x2','0');g.setAttribute('y2','1');const s1=document.createElementNS('http://www.w3.org/2000/svg','stop');s1.setAttribute('offset','5%');s1.setAttribute('stop-color',col);s1.setAttribute('stop-opacity','0.6');const s2=document.createElementNS('http://www.w3.org/2000/svg','stop');s2.setAttribute('offset','95%');s2.setAttribute('stop-color',col);s2.setAttribute('stop-opacity','0.05');g.appendChild(s1);g.appendChild(s2);return g;}
-  defs.appendChild(mkG('sa1','#FFAA72'));defs.appendChild(mkG('sa2','#FD5108'));svg.appendChild(defs);
-  const bot=pT+iH;
-  // stacked = d + mb
-  const sp=data.map((d,i)=>px(i)+','+(py(d.d+d.mb))).join(' ')+' '+px(data.length-1)+','+bot+' '+px(0)+','+bot;
-  svg.appendChild(svgEl('polygon',{points:sp,fill:'url(#sa1)',stroke:'none'}));
-  svg.appendChild(svgEl('polyline',{points:data.map((d,i)=>px(i)+','+(py(d.d+d.mb))).join(' '),fill:'none',stroke:'#FFAA72','stroke-width':'1.5'}));
-  const dp=data.map((d,i)=>px(i)+','+py(d.d)).join(' ')+' '+px(data.length-1)+','+bot+' '+px(0)+','+bot;
-  svg.appendChild(svgEl('polygon',{points:dp,fill:'url(#sa2)',stroke:'none'}));
-  svg.appendChild(svgEl('polyline',{points:data.map((d,i)=>px(i)+','+py(d.d)).join(' '),fill:'none',stroke:'#FD5108','stroke-width':'2'}));
-  data.forEach((d,i)=>{
-    const c=svgEl('circle',{cx:px(i),cy:py(d.d),r:'3.5',fill:'#FD5108',stroke:'#fff','stroke-width':'1.5',style:'cursor:pointer'});
-    c.addEventListener('mouseenter',()=>{c.setAttribute('r','5');showTip(tip,px(i)*e.offsetWidth/W,py(d.d)*e.offsetHeight/H,d.m+' · D:'+d.d+' M:'+d.mb);});
-    c.addEventListener('mouseleave',()=>{c.setAttribute('r','3.5');hideTip(tip);});
-    svg.appendChild(c);
-  });
-})();
+  const MONTHLY6_NEG = [
+    { month: 'Jan', visitors:  186 },
+    { month: 'Feb', visitors:  205 },
+    { month: 'Mar', visitors: -207 },
+    { month: 'Apr', visitors:  173 },
+    { month: 'May', visitors: -209 },
+    { month: 'Jun', visitors:  214 },
+  ];
+  const TIME90 = [
+    {date:'2024-04-01',desktop:222,mobile:150},{date:'2024-04-02',desktop:97,mobile:180},
+    {date:'2024-04-03',desktop:167,mobile:120},{date:'2024-04-04',desktop:242,mobile:260},
+    {date:'2024-04-05',desktop:373,mobile:290},{date:'2024-04-06',desktop:301,mobile:340},
+    {date:'2024-04-07',desktop:245,mobile:180},{date:'2024-04-08',desktop:409,mobile:320},
+    {date:'2024-04-09',desktop:59, mobile:110},{date:'2024-04-10',desktop:261,mobile:190},
+    {date:'2024-04-11',desktop:327,mobile:350},{date:'2024-04-12',desktop:292,mobile:210},
+    {date:'2024-04-13',desktop:342,mobile:380},{date:'2024-04-14',desktop:137,mobile:220},
+    {date:'2024-04-15',desktop:120,mobile:170},{date:'2024-04-16',desktop:138,mobile:190},
+    {date:'2024-04-17',desktop:446,mobile:360},{date:'2024-04-18',desktop:364,mobile:410},
+    {date:'2024-04-19',desktop:243,mobile:180},{date:'2024-04-20',desktop:89, mobile:150},
+    {date:'2024-04-21',desktop:137,mobile:200},{date:'2024-04-22',desktop:224,mobile:170},
+    {date:'2024-04-23',desktop:138,mobile:230},{date:'2024-04-24',desktop:387,mobile:290},
+    {date:'2024-04-25',desktop:215,mobile:250},{date:'2024-04-26',desktop:75, mobile:130},
+    {date:'2024-04-27',desktop:383,mobile:420},{date:'2024-04-28',desktop:122,mobile:180},
+    {date:'2024-04-29',desktop:315,mobile:240},{date:'2024-04-30',desktop:454,mobile:380},
+    {date:'2024-05-01',desktop:165,mobile:220},{date:'2024-05-02',desktop:293,mobile:310},
+    {date:'2024-05-03',desktop:247,mobile:190},{date:'2024-05-04',desktop:385,mobile:420},
+    {date:'2024-05-05',desktop:481,mobile:390},{date:'2024-05-06',desktop:498,mobile:520},
+    {date:'2024-05-07',desktop:388,mobile:300},{date:'2024-05-08',desktop:149,mobile:210},
+    {date:'2024-05-09',desktop:227,mobile:180},{date:'2024-05-10',desktop:293,mobile:330},
+    {date:'2024-05-11',desktop:335,mobile:270},{date:'2024-05-12',desktop:197,mobile:240},
+    {date:'2024-05-13',desktop:197,mobile:160},{date:'2024-05-14',desktop:448,mobile:490},
+    {date:'2024-05-15',desktop:473,mobile:380},{date:'2024-05-16',desktop:338,mobile:400},
+    {date:'2024-05-17',desktop:499,mobile:420},{date:'2024-05-18',desktop:315,mobile:350},
+    {date:'2024-05-19',desktop:235,mobile:180},{date:'2024-05-20',desktop:177,mobile:230},
+    {date:'2024-05-21',desktop:82, mobile:140},{date:'2024-05-22',desktop:81, mobile:120},
+    {date:'2024-05-23',desktop:252,mobile:290},{date:'2024-05-24',desktop:294,mobile:220},
+    {date:'2024-05-25',desktop:201,mobile:250},{date:'2024-05-26',desktop:213,mobile:170},
+    {date:'2024-05-27',desktop:420,mobile:460},{date:'2024-05-28',desktop:233,mobile:190},
+    {date:'2024-05-29',desktop:78, mobile:130},{date:'2024-05-30',desktop:340,mobile:280},
+    {date:'2024-05-31',desktop:178,mobile:230},{date:'2024-06-01',desktop:178,mobile:200},
+    {date:'2024-06-02',desktop:470,mobile:410},{date:'2024-06-03',desktop:103,mobile:160},
+    {date:'2024-06-04',desktop:439,mobile:380},{date:'2024-06-05',desktop:88, mobile:140},
+    {date:'2024-06-06',desktop:294,mobile:250},{date:'2024-06-07',desktop:323,mobile:370},
+    {date:'2024-06-08',desktop:385,mobile:320},{date:'2024-06-09',desktop:438,mobile:480},
+    {date:'2024-06-10',desktop:155,mobile:200},{date:'2024-06-11',desktop:92, mobile:150},
+    {date:'2024-06-12',desktop:492,mobile:420},{date:'2024-06-13',desktop:81, mobile:130},
+    {date:'2024-06-14',desktop:426,mobile:380},{date:'2024-06-15',desktop:307,mobile:350},
+    {date:'2024-06-16',desktop:371,mobile:310},{date:'2024-06-17',desktop:475,mobile:520},
+    {date:'2024-06-18',desktop:107,mobile:170},{date:'2024-06-19',desktop:341,mobile:290},
+    {date:'2024-06-20',desktop:408,mobile:450},{date:'2024-06-21',desktop:169,mobile:210},
+    {date:'2024-06-22',desktop:317,mobile:270},{date:'2024-06-23',desktop:480,mobile:530},
+    {date:'2024-06-24',desktop:132,mobile:180},{date:'2024-06-25',desktop:141,mobile:190},
+    {date:'2024-06-26',desktop:434,mobile:380},{date:'2024-06-27',desktop:448,mobile:490},
+    {date:'2024-06-28',desktop:149,mobile:200},{date:'2024-06-29',desktop:103,mobile:160},
+    {date:'2024-06-30',desktop:446,mobile:400},
+  ];
+  const PIE_DATA = [
+    { name: 'Chrome',  value: 275, fill: C1 },
+    { name: 'Safari',  value: 200, fill: C2 },
+    { name: 'Firefox', value: 187, fill: C3 },
+    { name: 'Edge',    value: 173, fill: C4 },
+    { name: 'Other',   value: 90,  fill: C5 },
+  ];
+  const RADAR_DATA = [
+    { subject: 'Jan', A: 186 }, { subject: 'Feb', A: 305 },
+    { subject: 'Mar', A: 237 }, { subject: 'Apr', A: 273 },
+    { subject: 'May', A: 209 }, { subject: 'Jun', A: 214 },
+  ];
+  const RADIAL_DATA = [
+    { name: 'Chrome',  value: 275, fill: C1 },
+    { name: 'Safari',  value: 200, fill: C2 },
+    { name: 'Firefox', value: 187, fill: C3 },
+    { name: 'Edge',    value: 173, fill: C4 },
+    { name: 'Other',   value: 90,  fill: C5 },
+  ];
+  const SCATTER_DATA = [
+    { risk: 12, ret: 8.2, aum: 300 }, { risk: 18, ret: 11.5, aum: 520 },
+    { risk: 25, ret: 14.1, aum: 180 }, { risk: 9, ret: 6.8, aum: 650 },
+    { risk: 32, ret: 17.3, aum: 420 }, { risk: 22, ret: 13.0, aum: 280 },
+    { risk: 15, ret: 9.9, aum: 390 }, { risk: 28, ret: 15.8, aum: 210 },
+  ];
+  const FUNNEL_DATA = [
+    { value: 1200, name: 'Leads',        fill: C1 },
+    { value: 940,  name: 'Qualified',    fill: '#fd6a2a' },
+    { value: 645,  name: 'Proposal',     fill: C2 },
+    { value: 420,  name: 'Negotiation',  fill: '#ffc89a' },
+    { value: 215,  name: 'Won',          fill: '#22C55E' },
+  ];
+  const TREEMAP_DATA = [
+    { name: 'Technology', size: 42 },
+    { name: 'People',     size: 24 },
+    { name: 'Travel',     size: 18 },
+    { name: 'Facilities', size: 10 },
+    { name: 'Other',      size: 6  },
+  ];
+  const TREEMAP_COLORS = [C1, C2, '#FFE8D4', C5, '#EEEFF1'];
+  const BAR_COMPOSED = [
+    { month: 'Jan', volume: 186, avg: 162 },
+    { month: 'Feb', volume: 305, avg: 246 },
+    { month: 'Mar', volume: 237, avg: 259 },
+    { month: 'Apr', volume: 73,  avg: 155 },
+    { month: 'May', volume: 209, avg: 177 },
+    { month: 'Jun', volume: 214, avg: 210 },
+  ];
 
-// ─── STEP AREA CHART ───
-(function(){
-  const e=document.getElementById('stepAreaChart');if(!e)return;
-  const W=560,H=200,pL=36,pR=12,pT=12,pB=26;
-  const data=[{m:'Jan',d:186,mb:80},{m:'Feb',d:305,mb:200},{m:'Mar',d:237,mb:120},{m:'Apr',d:73,mb:190},{m:'May',d:209,mb:130},{m:'Jun',d:214,mb:140}];
-  const svg=makeSVG(W,H);const tip=makeChartTooltip(e);e.appendChild(svg);
-  const maxV=400,iW=W-pL-pR,iH=H-pT-pB;
-  const px=i=>pL+(i/(data.length-1))*iW;const py=v=>pT+iH-(v/maxV)*iH;
-  drawGrid(svg,W,H,pL,pR,pT,pB,[{norm:0,label:'0'},{norm:.25,label:'100'},{norm:.5,label:'200'},{norm:.75,label:'300'},{norm:1,label:'400'}],data.map(d=>d.m));
-  // Step path builder
-  function stepPath(pts){let path='';pts.forEach((p,i)=>{if(i===0){path+='M'+p.x+','+p.y;}else{path+='H'+p.x+'V'+p.y;}});return path;}
-  const dPts=data.map((d,i)=>({x:px(i),y:py(d.d)}));
-  const mPts=data.map((d,i)=>({x:px(i),y:py(d.mb)}));
-  const bot=pT+iH;
-  // desktop area
-  const dPath=stepPath(dPts)+' H'+px(data.length-1)+' V'+bot+' H'+px(0)+' Z';
-  const dArea=document.createElementNS('http://www.w3.org/2000/svg','path');dArea.setAttribute('d',dPath);dArea.setAttribute('fill','#FD5108');dArea.setAttribute('fill-opacity','0.15');dArea.setAttribute('stroke','#FD5108');dArea.setAttribute('stroke-width','2');svg.appendChild(dArea);
-  // mobile area
-  const mPath=stepPath(mPts)+' H'+px(data.length-1)+' V'+bot+' H'+px(0)+' Z';
-  const mArea=document.createElementNS('http://www.w3.org/2000/svg','path');mArea.setAttribute('d',mPath);mArea.setAttribute('fill','#FFAA72');mArea.setAttribute('fill-opacity','0.15');mArea.setAttribute('stroke','#FFAA72');mArea.setAttribute('stroke-width','1.5');mArea.setAttribute('stroke-dasharray','4 2');svg.appendChild(mArea);
-  data.forEach((d,i)=>{
-    const c=svgEl('circle',{cx:px(i),cy:py(d.d),r:'3',fill:'#FD5108',stroke:'#fff','stroke-width':'1.5',style:'cursor:pointer'});
-    c.addEventListener('mouseenter',()=>{c.setAttribute('r','5');showTip(tip,px(i)*e.offsetWidth/W,py(d.d)*e.offsetHeight/H,d.m+' · D:'+d.d+' M:'+d.mb);});
-    c.addEventListener('mouseleave',()=>{c.setAttribute('r','3');hideTip(tip);});
-    svg.appendChild(c);
-  });
-})();
+  const dateTickFmt = v => new Date(v).toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
+  const monthSlice = v => String(v).slice(0, 3);
 
-// ─── STEP LINE CHART ───
-(function(){
-  const e=document.getElementById('stepLineChart');if(!e)return;
-  const W=560,H=200,pL=36,pR=12,pT=12,pB=26;
-  const data=[{m:'Jan',d:186,mb:80},{m:'Feb',d:305,mb:200},{m:'Mar',d:237,mb:120},{m:'Apr',d:73,mb:190},{m:'May',d:209,mb:130},{m:'Jun',d:214,mb:140}];
-  const svg=makeSVG(W,H);const tip=makeChartTooltip(e);e.appendChild(svg);
-  const maxV=400,iW=W-pL-pR,iH=H-pT-pB;
-  const px=i=>pL+(i/(data.length-1))*iW;const py=v=>pT+iH-(v/maxV)*iH;
-  drawGrid(svg,W,H,pL,pR,pT,pB,[{norm:0,label:'0'},{norm:.5,label:'200'},{norm:1,label:'400'}],data.map(d=>d.m));
-  function stepLine(pts,col,dsh){
-    let d='';pts.forEach((p,i)=>{d+=i===0?'M'+p.x+','+p.y:' H'+p.x+' V'+p.y;});
-    const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',d);path.setAttribute('fill','none');path.setAttribute('stroke',col);path.setAttribute('stroke-width','2');if(dsh)path.setAttribute('stroke-dasharray',dsh);return path;
+  const tooltipProps = (fmt) => ({
+    content: function(props) { return h(RcTooltip, Object.assign({}, props, { fmt })); }
+  });
+  const axisProps = { tickLine: false, axisLine: false, tick: { fontSize: 11, fill: TICK_COLOR, fontFamily: FONT } };
+
+  // AREA CHARTS
+
+  function ChartAreaInteractive() {
+    const [range, setRange] = useState('90d');
+    const filtered = useMemo(() => {
+      const ref = new Date('2024-06-30');
+      const days = range === '30d' ? 30 : range === '7d' ? 7 : 90;
+      const s = new Date(ref); s.setDate(s.getDate() - days);
+      return TIME90.filter(d => new Date(d.date) >= s);
+    }, [range]);
+    return h(CardWrap, null,
+      h(CardHdRow, {
+        left: h('div', null, h(CardTitle, null, 'Area Chart \u2014 Interactive'), h(CardDesc, null, 'Showing total visitors for the last 3 months')),
+        right: h('div', { style: { display: 'flex', gap: '4px', flexWrap: 'wrap' } },
+          h(RangeBtn, { label: 'Last 3 months', active: range === '90d', onClick: () => setRange('90d') }),
+          h(RangeBtn, { label: 'Last 30 days',  active: range === '30d', onClick: () => setRange('30d') }),
+          h(RangeBtn, { label: 'Last 7 days',   active: range === '7d',  onClick: () => setRange('7d')  })
+        )
+      }),
+      h(CardBody, null,
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(AreaChart, { data: filtered },
+            h('defs', null,
+              h('linearGradient', { id: 'gAI_D', x1:'0', y1:'0', x2:'0', y2:'1' },
+                h('stop', { offset: '5%',  stopColor: C1, stopOpacity: 0.8 }),
+                h('stop', { offset: '95%', stopColor: C1, stopOpacity: 0.1 })
+              ),
+              h('linearGradient', { id: 'gAI_M', x1:'0', y1:'0', x2:'0', y2:'1' },
+                h('stop', { offset: '5%',  stopColor: C2, stopOpacity: 0.8 }),
+                h('stop', { offset: '95%', stopColor: C2, stopOpacity: 0.1 })
+              )
+            ),
+            h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
+            h(XAxis, Object.assign({}, axisProps, { dataKey: 'date', minTickGap: 32, tickFormatter: dateTickFmt })),
+            h(Tooltip, tooltipProps(dateTickFmt)),
+            h(Area, { dataKey: 'mobile',  type: 'natural', fill: 'url(#gAI_M)', stroke: C2, stackId: 'a', name: 'Mobile'  }),
+            h(Area, { dataKey: 'desktop', type: 'natural', fill: 'url(#gAI_D)', stroke: C1, stackId: 'a', name: 'Desktop' }),
+            h(Legend, { iconType: 'square', iconSize: 10, wrapperStyle: { fontSize: '12px' } })
+          )
+        )
+      )
+    );
   }
-  svg.appendChild(stepLine(data.map((d,i)=>({x:px(i),y:py(d.d)})),'#FD5108'));
-  svg.appendChild(stepLine(data.map((d,i)=>({x:px(i),y:py(d.mb)})),'#FFAA72','4 2'));
-  data.forEach((d,i)=>{
-    const c=svgEl('circle',{cx:px(i),cy:py(d.d),r:'3.5',fill:'#FD5108',stroke:'#fff','stroke-width':'1.5',style:'cursor:pointer'});
-    c.addEventListener('mouseenter',()=>{c.setAttribute('r','5.5');showTip(tip,px(i)*e.offsetWidth/W,py(d.d)*e.offsetHeight/H,d.m+': '+d.d);});
-    c.addEventListener('mouseleave',()=>{c.setAttribute('r','3.5');hideTip(tip);});
-    svg.appendChild(c);
-  });
-})();
 
-// ─── LINE WITH DOTS ───
-(function(){
-  const e=document.getElementById('lineDotsChart');if(!e)return;
-  const W=560,H=200,pL=36,pR=12,pT=12,pB=26;
-  const data=[{m:'Jan',d:186,mb:80},{m:'Feb',d:305,mb:200},{m:'Mar',d:237,mb:120},{m:'Apr',d:73,mb:190},{m:'May',d:209,mb:130},{m:'Jun',d:214,mb:140}];
-  const svg=makeSVG(W,H);const tip=makeChartTooltip(e);e.appendChild(svg);
-  const maxV=400,iW=W-pL-pR,iH=H-pT-pB;
-  const px=i=>pL+(i/(data.length-1))*iW;const py=v=>pT+iH-(v/maxV)*iH;
-  drawGrid(svg,W,H,pL,pR,pT,pB,[{norm:0,label:'0'},{norm:.5,label:'200'},{norm:1,label:'400'}],data.map(d=>d.m));
-  svg.appendChild(svgEl('polyline',{points:data.map((d,i)=>px(i)+','+py(d.mb)).join(' '),fill:'none',stroke:'#FFAA72','stroke-width':'2'}));
-  svg.appendChild(svgEl('polyline',{points:data.map((d,i)=>px(i)+','+py(d.d)).join(' '),fill:'none',stroke:'#FD5108','stroke-width':'2'}));
-  // large dots for both series
-  data.forEach((d,i)=>{
-    [[d.d,'#FD5108'],[d.mb,'#FFAA72']].forEach(([v,col])=>{
-      const c=svgEl('circle',{cx:px(i),cy:py(v),r:'6',fill:col,stroke:'#fff','stroke-width':'2',style:'cursor:pointer'});
-      c.addEventListener('mouseenter',()=>{c.setAttribute('r','8');showTip(tip,px(i)*e.offsetWidth/W,py(v)*e.offsetHeight/H,d.m+': '+v);});
-      c.addEventListener('mouseleave',()=>{c.setAttribute('r','6');hideTip(tip);});
-      svg.appendChild(c);
-    });
-  });
-})();
-
-// ─── LINE WITH LABELS ───
-(function(){
-  const e=document.getElementById('lineLabelChart');if(!e)return;
-  const W=560,H=200,pL=36,pR=12,pT=22,pB=26;
-  const data=[{m:'Jan',d:186},{m:'Feb',d:305},{m:'Mar',d:237},{m:'Apr',d:73},{m:'May',d:209},{m:'Jun',d:214}];
-  const svg=makeSVG(W,H);const tip=makeChartTooltip(e);e.appendChild(svg);
-  const maxV=400,iW=W-pL-pR,iH=H-pT-pB;
-  const px=i=>pL+(i/(data.length-1))*iW;const py=v=>pT+iH-(v/maxV)*iH;
-  drawGrid(svg,W,H,pL,pR,pT,pB,[{norm:0,label:'0'},{norm:.5,label:'200'},{norm:1,label:'400'}],data.map(d=>d.m));
-  svg.appendChild(svgEl('polyline',{points:data.map((d,i)=>px(i)+','+py(d.d)).join(' '),fill:'none',stroke:'#FD5108','stroke-width':'2'}));
-  data.forEach((d,i)=>{
-    const c=svgEl('circle',{cx:px(i),cy:py(d.d),r:'4',fill:'#FD5108',stroke:'#fff','stroke-width':'2',style:'cursor:pointer'});
-    c.addEventListener('mouseenter',()=>{c.setAttribute('r','6');showTip(tip,px(i)*e.offsetWidth/W,py(d.d)*e.offsetHeight/H,d.m+': '+d.d);});
-    c.addEventListener('mouseleave',()=>{c.setAttribute('r','4');hideTip(tip);});
-    svg.appendChild(c);
-    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
-    t.setAttribute('x',px(i));t.setAttribute('y',py(d.d)-10);t.setAttribute('text-anchor','middle');
-    t.setAttribute('font-size','10');t.setAttribute('fill','#000');t.setAttribute('font-family','system-ui');t.setAttribute('font-weight','600');
-    t.textContent=d.d;svg.appendChild(t);
-  });
-})();
-
-// ─── HORIZONTAL BAR CHART ───
-(function(){
-  const e=document.getElementById('horizontalBarChart');if(!e)return;
-  const W=560,H=200,pL=56,pR=16,pT=10,pB=10;
-  const data=[{n:'US',v:520},{n:'UK',v:480},{n:'EMEA',v:340},{n:'APAC',v:270},{n:'LatAm',v:190}];
-  const svg=makeSVG(W,H);const tip=makeChartTooltip(e);e.appendChild(svg);
-  const maxV=600,iW=W-pL-pR,iH=H-pT-pB;
-  const rowH=iH/data.length;const barH=rowH*.55;
-  // vertical grid
-  [0,.25,.5,.75,1].forEach(n=>{
-    const x=pL+n*iW;
-    svg.appendChild(svgEl('line',{x1:x,y1:pT,x2:x,y2:pT+iH,class:'grid-line'}));
-    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
-    t.setAttribute('x',x);t.setAttribute('y',H-pB+13);t.setAttribute('text-anchor','middle');
-    t.setAttribute('font-size','9');t.setAttribute('fill','#A1A8B3');t.setAttribute('font-family','system-ui');
-    t.textContent=Math.round(n*maxV);svg.appendChild(t);
-  });
-  data.forEach((d,i)=>{
-    const by=pT+i*rowH+(rowH-barH)/2;
-    const bw=(d.v/maxV)*iW;
-    const r=svgEl('rect',{x:pL,y:by,width:bw,height:barH,fill:'#FD5108'});
-    r.style.cursor='pointer';r.style.transition='opacity .12s';
-    r.addEventListener('mouseenter',()=>{r.style.opacity='.75';showTip(tip,(pL+bw)*e.offsetWidth/W,by*e.offsetHeight/H,d.n+': £'+d.v+'M');});
-    r.addEventListener('mouseleave',()=>{r.style.opacity='1';hideTip(tip);});
-    svg.appendChild(r);
-    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
-    t.setAttribute('x',pL-6);t.setAttribute('y',by+barH/2+3.5);t.setAttribute('text-anchor','end');
-    t.setAttribute('font-size','10');t.setAttribute('fill','#A1A8B3');t.setAttribute('font-family','system-ui');
-    t.textContent=d.n;svg.appendChild(t);
-    const vt=document.createElementNS('http://www.w3.org/2000/svg','text');
-    vt.setAttribute('x',pL+bw+4);vt.setAttribute('y',by+barH/2+3.5);vt.setAttribute('text-anchor','start');
-    vt.setAttribute('font-size','10');vt.setAttribute('fill','#000');vt.setAttribute('font-weight','600');vt.setAttribute('font-family','system-ui');
-    vt.textContent='£'+d.v+'M';svg.appendChild(vt);
-  });
-})();
-
-// ─── BAR WITH LABELS ───
-(function(){
-  const e=document.getElementById('barLabelChart');if(!e)return;
-  const W=560,H=200,pL=36,pR=12,pT=24,pB=26;
-  const act=[68,82,55,91];const tgt=[75,78,70,85];const lbl=['Q1','Q2','Q3','Q4'];
-  const svg=makeSVG(W,H);const tip=makeChartTooltip(e);e.appendChild(svg);
-  const maxV=100,iW=W-pL-pR,iH=H-pT-pB;
-  const gW=iW/lbl.length;const bW=gW*.32;
-  drawGrid(svg,W,H,pL,pR,pT,pB,[{norm:0,label:'0'},{norm:.5,label:'50'},{norm:1,label:'100'}],lbl);
-  lbl.forEach((_,i)=>{
-    const gx=pL+i*gW+gW/2;
-    [[act[i],'#FD5108','Actual'],[tgt[i],'#FFAA72','Target']].forEach(([v,col,nm],j)=>{
-      const bh=(v/maxV)*iH;const bx=gx+(j===0?-bW-1:1);const by=pT+iH-bh;
-      const r=document.createElementNS('http://www.w3.org/2000/svg','rect');
-      r.setAttribute('x',bx);r.setAttribute('y',by);r.setAttribute('width',bW);r.setAttribute('height',bh);r.setAttribute('fill',col);r.style.cursor='pointer';
-      r.addEventListener('mouseenter',()=>{r.style.opacity='.75';showTip(tip,bx*e.offsetWidth/W,by*e.offsetHeight/H,nm+': '+v);});
-      r.addEventListener('mouseleave',()=>{r.style.opacity='1';hideTip(tip);});
-      svg.appendChild(r);
-      const t=document.createElementNS('http://www.w3.org/2000/svg','text');
-      t.setAttribute('x',bx+bW/2);t.setAttribute('y',by-4);t.setAttribute('text-anchor','middle');
-      t.setAttribute('font-size','9');t.setAttribute('fill','#000');t.setAttribute('font-weight','600');t.setAttribute('font-family','system-ui');
-      t.textContent=v;svg.appendChild(t);
-    });
-  });
-})();
-
-// ─── BAR NEGATIVE VALUES ───
-(function(){
-  const e=document.getElementById('barNegChart');if(!e)return;
-  const W=560,H=200,pL=36,pR=12,pT=12,pB=26;
-  const data=[{m:'Jan',v:12},{m:'Feb',v:-8},{m:'Mar',v:22},{m:'Apr',v:-15},{m:'May',v:18},{m:'Jun',v:-5}];
-  const svg=makeSVG(W,H);const tip=makeChartTooltip(e);e.appendChild(svg);
-  const absMax=25,iW=W-pL-pR,iH=H-pT-pB;
-  const midY=pT+iH/2;
-  const py=v=>midY-(v/absMax)*(iH/2);
-  drawGrid(svg,W,H,pL,pR,pT,pB,[{norm:0,label:'-25'},{norm:.25,label:'-12'},{norm:.5,label:'0'},{norm:.75,label:'+12'},{norm:1,label:'+25'}],data.map(d=>d.m));
-  // zero line
-  svg.appendChild(svgEl('line',{x1:pL,y1:midY,x2:pL+iW,y2:midY,stroke:'#000','stroke-width':'1'}));
-  const bW=(iW/data.length)*.5;
-  data.forEach((d,i)=>{
-    const bx=pL+(i/(data.length-1))*iW-bW/2;
-    const barTop=py(d.v);const barBot=py(0);
-    const by=Math.min(barTop,barBot);const bh=Math.abs(barTop-barBot);
-    const col=d.v>=0?'#FD5108':'#B5BCC4';
-    const r=svgEl('rect',{x:bx,y:by,width:bW,height:bh,fill:col});r.style.cursor='pointer';
-    r.addEventListener('mouseenter',()=>{r.style.opacity='.75';showTip(tip,bx*e.offsetWidth/W,barTop*e.offsetHeight/H,d.m+': '+(d.v>=0?'+':'')+d.v);});
-    r.addEventListener('mouseleave',()=>{r.style.opacity='1';hideTip(tip);});
-    svg.appendChild(r);
-  });
-})();
-
-// ─── PIE WITH LABELS ───
-(function(){
-  const e=document.getElementById('pieLabelChart');if(!e)return;
-  const segs=[{v:45,col:'#FD5108',name:'Consulting'},{v:30,col:'#FFAA72',name:'Advisory'},{v:15,col:'#CBD1D6',name:'Tax'},{v:10,col:'#DFE3E6',name:'Other'}];
-  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-  svg.setAttribute('viewBox','-1.4 -1.4 2.8 2.8');svg.style.cssText='width:200px;height:200px;flex-shrink:0;overflow:visible';
-  const tip2=document.createElement('div');tip2.className='chart-tooltip';tip2.style.opacity='0';tip2.style.position='absolute';e.style.position='relative';e.appendChild(tip2);
-  let cum=0;
-  segs.forEach(d=>{
-    const a0=cum*2*Math.PI/100-Math.PI/2;cum+=d.v;const a1=cum*2*Math.PI/100-Math.PI/2;
-    const x0=Math.cos(a0),y0=Math.sin(a0),x1=Math.cos(a1),y1=Math.sin(a1);
-    const lg=d.v>50?1:0;
-    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
-    p.setAttribute('d','M0 0 L'+x0+' '+y0+' A1 1 0 '+lg+' 1 '+x1+' '+y1+'Z');
-    p.setAttribute('fill',d.col);p.setAttribute('stroke','#fff');p.setAttribute('stroke-width','0.02');p.style.cssText='cursor:pointer;transition:transform .15s;transform-origin:center';
-    const mid=(a0+a1)/2;const lr=1.22;
-    const lx=Math.cos(mid)*lr;const ly=Math.sin(mid)*lr;
-    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
-    t.setAttribute('x',lx);t.setAttribute('y',ly+0.04);t.setAttribute('text-anchor','middle');t.setAttribute('font-size','0.13');t.setAttribute('fill','#A1A8B3');t.setAttribute('font-family','system-ui');
-    t.textContent=d.v+'%';
-    p.addEventListener('mouseenter',()=>{p.style.transform='scale(1.06)';tip2.innerHTML=d.name+': '+d.v+'%';tip2.style.opacity='1';});
-    p.addEventListener('mouseleave',()=>{p.style.transform='scale(1)';tip2.style.opacity='0';});
-    svg.appendChild(p);svg.appendChild(t);
-  });
-  e.appendChild(svg);
-})();
-
-// ─── STACKED DONUT (concentric rings) ───
-(function(){
-  const e=document.getElementById('stackedDonutChart');if(!e)return;
-  const outer=[{v:45,col:'#FD5108'},{v:30,col:'#FFAA72'},{v:25,col:'#CBD1D6'}];
-  const inner=[{v:40,col:'#FD5108'},{v:35,col:'#FFAA72'},{v:25,col:'#CBD1D6'}];
-  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-  svg.setAttribute('viewBox','-1 -1 2 2');svg.style.cssText='width:180px;height:180px;flex-shrink:0';
-  function drawRing(segs,R,r){
-    let cum=0;
-    segs.forEach(d=>{
-      const a0=cum*2*Math.PI/100-Math.PI/2;cum+=d.v;const a1=cum*2*Math.PI/100-Math.PI/2;
-      const x0o=Math.cos(a0)*R,y0o=Math.sin(a0)*R,x1o=Math.cos(a1)*R,y1o=Math.sin(a1)*R;
-      const x0i=Math.cos(a1)*r,y0i=Math.sin(a1)*r,x1i=Math.cos(a0)*r,y1i=Math.sin(a0)*r;
-      const lg=d.v>50?1:0;
-      const p=document.createElementNS('http://www.w3.org/2000/svg','path');
-      p.setAttribute('d','M'+x0o+' '+y0o+' A'+R+' '+R+' 0 '+lg+' 1 '+x1o+' '+y1o+' L'+x0i+' '+y0i+' A'+r+' '+r+' 0 '+lg+' 0 '+x1i+' '+y1i+'Z');
-      p.setAttribute('fill',d.col);p.setAttribute('stroke','#fff');p.setAttribute('stroke-width','0.02');svg.appendChild(p);
-    });
+  function ChartAreaStacked() {
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Area Chart \u2014 Stacked'), h(CardDesc, null, 'Showing total visitors for the last 6 months')),
+      h(CardBody, null,
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(AreaChart, { data: MONTHLY6 },
+            h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
+            h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
+            h(Tooltip, tooltipProps()),
+            h(Area, { dataKey: 'mobile',  type: 'natural', fill: C2, fillOpacity: 0.4, stroke: C2, stackId: 'a', name: 'Mobile'  }),
+            h(Area, { dataKey: 'desktop', type: 'natural', fill: C1, fillOpacity: 0.4, stroke: C1, stackId: 'a', name: 'Desktop' }),
+            h(Legend, { iconType: 'square', iconSize: 10, wrapperStyle: { fontSize: '12px' } })
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
   }
-  drawRing(outer,.92,.62);drawRing(inner,.55,.3);
-  const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x','0');t.setAttribute('y','0.06');t.setAttribute('text-anchor','middle');t.setAttribute('font-size','0.18');t.setAttribute('font-weight','700');t.setAttribute('fill','#000');t.setAttribute('font-family','system-ui');t.textContent='CY vs PY';
-  svg.appendChild(t);e.appendChild(svg);
-  const leg=document.createElement('div');leg.style.cssText='display:flex;flex-direction:column;gap:6px;font-size:12px;margin-left:12px';
-  [['Current Year','#FD5108'],['Prior Year','rgba(253,81,8,.35)']].forEach(([label,col])=>{
-    leg.innerHTML+='<div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;background:'+col+';border-radius:50%"></div>'+label+'</div>';
+
+  function ChartAreaSimple() {
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Area Chart'), h(CardDesc, null, 'Showing total visitors for the last 6 months')),
+      h(CardBody, null,
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(AreaChart, { data: MONTHLY6 },
+            h('defs', null,
+              h('linearGradient', { id: 'gAS', x1:'0', y1:'0', x2:'0', y2:'1' },
+                h('stop', { offset: '5%',  stopColor: C1, stopOpacity: 0.8 }),
+                h('stop', { offset: '95%', stopColor: C1, stopOpacity: 0.1 })
+              )
+            ),
+            h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
+            h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
+            h(Tooltip, tooltipProps()),
+            h(Area, { dataKey: 'desktop', type: 'natural', fill: 'url(#gAS)', stroke: C1, name: 'Desktop' })
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  function ChartAreaStep() {
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Area Chart \u2014 Step'), h(CardDesc, null, 'Discrete step interpolation \u2014 ideal for tier data')),
+      h(CardBody, null,
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(AreaChart, { data: MONTHLY6 },
+            h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
+            h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
+            h(Tooltip, tooltipProps()),
+            h(Area, { dataKey: 'desktop', type: 'step', fill: C1, fillOpacity: 0.4, stroke: C1, name: 'Desktop' })
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  // LINE CHARTS
+
+  function ChartLineMulti() {
+    const [active, setActive] = useState('desktop');
+    const total = useMemo(() => ({
+      desktop: TIME90.reduce((s, d) => s + d.desktop, 0),
+      mobile:  TIME90.reduce((s, d) => s + d.mobile,  0),
+    }), []);
+    return h(CardWrap, null,
+      h(CardHd, null,
+        h('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'stretch', margin: '-16px -20px', overflow: 'hidden' } },
+          h('div', { style: { padding: '16px 20px' } },
+            h(CardTitle, null, 'Line Chart \u2014 Interactive'),
+            h(CardDesc, null, 'Showing total visitors for the last 3 months')
+          ),
+          h('div', { style: { display: 'flex' } },
+            h(TabBtn, { label: 'Desktop', value: 'desktop', total: total.desktop, active: active === 'desktop', color: C1, onClick: () => setActive('desktop') }),
+            h(TabBtn, { label: 'Mobile',  value: 'mobile',  total: total.mobile,  active: active === 'mobile',  color: C2, onClick: () => setActive('mobile')  })
+          )
+        )
+      ),
+      h(CardBody, null,
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(LineChart, { data: TIME90 },
+            h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
+            h(XAxis, Object.assign({}, axisProps, { dataKey: 'date', minTickGap: 32, tickFormatter: dateTickFmt })),
+            h(Tooltip, tooltipProps(dateTickFmt)),
+            h(Line, { dataKey: active, type: 'monotone', stroke: active === 'desktop' ? C1 : C2, strokeWidth: 2, dot: false, name: active.charAt(0).toUpperCase() + active.slice(1) })
+          )
+        )
+      )
+    );
+  }
+
+  function ChartLineStep() {
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Line Chart \u2014 Step'), h(CardDesc, null, 'Staircase interpolation between data points')),
+      h(CardBody, null,
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(LineChart, { data: MONTHLY6 },
+            h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
+            h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
+            h(Tooltip, tooltipProps()),
+            h(Line, { dataKey: 'desktop', type: 'step', stroke: C1, strokeWidth: 2, dot: false, name: 'Desktop' })
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  function ChartLineDots() {
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Line Chart \u2014 Dots'), h(CardDesc, null, 'Prominent data point markers on each value')),
+      h(CardBody, null,
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(LineChart, { data: MONTHLY6 },
+            h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
+            h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
+            h(Tooltip, tooltipProps()),
+            h(Line, { dataKey: 'desktop', type: 'natural', stroke: C1, strokeWidth: 2, dot: { fill: C1, r: 4 }, activeDot: { r: 6 }, name: 'Desktop' })
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  function ChartLineLabels() {
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Line Chart \u2014 Labels'), h(CardDesc, null, 'Value labels displayed above each data point')),
+      h(CardBody, null,
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(LineChart, { data: MONTHLY6, margin: { top: 20 } },
+            h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
+            h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
+            h(Tooltip, tooltipProps()),
+            h(Line, { dataKey: 'desktop', type: 'natural', stroke: C1, strokeWidth: 2,
+              dot: { fill: C1, r: 4 },
+              label: { position: 'top', fill: '#000', fontSize: 11, dy: -6, fontFamily: FONT },
+              name: 'Desktop'
+            })
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  // BAR CHARTS
+
+  function ChartBarGrouped() {
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Bar Chart \u2014 Multiple'), h(CardDesc, null, 'January \u2013 June 2024')),
+      h(CardBody, null,
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(BarChart, { data: MONTHLY6 },
+            h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
+            h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
+            h(Tooltip, tooltipProps()),
+            h(Bar, { dataKey: 'desktop', fill: C1, radius: [4,4,0,0], name: 'Desktop' }),
+            h(Bar, { dataKey: 'mobile',  fill: C2, radius: [4,4,0,0], name: 'Mobile'  })
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  function ChartBarStacked() {
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Bar Chart \u2014 Stacked'), h(CardDesc, null, 'January \u2013 June 2024')),
+      h(CardBody, null,
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(BarChart, { data: MONTHLY6 },
+            h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
+            h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
+            h(Tooltip, tooltipProps()),
+            h(Bar, { dataKey: 'mobile',  fill: C2, stackId: 'a', name: 'Mobile'  }),
+            h(Bar, { dataKey: 'desktop', fill: C1, stackId: 'a', radius: [4,4,0,0], name: 'Desktop' }),
+            h(Legend, { iconType: 'square', iconSize: 10, wrapperStyle: { fontSize: '12px' } })
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  function ChartBarHorizontal() {
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Bar Chart \u2014 Horizontal'), h(CardDesc, null, 'January \u2013 June 2024')),
+      h(CardBody, null,
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(BarChart, { data: MONTHLY6, layout: 'vertical', margin: { left: 4 } },
+            h(XAxis, Object.assign({}, axisProps, { type: 'number', hide: true })),
+            h(YAxis, Object.assign({}, axisProps, { dataKey: 'month', type: 'category', tickFormatter: monthSlice, width: 32 })),
+            h(Tooltip, tooltipProps()),
+            h(Bar, { dataKey: 'desktop', fill: C1, radius: [0,4,4,0], name: 'Desktop' })
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  function ChartBarLabels() {
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Bar Chart \u2014 Labels'), h(CardDesc, null, 'January \u2013 June 2024')),
+      h(CardBody, null,
+        h(ResponsiveContainer, { width: '100%', height: 260 },
+          h(BarChart, { data: MONTHLY6, margin: { top: 20 } },
+            h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
+            h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
+            h(Tooltip, tooltipProps()),
+            h(Bar, { dataKey: 'desktop', fill: C1, radius: [4,4,0,0], name: 'Desktop' },
+              h(LabelList, { position: 'top', style: { fontSize: 11, fill: '#000', fontFamily: FONT } })
+            )
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  function ChartBarNegative() {
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Bar Chart \u2014 Negative Values'), h(CardDesc, null, 'January \u2013 June 2024')),
+      h(CardBody, null,
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(BarChart, { data: MONTHLY6_NEG },
+            h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
+            h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
+            h(YAxis, Object.assign({}, axisProps, { width: 36 })),
+            h(Tooltip, tooltipProps()),
+            h(Bar, { dataKey: 'visitors', radius: 4, name: 'Visitors' },
+              MONTHLY6_NEG.map((d, i) =>
+                h(Cell, { key: i, fill: d.visitors >= 0 ? C1 : C3 })
+              )
+            )
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  function ChartBarComposed() {
+    const { ComposedChart } = Recharts;
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Composed \u2014 Volume & Trend'), h(CardDesc, null, 'Bars show volume; line shows rolling average')),
+      h(CardBody, null,
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(ComposedChart, { data: BAR_COMPOSED },
+            h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
+            h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
+            h(YAxis, Object.assign({}, axisProps, { width: 36 })),
+            h(Tooltip, tooltipProps()),
+            h(Bar,  { dataKey: 'volume', fill: C2, radius: [4,4,0,0], name: 'Volume' }),
+            h(Line, { dataKey: 'avg',    stroke: C1, strokeWidth: 2, dot: { fill: C1, r: 3 }, type: 'monotone', name: 'Avg' })
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  // PIE & DONUT
+
+  function ChartPieSimple() {
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Pie Chart'), h(CardDesc, null, 'January \u2013 June 2024')),
+      h(CardBody, { style: { display: 'flex', justifyContent: 'center' } },
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(PieChart, null,
+            h(Tooltip, tooltipProps()),
+            h(Pie, { data: PIE_DATA, dataKey: 'value', nameKey: 'name', outerRadius: 100 },
+              PIE_DATA.map((d, i) => h(Cell, { key: i, fill: d.fill }))
+            ),
+            h(Legend, { iconType: 'square', iconSize: 10, wrapperStyle: { fontSize: '12px' } })
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  function ChartPieLabels() {
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Pie Chart \u2014 Labels'), h(CardDesc, null, 'January \u2013 June 2024')),
+      h(CardBody, { style: { display: 'flex', justifyContent: 'center' } },
+        h(ResponsiveContainer, { width: '100%', height: 260 },
+          h(PieChart, null,
+            h(Tooltip, tooltipProps()),
+            h(Pie, { data: PIE_DATA, dataKey: 'value', nameKey: 'name', outerRadius: 90, label: ({ name, percent }) => name + ' ' + (percent * 100).toFixed(0) + '%', labelLine: true },
+              PIE_DATA.map((d, i) => h(Cell, { key: i, fill: d.fill }))
+            )
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  function ChartDonutText() {
+    const total = PIE_DATA.reduce((s, d) => s + d.value, 0);
+    const CentreLabel = ({ viewBox }) => {
+      const { cx, cy } = viewBox || {};
+      return h('g', null,
+        h('text', { x: cx, y: cy - 6, textAnchor: 'middle', fill: '#000', fontWeight: 700, fontSize: 22, fontFamily: FONT }, total.toLocaleString()),
+        h('text', { x: cx, y: cy + 14, textAnchor: 'middle', fill: '#A1A8B3', fontSize: 12, fontFamily: FONT }, 'Visitors')
+      );
+    };
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Donut \u2014 Centre Text'), h(CardDesc, null, 'January \u2013 June 2024')),
+      h(CardBody, { style: { display: 'flex', justifyContent: 'center' } },
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(PieChart, null,
+            h(Tooltip, tooltipProps()),
+            h(Pie, { data: PIE_DATA, dataKey: 'value', nameKey: 'name', innerRadius: 70, outerRadius: 100, strokeWidth: 4 },
+              PIE_DATA.map((d, i) => h(Cell, { key: i, fill: d.fill })),
+              h(LabelList, { content: CentreLabel, position: 'center' })
+            ),
+            h(Legend, { iconType: 'square', iconSize: 10, wrapperStyle: { fontSize: '12px' } })
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  function ChartDonutStacked() {
+    const inner = [
+      { name: 'Desktop', value: 580, fill: C1 },
+      { name: 'Mobile',  value: 420, fill: C2 },
+    ];
+    const outer = [
+      { name: 'Direct',   value: 300, fill: C1 },
+      { name: 'Social',   value: 220, fill: '#fd6a2a' },
+      { name: 'Search',   value: 260, fill: C2 },
+      { name: 'Referral', value: 220, fill: '#ffc89a' },
+    ];
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Donut \u2014 Stacked Rings'), h(CardDesc, null, 'Concentric rings compare two datasets')),
+      h(CardBody, { style: { display: 'flex', justifyContent: 'center' } },
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(PieChart, null,
+            h(Tooltip, tooltipProps()),
+            h(Pie, { data: inner, dataKey: 'value', nameKey: 'name', innerRadius: 45, outerRadius: 70, strokeWidth: 3 },
+              inner.map((d, i) => h(Cell, { key: i, fill: d.fill }))
+            ),
+            h(Pie, { data: outer, dataKey: 'value', nameKey: 'name', innerRadius: 80, outerRadius: 105, strokeWidth: 3 },
+              outer.map((d, i) => h(Cell, { key: i, fill: d.fill }))
+            )
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  // RADAR & RADIAL
+
+  function ChartRadarDefault() {
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Radar Chart'), h(CardDesc, null, 'Showing total visitors for the last 6 months')),
+      h(CardBody, { style: { display: 'flex', justifyContent: 'center' } },
+        h(ResponsiveContainer, { width: '100%', height: 280 },
+          h(RadarChart, { data: RADAR_DATA, margin: { top: 10, right: 30, bottom: 10, left: 30 } },
+            h(PolarGrid),
+            h(PolarAngleAxis, { dataKey: 'subject', tick: { fontSize: 12, fill: TICK_COLOR, fontFamily: FONT } }),
+            h(Tooltip, tooltipProps()),
+            h(Radar, { name: 'Desktop', dataKey: 'A', stroke: C1, fill: C1, fillOpacity: 0.6 })
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  function ChartRadarCircular() {
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Radar \u2014 Circular Grid'), h(CardDesc, null, 'Same data with circular concentric grid lines')),
+      h(CardBody, { style: { display: 'flex', justifyContent: 'center' } },
+        h(ResponsiveContainer, { width: '100%', height: 280 },
+          h(RadarChart, { data: RADAR_DATA, margin: { top: 10, right: 30, bottom: 10, left: 30 } },
+            h(PolarGrid, { gridType: 'circle' }),
+            h(PolarAngleAxis, { dataKey: 'subject', tick: { fontSize: 12, fill: TICK_COLOR, fontFamily: FONT } }),
+            h(Tooltip, tooltipProps()),
+            h(Radar, { name: 'Desktop', dataKey: 'A', stroke: C1, fill: C1, fillOpacity: 0.55 })
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  function ChartRadialBar() {
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Radial Bar Chart'), h(CardDesc, null, 'Arc bars per category')),
+      h(CardBody, { style: { display: 'flex', justifyContent: 'center' } },
+        h(ResponsiveContainer, { width: '100%', height: 270 },
+          h(RadialBarChart, { data: RADIAL_DATA, innerRadius: 30, outerRadius: 110, startAngle: 90, endAngle: -270 },
+            h(Tooltip, tooltipProps()),
+            h(RadialBar, { dataKey: 'value', background: { fill: '#EEEFF1' } }),
+            h(Legend, { iconType: 'circle', iconSize: 10, wrapperStyle: { fontSize: '12px', bottom: 0 } })
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  function ChartRadialText() {
+    const val = 756;
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Radial Bar \u2014 Centre Text'), h(CardDesc, null, 'Single arc with KPI value displayed in centre')),
+      h(CardBody, { style: { display: 'flex', justifyContent: 'center' } },
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(RadialBarChart, { data: [{ value: val, fill: C1 }], innerRadius: 70, outerRadius: 110, startAngle: 90, endAngle: 90 - (val / 1000) * 360 },
+            h(RadialBar, { dataKey: 'value', background: { fill: '#EEEFF1' }, isAnimationActive: true }),
+            h('text', { x: '50%', y: '46%', textAnchor: 'middle', dominantBaseline: 'middle', fontSize: 28, fontWeight: 700, fill: '#000', fontFamily: FONT }, val),
+            h('text', { x: '50%', y: '58%', textAnchor: 'middle', dominantBaseline: 'middle', fontSize: 12, fill: TICK_COLOR, fontFamily: FONT }, 'Goal Progress')
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  // OTHER CHARTS
+
+  function ChartScatter() {
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Scatter Plot \u2014 Risk vs Return'), h(CardDesc, null, 'Portfolio positioning')),
+      h(CardBody, null,
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(ScatterChart, null,
+            h(CartesianGrid, { stroke: GRID_COLOR }),
+            h(XAxis, Object.assign({}, axisProps, { dataKey: 'risk',  type: 'number', name: 'Risk %',   label: { value: 'Risk %',   position: 'insideBottom', offset: -4, fontSize: 11, fill: TICK_COLOR } })),
+            h(YAxis, Object.assign({}, axisProps, { dataKey: 'ret',   type: 'number', name: 'Return %', label: { value: 'Return %', angle: -90, position: 'insideLeft', offset: 10, fontSize: 11, fill: TICK_COLOR } })),
+            h(ZAxis, { dataKey: 'aum', range: [60, 400] }),
+            h(Tooltip, { cursor: { strokeDasharray: '3 3' }, content: function(props) { return h(RcTooltip, props); } }),
+            h(Scatter, { data: SCATTER_DATA, fill: C1, fillOpacity: 0.75, name: 'Funds' })
+          )
+        )
+      ),
+      h(CardFoot, null, 'Bubble size proportional to AUM')
+    );
+  }
+
+  function ChartTreemap() {
+    const colors = TREEMAP_COLORS;
+    function CustomContent({ x, y, width, height, name, depth }) {
+      if (depth < 1) return null;
+      const idx = TREEMAP_DATA.findIndex(d => d.name === name);
+      const bg = colors[idx] || C3;
+      const light = idx > 1;
+      return h('g', null,
+        h('rect', { x, y, width, height, fill: bg, stroke: '#fff', strokeWidth: 2 }),
+        width > 40 && height > 20 && h('text', { x: x + width / 2, y: y + height / 2 - 4, textAnchor: 'middle', fill: light ? '#000' : '#fff', fontSize: Math.min(13, width / 6), fontWeight: 600, fontFamily: FONT }, name),
+        width > 40 && height > 30 && h('text', { x: x + width / 2, y: y + height / 2 + 12, textAnchor: 'middle', fill: light ? '#000' : '#fff', fontSize: 11, fontFamily: FONT, opacity: 0.8 }, String(TREEMAP_DATA[idx] ? TREEMAP_DATA[idx].size : '') + '%')
+      );
+    }
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Treemap \u2014 Spend by Category'), h(CardDesc, null, 'Relative size = proportional spend')),
+      h(CardBody, null,
+        h(ResponsiveContainer, { width: '100%', height: 260 },
+          h(Treemap, { data: TREEMAP_DATA, dataKey: 'size', aspectRatio: 4/3, content: h(CustomContent) })
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  function ChartFunnel() {
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Funnel \u2014 Sales Pipeline'), h(CardDesc, null, 'Conversion across deal stages')),
+      h(CardBody, null,
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(FunnelChart, null,
+            h(Tooltip, tooltipProps()),
+            h(Funnel, { dataKey: 'value', data: FUNNEL_DATA, isAnimationActive: true },
+              h(LabelList, { position: 'right', fill: TICK_COLOR, stroke: 'none', dataKey: 'name', style: { fontSize: 12, fontFamily: FONT } })
+            )
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  function ChartBarSimple() {
+    return h(CardWrap, null,
+      h(CardHd, null, h(CardTitle, null, 'Bar Chart'), h(CardDesc, null, 'January \u2013 June 2024')),
+      h(CardBody, null,
+        h(ResponsiveContainer, { width: '100%', height: 250 },
+          h(BarChart, { data: MONTHLY6 },
+            h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
+            h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
+            h(Tooltip, tooltipProps()),
+            h(Bar, { dataKey: 'desktop', fill: C1, radius: [4,4,0,0], name: 'Desktop' })
+          )
+        )
+      ),
+      h(TrendFoot)
+    );
+  }
+
+  // Mount all charts on DOMContentLoaded
+  const CHART_MAP = {
+    'rc-area-interactive': ChartAreaInteractive,
+    'rc-area-stacked':     ChartAreaStacked,
+    'rc-area-simple':      ChartAreaSimple,
+    'rc-area-step':        ChartAreaStep,
+    'rc-line-multi':       ChartLineMulti,
+    'rc-line-step':        ChartLineStep,
+    'rc-line-dots':        ChartLineDots,
+    'rc-line-labels':      ChartLineLabels,
+    'rc-bar-grouped':      ChartBarGrouped,
+    'rc-bar-stacked':      ChartBarStacked,
+    'rc-bar-horizontal':   ChartBarHorizontal,
+    'rc-bar-labels':       ChartBarLabels,
+    'rc-bar-negative':     ChartBarNegative,
+    'rc-bar-composed':     ChartBarComposed,
+    'rc-pie-simple':       ChartPieSimple,
+    'rc-pie-labels':       ChartPieLabels,
+    'rc-donut-text':       ChartDonutText,
+    'rc-donut-stacked':    ChartDonutStacked,
+    'rc-radar-default':    ChartRadarDefault,
+    'rc-radar-circular':   ChartRadarCircular,
+    'rc-radial-bar':       ChartRadialBar,
+    'rc-radial-text':      ChartRadialText,
+    'rc-scatter':          ChartScatter,
+    'rc-treemap':          ChartTreemap,
+    'rc-funnel':           ChartFunnel,
+    'rc-bar-simple':       ChartBarSimple,
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    Object.keys(CHART_MAP).forEach(function(id) {
+      const el = document.getElementById(id);
+      if (el) ReactDOM.createRoot(el).render(h(CHART_MAP[id]));
+    });
   });
-  e.appendChild(leg);
-})();
 
-// ─── RADAR CIRCULAR ───
-(function(){
-  const e=document.getElementById('radarCircularChart');if(!e)return;
-  const axes2=['Strategy','Execution','People','Innovation','Finance','Risk'];
-  const cur=[80,65,90,55,72,68],tgt=[85,80,85,75,80,75];
-  const cx=100,cy=100,R=70;const n=axes2.length;
-  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 200 200');svg.style.cssText='width:200px;height:200px';
-  function pt(i,v){const a=(i/n)*2*Math.PI-Math.PI/2;return{x:cx+Math.cos(a)*(v/100)*R,y:cy+Math.sin(a)*(v/100)*R};}
-  // circular grid
-  [.25,.5,.75,1].forEach(f=>{
-    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',cx);c.setAttribute('cy',cy);c.setAttribute('r',R*f);c.setAttribute('fill','none');c.setAttribute('stroke','#DFE3E6');c.setAttribute('stroke-width','1');svg.appendChild(c);
-  });
-  axes2.forEach((_,i)=>{const p=pt(i,100);svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg','line'));const l=svg.lastChild;l.setAttribute('x1',cx);l.setAttribute('y1',cy);l.setAttribute('x2',p.x);l.setAttribute('y2',p.y);l.setAttribute('stroke','#DFE3E6');l.setAttribute('stroke-width','1');});
-  const tp2=tgt.map((_,i)=>pt(i,tgt[i]));
-  const tPoly=document.createElementNS('http://www.w3.org/2000/svg','polygon');tPoly.setAttribute('points',tp2.map(p=>p.x+','+p.y).join(' '));tPoly.setAttribute('fill','#DFE3E6');tPoly.setAttribute('stroke','#CBD1D6');tPoly.setAttribute('stroke-width','1.5');tPoly.setAttribute('opacity','0.6');svg.appendChild(tPoly);
-  const cp=cur.map((_,i)=>pt(i,cur[i]));
-  const cPoly=document.createElementNS('http://www.w3.org/2000/svg','polygon');cPoly.setAttribute('points',cp.map(p=>p.x+','+p.y).join(' '));cPoly.setAttribute('fill','#FD5108');cPoly.setAttribute('stroke','#FD5108');cPoly.setAttribute('stroke-width','2');cPoly.setAttribute('opacity','0.2');svg.appendChild(cPoly);
-  const cLine=document.createElementNS('http://www.w3.org/2000/svg','polygon');cLine.setAttribute('points',cp.map(p=>p.x+','+p.y).join(' '));cLine.setAttribute('fill','none');cLine.setAttribute('stroke','#FD5108');cLine.setAttribute('stroke-width','2');svg.appendChild(cLine);
-  axes2.forEach((a,i)=>{const p=pt(i,118);const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',p.x);t.setAttribute('y',p.y+3);t.setAttribute('text-anchor','middle');t.setAttribute('font-size','8.5');t.setAttribute('fill','#A1A8B3');t.setAttribute('font-family','system-ui');t.textContent=a;svg.appendChild(t);});
-  e.appendChild(svg);
 })();
-
-// ─── RADIAL BAR CHART ───
-(function(){
-  const e=document.getElementById('radialBarChart');if(!e)return;
-  const segs=[{v:80,col:'#FD5108',name:'Consulting'},{v:65,col:'#FFAA72',name:'Advisory'},{v:45,col:'#CBD1D6',name:'Tax'},{v:30,col:'#DFE3E6',name:'Deals'}];
-  const cx=100,cy=100;
-  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 200 200');svg.style.cssText='width:180px;height:180px;flex-shrink:0';
-  const tip3=document.createElement('div');tip3.className='chart-tooltip';tip3.style.opacity='0';tip3.style.position='absolute';e.style.position='relative';e.appendChild(tip3);
-  segs.forEach((d,i)=>{
-    const R=72-i*16;const r=R-10;
-    const startA=-Math.PI/2;const endA=startA+(d.v/100)*2*Math.PI;
-    // track (background arc)
-    function arcPath(inner,outer,a0,a1){const x0o=cx+Math.cos(a0)*outer,y0o=cy+Math.sin(a0)*outer,x1o=cx+Math.cos(a1)*outer,y1o=cy+Math.sin(a1)*outer;const x0i=cx+Math.cos(a1)*inner,y0i=cy+Math.sin(a1)*inner,x1i=cx+Math.cos(a0)*inner,y1i=cy+Math.sin(a0)*inner;const lg=(a1-a0)>Math.PI?1:0;return 'M'+x0o+' '+y0o+' A'+outer+' '+outer+' 0 '+lg+' 1 '+x1o+' '+y1o+' L'+x0i+' '+y0i+' A'+inner+' '+inner+' 0 '+lg+' 0 '+x1i+' '+y1i+'Z';}
-    const track=document.createElementNS('http://www.w3.org/2000/svg','path');track.setAttribute('d',arcPath(r,R,startA,startA+2*Math.PI));track.setAttribute('fill','#EEEFF1');svg.appendChild(track);
-    const bar=document.createElementNS('http://www.w3.org/2000/svg','path');bar.setAttribute('d',arcPath(r,R,startA,endA));bar.setAttribute('fill',d.col);bar.style.cursor='pointer';
-    bar.addEventListener('mouseenter',()=>{bar.setAttribute('opacity','.8');tip3.innerHTML=d.name+': '+d.v+'%';tip3.style.opacity='1';tip3.style.left='50%';tip3.style.top='50%';});
-    bar.addEventListener('mouseleave',()=>{bar.setAttribute('opacity','1');tip3.style.opacity='0';});
-    svg.appendChild(bar);
-  });
-  e.appendChild(svg);
-})();
-
-// ─── RADIAL BAR WITH CENTRE TEXT ───
-(function(){
-  const e=document.getElementById('radialTextChart');if(!e)return;
-  const pct=73;const cx=100,cy=100,R=75,r=58;
-  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 200 200');svg.style.cssText='width:180px;height:180px';
-  // track
-  const startA=-Math.PI*.8;const endA=Math.PI*.8;
-  function arcD(inner,outer,a0,a1){const x0o=cx+Math.cos(a0)*outer,y0o=cy+Math.sin(a0)*outer,x1o=cx+Math.cos(a1)*outer,y1o=cy+Math.sin(a1)*outer;const x0i=cx+Math.cos(a1)*inner,y0i=cy+Math.sin(a1)*inner,x1i=cx+Math.cos(a0)*inner,y1i=cy+Math.sin(a0)*inner;const lg=(a1-a0)>Math.PI?1:0;return 'M'+x0o+' '+y0o+' A'+outer+' '+outer+' 0 '+lg+' 1 '+x1o+' '+y1o+' L'+x0i+' '+y0i+' A'+inner+' '+inner+' 0 '+lg+' 0 '+x1i+' '+y1i+'Z';}
-  const track=document.createElementNS('http://www.w3.org/2000/svg','path');track.setAttribute('d',arcD(r,R,startA,endA));track.setAttribute('fill','#EEEFF1');svg.appendChild(track);
-  const fillA=startA+(pct/100)*(endA-startA);
-  const bar=document.createElementNS('http://www.w3.org/2000/svg','path');bar.setAttribute('d',arcD(r,R,startA,fillA));bar.setAttribute('fill','#FD5108');svg.appendChild(bar);
-  // centre text
-  const t1=document.createElementNS('http://www.w3.org/2000/svg','text');t1.setAttribute('x','100');t1.setAttribute('y','100');t1.setAttribute('text-anchor','middle');t1.setAttribute('dominant-baseline','middle');t1.setAttribute('font-size','28');t1.setAttribute('font-weight','700');t1.setAttribute('fill','#000');t1.setAttribute('font-family','system-ui');t1.textContent=pct+'%';svg.appendChild(t1);
-  const t2=document.createElementNS('http://www.w3.org/2000/svg','text');t2.setAttribute('x','100');t2.setAttribute('y','120');t2.setAttribute('text-anchor','middle');t2.setAttribute('font-size','11');t2.setAttribute('fill','#A1A8B3');t2.setAttribute('font-family','system-ui');t2.textContent='Completion';svg.appendChild(t2);
-  e.appendChild(svg);
-})();
-
 
 </script>
-</body>
-</html>
 
 <!-- ════════════════════ CHAT + FOUNDATIONS ════════════════════ -->
 <section class="section" id="chat">
@@ -6641,314 +7236,6 @@ function legToggle(legId,cls){
   const off=l.classList.toggle('off');
   document.querySelectorAll('.'+cls).forEach(e=>e.style.opacity=off?'0':'1');
 }
-
-// ─── LINE CHART ───
-(function(){
-  const el2=document.getElementById('lineC');if(!el2)return;
-  const W=560,H=180,pL=38,pR=12,pT=10,pB=24;
-  const d1=[42,55,38,72,61,85,69,91,78,88,95,102];
-  const d2=[35,42,50,58,49,62,71,68,75,80,85,90];
-  const lbl=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const max=110,iW=W-pL-pR,iH=H-pT-pB;
-  const svg=mkSVG(W,H);el2.appendChild(svg);
-  const tp=mkTip(el2);
-  axes(svg,W,H,pL,pR,pT,pB,[{n:0,l:'0'},{n:.25,l:'25'},{n:.5,l:'50'},{n:.75,l:'75'},{n:1,l:'100'}],lbl);
-  const px=i=>pL+(i/(d1.length-1))*iW;
-  const py=v=>pT+iH-(v/max)*iH;
-  // area fill
-  const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
-  const g=document.createElementNS('http://www.w3.org/2000/svg','linearGradient');
-  g.id='lg1';g.setAttribute('x1','0');g.setAttribute('y1','0');g.setAttribute('x2','0');g.setAttribute('y2','1');
-  const s1=document.createElementNS('http://www.w3.org/2000/svg','stop');s1.setAttribute('offset','0%');s1.setAttribute('stop-color','#FD5108');s1.setAttribute('stop-opacity','0.12');
-  const s2=document.createElementNS('http://www.w3.org/2000/svg','stop');s2.setAttribute('offset','100%');s2.setAttribute('stop-color','#FD5108');s2.setAttribute('stop-opacity','0');
-  g.appendChild(s1);g.appendChild(s2);defs.appendChild(g);svg.appendChild(defs);
-  const areaPts=d1.map((v,i)=>px(i)+','+py(v)).join(' ')+' '+px(d1.length-1)+','+(pT+iH)+' '+px(0)+','+(pT+iH);
-  svg.appendChild(el('polygon',{points:areaPts,fill:'url(#lg1)'}));
-  // series 2
-  svg.appendChild(el('polyline',{points:d2.map((v,i)=>px(i)+','+py(v)).join(' '),fill:'none',stroke:'#CBD1D6','stroke-width':'1.5','stroke-dasharray':'4,3',class:'lls2'}));
-  // series 1
-  svg.appendChild(el('polyline',{points:d1.map((v,i)=>px(i)+','+py(v)).join(' '),fill:'none',stroke:'#FD5108','stroke-width':'2',class:'lls1'}));
-  d1.forEach((v,i)=>{
-    const c=el('circle',{cx:px(i),cy:py(v),r:'3.5',fill:'#FD5108',stroke:'#fff','stroke-width':'1.5',class:'lls1',style:'cursor:pointer'});
-    c.addEventListener('mouseenter',()=>{c.setAttribute('r','5.5');tip(tp,px(i),py(v),lbl[i]+': £'+v+'M',W,H,el2.offsetWidth,el2.offsetHeight);});
-    c.addEventListener('mouseleave',()=>{c.setAttribute('r','3.5');hideTip(tp);});
-    svg.appendChild(c);
-  });
-  d2.forEach((v,i)=>{
-    const c=el('circle',{cx:px(i),cy:py(v),r:'3',fill:'#CBD1D6',stroke:'#fff','stroke-width':'1.5',class:'lls2',style:'cursor:pointer'});
-    c.addEventListener('mouseenter',()=>{c.setAttribute('r','5');tip(tp,px(i),py(v),'Prior: £'+v+'M',W,H,el2.offsetWidth,el2.offsetHeight);});
-    c.addEventListener('mouseleave',()=>{c.setAttribute('r','3');hideTip(tp);});
-    svg.appendChild(c);
-  });
-})();
-
-// ─── BAR CHART ───
-(function(){
-  const e=document.getElementById('barC');if(!e)return;
-  const W=560,H=180,pL=38,pR=12,pT=10,pB=24;
-  const act=[68,82,55,91];const tgt=[75,78,70,85];const lbl=['Q1','Q2','Q3','Q4'];
-  const max=100,iW=W-pL-pR,iH=H-pT-pB;
-  const svg=mkSVG(W,H);e.appendChild(svg);const tp=mkTip(e);
-  axes(svg,W,H,pL,pR,pT,pB,[{n:0,l:'0'},{n:.25,l:'25M'},{n:.5,l:'50M'},{n:.75,l:'75M'},{n:1,l:'100M'}],lbl);
-  const gW=iW/lbl.length;const bW=gW*.34;
-  lbl.forEach((_,i)=>{
-    const gx=pL+i*gW+gW/2;
-    [[act[i],'#FD5108','bls1','Actual'],[tgt[i],'#FFAA72','bls2','Target']].forEach(([v,col,cls,name],j)=>{
-      const bh=(v/max)*iH;const bx=gx+(j===0?-bW-1:1);const by=pT+iH-bh;
-      const r=document.createElementNS('http://www.w3.org/2000/svg','rect');
-      r.setAttribute('x',bx);r.setAttribute('y',by);r.setAttribute('width',bW);r.setAttribute('height',bh);r.setAttribute('fill',col);r.setAttribute('class',cls);r.style.cursor='pointer';r.style.transition='opacity .15s';
-      r.addEventListener('mouseenter',()=>{r.style.opacity='.75';tip(tp,bx,by,name+': £'+v+'M',W,H,e.offsetWidth,e.offsetHeight);});
-      r.addEventListener('mouseleave',()=>{r.style.opacity='1';hideTip(tp);});
-      svg.appendChild(r);
-    });
-  });
-})();
-
-// ─── AREA CHART ───
-(function(){
-  const e=document.getElementById('areaC');if(!e)return;
-  const W=560,H=180,pL=38,pR=12,pT=10,pB=24;
-  const d=[850,1020,1340,1680,1920,2140,2380,2580,2710,2780,2820,2847];
-  const lbl=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const max=3000,iW=W-pL-pR,iH=H-pT-pB;
-  const svg=mkSVG(W,H);e.appendChild(svg);const tp=mkTip(e);
-  const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
-  const g=document.createElementNS('http://www.w3.org/2000/svg','linearGradient');g.id='lg2';g.setAttribute('x1','0');g.setAttribute('y1','0');g.setAttribute('x2','0');g.setAttribute('y2','1');
-  const s1=document.createElementNS('http://www.w3.org/2000/svg','stop');s1.setAttribute('offset','0%');s1.setAttribute('stop-color','#FD5108');s1.setAttribute('stop-opacity','0.15');
-  const s2=document.createElementNS('http://www.w3.org/2000/svg','stop');s2.setAttribute('offset','100%');s2.setAttribute('stop-color','#FD5108');s2.setAttribute('stop-opacity','0');
-  g.appendChild(s1);g.appendChild(s2);defs.appendChild(g);svg.appendChild(defs);
-  axes(svg,W,H,pL,pR,pT,pB,[{n:0,l:'0'},{n:.33,l:'1k'},{n:.67,l:'2k'},{n:1,l:'3k'}],lbl);
-  const px=i=>pL+(i/(d.length-1))*iW;const py=v=>pT+iH-(v/max)*iH;
-  const ap=d.map((v,i)=>px(i)+','+py(v)).join(' ')+' '+px(d.length-1)+','+(pT+iH)+' '+px(0)+','+(pT+iH);
-  svg.appendChild(el('polygon',{points:ap,fill:'url(#lg2)'}));
-  svg.appendChild(el('polyline',{points:d.map((v,i)=>px(i)+','+py(v)).join(' '),fill:'none',stroke:'#FD5108','stroke-width':'2'}));
-  d.forEach((v,i)=>{
-    const c=el('circle',{cx:px(i),cy:py(v),r:'3',fill:'#FD5108',stroke:'#fff','stroke-width':'1.5',style:'cursor:pointer'});
-    c.addEventListener('mouseenter',()=>{c.setAttribute('r','5');tip(tp,px(i),py(v),lbl[i]+': '+v+' clients',W,H,e.offsetWidth,e.offsetHeight);});
-    c.addEventListener('mouseleave',()=>{c.setAttribute('r','3');hideTip(tp);});
-    svg.appendChild(c);
-  });
-})();
-
-// ─── STACKED BAR ───
-(function(){
-  const e=document.getElementById('stackC');if(!e)return;
-  const W=560,H=180,pL=38,pR=12,pT=10,pB=24;
-  const segs=[[45,38,52,61],[28,31,25,22],[15,18,14,10]];
-  const cols=['#FD5108','#FFAA72','#CBD1D6'];const cls2=['ss1','ss2','ss3'];
-  const names=['Consulting','Advisory','Tax'];const lbl=['Q1','Q2','Q3','Q4'];
-  const max=100,iW=W-pL-pR,iH=H-pT-pB;
-  const svg=mkSVG(W,H);e.appendChild(svg);const tp=mkTip(e);
-  axes(svg,W,H,pL,pR,pT,pB,[{n:0,l:'0'},{n:.25,l:'25'},{n:.5,l:'50'},{n:.75,l:'75'},{n:1,l:'100'}],lbl);
-  const bW=(iW/lbl.length)*.55;
-  lbl.forEach((_,i)=>{
-    const bx=pL+i*(iW/lbl.length)+(iW/lbl.length-bW)/2;
-    let base=pT+iH;
-    segs.forEach((seg,si)=>{
-      const bh=(seg[i]/max)*iH;base-=bh;
-      const r=document.createElementNS('http://www.w3.org/2000/svg','rect');
-      r.setAttribute('x',bx);r.setAttribute('y',base);r.setAttribute('width',bW);r.setAttribute('height',bh);r.setAttribute('fill',cols[si]);r.setAttribute('class',cls2[si]);r.style.cursor='pointer';
-      r.addEventListener('mouseenter',()=>{r.style.opacity='.75';tip(tp,bx,base,names[si]+': '+seg[i]+'%',W,H,e.offsetWidth,e.offsetHeight);});
-      r.addEventListener('mouseleave',()=>{r.style.opacity='1';hideTip(tp);});
-      svg.appendChild(r);
-    });
-  });
-})();
-
-// ─── GROUPED BAR ───
-(function(){
-  const e=document.getElementById('grpC');if(!e)return;
-  const W=560,H=180,pL=38,pR=12,pT=10,pB=24;
-  const act=[65,80,58,92];const bud=[70,75,72,88];const lbl=['Q1','Q2','Q3','Q4'];
-  const max=100,iW=W-pL-pR,iH=H-pT-pB;
-  const svg=mkSVG(W,H);e.appendChild(svg);const tp=mkTip(e);
-  axes(svg,W,H,pL,pR,pT,pB,[{n:0,l:'0'},{n:.25,l:'25M'},{n:.5,l:'50M'},{n:.75,l:'75M'},{n:1,l:'100M'}],lbl);
-  const gW=iW/lbl.length;const bW=gW*.32;
-  lbl.forEach((_,i)=>{
-    const gx=pL+i*gW+gW/2;
-    [[act[i],'#FD5108','gs1','Actual'],[bud[i],'#FFAA72','gs2','Budget']].forEach(([v,col,cls,name],j)=>{
-      const bh=(v/max)*iH;const bx=gx+(j===0?-bW-1:1);const by=pT+iH-bh;
-      const r=document.createElementNS('http://www.w3.org/2000/svg','rect');
-      r.setAttribute('x',bx);r.setAttribute('y',by);r.setAttribute('width',bW);r.setAttribute('height',bh);r.setAttribute('fill',col);r.setAttribute('class',cls);r.style.cursor='pointer';
-      r.addEventListener('mouseenter',()=>{r.style.opacity='.75';tip(tp,bx,by,name+': £'+v+'M',W,H,e.offsetWidth,e.offsetHeight);});
-      r.addEventListener('mouseleave',()=>{r.style.opacity='1';hideTip(tp);});
-      svg.appendChild(r);
-    });
-  });
-})();
-
-// ─── PIE CHART ───
-(function(){
-  const e=document.getElementById('pieC');if(!e)return;
-  const segs=[{v:45,col:'#FD5108',cls:'ps1',name:'Consulting'},{v:30,col:'#FFAA72',cls:'ps2',name:'Advisory'},{v:15,col:'#CBD1D6',cls:'ps3',name:'Tax'},{v:10,col:'#DFE3E6',cls:'ps4',name:'Deals'}];
-  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-  svg.setAttribute('viewBox','-1 -1 2 2');svg.style.cssText='width:180px;height:180px;flex-shrink:0';
-  const tp=mkTip(e);let cum=0;
-  segs.forEach(d=>{
-    const a0=cum*2*Math.PI/100-Math.PI/2;cum+=d.v;const a1=cum*2*Math.PI/100-Math.PI/2;
-    const x0=Math.cos(a0),y0=Math.sin(a0),x1=Math.cos(a1),y1=Math.sin(a1);
-    const lg=d.v>50?1:0;
-    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
-    p.setAttribute('d',`M0 0 L${x0} ${y0} A1 1 0 ${lg} 1 ${x1} ${y1}Z`);
-    p.setAttribute('fill',d.col);p.setAttribute('class',d.cls);p.style.cssText='cursor:pointer;transition:transform .15s ease;transform-origin:center';
-    const mid=(a0+a1)/2;
-    p.addEventListener('mouseenter',()=>{p.style.transform='scale(1.06)';tip(tp,90+Math.cos(mid)*80,90+Math.sin(mid)*80,d.name+': '+d.v+'%',200,180,e.offsetWidth,e.offsetHeight);});
-    p.addEventListener('mouseleave',()=>{p.style.transform='scale(1)';hideTip(tp);});
-    svg.appendChild(p);
-  });
-  e.appendChild(svg);
-  // legend in card
-  const leg=document.createElement('div');leg.style.cssText='display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--g5)';
-  segs.forEach(d=>{leg.innerHTML+=`<div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;background:${d.col}"></div>${d.name}<strong style="margin-left:auto;color:var(--bk)">${d.v}%</strong></div>`;});
-  e.appendChild(leg);
-})();
-
-// ─── DONUT ───
-(function(){
-  const e=document.getElementById('donutC');if(!e)return;
-  const segs=[{v:58,col:'#FD5108',cls:'ds1',name:'Complete'},{v:26,col:'#FFAA72',cls:'ds2',name:'In Progress'},{v:16,col:'#CBD1D6',cls:'ds3',name:'Pending'}];
-  const R=.72,r=.44;
-  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-  svg.setAttribute('viewBox','-1 -1 2 2');svg.style.cssText='width:160px;height:160px;flex-shrink:0';
-  const tp=mkTip(e);let cum=0;
-  segs.forEach(d=>{
-    const a0=cum*2*Math.PI/100-Math.PI/2;cum+=d.v;const a1=cum*2*Math.PI/100-Math.PI/2;
-    const x0o=Math.cos(a0)*R,y0o=Math.sin(a0)*R,x1o=Math.cos(a1)*R,y1o=Math.sin(a1)*R;
-    const x0i=Math.cos(a1)*r,y0i=Math.sin(a1)*r,x1i=Math.cos(a0)*r,y1i=Math.sin(a0)*r;
-    const lg=d.v>50?1:0;
-    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
-    p.setAttribute('d',`M${x0o} ${y0o} A${R} ${R} 0 ${lg} 1 ${x1o} ${y1o} L${x0i} ${y0i} A${r} ${r} 0 ${lg} 0 ${x1i} ${y1i}Z`);
-    p.setAttribute('fill',d.col);p.setAttribute('class',d.cls);p.style.cssText='cursor:pointer;transition:transform .15s ease;transform-origin:center';
-    const mid=(a0+(a1))/2;
-    p.addEventListener('mouseenter',()=>{p.style.transform='scale(1.04)';tip(tp,80+Math.cos(mid)*70,80+Math.sin(mid)*70,d.name+': '+d.v+'%',200,180,e.offsetWidth,e.offsetHeight);});
-    p.addEventListener('mouseleave',()=>{p.style.transform='scale(1)';hideTip(tp);});
-    svg.appendChild(p);
-  });
-  // Centre label
-  const t=document.createElementNS('http://www.w3.org/2000/svg','text');
-  t.setAttribute('x','0');t.setAttribute('y','0.08');t.setAttribute('text-anchor','middle');t.setAttribute('font-size','0.3');t.setAttribute('font-weight','700');t.setAttribute('fill','#000');t.setAttribute('font-family','system-ui');t.textContent='58%';
-  const t2=document.createElementNS('http://www.w3.org/2000/svg','text');
-  t2.setAttribute('x','0');t2.setAttribute('y','0.26');t2.setAttribute('text-anchor','middle');t2.setAttribute('font-size','0.14');t2.setAttribute('fill','#A1A8B3');t2.setAttribute('font-family','system-ui');t2.textContent='Complete';
-  svg.appendChild(t);svg.appendChild(t2);
-  e.appendChild(svg);
-  // right side stats
-  const stats=document.createElement('div');stats.style.cssText='display:flex;flex-direction:column;gap:10px';
-  [{v:58,col:'#FD5108',label:'Complete'},{v:26,col:'#FFAA72',label:'In Progress'},{v:16,col:'#CBD1D6',label:'Pending'}].forEach(d=>{
-    stats.innerHTML+=`<div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:12px"><span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:${d.col};display:inline-block"></span>${d.label}</span><strong>${d.v}%</strong></div><div style="height:4px;background:var(--g2);border-radius:2px"><div style="width:${d.v}%;height:100%;background:${d.col};border-radius:2px"></div></div></div>`;
-  });
-  e.appendChild(stats);
-})();
-
-// ─── SCATTER ───
-(function(){
-  const e=document.getElementById('scatC');if(!e)return;
-  const W=560,H=180,pL=38,pR=12,pT=10,pB=24;
-  const pts=[
-    {x:12,y:18,r:7,col:'#FD5108',name:'Fund A'},{x:25,y:42,r:10,col:'#FD5108',name:'Fund B'},
-    {x:42,y:35,r:6,col:'#FFAA72',name:'Fund C'},{x:58,y:60,r:12,col:'#FFAA72',name:'Fund D'},
-    {x:70,y:52,r:8,col:'#FD5108',name:'Fund E'},{x:35,y:28,r:5,col:'#CBD1D6',name:'Fund F'},
-    {x:52,y:75,r:9,col:'#FFAA72',name:'Fund G'},{x:80,y:68,r:11,col:'#FD5108',name:'Fund H'},
-    {x:18,y:55,r:6,col:'#CBD1D6',name:'Fund I'},{x:65,y:40,r:8,col:'#CBD1D6',name:'Fund J'}
-  ];
-  const svg=mkSVG(W,H);e.appendChild(svg);const tp=mkTip(e);
-  const iW=W-pL-pR,iH=H-pT-pB;
-  axes(svg,W,H,pL,pR,pT,pB,[{n:0,l:'0%'},{n:.25,l:'25%'},{n:.5,l:'50%'},{n:.75,l:'75%'},{n:1,l:'100%'}],['Low Risk','','','','High Risk']);
-  pts.forEach(p=>{
-    const cx=pL+(p.x/100)*iW,cy=pT+iH-(p.y/100)*iH;
-    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
-    c.setAttribute('cx',cx);c.setAttribute('cy',cy);c.setAttribute('r',p.r);c.setAttribute('fill',p.col);c.setAttribute('opacity','0.75');c.style.cursor='pointer';c.style.transition='r .12s,opacity .12s';
-    c.addEventListener('mouseenter',()=>{c.setAttribute('opacity','1');c.setAttribute('r',p.r+3);tip(tp,cx,cy,p.name+' · Risk '+p.x+'% / Return '+p.y+'%',W,H,e.offsetWidth,e.offsetHeight);});
-    c.addEventListener('mouseleave',()=>{c.setAttribute('opacity','0.75');c.setAttribute('r',p.r);hideTip(tp);});
-    svg.appendChild(c);
-  });
-})();
-
-// ─── RADAR ───
-(function(){
-  const e=document.getElementById('radC');if(!e)return;
-  const axes2=['Strategy','Execution','People','Innovation','Finance','Risk'];
-  const cur=[80,65,90,55,72,68],tgt=[85,80,85,75,80,75];
-  const cx=100,cy=100,R=70;const n=axes2.length;
-  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 200 200');svg.style.cssText='width:200px;height:200px';
-  function pt(i,v){const a=(i/n)*2*Math.PI-Math.PI/2;return{x:cx+Math.cos(a)*(v/100)*R,y:cy+Math.sin(a)*(v/100)*R};}
-  [.25,.5,.75,1].forEach(f=>{const ps=axes2.map((_,i)=>pt(i,f*100));svg.appendChild(el('polygon',{points:ps.map(p=>p.x+','+p.y).join(' '),fill:'none',stroke:'#DFE3E6','stroke-width':'1'}));});
-  axes2.forEach((_,i)=>{const p=pt(i,100);svg.appendChild(el('line',{x1:cx,y1:cy,x2:p.x,y2:p.y,stroke:'#DFE3E6','stroke-width':'1'}));});
-  const tp2=tgt.map((_,i)=>pt(i,tgt[i]));svg.appendChild(el('polygon',{points:tp2.map(p=>p.x+','+p.y).join(' '),fill:'#DFE3E6',stroke:'#CBD1D6','stroke-width':'1.5',opacity:'.6'}));
-  const cp=cur.map((_,i)=>pt(i,cur[i]));svg.appendChild(el('polygon',{points:cp.map(p=>p.x+','+p.y).join(' '),fill:'#FD5108',stroke:'#FD5108','stroke-width':'2',opacity:'.2'}));svg.appendChild(el('polygon',{points:cp.map(p=>p.x+','+p.y).join(' '),fill:'none',stroke:'#FD5108','stroke-width':'2'}));
-  axes2.forEach((a,i)=>{const p=pt(i,118);const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',p.x);t.setAttribute('y',p.y+3);t.setAttribute('text-anchor','middle');t.setAttribute('font-size','8.5');t.setAttribute('fill','#A1A8B3');t.setAttribute('font-family','system-ui');t.textContent=a;svg.appendChild(t);});
-  e.appendChild(svg);
-})();
-
-// ─── COMPOSED ───
-(function(){
-  const e=document.getElementById('compC');if(!e)return;
-  const W=560,H=180,pL=38,pR=12,pT=10,pB=24;
-  const bars=[52,68,45,78,61,85,72,90];const trend=[50,55,58,64,65,70,73,80];const lbl=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'];
-  const max=100,iW=W-pL-pR,iH=H-pT-pB;
-  const svg=mkSVG(W,H);e.appendChild(svg);const tp=mkTip(e);
-  axes(svg,W,H,pL,pR,pT,pB,[{n:0,l:'0'},{n:.25,l:'25'},{n:.5,l:'50'},{n:.75,l:'75'},{n:1,l:'100'}],lbl);
-  const bW=(iW/bars.length)*.55;
-  bars.forEach((v,i)=>{
-    const bx=pL+(i+.5)*(iW/bars.length)-bW/2;const bh=(v/max)*iH;const by=pT+iH-bh;
-    const r=document.createElementNS('http://www.w3.org/2000/svg','rect');
-    r.setAttribute('x',bx);r.setAttribute('y',by);r.setAttribute('width',bW);r.setAttribute('height',bh);r.setAttribute('fill','#FFAA72');r.setAttribute('class','cs1');r.style.cursor='pointer';
-    r.addEventListener('mouseenter',()=>{r.style.opacity='.7';tip(tp,bx,by,lbl[i]+': '+v,W,H,e.offsetWidth,e.offsetHeight);});
-    r.addEventListener('mouseleave',()=>{r.style.opacity='1';hideTip(tp);});
-    svg.appendChild(r);
-  });
-  const tpts=trend.map((v,i)=>(pL+(i+.5)*(iW/trend.length))+','+(pT+iH-(v/max)*iH)).join(' ');
-  svg.appendChild(el('polyline',{points:tpts,fill:'none',stroke:'#FD5108','stroke-width':'2','stroke-linecap':'round','stroke-linejoin':'round',class:'cs2'}));
-  trend.forEach((v,i)=>{
-    const cx2=pL+(i+.5)*(iW/trend.length),cy2=pT+iH-(v/max)*iH;
-    const c=el('circle',{cx:cx2,cy:cy2,r:'3.5',fill:'#FD5108',stroke:'#fff','stroke-width':'1.5',class:'cs2',style:'cursor:pointer'});
-    c.addEventListener('mouseenter',()=>{c.setAttribute('r','5.5');tip(tp,cx2,cy2,'Trend: '+v,W,H,e.offsetWidth,e.offsetHeight);});
-    c.addEventListener('mouseleave',()=>{c.setAttribute('r','3.5');hideTip(tp);});
-    svg.appendChild(c);
-  });
-})();
-
-// ─── TREEMAP ───
-(function(){
-  const e=document.getElementById('treeC');if(!e)return;
-  const tiles=[
-    {name:'Technology',pct:42,col:'#FD5108',tc:'#fff'},{name:'People',pct:24,col:'#FFAA72',tc:'#000'},
-    {name:'Travel',pct:18,col:'#FFE8D4',tc:'#000'},{name:'Facilities',pct:10,col:'#DFE3E6',tc:'#000'},
-    {name:'Other',pct:6,col:'#EEEFF1',tc:'#A1A8B3'}
-  ];
-  const layout=[{x:0,y:0,w:57,h:100},{x:57,y:0,w:43,h:54},{x:57,y:54,w:43,h:46},{x:0,y:70,w:32,h:30},{x:32,y:70,w:25,h:30}];
-  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 100 100');svg.style.cssText='width:100%;height:100%;display:block';
-  const tp=mkTip(e);
-  tiles.forEach((t,i)=>{
-    const l=layout[i];if(!l)return;
-    const g=document.createElementNS('http://www.w3.org/2000/svg','g');g.style.cursor='pointer';
-    const r=el('rect',{x:l.x+.4,y:l.y+.4,width:l.w-.8,height:l.h-.8,fill:t.col});
-    const tx=document.createElementNS('http://www.w3.org/2000/svg','text');tx.setAttribute('x',l.x+l.w/2);tx.setAttribute('y',l.y+l.h/2-3);tx.setAttribute('text-anchor','middle');tx.setAttribute('font-size',l.w>30?'7.5':'6.5');tx.setAttribute('fill',t.tc);tx.setAttribute('font-family','system-ui');tx.setAttribute('font-weight','700');tx.textContent=t.name;
-    const tx2=document.createElementNS('http://www.w3.org/2000/svg','text');tx2.setAttribute('x',l.x+l.w/2);tx2.setAttribute('y',l.y+l.h/2+8);tx2.setAttribute('text-anchor','middle');tx2.setAttribute('font-size','6.5');tx2.setAttribute('fill',t.tc);tx2.setAttribute('font-family','system-ui');tx2.setAttribute('opacity','0.8');tx2.textContent=t.pct+'%';
-    g.appendChild(r);g.appendChild(tx);g.appendChild(tx2);
-    g.addEventListener('mouseenter',()=>{r.setAttribute('opacity','.82');tip(tp,(l.x+l.w/2)*e.offsetWidth/100,l.y*e.offsetHeight/100,t.name+': '+t.pct+'%',100,100,e.offsetWidth,e.offsetHeight);});
-    g.addEventListener('mouseleave',()=>{r.setAttribute('opacity','1');hideTip(tp);});
-    svg.appendChild(g);
-  });
-  e.appendChild(svg);
-})();
-
-// ─── FUNNEL ───
-(function(){
-  const e=document.getElementById('funC');if(!e)return;
-  const stages=[{name:'Leads',v:1200,col:'#FD5108'},{name:'Qualified',v:940,col:'#fd6a2a'},{name:'Proposal',v:645,col:'#FFAA72'},{name:'Negotiation',v:420,col:'#ffc89a'},{name:'Won',v:215,col:'#22C55E'}];
-  const W=560,H=180,pL=70,pR=70,pT=8,pB=8;
-  const svg=mkSVG(W,H);e.appendChild(svg);const tp=mkTip(e);
-  const sH=(H-pT-pB)/stages.length-3;const maxW=W-pL-pR;
-  stages.forEach((s,i)=>{
-    const ratio=s.v/stages[0].v;const bW=maxW*ratio;const bX=pL+(maxW-bW)/2;const by=pT+i*(sH+3);
-    const r=document.createElementNS('http://www.w3.org/2000/svg','rect');r.setAttribute('x',bX);r.setAttribute('y',by);r.setAttribute('width',bW);r.setAttribute('height',sH);r.setAttribute('fill',s.col);r.style.cursor='pointer';
-    const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');lbl.setAttribute('x',pL-8);lbl.setAttribute('y',by+sH/2+3);lbl.setAttribute('text-anchor','end');lbl.setAttribute('font-size','9.5');lbl.setAttribute('fill','#A1A8B3');lbl.setAttribute('font-family','system-ui');lbl.textContent=s.name;
-    const vl=document.createElementNS('http://www.w3.org/2000/svg','text');vl.setAttribute('x',bX+bW+6);vl.setAttribute('y',by+sH/2+3);vl.setAttribute('text-anchor','start');vl.setAttribute('font-size','9.5');vl.setAttribute('fill','#A1A8B3');vl.setAttribute('font-family','system-ui');vl.textContent=s.v.toLocaleString();
-    r.addEventListener('mouseenter',()=>{r.style.opacity='.8';tip(tp,(bX+bW/2),by,s.name+': '+s.v.toLocaleString()+' ('+Math.round(ratio*100)+'%)',W,H,e.offsetWidth,e.offsetHeight);});
-    r.addEventListener('mouseleave',()=>{r.style.opacity='1';hideTip(tp);});
-    svg.appendChild(r);svg.appendChild(lbl);svg.appendChild(vl);
-  });
-})();
 
 </script>
 </body>
