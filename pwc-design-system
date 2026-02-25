@@ -6374,15 +6374,26 @@ document.addEventListener('keydown', e => {
   }
 
   function ChartLineDots() {
+    const [activeIdx, setActiveIdx] = useState(null);
+    function onChartClick(data) {
+      if (data && data.activeTooltipIndex != null) {
+        const idx = data.activeTooltipIndex;
+        setActiveIdx(function(prev) { return prev === idx ? null : idx; });
+      }
+    }
     return h(CardWrap, null,
       h(CardHd, null, h(CardTitle, null, 'Line Chart \u2014 Dots'), h(CardDesc, null, 'Prominent data point markers on each value')),
       h(CardBody, null,
         h(ResponsiveContainer, { width: '100%', height: 250 },
-          h(LineChart, { data: MONTHLY6 },
+          h(LineChart, { data: MONTHLY6, onClick: onChartClick, style: { cursor: 'pointer' } },
             h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
             h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
             h(Tooltip, tooltipProps()),
-            h(Line, { dataKey: 'desktop', type: 'natural', stroke: C1, strokeWidth: 2, dot: { fill: C1, r: 4 }, activeDot: { r: 6 }, name: 'Desktop' })
+            h(Line, { dataKey: 'desktop', type: 'natural', stroke: C1, strokeWidth: 2,
+              dot: function(p) {
+                return h('circle', { key: p.index, cx: p.cx, cy: p.cy, r: activeIdx === p.index ? 7 : 4, fill: C1, fillOpacity: activeIdx === null || activeIdx === p.index ? 1 : 0.25, stroke: activeIdx === p.index ? '#fff' : 'none', strokeWidth: 2 });
+              },
+              activeDot: false, name: 'Desktop' })
           )
         )
       ),
@@ -6391,18 +6402,27 @@ document.addEventListener('keydown', e => {
   }
 
   function ChartLineLabels() {
+    const [activeIdx, setActiveIdx] = useState(null);
+    function onChartClick(data) {
+      if (data && data.activeTooltipIndex != null) {
+        const idx = data.activeTooltipIndex;
+        setActiveIdx(function(prev) { return prev === idx ? null : idx; });
+      }
+    }
     return h(CardWrap, null,
       h(CardHd, null, h(CardTitle, null, 'Line Chart \u2014 Labels'), h(CardDesc, null, 'Value labels displayed above each data point')),
       h(CardBody, null,
         h(ResponsiveContainer, { width: '100%', height: 250 },
-          h(LineChart, { data: MONTHLY6, margin: { top: 20 } },
+          h(LineChart, { data: MONTHLY6, margin: { top: 20 }, onClick: onChartClick, style: { cursor: 'pointer' } },
             h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
             h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
             h(Tooltip, tooltipProps()),
             h(Line, { dataKey: 'desktop', type: 'natural', stroke: C1, strokeWidth: 2,
-              dot: { fill: C1, r: 4 },
+              dot: function(p) {
+                return h('circle', { key: p.index, cx: p.cx, cy: p.cy, r: activeIdx === p.index ? 7 : 4, fill: C1, fillOpacity: activeIdx === null || activeIdx === p.index ? 1 : 0.25, stroke: activeIdx === p.index ? '#fff' : 'none', strokeWidth: 2 });
+              },
               label: { position: 'top', fill: '#000', fontSize: 11, dy: -6, fontFamily: FONT },
-              name: 'Desktop'
+              activeDot: false, name: 'Desktop'
             })
           )
         )
@@ -6414,16 +6434,22 @@ document.addEventListener('keydown', e => {
   // BAR CHARTS
 
   function ChartBarGrouped() {
+    const [activeIdx, setActiveIdx] = useState(null);
+    function onBarClick(data, index) { setActiveIdx(function(prev) { return prev === index ? null : index; }); }
     return h(CardWrap, null,
       h(CardHd, null, h(CardTitle, null, 'Bar Chart \u2014 Multiple'), h(CardDesc, null, 'January \u2013 June 2024')),
       h(CardBody, null,
         h(ResponsiveContainer, { width: '100%', height: 250 },
-          h(BarChart, { data: MONTHLY6 },
+          h(BarChart, { data: MONTHLY6, style: { cursor: 'pointer' } },
             h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
             h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
             h(Tooltip, tooltipProps()),
-            h(Bar, { dataKey: 'desktop', fill: C1, radius: [4,4,0,0], name: 'Desktop' }),
-            h(Bar, { dataKey: 'mobile',  fill: C2, radius: [4,4,0,0], name: 'Mobile'  })
+            h(Bar, { dataKey: 'desktop', radius: [4,4,0,0], name: 'Desktop', onClick: onBarClick },
+              MONTHLY6.map(function(d, i) { return h(Cell, { key: i, fill: C1, fillOpacity: activeIdx === null || activeIdx === i ? 1 : 0.25 }); })
+            ),
+            h(Bar, { dataKey: 'mobile',  radius: [4,4,0,0], name: 'Mobile', onClick: onBarClick },
+              MONTHLY6.map(function(d, i) { return h(Cell, { key: i, fill: C2, fillOpacity: activeIdx === null || activeIdx === i ? 1 : 0.25 }); })
+            )
           )
         )
       ),
@@ -6432,16 +6458,22 @@ document.addEventListener('keydown', e => {
   }
 
   function ChartBarStacked() {
+    const [activeIdx, setActiveIdx] = useState(null);
+    function onBarClick(data, index) { setActiveIdx(function(prev) { return prev === index ? null : index; }); }
     return h(CardWrap, null,
       h(CardHd, null, h(CardTitle, null, 'Bar Chart \u2014 Stacked'), h(CardDesc, null, 'January \u2013 June 2024')),
       h(CardBody, null,
         h(ResponsiveContainer, { width: '100%', height: 250 },
-          h(BarChart, { data: MONTHLY6 },
+          h(BarChart, { data: MONTHLY6, style: { cursor: 'pointer' } },
             h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
             h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
             h(Tooltip, tooltipProps()),
-            h(Bar, { dataKey: 'mobile',  fill: C2, stackId: 'a', name: 'Mobile'  }),
-            h(Bar, { dataKey: 'desktop', fill: C1, stackId: 'a', radius: [4,4,0,0], name: 'Desktop' }),
+            h(Bar, { dataKey: 'mobile', stackId: 'a', name: 'Mobile', onClick: onBarClick },
+              MONTHLY6.map(function(d, i) { return h(Cell, { key: i, fill: C2, fillOpacity: activeIdx === null || activeIdx === i ? 1 : 0.25 }); })
+            ),
+            h(Bar, { dataKey: 'desktop', stackId: 'a', radius: [4,4,0,0], name: 'Desktop', onClick: onBarClick },
+              MONTHLY6.map(function(d, i) { return h(Cell, { key: i, fill: C1, fillOpacity: activeIdx === null || activeIdx === i ? 1 : 0.25 }); })
+            ),
             h(Legend, { iconType: 'square', iconSize: 10, wrapperStyle: { fontSize: '12px' } })
           )
         )
@@ -6451,15 +6483,19 @@ document.addEventListener('keydown', e => {
   }
 
   function ChartBarHorizontal() {
+    const [activeIdx, setActiveIdx] = useState(null);
+    function onBarClick(data, index) { setActiveIdx(function(prev) { return prev === index ? null : index; }); }
     return h(CardWrap, null,
       h(CardHd, null, h(CardTitle, null, 'Bar Chart \u2014 Horizontal'), h(CardDesc, null, 'January \u2013 June 2024')),
       h(CardBody, null,
         h(ResponsiveContainer, { width: '100%', height: 250 },
-          h(BarChart, { data: MONTHLY6, layout: 'vertical', margin: { left: 4 } },
+          h(BarChart, { data: MONTHLY6, layout: 'vertical', margin: { left: 4 }, style: { cursor: 'pointer' } },
             h(XAxis, Object.assign({}, axisProps, { type: 'number', hide: true })),
             h(YAxis, Object.assign({}, axisProps, { dataKey: 'month', type: 'category', tickFormatter: monthSlice, width: 32 })),
             h(Tooltip, tooltipProps()),
-            h(Bar, { dataKey: 'desktop', fill: C1, radius: [0,4,4,0], name: 'Desktop' })
+            h(Bar, { dataKey: 'desktop', radius: [0,4,4,0], name: 'Desktop', onClick: onBarClick },
+              MONTHLY6.map(function(d, i) { return h(Cell, { key: i, fill: C1, fillOpacity: activeIdx === null || activeIdx === i ? 1 : 0.25 }); })
+            )
           )
         )
       ),
@@ -6468,15 +6504,18 @@ document.addEventListener('keydown', e => {
   }
 
   function ChartBarLabels() {
+    const [activeIdx, setActiveIdx] = useState(null);
+    function onBarClick(data, index) { setActiveIdx(function(prev) { return prev === index ? null : index; }); }
     return h(CardWrap, null,
       h(CardHd, null, h(CardTitle, null, 'Bar Chart \u2014 Labels'), h(CardDesc, null, 'January \u2013 June 2024')),
       h(CardBody, null,
         h(ResponsiveContainer, { width: '100%', height: 260 },
-          h(BarChart, { data: MONTHLY6, margin: { top: 20 } },
+          h(BarChart, { data: MONTHLY6, margin: { top: 20 }, style: { cursor: 'pointer' } },
             h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
             h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
             h(Tooltip, tooltipProps()),
-            h(Bar, { dataKey: 'desktop', fill: C1, radius: [4,4,0,0], name: 'Desktop' },
+            h(Bar, { dataKey: 'desktop', radius: [4,4,0,0], name: 'Desktop', onClick: onBarClick },
+              MONTHLY6.map(function(d, i) { return h(Cell, { key: i, fill: C1, fillOpacity: activeIdx === null || activeIdx === i ? 1 : 0.25 }); }),
               h(LabelList, { position: 'top', style: { fontSize: 11, fill: '#000', fontFamily: FONT } })
             )
           )
@@ -6487,19 +6526,21 @@ document.addEventListener('keydown', e => {
   }
 
   function ChartBarNegative() {
+    const [activeIdx, setActiveIdx] = useState(null);
+    function onBarClick(data, index) { setActiveIdx(function(prev) { return prev === index ? null : index; }); }
     return h(CardWrap, null,
       h(CardHd, null, h(CardTitle, null, 'Bar Chart \u2014 Negative Values'), h(CardDesc, null, 'January \u2013 June 2024')),
       h(CardBody, null,
         h(ResponsiveContainer, { width: '100%', height: 250 },
-          h(BarChart, { data: MONTHLY6_NEG },
+          h(BarChart, { data: MONTHLY6_NEG, style: { cursor: 'pointer' } },
             h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
             h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
             h(YAxis, Object.assign({}, axisProps, { width: 36 })),
             h(Tooltip, tooltipProps()),
-            h(Bar, { dataKey: 'visitors', radius: 4, name: 'Visitors' },
-              MONTHLY6_NEG.map((d, i) =>
-                h(Cell, { key: i, fill: d.visitors >= 0 ? C1 : C3 })
-              )
+            h(Bar, { dataKey: 'visitors', radius: 4, name: 'Visitors', onClick: onBarClick },
+              MONTHLY6_NEG.map(function(d, i) {
+                return h(Cell, { key: i, fill: d.visitors >= 0 ? C1 : C3, fillOpacity: activeIdx === null || activeIdx === i ? 1 : 0.25 });
+              })
             )
           )
         )
@@ -6510,17 +6551,21 @@ document.addEventListener('keydown', e => {
 
   function ChartBarComposed() {
     const { ComposedChart } = Recharts;
+    const [activeIdx, setActiveIdx] = useState(null);
+    function onBarClick(data, index) { setActiveIdx(function(prev) { return prev === index ? null : index; }); }
     return h(CardWrap, null,
       h(CardHd, null, h(CardTitle, null, 'Composed \u2014 Volume & Trend'), h(CardDesc, null, 'Bars show volume; line shows rolling average')),
       h(CardBody, null,
         h(ResponsiveContainer, { width: '100%', height: 250 },
-          h(ComposedChart, { data: BAR_COMPOSED },
+          h(ComposedChart, { data: BAR_COMPOSED, style: { cursor: 'pointer' } },
             h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
             h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
             h(YAxis, Object.assign({}, axisProps, { width: 36 })),
             h(Tooltip, tooltipProps()),
-            h(Bar,  { dataKey: 'volume', fill: C2, radius: [4,4,0,0], name: 'Volume' }),
-            h(Line, { dataKey: 'avg',    stroke: C1, strokeWidth: 2, dot: { fill: C1, r: 3 }, type: 'monotone', name: 'Avg' })
+            h(Bar, { dataKey: 'volume', radius: [4,4,0,0], name: 'Volume', onClick: onBarClick },
+              BAR_COMPOSED.map(function(d, i) { return h(Cell, { key: i, fill: C2, fillOpacity: activeIdx === null || activeIdx === i ? 1 : 0.25 }); })
+            ),
+            h(Line, { dataKey: 'avg', stroke: C1, strokeWidth: 2, dot: { fill: C1, r: 3 }, type: 'monotone', name: 'Avg', opacity: activeIdx !== null ? 0.4 : 1 })
           )
         )
       ),
@@ -6531,14 +6576,19 @@ document.addEventListener('keydown', e => {
   // PIE & DONUT
 
   function ChartPieSimple() {
+    const [activeIdx, setActiveIdx] = useState(null);
+    function onPieClick(data, index) { setActiveIdx(function(prev) { return prev === index ? null : index; }); }
+    const activeShape = function(props) {
+      return h(Sector, Object.assign({}, props, { outerRadius: (props.outerRadius || 0) + 8 }));
+    };
     return h(CardWrap, null,
       h(CardHd, null, h(CardTitle, null, 'Pie Chart'), h(CardDesc, null, 'January \u2013 June 2024')),
       h(CardBody, { style: { display: 'flex', justifyContent: 'center' } },
         h(ResponsiveContainer, { width: '100%', height: 250 },
           h(PieChart, null,
             h(Tooltip, tooltipProps()),
-            h(Pie, { data: PIE_DATA, dataKey: 'value', nameKey: 'name', outerRadius: 100 },
-              PIE_DATA.map((d, i) => h(Cell, { key: i, fill: d.fill }))
+            h(Pie, { data: PIE_DATA, dataKey: 'value', nameKey: 'name', outerRadius: 100, activeIndex: activeIdx !== null ? activeIdx : undefined, activeShape: activeShape, onClick: onPieClick, style: { cursor: 'pointer' } },
+              PIE_DATA.map(function(d, i) { return h(Cell, { key: i, fill: d.fill, fillOpacity: activeIdx === null || activeIdx === i ? 1 : 0.3 }); })
             ),
             h(Legend, { iconType: 'square', iconSize: 10, wrapperStyle: { fontSize: '12px' } })
           )
@@ -6549,14 +6599,19 @@ document.addEventListener('keydown', e => {
   }
 
   function ChartPieLabels() {
+    const [activeIdx, setActiveIdx] = useState(null);
+    function onPieClick(data, index) { setActiveIdx(function(prev) { return prev === index ? null : index; }); }
+    const activeShape = function(props) {
+      return h(Sector, Object.assign({}, props, { outerRadius: (props.outerRadius || 0) + 8 }));
+    };
     return h(CardWrap, null,
       h(CardHd, null, h(CardTitle, null, 'Pie Chart \u2014 Labels'), h(CardDesc, null, 'January \u2013 June 2024')),
       h(CardBody, { style: { display: 'flex', justifyContent: 'center' } },
         h(ResponsiveContainer, { width: '100%', height: 260 },
           h(PieChart, null,
             h(Tooltip, tooltipProps()),
-            h(Pie, { data: PIE_DATA, dataKey: 'value', nameKey: 'name', outerRadius: 90, label: ({ name, percent }) => name + ' ' + (percent * 100).toFixed(0) + '%', labelLine: true },
-              PIE_DATA.map((d, i) => h(Cell, { key: i, fill: d.fill }))
+            h(Pie, { data: PIE_DATA, dataKey: 'value', nameKey: 'name', outerRadius: 90, label: function(p) { return p.name + ' ' + (p.percent * 100).toFixed(0) + '%'; }, labelLine: true, activeIndex: activeIdx !== null ? activeIdx : undefined, activeShape: activeShape, onClick: onPieClick, style: { cursor: 'pointer' } },
+              PIE_DATA.map(function(d, i) { return h(Cell, { key: i, fill: d.fill, fillOpacity: activeIdx === null || activeIdx === i ? 1 : 0.3 }); })
             )
           )
         )
@@ -6566,12 +6621,20 @@ document.addEventListener('keydown', e => {
   }
 
   function ChartDonutText() {
-    const total = PIE_DATA.reduce((s, d) => s + d.value, 0);
-    const CentreLabel = ({ viewBox }) => {
-      const { cx, cy } = viewBox || {};
+    const [activeIdx, setActiveIdx] = useState(null);
+    const total = PIE_DATA.reduce(function(s, d) { return s + d.value; }, 0);
+    function onPieClick(data, index) { setActiveIdx(function(prev) { return prev === index ? null : index; }); }
+    const activeShape = function(props) {
+      return h(Sector, Object.assign({}, props, { outerRadius: (props.outerRadius || 0) + 8 }));
+    };
+    const CentreLabel = function(p) {
+      const viewBox = p.viewBox || {};
+      const cx = viewBox.cx; const cy = viewBox.cy;
+      const displayVal = activeIdx !== null ? PIE_DATA[activeIdx].value : total;
+      const displayLbl = activeIdx !== null ? PIE_DATA[activeIdx].name : 'Visitors';
       return h('g', null,
-        h('text', { x: cx, y: cy - 6, textAnchor: 'middle', fill: '#000', fontWeight: 700, fontSize: 22, fontFamily: FONT }, total.toLocaleString()),
-        h('text', { x: cx, y: cy + 14, textAnchor: 'middle', fill: '#A1A8B3', fontSize: 12, fontFamily: FONT }, 'Visitors')
+        h('text', { x: cx, y: cy - 6, textAnchor: 'middle', fill: '#000', fontWeight: 700, fontSize: 22, fontFamily: FONT }, displayVal.toLocaleString()),
+        h('text', { x: cx, y: cy + 14, textAnchor: 'middle', fill: '#A1A8B3', fontSize: 12, fontFamily: FONT }, displayLbl)
       );
     };
     return h(CardWrap, null,
@@ -6580,8 +6643,8 @@ document.addEventListener('keydown', e => {
         h(ResponsiveContainer, { width: '100%', height: 250 },
           h(PieChart, null,
             h(Tooltip, tooltipProps()),
-            h(Pie, { data: PIE_DATA, dataKey: 'value', nameKey: 'name', innerRadius: 70, outerRadius: 100, strokeWidth: 4 },
-              PIE_DATA.map((d, i) => h(Cell, { key: i, fill: d.fill })),
+            h(Pie, { data: PIE_DATA, dataKey: 'value', nameKey: 'name', innerRadius: 70, outerRadius: 100, strokeWidth: 4, activeIndex: activeIdx !== null ? activeIdx : undefined, activeShape: activeShape, onClick: onPieClick, style: { cursor: 'pointer' } },
+              PIE_DATA.map(function(d, i) { return h(Cell, { key: i, fill: d.fill, fillOpacity: activeIdx === null || activeIdx === i ? 1 : 0.3 }); }),
               h(LabelList, { content: CentreLabel, position: 'center' })
             ),
             h(Legend, { iconType: 'square', iconSize: 10, wrapperStyle: { fontSize: '12px' } })
@@ -6603,17 +6666,24 @@ document.addEventListener('keydown', e => {
       { name: 'Search',   value: 260, fill: C2 },
       { name: 'Referral', value: 220, fill: '#ffc89a' },
     ];
+    const [activeInner, setActiveInner] = useState(null);
+    const [activeOuter, setActiveOuter] = useState(null);
+    function onInnerClick(data, index) { setActiveInner(function(prev) { return prev === index ? null : index; }); }
+    function onOuterClick(data, index) { setActiveOuter(function(prev) { return prev === index ? null : index; }); }
+    const activeShape = function(props) {
+      return h(Sector, Object.assign({}, props, { outerRadius: (props.outerRadius || 0) + 7 }));
+    };
     return h(CardWrap, null,
       h(CardHd, null, h(CardTitle, null, 'Donut \u2014 Stacked Rings'), h(CardDesc, null, 'Concentric rings compare two datasets')),
       h(CardBody, { style: { display: 'flex', justifyContent: 'center' } },
         h(ResponsiveContainer, { width: '100%', height: 250 },
           h(PieChart, null,
             h(Tooltip, tooltipProps()),
-            h(Pie, { data: inner, dataKey: 'value', nameKey: 'name', innerRadius: 45, outerRadius: 70, strokeWidth: 3 },
-              inner.map((d, i) => h(Cell, { key: i, fill: d.fill }))
+            h(Pie, { data: inner, dataKey: 'value', nameKey: 'name', innerRadius: 45, outerRadius: 70, strokeWidth: 3, activeIndex: activeInner !== null ? activeInner : undefined, activeShape: activeShape, onClick: onInnerClick, style: { cursor: 'pointer' } },
+              inner.map(function(d, i) { return h(Cell, { key: i, fill: d.fill, fillOpacity: activeInner === null || activeInner === i ? 1 : 0.3 }); })
             ),
-            h(Pie, { data: outer, dataKey: 'value', nameKey: 'name', innerRadius: 80, outerRadius: 105, strokeWidth: 3 },
-              outer.map((d, i) => h(Cell, { key: i, fill: d.fill }))
+            h(Pie, { data: outer, dataKey: 'value', nameKey: 'name', innerRadius: 80, outerRadius: 105, strokeWidth: 3, activeIndex: activeOuter !== null ? activeOuter : undefined, activeShape: activeShape, onClick: onOuterClick, style: { cursor: 'pointer' } },
+              outer.map(function(d, i) { return h(Cell, { key: i, fill: d.fill, fillOpacity: activeOuter === null || activeOuter === i ? 1 : 0.3 }); })
             )
           )
         )
@@ -6694,6 +6764,11 @@ document.addEventListener('keydown', e => {
   // OTHER CHARTS
 
   function ChartScatter() {
+    const [activePt, setActivePt] = useState(null);
+    function onDotClick(data) {
+      const key = data.risk + ',' + data.ret;
+      setActivePt(function(prev) { return prev === key ? null : key; });
+    }
     return h(CardWrap, null,
       h(CardHd, null, h(CardTitle, null, 'Scatter Plot \u2014 Risk vs Return'), h(CardDesc, null, 'Portfolio positioning')),
       h(CardBody, null,
@@ -6704,7 +6779,12 @@ document.addEventListener('keydown', e => {
             h(YAxis, Object.assign({}, axisProps, { dataKey: 'ret',   type: 'number', name: 'Return %', label: { value: 'Return %', angle: -90, position: 'insideLeft', offset: 10, fontSize: 11, fill: TICK_COLOR } })),
             h(ZAxis, { dataKey: 'aum', range: [60, 400] }),
             h(Tooltip, { cursor: { strokeDasharray: '3 3' }, content: function(props) { return h(RcTooltip, props); } }),
-            h(Scatter, { data: SCATTER_DATA, fill: C1, fillOpacity: 0.75, name: 'Funds' })
+            h(Scatter, { data: SCATTER_DATA, name: 'Funds', onClick: onDotClick, style: { cursor: 'pointer' } },
+              SCATTER_DATA.map(function(d, i) {
+                const key = d.risk + ',' + d.ret;
+                return h(Cell, { key: i, fill: C1, fillOpacity: activePt === null || activePt === key ? 0.85 : 0.2 });
+              })
+            )
           )
         )
       ),
@@ -6754,15 +6834,19 @@ document.addEventListener('keydown', e => {
   }
 
   function ChartBarSimple() {
+    const [activeIdx, setActiveIdx] = useState(null);
+    function onBarClick(data, index) { setActiveIdx(function(prev) { return prev === index ? null : index; }); }
     return h(CardWrap, null,
       h(CardHd, null, h(CardTitle, null, 'Bar Chart'), h(CardDesc, null, 'January \u2013 June 2024')),
       h(CardBody, null,
         h(ResponsiveContainer, { width: '100%', height: 250 },
-          h(BarChart, { data: MONTHLY6 },
+          h(BarChart, { data: MONTHLY6, style: { cursor: 'pointer' } },
             h(CartesianGrid, { vertical: false, stroke: GRID_COLOR }),
             h(XAxis, Object.assign({}, axisProps, { dataKey: 'month', tickFormatter: monthSlice })),
             h(Tooltip, tooltipProps()),
-            h(Bar, { dataKey: 'desktop', fill: C1, radius: [4,4,0,0], name: 'Desktop' })
+            h(Bar, { dataKey: 'desktop', radius: [4,4,0,0], name: 'Desktop', onClick: onBarClick },
+              MONTHLY6.map(function(d, i) { return h(Cell, { key: i, fill: C1, fillOpacity: activeIdx === null || activeIdx === i ? 1 : 0.25 }); })
+            )
           )
         )
       ),
