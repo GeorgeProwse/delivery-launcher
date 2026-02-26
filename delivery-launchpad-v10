@@ -20,21 +20,21 @@
   --orange100: #ffe8d4;
   --black: #000000;
   --white: #ffffff;
-  --grey100: #eeeff1;
-  --grey200: #dfe3e6;
-  --grey300: #cbd1d6;
-  --grey400: #b5bcc4;
-  --grey500: #a1a8b3;
-  --success: #22c55e;
-  --successBg: #dcfce7;
-  --warning: #eab308;
-  --warningBg: #fef3c7;
-  --bgColor: #eeeff1;
+  --grey100: #f5f6f7;
+  --grey200: #e8eaed;
+  --grey300: #d1d5db;
+  --grey400: #9ca3af;
+  --grey500: #6b7280;
+  --success: #16a34a;
+  --successBg: #f0fdf4;
+  --warning: #ca8a04;
+  --warningBg: #fefce8;
+  --bgColor: #f8f9fa;
   --cardBg: #ffffff;
-  --textColor: #000000;
-  --secondaryText: #a1a8b3;
-  --borderColor: #dfe3e6;
-  --surfaceColor: #eeeff1;
+  --textColor: #1a1a1a;
+  --secondaryText: #6b7280;
+  --borderColor: #e5e7eb;
+  --surfaceColor: #f3f4f6;
 }
 
 @keyframes fadeIn {
@@ -997,26 +997,25 @@ textarea {
   border-right: 1px solid var(--borderColor);
   display: flex;
   flex-direction: column;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
 }
 /* Sidebar overall progress summary */
 .sidebar-summary {
-  padding: 14px 14px 12px;
+  padding: 16px 16px 14px;
   border-bottom: 1px solid var(--borderColor);
   background: var(--cardBg);
   flex-shrink: 0;
 }
 .sidebar-summary-title {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   color: var(--secondaryText);
   margin-bottom: 6px;
 }
 .sidebar-summary-count {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--textColor);
   margin-bottom: 6px;
   line-height: 1.2;
@@ -1024,19 +1023,19 @@ textarea {
 .sidebar-summary-subtext {
   font-size: 11px;
   color: var(--secondaryText);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .sidebar-summary-bar-outer {
-  height: 6px;
+  height: 4px;
   background: var(--grey200);
-  border-radius: 3px;
+  border-radius: 2px;
   overflow: hidden;
 }
 .sidebar-summary-bar-inner {
   height: 100%;
   background: var(--orange500);
-  border-radius: 3px;
-  transition: width 0.3s ease;
+  border-radius: 2px;
+  transition: width 0.4s ease;
   width: 0%;
 }
 .sidebar-phase-list {
@@ -1045,25 +1044,25 @@ textarea {
   padding-top: 4px;
 }
 .sidebar-header {
-  background: var(--orange500);
-  padding: 10px 14px;
-  color: #fff;
-  font-size: 11px;
+  padding: 10px 16px;
+  font-size: 10px;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.06em;
+  color: var(--secondaryText);
+  border-bottom: 1px solid var(--borderColor);
 }
 .sidebar-phase {
   border-bottom: 1px solid var(--borderColor);
 }
 .sidebar-phase-label {
-  padding: 8px 14px 6px;
+  padding: 8px 16px 6px;
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--secondaryText);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  background: var(--surfaceColor);
+  letter-spacing: 0.05em;
+  background: var(--cardBg);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1071,9 +1070,9 @@ textarea {
 }
 .sidebar-phase-count-badge {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--grey400);
-  background: var(--grey200);
+  background: var(--surfaceColor);
   padding: 1px 7px;
   border-radius: 100px;
   white-space: nowrap;
@@ -1085,7 +1084,7 @@ textarea {
   color: var(--success);
 }
 .sidebar-item {
-  padding: 8px 14px 8px 16px;
+  padding: 7px 16px 7px 16px;
   font-size: 12px;
   font-weight: 400;
   color: var(--textColor);
@@ -1094,21 +1093,20 @@ textarea {
   align-items: center;
   gap: 9px;
   transition: all 120ms ease;
-  border-left: 3px solid transparent;
+  border-left: 2px solid transparent;
   line-height: 1.3;
 }
 .sidebar-item:hover {
-  background: var(--orange100);
-  color: var(--orange500);
+  background: var(--surfaceColor);
+  color: var(--textColor);
 }
 .sidebar-item:focus {
   outline: 2px solid var(--orange500);
   outline-offset: -2px;
-  background: var(--orange100);
-  color: var(--orange500);
+  background: var(--surfaceColor);
 }
 .sidebar-item.active {
-  background: var(--orange100);
+  background: var(--surfaceColor);
   color: var(--orange500);
   border-left-color: var(--orange500);
   font-weight: 600;
@@ -1122,18 +1120,18 @@ textarea {
 }
 
 .step-dot {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  background-color: var(--grey200);
+  background-color: var(--surfaceColor);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 9px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--grey500);
   flex-shrink: 0;
-  border: 1.5px solid var(--grey300);
+  border: 1px solid var(--grey300);
 }
 .sidebar-item.active .step-dot {
   background-color: var(--orange500);
@@ -1152,7 +1150,7 @@ textarea {
 .workflow-header {
   background: var(--cardBg);
   border-bottom: 1px solid var(--borderColor);
-  padding: 16px 24px;
+  padding: 14px 24px;
   margin-bottom: 0;
   display: flex;
   align-items: center;
@@ -1160,12 +1158,11 @@ textarea {
   position: sticky;
   top: 0;
   z-index: 150;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 .workflow-header h2 {
-  font-size: 17px;
-  font-weight: 700;
-  margin-bottom: 3px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 2px;
   letter-spacing: -0.01em;
 }
 .workflow-header p {
@@ -1211,25 +1208,25 @@ textarea {
   opacity: 0.8;
 }
 .progress-bar {
-  width: 180px;
-  height: 7px;
+  width: 160px;
+  height: 3px;
   background-color: var(--grey200);
-  border-radius: 4px;
+  border-radius: 2px;
   overflow: hidden;
 }
 .progress-fill {
   height: 100%;
   background-color: var(--orange500);
-  border-radius: 4px;
-  transition: width 0.3s ease;
+  border-radius: 2px;
+  transition: width 0.4s ease;
 }
 
 .phase-filter-bar {
   background: var(--cardBg);
   border-bottom: 1px solid var(--borderColor);
-  padding: 10px 24px;
+  padding: 8px 24px;
   position: sticky;
-  top: 65px;
+  top: 60px;
   z-index: 140;
 }
 .phase-filter-pills {
@@ -1251,7 +1248,7 @@ textarea {
   padding: 5px 14px;
   font-size: 12px;
   font-weight: 500;
-  border: 1.5px solid var(--borderColor);
+  border: 1px solid var(--borderColor);
   border-radius: 100px;
   background: var(--cardBg);
   color: var(--secondaryText);
@@ -1260,36 +1257,35 @@ textarea {
   font-family: system-ui, sans-serif;
 }
 .phase-filter-pill:hover {
-  border-color: var(--orange300);
-  color: var(--orange500);
-  background: var(--orange100);
+  border-color: var(--grey300);
+  color: var(--textColor);
+  background: var(--surfaceColor);
 }
 .phase-filter-pill:focus {
   outline: 2px solid var(--orange500);
   outline-offset: 2px;
 }
 .phase-filter-pill.active {
-  background: var(--orange500);
-  border-color: var(--orange500);
-  color: #fff;
+  background: var(--orange100);
+  border-color: var(--orange300);
+  color: var(--orange500);
   font-weight: 600;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 .workflow-tip-banner {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #eff6ff;
-  border-bottom: 1px solid #bfdbfe;
-  padding: 9px 24px;
+  background: var(--surfaceColor);
+  border-bottom: 1px solid var(--borderColor);
+  padding: 8px 24px;
   font-size: 12px;
-  color: #1e40af;
+  color: var(--secondaryText);
 }
 .workflow-tip-icon {
-  font-size: 14px;
+  font-size: 13px;
   flex-shrink: 0;
-  color: #3b82f6;
+  color: var(--grey400);
 }
 .workflow-tip-text {
   flex: 1;
@@ -1299,7 +1295,7 @@ textarea {
   background: none;
   border: none;
   cursor: pointer;
-  color: #93c5fd;
+  color: var(--grey400);
   font-size: 14px;
   padding: 2px 6px;
   border-radius: 2px;
@@ -1307,20 +1303,19 @@ textarea {
   font-family: system-ui, sans-serif;
 }
 .workflow-tip-dismiss:hover {
-  color: #1e40af;
+  color: var(--textColor);
 }
 
 .phase-divider {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 18px;
-  margin: 20px 0 10px 0;
-  background: var(--cardBg);
-  border: 1px solid var(--borderColor);
-  border-left: 4px solid var(--orange500);
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 10px 18px;
+  margin: 18px 0 8px 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--borderColor);
+  border-radius: 0;
 }
 .phase-divider:first-child {
   margin-top: 0;
@@ -1332,17 +1327,14 @@ textarea {
 }
 .phase-divider-number {
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--orange500);
-  background: var(--orange100);
-  padding: 3px 10px;
-  border-radius: 100px;
+  letter-spacing: 0.04em;
+  color: var(--secondaryText);
 }
 .phase-divider-name {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--textColor);
   letter-spacing: -0.01em;
 }
@@ -1359,57 +1351,52 @@ textarea {
   white-space: nowrap;
 }
 .phase-divider-bar-outer {
-  width: 90px;
-  height: 6px;
+  width: 80px;
+  height: 3px;
   background: var(--grey200);
-  border-radius: 3px;
+  border-radius: 2px;
   overflow: hidden;
 }
 .phase-divider-bar-inner {
   height: 100%;
   background: var(--orange500);
-  border-radius: 3px;
-  transition: width 0.3s ease;
+  border-radius: 2px;
+  transition: width 0.4s ease;
 }
 
 #promptCards {
-  padding: 16px 24px 40px;
+  padding: 12px 24px 40px;
 }
 
 .prompt-card {
   background: var(--cardBg);
   border: 1px solid var(--borderColor);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   overflow: hidden;
-  border-left: 4px solid var(--grey200);
-  border-radius: 6px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  border-left: 3px solid var(--grey200);
+  border-radius: 8px;
   transition:
     border-color 200ms ease,
     box-shadow 200ms ease;
 }
 .prompt-card:hover {
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 .prompt-card.active-card {
   border-left-color: var(--orange500);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 .prompt-card.completed-card {
   border-left-color: var(--success);
-  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.08);
 }
 .prompt-card.locked-card {
-  opacity: 0.45;
+  opacity: 0.5;
   pointer-events: none;
-  box-shadow: none;
 }
 /* When navigated to via sidebar, locked card becomes fully accessible */
 .prompt-card.locked-card.sidebar-override {
   opacity: 1;
   pointer-events: auto;
   border-left-color: var(--grey300);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 @keyframes cardPulse {
@@ -1431,13 +1418,13 @@ textarea {
 }
 
 .prompt-card-header {
-  padding: 14px 18px;
+  padding: 12px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
   user-select: none;
-  transition: background-color 200ms ease;
+  transition: background-color 150ms ease;
   gap: 12px;
 }
 .prompt-card-header:hover {
@@ -1462,19 +1449,22 @@ textarea {
 
 .prompt-id {
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
+  color: var(--secondaryText);
+  background-color: var(--surfaceColor);
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+.prompt-card.active-card .prompt-id {
   color: var(--orange500);
   background-color: var(--orange100);
-  padding: 3px 10px;
-  border-radius: 100px;
-  white-space: nowrap;
-  letter-spacing: 0.04em;
-  flex-shrink: 0;
 }
 .prompt-card.completed-card .prompt-id {
   color: var(--success);
   background-color: var(--successBg);
-  border: 1px solid rgba(34, 197, 94, 0.2);
 }
 .prompt-card.locked-card .prompt-id {
   color: var(--grey400);
@@ -1504,26 +1494,23 @@ textarea {
 
 .status-badge {
   font-size: 11px;
-  padding: 4px 12px;
-  font-weight: 600;
-  border-radius: 100px;
+  padding: 3px 10px;
+  font-weight: 500;
+  border-radius: 4px;
   white-space: nowrap;
   flex-shrink: 0;
 }
 .badge-ready {
   background-color: var(--orange100);
   color: var(--orange500);
-  border: 1px solid var(--orange300);
 }
 .badge-done {
   background-color: var(--successBg);
   color: var(--success);
-  border: 1px solid rgba(34, 197, 94, 0.2);
 }
 .badge-locked {
   background-color: var(--surfaceColor);
-  color: var(--secondaryText);
-  border: 1px solid var(--borderColor);
+  color: var(--grey400);
 }
 
 .prompt-card-body {
@@ -1561,9 +1548,9 @@ textarea {
 .artifact-tag {
   font-size: 12px;
   padding: 3px 10px;
-  background-color: #dbeafe;
-  color: #3b82f6;
-  border: 1px solid #bfdbfe;
+  background-color: var(--surfaceColor);
+  color: var(--secondaryText);
+  border: 1px solid var(--borderColor);
 }
 
 .prompt-box-header {
@@ -1600,31 +1587,31 @@ textarea {
 }
 
 .prompt-text-box {
-  background-color: #1a1b2e;
-  color: #d4d8e8;
+  background-color: var(--surfaceColor);
+  color: var(--textColor);
   border-radius: 6px;
-  padding: 10px 12px;
+  padding: 12px 14px;
   font-size: 12px;
-  font-family: "Courier New", monospace;
+  font-family: "SF Mono", "Consolas", "Monaco", monospace;
   line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
   max-height: 100px;
   overflow-y: auto;
-  border: 1px solid #2a2b3d;
+  border: 1px solid var(--borderColor);
   transition: max-height 300ms ease;
   scrollbar-width: thin;
-  scrollbar-color: #3a3b5e #1a1b2e;
+  scrollbar-color: var(--grey300) var(--surfaceColor);
 }
 .prompt-text-box::-webkit-scrollbar {
-  width: 5px;
+  width: 4px;
 }
 .prompt-text-box::-webkit-scrollbar-track {
-  background: #1a1b2e;
+  background: transparent;
 }
 .prompt-text-box::-webkit-scrollbar-thumb {
-  background: #3a3b5e;
-  border-radius: 3px;
+  background: var(--grey300);
+  border-radius: 2px;
 }
 .prompt-text-box.prompt-text-expanded {
   max-height: 480px;
@@ -1660,28 +1647,25 @@ textarea {
 
 /* Primary action */
 .btn-copy {
-  background-color: var(--orange500);
+  background-color: var(--textColor);
   color: var(--white);
-  padding: 8px 18px;
+  padding: 7px 16px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   border: none;
   border-radius: 6px;
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: background-color 200ms ease, box-shadow 200ms ease;
+  transition: background-color 150ms ease;
   font-family: system-ui, sans-serif;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 .btn-copy:hover {
-  background-color: #d94000;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+  background-color: #333;
 }
 .btn-copy.copied {
   background-color: var(--success);
-  box-shadow: 0 2px 6px rgba(34, 197, 94, 0.25);
 }
 
 /* Secondary/ghost utility actions — CHANGE 11 */
@@ -1773,47 +1757,62 @@ textarea {
   bottom: 24px;
   right: 24px;
   z-index: 1000;
-  width: 340px;
-  background: #fff;
+  width: 320px;
+  background: var(--cardBg);
   border: 1px solid var(--borderColor);
-  border-radius: 6px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.10);
   font-family: system-ui, sans-serif;
 }
 .guidance-panel.visible {
   display: block;
+  animation: slideDown 200ms ease;
 }
 .guidance-panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  background: var(--orange500);
-  border-radius: 6px 6px 0 0;
+  background: var(--cardBg);
+  border-bottom: 1px solid var(--borderColor);
+  border-radius: 10px 10px 0 0;
 }
 .guidance-panel-title {
   font-size: 11px;
-  font-weight: 700;
-  color: #fff;
+  font-weight: 600;
+  color: var(--textColor);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
 }
 .guidance-panel-counter {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--secondaryText);
+}
+.guidance-panel-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--grey400);
+  font-size: 16px;
+  padding: 0 2px;
+  line-height: 1;
+  transition: color 120ms;
+}
+.guidance-panel-close:hover {
+  color: var(--textColor);
 }
 .guidance-panel-body {
   padding: 14px;
 }
 .guidance-panel-step-title {
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--textColor);
   margin-bottom: 6px;
 }
 .guidance-panel-text {
   font-size: 13px;
-  color: #555;
+  color: var(--secondaryText);
   line-height: 1.6;
   margin: 0 0 8px;
 }
@@ -1821,9 +1820,10 @@ textarea {
   font-size: 12px;
   color: var(--secondaryText);
   background: var(--surfaceColor);
-  border-left: 2px solid var(--orange300);
+  border-left: 2px solid var(--grey300);
   padding: 8px 10px;
   line-height: 1.5;
+  border-radius: 0 4px 4px 0;
 }
 .guidance-panel-footer {
   display: flex;
@@ -1831,8 +1831,7 @@ textarea {
   justify-content: space-between;
   padding: 10px 14px;
   border-top: 1px solid var(--borderColor);
-  background: var(--surfaceColor);
-  border-radius: 0 0 6px 6px;
+  border-radius: 0 0 10px 10px;
 }
 .guidance-panel-skip {
   font-size: 11px;
@@ -1841,38 +1840,45 @@ textarea {
   border: none;
   cursor: pointer;
   padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 .guidance-panel-skip:hover {
   color: var(--textColor);
 }
 .guidance-panel-actions {
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 .btn-guidance-back {
-  padding: 6px 14px;
+  padding: 6px 12px;
   font-size: 12px;
-  font-weight: 600;
-  background: #fff;
+  font-weight: 500;
+  background: var(--cardBg);
   border: 1px solid var(--borderColor);
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 6px;
+  transition: all 120ms ease;
+}
+.btn-guidance-back:hover {
+  background: var(--surfaceColor);
 }
 .btn-guidance-next {
-  padding: 6px 14px;
+  padding: 6px 12px;
   font-size: 12px;
-  font-weight: 600;
-  background: var(--orange500);
-  color: #fff;
+  font-weight: 500;
+  background: var(--textColor);
+  color: var(--white);
   border: none;
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 6px;
+  transition: background-color 120ms ease;
 }
 .btn-guidance-next:hover {
-  background: #d44000;
+  background: #333;
 }
 .guidance-highlight {
-  outline: 2px solid var(--orange500);
+  outline: 2px solid var(--orange300);
   outline-offset: 3px;
 }
 /* ── CHUNK 1: Section completion indicators ── */
@@ -1898,57 +1904,9 @@ textarea {
   background: #e57373;
 }
 
-/* ── CHUNK 1: Draft restore banner ── */
+/* ── CHUNK 1: Draft restore banner — hidden ── */
 #draftBanner {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #1e293b;
-  color: #fff;
-  padding: 12px 24px;
-  z-index: 999;
-  display: none;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 13px;
-  gap: 16px;
-}
-#draftBanner.visible {
-  display: flex;
-}
-.draft-banner-actions {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
-}
-.btn-draft-restore {
-  padding: 6px 14px;
-  font-size: 12px;
-  font-weight: 600;
-  background: var(--orange500);
-  color: #fff;
-  border: none;
-  border-radius: 2px;
-  cursor: pointer;
-}
-.btn-draft-dismiss {
-  padding: 6px 14px;
-  font-size: 12px;
-  font-weight: 500;
-  background: transparent;
-  color: #aaa;
-  border: 1px solid #444;
-  border-radius: 2px;
-  cursor: pointer;
-}
-.btn-draft-restore:hover {
-  background: #d44000;
-}
-.btn-draft-dismiss:hover {
-  color: #fff;
-  border-color: #888;
+  display: none !important;
 }
 
 .brief-strength-wrap {
@@ -2237,20 +2195,19 @@ textarea {
 .btn-mark-done {
   background: transparent;
   color: var(--success);
-  padding: 7px 16px;
+  padding: 6px 14px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  border: 1.5px solid var(--success);
+  border: 1px solid var(--success);
   border-radius: 6px;
-  transition: all 200ms ease;
+  transition: all 150ms ease;
   font-family: system-ui, sans-serif;
   white-space: nowrap;
 }
 .btn-mark-done:hover {
-  background-color: var(--success);
-  color: var(--white);
-  box-shadow: 0 2px 6px rgba(34, 197, 94, 0.3);
+  background-color: var(--successBg);
+  color: var(--success);
 }
 .btn-edit-prompt {
   background: transparent;
@@ -2275,7 +2232,7 @@ textarea {
 }
 .prompt-text-box[contenteditable="true"] {
   outline: 2px solid var(--orange300);
-  background: #fffdf9;
+  background: var(--cardBg);
   cursor: text;
 }
 #gateModal,
@@ -4828,7 +4785,7 @@ const INLINED_DATA = {
           {
             prompt_id: "P1.3",
             prompt_name: "Scope, Objectives & Success Criteria",
-            file: "scope_statement.json",
+            file: "scope_objectives.json",
             artifact: "Scope & Objectives Workbook",
             depends_on: ["P1.1"],
             sign_off_gate: false,
@@ -4874,7 +4831,7 @@ const INLINED_DATA = {
           {
             prompt_id: "P2.3",
             prompt_name: "Budget & Cost Baseline",
-            file: "budget_cost_baseline.json",
+            file: "budget_baseline.json",
             artifact: "Budget Baseline & Cost Tracker",
             depends_on: ["P2.2", "P1.4"],
             sign_off_gate: false,
@@ -4904,19 +4861,11 @@ const INLINED_DATA = {
             sign_off_gate: false,
           },
           {
-            prompt_id: "P2.7",
-            prompt_name: "Change Control Log",
-            file: "change_control_plan.json",
-            artifact: "Change Control Workbook",
-            depends_on: ["P1.3", "P1.5", "P2.3"],
-            sign_off_gate: false,
-          },
-          {
             prompt_id: "P2.8",
             prompt_name: "PMO Playbook",
             file: "pmo_playbook.json",
             artifact: "PMO Playbook",
-            depends_on: ["P2.1", "P2.2", "P2.3", "P2.4", "P2.5", "P2.6", "P2.7"],
+            depends_on: ["P2.1", "P2.2", "P2.3", "P2.4", "P2.5", "P2.6"],
             sign_off_gate: true,
           },
         ],
@@ -8254,7 +8203,7 @@ const INLINED_PROMPTS = {
       `**Role & purpose** – Normalise the engagement brief data and create a canonical JSON handoff for downstream prompts. Do not call the code interpreter.
 
 <context>
-  Global style and data standards. Use Linked Arial headings (sizes 18/16/14/11 pt) and 11 pt body text at 1.5 spacing. Table headers use PwC orange (#FD5108) with white text, grey horizontal lines and no vertical borders. Unknown values should be marked "TBC". Use ISO 8601 dates. Canonical keys use snake_case; labels use Title Case; data types include string, date, integer, decimal and boolean. Units: person_days (1=8h); working_days; currency with two decimals (AUD); percentages as decimals. Enumerations: delivery_methodology ∈ {Waterfall, Agile, Hybrid}; fee_structure ∈ {Fixed_Price, Time_and_Materials, Capped_T_and_M}; engagement_complexity ∈ {Low, Medium, High, Very_High}; organisation_type ∈ {PwC, Client, Joint, Alliance_Partner, Third_Party, Regulator, Vendor, Other}; yes_no ∈ {Yes, No}.
+  Global style and data standards. Use Arial headings (sizes 18/16/14/11 pt) and 11 pt body text at 1.5 spacing. Table headers use PwC orange (#FD5108) with white text, grey horizontal lines and no vertical borders. Unknown values should be marked "TBC". Use ISO 8601 dates. Canonical keys use snake_case; labels use Title Case; data types include string, date, integer, decimal and boolean. Units: person_days (1=8h); working_days; currency with two decimals (AUD); percentages as decimals. Enumerations: delivery_methodology ∈ {Waterfall, Agile, Hybrid}; fee_structure ∈ {Fixed_Price, Time_and_Materials, Capped_T_and_M}; engagement_complexity ∈ {Low, Medium, High, Very_High}; organisation_type ∈ {PwC, Client, Joint, Alliance_Partner, Third_Party, Regulator, Vendor, Other}; yes_no ∈ {Yes, No}.
 </context>
 <engagement_data>{{ENGAGEMENT_DATA}}</engagement_data>
 <instructions>
@@ -8262,7 +8211,7 @@ const INLINED_PROMPTS = {
 2. Parse the JSON in <engagement_data>. Trim strings, convert fields to canonical keys. Set optional fields to null if absent; mark unknown required fields as "TBC".
 3. Do not validate client_name or engagement_name; those are provided in the form.
 4. Build a canonical JSON object with: client_name, engagement_name, engagement_code, engagement_lead, industry, sector, sub_sector, delivery_methodology, fee_structure, start_date, end_date, total_budget, engagement_description, scope_summary, objectives (list), roles and decision rights, commercial_terms and open_items (empty list if none).
-5. Output the JSON as `P1_1_CANONICAL_HANDOFF`; do not call python.
+5. Output the JSON as \`P1_1_CANONICAL_HANDOFF\`; do not call python.
 </instructions>`
   },
 
@@ -8277,12 +8226,18 @@ const INLINED_PROMPTS = {
   Enumerations: stakeholder_type ∈ {Sponsor, Decision_Maker, Project_Owner, Programme_Manager, SME, End_User, Approver, Informed_Only, Other}; organisation_type ∈ {PwC, Client, Joint, Alliance_Partner, Third_Party, Regulator, Vendor, Other}; engagement_role ∈ {Sponsor, Decision_Maker, Project_Owner, Programme_Manager, SME, End_User, Approver, Informed_Only, Other}; influence_level, interest_level ∈ {High, Medium, Low}; engagement_strategy ∈ {Manage_Closely, Keep_Satisfied, Keep_Informed, Monitor}; preferred_channel ∈ {Email, Phone, Video_Conference, In_Person, Instant_Message}; communication_cadence ∈ {Daily, Weekly, Fortnightly, Monthly, Quarterly, As_Needed}; yes_no ∈ {Yes, No}. Derive influence_level: score ≥4 → High; 3 → Medium; ≤2 → Low. Derive engagement_strategy: High influence + High interest = Manage_Closely; High influence + Medium/Low interest = Keep_Satisfied; Medium/Low influence + High interest = Keep_Informed; otherwise = Monitor. Use ISO 8601 dates. Table style: header row orange with white text; grey horizontal lines; no vertical borders.
 </context>
 <instructions>
-1. Load `P1_1_CANONICAL_HANDOFF`. Identify stakeholders: include client sponsor, engagement lead, key decision makers and any additional roles specified. Deduplicate by full_name; if both PwC and client stakeholders have same name, add organisation suffix.
-2. For each stakeholder, collect: stakeholder_id, full_name, organisation_name, organisation_type, role_title, engagement_role, influence_score (1–5), interest_score (1–5), preferred_channel and communication_cadence (default Weekly Email), sensitivity (Yes/No), contact_email, contact_phone, notes and source.
-3. Compute influence_level and interest_level from scores; assign engagement_strategy using the mapping. Determine quadrant by combining levels (e.g., High/High → Quadrant_I).
-4. Build an Excel workbook with three sheets: **Stakeholder_Register** (columns: stakeholder_id, full_name, organisation_name, organisation_type, role_title, engagement_role, influence_score, interest_score, influence_level, interest_level, quadrant, engagement_strategy, workstream, preferred_channel, communication_cadence, sensitivity, contact_email, contact_phone, notes, source, last_confirmed_date); **Stakeholder_Summary** (tables showing counts by stakeholder_type and engagement_strategy and a 3×3 influence–interest matrix); **Change_Log** (record_id, field_changed, old_value, new_value, date, updated_by).
-5. Use pandas and openpyxl to create the workbook. Apply the table style from <context>; freeze header rows; add filters and appropriate column widths.
-6. Prepare `P1_2_CANONICAL_HANDOFF` JSON summarising the stakeholder register (list of stakeholder objects) and include a link to the generated workbook. Do not include any additional commentary.
+1. Load \`P1_1_CANONICAL_HANDOFF\`. If client_name or engagement_name is missing, output \`P1_2_VALIDATION_ERRORS\` JSON and stop.
+2. Identify stakeholders from the brief: include client sponsor, engagement lead, key decision makers, project owner, programme manager and any additional roles specified. If the brief is sparse, infer standard PwC engagement roles appropriate to the engagement size and complexity. Depth floors: small engagements (<6 months) = 15–20 stakeholders; medium (6–12 months) = 20–25; large (12+ months) = 25+. Ensure representation across all four engagement_strategy quadrants. Generate the stakeholder data as a Python list of dictionaries within the code call rather than reasoning through each one individually before the code block. Deduplicate by full_name; if PwC and client stakeholders share a name, append the organisation suffix. Do not fabricate individual names — use role-based placeholders (e.g. "Client Programme Manager") where names are not provided.
+3. For each stakeholder, collect: stakeholder_id (SH-001…), full_name, organisation_name, organisation_type, role_title, engagement_role, influence_score (1–5), interest_score (1–5), preferred_channel (default Email), communication_cadence (default Weekly), sensitivity (Yes/No — default No), contact_email, contact_phone, notes and source.
+4. Compute influence_level and interest_level from scores using the derivation rules in <context>. Assign engagement_strategy using the mapping. Determine quadrant by combining levels (e.g., High influence + High interest → Manage_Closely).
+5. Build an Excel workbook (\`P1_2_Stakeholder_Register.xlsx\`) with three sheets:
+   **Stakeholder_Register** — columns as listed in step 3 plus influence_level, interest_level, quadrant, engagement_strategy, workstream and last_confirmed_date. Apply dropdown data validation on: organisation_type, engagement_role, preferred_channel, communication_cadence, sensitivity. Apply conditional formatting: Manage_Closely rows highlighted orange; sensitivity=Yes rows with bold left border.
+   **Stakeholder_Summary** — count tables by stakeholder_type and engagement_strategy; a 3×3 influence–interest matrix with stakeholder counts per cell and colour-coded fills (high-influence/high-interest in orange, low/low in light grey).
+   **Change_Log** — record_id, field_changed, old_value, new_value, date, updated_by. Pre-populate one instructional placeholder row.
+6. Apply consistent formatting across all sheets: freeze header row on each sheet; enable auto-filters; set column widths to fit content (minimum 14 characters); set tab colours (orange for Stakeholder_Register, grey for Change_Log). Use the table style from <context>.
+7. Use a single code interpreter call with pandas and openpyxl to create the workbook.
+8. Prepare \`P1_2_CANONICAL_HANDOFF\` JSON summarising the stakeholder register (list of stakeholder objects with all fields) and include a link to the generated workbook.
+9. Output only the JSON handoff and the workbook download link.
 </instructions>`
   },
 
@@ -8297,14 +8252,14 @@ const INLINED_PROMPTS = {
   Enumerations: scope_type ∈ {Inclusion, Exclusion, Assumption, Constraint}; objective_type ∈ {Business, Technical, Compliance, Regulatory, Risk, Other}; priority ∈ {Critical, High, Medium, Low}; confidence_level ∈ {High, Medium, Low, TBC}; yes_no ∈ {Yes, No}. Unknown fields should be marked "TBC". Use ISO 8601 dates. Table style as per global standards.
 </context>
 <instructions>
-1. Load `P1_1_CANONICAL_HANDOFF` and `P1_2_CANONICAL_HANDOFF`. Extract scope statements, objectives and success criteria from the brief and stakeholder analysis.
-2. Draft a boundary statement summarising what is in scope and out of scope, citing key inclusions and exclusions.
-3. Build a **Scope_Register** with columns: record_id, type (scope_type), title, description, category, source, confidence_level, owner_organisation_type, owner_role, status (Proposed, Confirmed, Deferred), date_confirmed, notes, linked_objective_ids and linked_stakeholder_ids.
-4. Build an **Objectives_Register** with columns: objective_id, objective_name, objective_type, priority, owner_role, owner_organisation_type, success_criteria, status, related_scope_ids.
-5. Build a **Success_Criteria** sheet mapping each objective to measurable criteria: criterion_id, objective_id, criterion_description, metric, target_value, measure_method, confidence_level, due_date, status.
-6. Use pandas and openpyxl to assemble a workbook (`P1_3_Scope_Objectives.xlsx`) with these sheets, applying the table style.
-7. Compose `P1_3_CANONICAL_HANDOFF` JSON containing: boundary_statement, inclusions[], exclusions[], assumptions[], constraints[], objectives[], success_criteria[], open_items[] and validation field.
-8. After running code, output the canonical JSON and a link to the workbook.
+1. Load \`P1_1_CANONICAL_HANDOFF\` and \`P1_2_CANONICAL_HANDOFF\`. If client_name or engagement_name is missing, output \`P1_3_VALIDATION_ERRORS\` JSON and stop. Extract scope statements, objectives and success criteria from the brief and stakeholder analysis.
+2. Draft a boundary statement (2–3 sentences) summarising what is in scope and out of scope, citing key inclusions and exclusions.
+3. Build a **Scope_Register** with columns: record_id (INC-001/EXC-001/ASM-001/CON-001 by type), scope_type, title, description, category, source, confidence_level, owner_organisation_type, owner_role, status (Proposed, Confirmed, Deferred), date_confirmed, notes, linked_objective_ids and linked_stakeholder_ids. Aim for a minimum of 3 inclusions, 2 exclusions and 2 assumptions. If fewer exist in the brief, add "Scope boundaries based on current brief — to be confirmed in workshop" as an assumption with confidence_level Low. Apply dropdown validation on scope_type, confidence_level and status. Apply conditional formatting: confidence_level=Low rows highlighted amber; status=Deferred rows greyed out.
+4. Build an **Objectives_and_Success_Criteria** sheet combining objectives with their measurable success criteria: objective_id (OBJ-001…), objective_name, objective_type, priority, owner_role, owner_organisation_type, status, related_scope_ids, criterion_id (SC-001…), criterion_description, metric, target_value, measure_method, confidence_level, due_date, criterion_status. Each objective may have multiple rows (one per criterion); repeat the objective fields on each row for easy filtering. Apply dropdown validation on objective_type, priority, confidence_level and status.
+5. Apply consistent formatting to all sheets: freeze header rows; enable auto-filters; set column widths to fit content (minimum 14 characters); set tab colours (orange for data sheets). Use the table style from <context>.
+6. Use a single code interpreter call with pandas and openpyxl to assemble the workbook (\`P1_3_Scope_Objectives.xlsx\`).
+7. Compose \`P1_3_CANONICAL_HANDOFF\` JSON containing: boundary_statement, inclusions[], exclusions[], assumptions[], constraints[], objectives[], success_criteria[], open_items[] and validation field.
+8. Output only the JSON handoff and a link to the workbook.
 </instructions>`
   },
 
@@ -8316,25 +8271,25 @@ const INLINED_PROMPTS = {
       `**Role & purpose** – Consolidate the engagement context, stakeholder analysis and scope registers into a formal Engagement Charter that will serve as the initiation stage gate.
 
 <context>
-  Enumerations and definitions: priority ∈ {Critical, High, Medium, Low}; decision_type ∈ {Scope_Change, Budget_Change, Schedule_Change, Deliverable_Signoff, Risk_Acceptance, Issue_Escalation, Commercial_Change}; owner_org ∈ {PwC, Client, Joint, Third_Party, TBC}; status ∈ {Draft, Proposed, Approved, Rejected, Deferred}; yes_no ∈ {Yes, No, TBC}. Date fields use ISO 8601 (YYYY MM DD). Use the global style rules (Linked Arial headings, 11 pt body text, orange table headers, grey horizontal rules, no vertical borders). Example table:
+  Enumerations and definitions: priority ∈ {Critical, High, Medium, Low}; decision_type ∈ {Scope_Change, Budget_Change, Schedule_Change, Deliverable_Signoff, Risk_Acceptance, Issue_Escalation, Commercial_Change}; owner_org ∈ {PwC, Client, Joint, Third_Party, TBC}; status ∈ {Draft, Proposed, Approved, Rejected, Deferred}; yes_no ∈ {Yes, No, TBC}. Date fields use ISO 8601 (YYYY MM DD). Use the global style rules (Arial headings, 11 pt body text, orange table headers, grey horizontal rules, no vertical borders). Example table:
   Client Name | Engagement Name | Engagement Code | Delivery Methodology | Fee Structure | Total Budget | Start Date | End Date | Primary Workstreams
   ACME Corp | Project Phoenix | ENG 001 | Agile | Time_and_Materials | AUD 1.2M | 2026 03 01 | 2026 10 31 | Core Build, Integration, Testing
 </context>
 <instructions>
-1. Extract and normalise data from the canonical handoffs: `P1_1_CANONICAL_HANDOFF`, `P1_2_CANONICAL_HANDOFF` and `P1_3_CANONICAL_HANDOFF`. Apply canonical field names and enumerations; unknown values become "TBC".
+1. Extract and normalise data from the canonical handoffs: \`P1_1_CANONICAL_HANDOFF\`, \`P1_2_CANONICAL_HANDOFF\` and \`P1_3_CANONICAL_HANDOFF\`. If client_name or engagement_name is missing, or zero objectives exist, output \`P1_4_VALIDATION_ERRORS\` JSON listing the missing fields and stop. Apply canonical field names and enumerations; unknown values become "TBC".
 2. Draft the charter narrative: write a concise purpose and introduction describing the engagement and the role of the charter; summarise the engagement overview in a table (see example).
 3. Derive and populate tables for objectives, success criteria and KPIs using the priority and owner role enumerations.
-4. Summarise the scope: include the boundary statement; list top inclusions and exclusions; summarise assumptions, constraints and dependencies; ensure each item is traced back to `P1_3`.
+4. Summarise the scope: include the boundary statement; list top inclusions and exclusions; summarise assumptions, constraints and dependencies; ensure each item is traced back to \`P1_3\`.
 5. Describe the delivery approach: reference the delivery methodology and identify primary workstreams; if unknown, insert 'TBC' and create an open item.
 6. Build team and role tables: list PwC and Client roles with names (or placeholders), responsibilities and owner_org.
 7. Create a decision rights table using decision_type enumerations and map Accountable, Consulted and Informed roles based on stakeholder responsibilities.
 8. Summarise commercial terms (billing frequency, invoicing contact, PO reference, payment terms, currency, GST treatment); unknown values are flagged as 'Proposed – to be confirmed'.
 9. Provide a brief risk, compliance and quality statement referencing the need for detailed registers (to be generated later).
-10. Outline the change control policy and note that formal change requests will be handled in `P2.7`.
+10. Outline the change control policy and note that formal change requests will be managed through the governance framework defined in \`P1.5\`.
 11. List all open items from upstream handoffs and any new items introduced in this step; assign each to an owner role with a priority.
 12. Create a sign off table for key roles (Client Sponsor, Project Owner, PwC Engagement Lead, Engagement Manager, Account Leader) with signature and date placeholders.
-13. Using python docx, generate a Word document with the sections above. Apply the style guidelines: Linked Arial headings (L1–4 at 18/16/14/11 pt), 11 pt body text at 1.5 spacing, orange header rows with white text for tables, grey horizontal rules and no vertical borders. Include the confidentiality footer on every page.
-14. Assemble `P1_4_CANONICAL_HANDOFF` JSON containing `engagement_identifiers`, `engagement_context`, `scope_summary`, `objectives_refs`, `roles`, `decision_rights_summary`, `commercial_terms`, `open_items[]` and `validation`, plus a link to the generated document.
+13. Use a single code interpreter call with python-docx to generate a Word document with the sections above. Apply the style guidelines: Arial headings (L1–4 at 18/16/14/11 pt), 11 pt body text at 1.5 spacing, orange header rows with white text for tables, grey horizontal rules and no vertical borders. Include the confidentiality footer on every page.
+14. Assemble \`P1_4_CANONICAL_HANDOFF\` JSON containing \`engagement_identifiers\`, \`engagement_context\`, \`scope_summary\`, \`objectives_refs\`, \`roles\`, \`decision_rights_summary\`, \`commercial_terms\`, \`open_items[]\` and \`validation\`, plus a link to the generated document.
 15. After the code call, output the JSON handoff and a closing sentence indicating that the charter has been generated.
 </instructions>`
   },
@@ -8350,17 +8305,18 @@ const INLINED_PROMPTS = {
   Enumerations: governance_body_type ∈ {Steering_Committee, Project_Board, Working_Group, PMO, Stakeholder_Forum, Other}; meeting_type ∈ {Kickoff, Steering_Committee, Working_Group, Workshop, Weekly_Status, Fortnightly_Status, Monthly_Report, Quarterly_Review, Other}; frequency ∈ {Weekly, Fortnightly, Monthly, Quarterly, As_Needed}; decision_scope ∈ {Scope_Change, Budget_Change, Schedule_Change, Deliverable_Signoff, Risk_Acceptance, Issue_Escalation, Commercial_Change}; escalation_level ∈ {Project_Manager, Programme_Manager, Steering_Committee, Board, Executive}. Use the global style rules; tables follow the orange header/grey horizontal rule style. Example table: Governance Body | Purpose | Chair Role | Member Roles | Frequency | Quorum | Decision Scope; Steering Committee | Provide strategic direction and approve major changes | Client Sponsor | PwC Engagement Lead; Client Project Owner; PwC Programme Manager | Monthly | 60% of members | Scope, Budget, Schedule.
 </context>
 <instructions>
-1. Consolidate inputs from `P1_1_CANONICAL_HANDOFF`, `P1_2_CANONICAL_HANDOFF`, `P1_3_CANONICAL_HANDOFF` and `P1_4_CANONICAL_HANDOFF`. Identify required governance bodies and their purposes based on engagement size, complexity and regulatory requirements.
-2. For each governance body, define: body_name, purpose, chair_role, member_roles, frequency, quorum and decision_scope (one or more items from the enumeration) and any delegated authority.
-3. Create an escalation ladder: list escalation triggers (e.g., schedule variance > 10%), escalation level, responsible role and target resolution time.
-4. Define a reporting cadence: for each report type (e.g., Status Report, Risk Report, Budget Report, Milestone Report, Steering Deck), specify audience, frequency, owner_role, approval_role, delivery format and due dates.
-5. Build a meeting schedule table: meeting_id, governance_body, meeting_type, frequency, day_of_week, time, chair_role, agenda_owner_role, minutes_owner_role, attendee_roles and status (Planned, Completed, Cancelled, TBC).
-6. Construct a decision/action log template: record_id, record_type (Decision/Action), date, title, description, source_body, owner_role, due_date, status, decision_outcome (if decision) and notes.
-7. Assemble a RACI matrix for key governance activities (e.g., change approval, risk review, milestone signoff): list tasks down the rows and roles across columns, with R/A/C/I assignments.
-8. Generate a Terms of Reference (TOR) sheet: for each governance body, list the decision scope, membership, quorum requirement and escalation path.
-9. Use pandas and openpyxl to create a multi sheet workbook (`P1_5_Governance_Framework.xlsx`) containing sheets for Governance_Bodies, Meeting_Schedule, Reporting_Cadence, RACI_Matrix, Decision_Action_Log and TOR. Apply the standard table formatting.
-10. Produce `P1_5_CANONICAL_HANDOFF` summarising governance bodies, escalation ladder, reporting cadence and a link to the workbook.
-11. After the code call, output only the JSON handoff and a sentence indicating that the governance framework has been created.
+1. Consolidate inputs from \`P1_1_CANONICAL_HANDOFF\`, \`P1_2_CANONICAL_HANDOFF\`, \`P1_3_CANONICAL_HANDOFF\` and \`P1_4_CANONICAL_HANDOFF\`. If client_name or engagement_name is missing, output \`P1_5_VALIDATION_ERRORS\` JSON and stop.
+2. Determine engagement size: Small (<6 months, 1–2 workstreams), Medium (6–12 months, 2–4 workstreams) or Large (12+ months, 4+ workstreams). If size cannot be determined, default to Medium.
+3. Propose governance bodies based on size: Small = Steering Committee + Delivery Working Group; Medium = add PMO/Reporting Forum; Large = add Workstream Lead Forums. Always propose at least two governance bodies. For each body define: body_name, purpose, chair_role, member_roles, frequency, quorum, decision_scope (one or more from the enumeration) and delegated_authority. Membership must be role-based (not named individuals unless explicitly known from upstream).
+4. Build a **Governance_Bodies** sheet with the columns from step 3. Below the governance bodies table (separated by a bold section header row "Escalation Ladder"), add an escalation ladder table: escalation_trigger (e.g., schedule variance >10%, budget variance >5%), escalation_level, responsible_role, target_resolution_time. Apply dropdown validation on frequency and decision_scope in the bodies table.
+5. Build a **Reporting_Cadence** sheet: report_type, audience, frequency, owner_role, approval_role, delivery_format, due_date. Include at minimum: Status Report, Risk Report, Budget Report, Milestone Report, Steering Deck. Apply dropdown validation on frequency and delivery_format.
+6. Build a **Meeting_Schedule** sheet: meeting_id, governance_body, meeting_type, frequency, day_of_week, time, chair_role, attendee_roles, status (Planned, Completed, Cancelled, TBC). Set day_of_week and time to "TBC" rather than fabricating specific days or times. Apply dropdown validation on meeting_type, frequency and status.
+7. Build a **Decision_Action_Log** sheet as a headers-only template: record_id, record_type (Decision/Action), date, title, description, source_body, owner_role, due_date, status, decision_outcome (if Decision), notes. Pre-populate one instructional placeholder row. Apply dropdown validation on record_type and status.
+8. Build a **RACI_Matrix** sheet for key governance activities (change approval, risk review, milestone signoff, status reporting, budget review, escalation management): list activities as rows and roles as columns, with R/A/C/I assignments. Ensure each activity has exactly one A (Accountable).
+9. Apply consistent formatting to all sheets: freeze header rows; enable auto-filters; set column widths to fit content (minimum 14 characters); set tab colours (orange for Governance_Bodies and Meeting_Schedule, grey for Decision_Action_Log); use the table style from <context>.
+10. Use a single code interpreter call with pandas and openpyxl to create \`P1_5_Governance_Framework.xlsx\` with all five sheets.
+11. Produce \`P1_5_CANONICAL_HANDOFF\` summarising governance bodies, escalation ladder, reporting cadence and a link to the workbook.
+12. Output only the JSON handoff and a sentence confirming the governance framework has been created.
 </instructions>`
   },
 
@@ -8375,16 +8331,18 @@ const INLINED_PROMPTS = {
   Enumerations: element_type ∈ {Engagement, Phase, Workstream, Deliverable, Work_Package}; owner_organisation_type ∈ {PwC, Client, Joint, Third_Party}; priority ∈ {Critical, High, Medium, Low}; milestone_type ∈ {Phase_Gate, Deliverable_Signoff, Client_Approval, Regulatory_Submission, Go_Live, Review_Point, Steering_Committee, Sprint_Review, Other}; task_status ∈ {Not_Started, In_Progress, Complete, On_Hold, Cancelled, Blocked}; yes_no ∈ {Yes, No}. Working days are Monday–Friday; person days assume 8 hours/day; use ISO 8601 dates. Table style per global guidelines.
 </context>
 <instructions>
-1. Load `P1_3_CANONICAL_HANDOFF`, `P1_4_CANONICAL_HANDOFF` and `P1_5_CANONICAL_HANDOFF`. Create a top level WBS element for the engagement and define phases, workstreams, deliverables and work packages. Use the element_type enumeration and assign wbs_level accordingly (Engagement=1, Phase=2, Workstream=3, Deliverable/Work_Package=4).
-2. For each deliverable or work package, set estimated_effort_days and estimated_duration_days based on scope items and objectives; assign owner_organisation_type and responsible_role; set priority; identify predecessor_wbs_ids where tasks are sequential.
-3. Build a **WBS_Dictionary** sheet with columns: wbs_id, element_name, parent_wbs_id, wbs_level, element_type, owner_organisation_type, responsible_role, estimated_effort_days, estimated_duration_days, predecessor_wbs_ids, priority, task_status.
-4. Create a **Deliverable_Register** sheet: deliverable_id, workstream, owner_organisation_type, responsible_role, estimated_effort_days, planned_start_date, planned_end_date, acceptance_criteria, sign_off_required (Yes/No), sign_off_authority, scope_objective_trace, status.
-5. Create a **Milestone_Plan** sheet: milestone_id, milestone_name, phase_or_workstream, milestone_type, planned_date, actual_date, variance_days, status, owner_role, signoff_required (Yes/No), signoff_status.
-6. Create a **Schedule** sheet with task-level detail: task_id, wbs_id, task_name, wbs_level, workstream, owner_role, planned_start_date, planned_end_date, duration_days, predecessor_task_ids, task_status, percent_complete, is_milestone (Yes/No), is_critical_path (Yes/No), sprint, notes.
-7. Create a **KPI_Summary** sheet summarising planned vs. actual start and finish dates, total effort and percent complete by workstream, phase and overall.
-8. Create a **Change_Log** sheet recording any adjustments to the WBS or schedule: change_id, change_type, reason, affected_wbs_id, date, author_role, approved_by, notes.
-9. Use pandas and openpyxl to assemble `P2_1_WBS_Schedule.xlsx` with the above sheets; apply consistent table formatting.
-10. Build `P2_1_CANONICAL_HANDOFF` JSON capturing the WBS hierarchy, schedule summary and a link to the workbook. Output only the JSON and workbook link.
+1. Load \`P1_3_CANONICAL_HANDOFF\`, \`P1_4_CANONICAL_HANDOFF\` and \`P1_5_CANONICAL_HANDOFF\`. If scope items or objectives are missing, output \`P2_1_VALIDATION_ERRORS\` JSON and stop. Create a top-level WBS element for the engagement and define phases, workstreams, deliverables and work packages. Use the element_type enumeration and assign wbs_level accordingly (Engagement=1, Phase=2, Workstream=3, Deliverable/Work_Package=4).
+2. For each deliverable or work package, set estimated_effort_days and estimated_duration_days based on scope items and objectives; assign owner_organisation_type and responsible_role; set priority; identify predecessor_wbs_ids where tasks are sequential. When effort or duration is unknown, use reasonable defaults based on element_type and mark confidence as TBC in the notes.
+3. Build a **WBS_Dictionary** sheet with columns: wbs_id, element_name, parent_wbs_id, wbs_level, element_type, owner_organisation_type, responsible_role, estimated_effort_days, estimated_duration_days, predecessor_wbs_ids, priority, task_status. Apply dropdown validation on element_type, owner_organisation_type, priority and task_status.
+4. Create a **Deliverable_Register** sheet: deliverable_id, deliverable_name, workstream, owner_organisation_type, responsible_role, estimated_effort_days, planned_start_date, planned_end_date, acceptance_criteria, sign_off_required (Yes/No), sign_off_authority, scope_objective_trace, status. Apply dropdown validation on owner_organisation_type, sign_off_required and status.
+5. Create a **Milestone_Plan** sheet: milestone_id, milestone_name, phase_or_workstream, milestone_type, planned_date, actual_date, variance_days (formula: if actual_date is blank return blank, else actual − planned), status, owner_role, signoff_required (Yes/No), signoff_status. Apply dropdown validation on milestone_type, status and signoff_status. Apply conditional formatting: overdue milestones (actual_date past planned_date) highlighted red; signoff_status=Pending highlighted amber.
+6. Create a **Schedule** sheet with task-level detail: task_id, wbs_id, task_name, wbs_level, workstream, owner_role, planned_start_date, planned_end_date, duration_days, predecessor_task_ids, task_status, percent_complete, is_milestone (Yes/No), is_critical_path (Yes/No), sprint, notes. Calculate start and end dates based on predecessors and working days. To identify the critical path, flag the longest sequential chain of predecessors as is_critical_path=Yes — do not implement a full CPM algorithm; simply identify the longest path by summing durations along predecessor chains. Apply conditional formatting: critical path tasks in bold; Blocked or On_Hold tasks highlighted red.
+7. Create a **KPI_Summary** sheet with explicit columns: dimension (Phase/Workstream/Overall), dimension_name, planned_start, planned_end, actual_start, actual_end, planned_effort_days, actual_effort_days, percent_complete, status. Populate one row per workstream, one per phase and one overall summary row.
+8. Create a **Change_Log** sheet: change_id, change_type, reason, affected_wbs_id, date, author_role, approved_by, notes. Pre-populate one instructional placeholder row.
+9. Apply consistent formatting to all sheets: freeze header rows; enable auto-filters; set column widths to fit content (minimum 14 characters); set tab colours (orange for WBS_Dictionary and Schedule, grey for Change_Log). Use the table style from <context>.
+10. Use a single code interpreter call with pandas and openpyxl to assemble \`P2_1_WBS_Schedule.xlsx\` with all six sheets.
+11. Build \`P2_1_CANONICAL_HANDOFF\` JSON capturing the WBS hierarchy, deliverables, milestones, schedule summary and a link to the workbook.
+12. Output only the JSON and workbook link.
 </instructions>`
   },
 
@@ -8393,21 +8351,20 @@ const INLINED_PROMPTS = {
     prompt_name: "Resource Plan & RACI",
     artifact: "P2_2_RESOURCE_PLAN",
     instruction:
-      `**Role & purpose** – Build a resource plan and RACI matrix to allocate roles to work packages, assess capacity and produce a multi sheet workbook and canonical handoff.
+      `**Role & purpose** – Build a resource plan to allocate roles to work packages and produce a workbook and canonical handoff.
 
 <context>
   Enumerations: seniority_level ∈ {Partner, Director, Senior_Manager, Manager, Senior_Associate, Associate, Analyst, Specialist, Other}; organisation_type ∈ {PwC, Client, Joint, Alliance_Partner, Third_Party, Regulator, Vendor, Other}; location ∈ {Onshore, Offshore, Near_Shore, Client_Site, Remote}; confirmed_status ∈ {Confirmed, Proposed, TBC}; raci_code ∈ {R, A, C, I}; yes_no ∈ {Yes, No}. Working days Monday–Friday; person days = 8 hours; use ISO 8601 dates.
 </context>
 <instructions>
-1. Load `P2_1_CANONICAL_HANDOFF` along with `P1_4_CANONICAL_HANDOFF` and `P1_2_CANONICAL_HANDOFF`. Determine resource requirements by mapping each work package to the responsible role and estimated effort_days.
-2. For each role, derive seniority_level, organisation_type and location based on the engagement context and stakeholder register. When names are unknown, leave full_name blank and set confirmed_status to TBC.
-3. Build a **Resource_Register** sheet with columns: resource_id, full_name, role_title, seniority_level, organisation_type, primary_workstream, secondary_workstream, location, start_date, end_date, total_effort_days, estimated_duration_days, fte_allocation (effort/duration), availability_percent, daily_rate, confirmed_status, security_clearance_required (Yes/No), notes.
-4. Build a **Weekly_Loading** sheet with one row per resource and one column per week from project start to end; fill planned allocation days; compute utilisation_percent and highlight >100%.
-5. Build a **Capacity_Summary** sheet aggregating total capacity and demand by week and by organisation_type; compute variance_days and utilisation_percent; assign a status (Overloaded if >100%, Underutilised if <60%).
-6. Build a **Seniority_Mix** sheet summarising total effort and cost by seniority_level and organisation_type, plus percentages of total.
-7. Build a **RACI_Matrix** sheet with tasks (from WBS) down the rows and roles across columns; fill each cell with the appropriate RACI code.
-8. Use pandas and openpyxl to create `P2_2_Resource_Plan.xlsx` with these sheets, formatting tables according to the style guidelines.
-9. Prepare `P2_2_CANONICAL_HANDOFF` JSON summarising resource requirements, capacity utilisation and a link to the workbook. Output only the JSON and the workbook link.
+1. Load \`P2_1_CANONICAL_HANDOFF\` along with \`P1_4_CANONICAL_HANDOFF\` and \`P1_2_CANONICAL_HANDOFF\`. If WBS or schedule data is missing, output \`P2_2_VALIDATION_ERRORS\` JSON and stop. Determine resource requirements by mapping each work package to the responsible role and estimated effort_days.
+2. For each role, derive seniority_level, organisation_type and location based on the engagement context and stakeholder register. Use these inference rules when upstream data is sparse: engagement leadership roles → Partner/Director/Senior_Manager; PMO/Engagement Manager → Manager/Senior_Manager; workstream leads → Manager/Senior_Manager; delivery team → Associate/Senior_Associate/Analyst; specialist roles → Specialist. When names are unknown, leave full_name blank and set confirmed_status to TBC. Mark all inferred roles with "Inferred" in the notes column.
+3. Ensure minimum resource coverage based on engagement size: small (<6 months) = 6–10 roles; medium (6–12 months) = 10–18 roles; large (12+ months) = 18+ roles. At minimum always include: Engagement Partner/Lead, Engagement Manager, one Workstream Lead per workstream, appropriate delivery staff, Client Sponsor, Client Project Owner.
+4. Build a **Resource_Register** sheet with columns: resource_id (RES-001…), full_name, role_title, seniority_level, organisation_type, primary_workstream, secondary_workstream, location, start_date, end_date, total_effort_days, estimated_duration_days, fte_allocation (formula: IFERROR(effort/duration, 0)), availability_percent, daily_rate, confirmed_status, security_clearance_required (Yes/No), notes. Apply dropdown data validation on: seniority_level, organisation_type, location, confirmed_status, security_clearance_required. Apply conditional formatting: confirmed_status=TBC rows highlighted amber; fte_allocation>1.0 highlighted red.
+5. Apply consistent formatting: freeze header row; enable auto-filters; set column widths to fit content (minimum 14 characters); set tab colour orange. Use the table style from <context>.
+6. Use a single code interpreter call with pandas and openpyxl to create \`P2_2_Resource_Plan.xlsx\` with the Resource_Register sheet.
+7. Prepare \`P2_2_CANONICAL_HANDOFF\` JSON summarising resource requirements (roles list, total effort, seniority breakdown) and a link to the workbook.
+8. Output only the JSON and the workbook link.
 </instructions>`
   },
 
@@ -8422,14 +8379,16 @@ const INLINED_PROMPTS = {
   Enumerations: cost_type ∈ {Labour_PwC, Labour_Client, Labour_Alliance_Partner, Labour_Third_Party, Travel_and_Accommodation, Technology_and_Software, Training, Printing_and_Production, Contingency, Other}; confidence_level ∈ {High, Medium, Low, TBC}; reimbursable ∈ {Yes, No}; fixed_or_variable ∈ {Fixed, Variable}; invoice_status ∈ {Draft, Sent, Paid, Cancelled, Overdue}; yes_no ∈ {Yes, No}. Use AUD currency; ISO 8601 dates; person_days as defined earlier.
 </context>
 <instructions>
-1. Load `P2_1_CANONICAL_HANDOFF` and `P2_2_CANONICAL_HANDOFF`. For each resource, compute baseline cost = total_effort_days × daily_rate. Categorise costs by phase_or_workstream and cost_type.
-2. Build a **Budget_Baseline** sheet: budget_line_id, cost_item_description, phase_or_workstream, cost_type, resource_role, seniority_level, effort_days, daily_rate, baseline_amount, confidence_level, reimbursable, fixed_or_variable, notes.
-3. Build a **Cost_Tracker** sheet to record actual costs by period: record_id, date, description, resource_role, cost_type, planned_amount, actual_amount, variance_amount, variance_percent, status.
-4. Build a **Monthly_Profile** sheet summarising planned and actual costs per month: month, planned_labour_cost, planned_non_labour_cost, actual_labour_cost, actual_non_labour_cost, cumulative_planned, cumulative_actual, cost_variance, variance_percent, status.
-5. Build an **Invoice_Schedule** sheet: invoice_id, description, billing_period_or_milestone, invoice_type (Progress, Milestone, Retainer, Final), planned_invoice_date, amount_excl_gst, gst_amount, total_amount, invoice_status, invoice_number, date_sent, date_paid, outstanding_days, notes.
-6. Build an **Earned_Value_Metrics** sheet: period_start, period_end, planned_value (PV), earned_value (EV), actual_cost (AC), schedule_variance (SV = EV - PV), cost_variance (CV = EV - AC), SPI (EV/PV), CPI (EV/AC), EAC (total_budget / CPI), VAC (total_budget - EAC), TCPI ((total_budget - EV)/(total_budget - AC)).
-7. Use pandas and openpyxl to assemble `P2_3_Budget_Baseline.xlsx` with these sheets; apply table formatting and freeze header rows.
-8. Create `P2_3_CANONICAL_HANDOFF` JSON summarising baseline totals, cost categories, invoice summary and a link to the workbook. Output only the JSON and workbook link.
+1. Load \`P2_1_CANONICAL_HANDOFF\` and \`P2_2_CANONICAL_HANDOFF\`. If resource data or schedule data is missing, output \`P2_3_VALIDATION_ERRORS\` JSON and stop. For each resource, compute baseline cost = total_effort_days × daily_rate. Categorise costs by phase_or_workstream and cost_type.
+2. Build a **Budget_Baseline** sheet: budget_line_id (BL-001…), cost_item_description, phase_or_workstream, cost_type, resource_role, seniority_level, effort_days, daily_rate, baseline_amount (formula: effort × rate), confidence_level, reimbursable, fixed_or_variable, notes. Include a totals row at the bottom. Apply dropdown validation on cost_type, confidence_level, reimbursable and fixed_or_variable. Apply conditional formatting: confidence_level=Low highlighted amber; Contingency rows highlighted light blue.
+3. Build a **Cost_Tracker** sheet to record actual costs by period: record_id, date, description, resource_role, cost_type, planned_amount, actual_amount, variance_amount (formula: actual − planned), variance_percent (formula: IFERROR(variance/planned, 0)), status. Pre-populate one instructional placeholder row. Apply conditional formatting: negative variance highlighted green; positive variance >10% highlighted red.
+4. Build a **Monthly_Profile** sheet summarising planned and actual costs per month: month, planned_labour_cost, planned_non_labour_cost, actual_labour_cost, actual_non_labour_cost, cumulative_planned, cumulative_actual, cost_variance, variance_percent, status. Populate the planned columns from the baseline data; leave actual columns as zero for initial baseline. Apply conditional formatting: variance_percent >10% highlighted red.
+5. Build an **Invoice_Schedule** sheet: invoice_id (INV-001…), description, billing_period_or_milestone, invoice_type (Progress, Milestone, Retainer, Final), planned_invoice_date, amount_excl_gst, gst_amount (formula: amount × 0.10), total_amount (formula: excl + gst), invoice_status, invoice_number, date_sent, date_paid, outstanding_days, notes. Apply dropdown validation on invoice_type and invoice_status. Apply conditional formatting: invoice_status=Overdue highlighted red.
+6. Build an **Earned_Value_Metrics** sheet: period_start, period_end, planned_value (PV), earned_value (EV), actual_cost (AC), schedule_variance (SV = EV − PV), cost_variance (CV = EV − AC), SPI (IFERROR(EV/PV, 0)), CPI (IFERROR(EV/AC, 0)), EAC (IFERROR(total_budget / CPI, 0)), VAC (total_budget − EAC), TCPI (IFERROR((total_budget − EV)/(total_budget − AC), 0)). Wrap all division formulas in IFERROR to handle blank or zero denominators. Pre-populate the first period with baseline values; subsequent periods left blank for tracking. Apply conditional formatting: SPI or CPI <1.0 highlighted red; >1.0 highlighted green.
+7. Apply consistent formatting to all sheets: freeze header rows; enable auto-filters; set column widths to fit content (minimum 14 characters); set tab colours (orange for Budget_Baseline and Monthly_Profile, grey for Cost_Tracker). Use the table style from <context>.
+8. Use a single code interpreter call with pandas and openpyxl to assemble \`P2_3_Budget_Baseline.xlsx\` with these sheets.
+9. Create \`P2_3_CANONICAL_HANDOFF\` JSON summarising baseline totals, cost categories, invoice schedule and a link to the workbook.
+10. Output only the JSON and workbook link.
 </instructions>`
   },
 
@@ -8438,20 +8397,22 @@ const INLINED_PROMPTS = {
     prompt_name: "Risk Register",
     artifact: "P2_4_RISK_REGISTER",
     instruction:
-      `**Role & purpose** – Develop a comprehensive risk register and mitigation plan, with heat maps, response actions and trend analysis.
+      `**Role & purpose** – Develop a comprehensive risk register with heat map visualisation.
 
 <context>
   Enumerations: risk_category ∈ {Strategic, Financial, Operational, Schedule, Resource, Technology, Regulatory_and_Compliance, Stakeholder, Scope, Quality, Third_Party, Cyber_and_Security, People, Environmental_and_ESG, Other}; likelihood_level ∈ {High=3, Medium=2, Low=1}; impact_level ∈ {High=3, Medium=2, Low=1}; risk_rating mapping: 9=Critical, 6=High, 3–4=Medium, 1–2=Low; risk_response_strategy ∈ {Avoid, Mitigate, Transfer, Accept}; risk_status ∈ {Open, Mitigated, Accepted, Closed, Transferred, Eventuated}; yes_no ∈ {Yes, No}. Unknown values become "TBC".
 </context>
 <instructions>
-1. Load `P1_3_CANONICAL_HANDOFF` and `P1_4_CANONICAL_HANDOFF` to identify potential risks and constraints. Augment with risks raised during stakeholder analysis.
-2. For each risk, collect: risk_id, title, risk_category, description (cause → event → effect), source, owner_role, owner_organisation_type, likelihood_level, impact_level, risk_score (likelihood × impact), risk_rating (using mapping), risk_response_strategy, mitigation_actions, contingency_plan, residual_likelihood_level, residual_impact_level, residual_score, residual_rating, risk_status, escalation_required (Yes/No), next_review_date, restricted_distribution (Yes/No), date_raised, raised_by, notes.
-3. Build a **Risk_Register** sheet with the above columns; compute risk_score and risk_rating automatically.
-4. Build a **Heat_Map** sheet summarising count of risks for each combination of likelihood_level and impact_level; apply conditional formatting using risk_rating colours (Critical, High, Medium, Low).
-5. Build a **Response_Plan** sheet with columns: risk_id, risk_rating, action_id, specific_action, action_type (Mitigation, Contingency, Transfer), action_owner, due_date, status.
-6. Build a **Trend_Dashboard** sheet tracking risk ratings over time: risk_id, review_date, baseline_rating, current_rating, change, notes.
-7. Use pandas and openpyxl to produce `P2_4_Risk_Register.xlsx` with these sheets; apply style guidelines.
-8. Prepare `P2_4_CANONICAL_HANDOFF` JSON summarising risk counts by rating and linking to the workbook. Output only the JSON and workbook link.
+1. Load \`P1_3_CANONICAL_HANDOFF\`, \`P1_4_CANONICAL_HANDOFF\` and other available upstream handoffs. If client_name or engagement_name is missing, output \`P2_4_VALIDATION_ERRORS\` JSON and stop. Identify potential risks from: scope assumptions and constraints, regulatory obligations, schedule pressure, resource gaps, technology complexity and stakeholder sensitivities.
+2. Generate a comprehensive risk set. Extract risks explicitly stated in upstream handoffs (mark source: Upstream). Then infer realistic risks based on engagement context — industry, methodology, complexity, regulatory profile (mark source: Inferred). Minimum risk count: small engagements (<6 months) = 10–15 risks; medium (6–12 months) = 15–25; large (12+ months) = 25+. Do not produce a skeleton register with only 3–5 generic risks.
+3. For each risk, collect: risk_id (RSK-001…), title, risk_category, description (written as: cause → event → effect), source, owner_role, owner_organisation_type, likelihood_level, impact_level, risk_score (formula: likelihood × impact), risk_rating (9=Critical, 6=High, 3–4=Medium, 1–2=Low), risk_response_strategy, mitigation_actions (specific and actionable, not generic), contingency_plan, residual_likelihood_level, residual_impact_level, residual_score, residual_rating, risk_status (default Open), escalation_required (Yes for Critical risks), next_review_date, restricted_distribution (Yes/No), date_raised, raised_by, notes.
+4. Set next_review_date based on rating: Critical = +7 days; High = +14 days; Medium = +28 days; Low = +56 days from the current date.
+5. Build a **Risk_Register** sheet with all columns from step 3; compute risk_score and risk_rating via formulas. Apply dropdown validation on: risk_category, likelihood_level, impact_level, risk_response_strategy, risk_status, escalation_required, restricted_distribution. Apply conditional formatting: Critical rows with red fill (#D32F2F); High rows with orange fill (#FF9800); Medium rows with amber fill (#FFC107); Low rows with green fill (#4CAF50). Overdue next_review_date highlighted with red text.
+6. Build a **Heat_Map** sheet as a visual matrix (not a flat table). Build a fixed 4×4 range: row 1 contains a blank cell then impact labels (High, Medium, Low) in columns B–D; column A rows 2–4 contains likelihood labels (High, Medium, Low). Populate each intersection cell with a COUNTIFS formula counting risks from the Risk_Register sheet matching that likelihood and impact combination. Apply colour fills to each cell based on the resulting score: 9=#D32F2F, 6=#FF9800, 3–4=#FFC107, 1–2=#4CAF50. Below the inherent grid, add a second identically structured 3×3 grid for residual ratings using residual_likelihood and residual_impact.
+7. Apply consistent formatting: freeze header rows; enable auto-filters; set column widths to fit content (minimum 14 characters); set tab colours (orange for Risk_Register, grey for Heat_Map). Use the table style from <context>.
+8. Use a single code interpreter call with pandas and openpyxl to produce \`P2_4_Risk_Register.xlsx\` with these sheets.
+9. Prepare \`P2_4_CANONICAL_HANDOFF\` JSON summarising: total risk count, counts by rating (Critical/High/Medium/Low), top 5 risks by score, and a link to the workbook.
+10. Output only the JSON and workbook link.
 </instructions>`
   },
 
@@ -8466,13 +8427,14 @@ const INLINED_PROMPTS = {
   Enumerations: communication_type ∈ {Report, Meeting, Workshop, Training, Update, Newsletter, Ad_Hoc, Other}; frequency ∈ {Daily, Weekly, Fortnightly, Monthly, Quarterly, Annually, As_Needed}; preferred_channel ∈ {Email, Phone, Video_Conference, In_Person, Instant_Message}; audience_type ∈ {Sponsor, Steering_Committee, Team, Stakeholders, Regulators, Vendors, Clients, Public, Other}; sensitivity_level ∈ {Public, Internal, Confidential, Secret}; yes_no ∈ {Yes, No}. Table style as per global guidelines.
 </context>
 <instructions>
-1. Load stakeholder analysis and governance framework handoffs (`P1_2_CANONICAL_HANDOFF` and `P1_5_CANONICAL_HANDOFF`). Group stakeholders into audience groups based on organisation_type and engagement_role.
-2. Build an **Audience_Groups** sheet: audience_name, audience_type, stakeholder_type, engagement_strategy, key_communication_needs, preferred_channel, sensitivity_level.
-3. Build a **Communications_Matrix** sheet with columns: comm_id, communication_title, communication_type, purpose, primary_audience_group, engagement_strategy, frequency, channel, format (e.g., PDF, Slide, Email), owner_role, approver_role, next_due_date, last_sent_date, status, sensitive (Yes/No), approval_required (Yes/No), linked_governance_body, phase_or_workstream, notes.
-4. Build a **Message_Library** sheet: template_id, template_name, communication_type, audience_group, purpose, key_messages, tone (Formal, Informal, Urgent, Supportive), status (Draft, Approved, Deprecated), approved_by, last_updated, notes.
-5. Build a **Distribution_List** sheet: stakeholder_id, full_name, role_title, organisation_type, audience_group, preferred_channel, sensitive_comms_only (Yes/No).
-6. Use pandas and openpyxl to generate `P2_5_Communications_Plan.xlsx` with these sheets; apply table styling and freeze headers.
-7. Output `P2_5_CANONICAL_HANDOFF` JSON summarising the communications plan and including the workbook link.
+1. Load \`P1_2_CANONICAL_HANDOFF\` and \`P1_5_CANONICAL_HANDOFF\`. If stakeholder data or governance bodies are missing, output \`P2_5_VALIDATION_ERRORS\` JSON and stop. Group stakeholders into audience groups based on organisation_type and engagement_role.
+2. Derive communication activities from the governance framework: each governance body meeting implies preparation, agenda distribution and minutes distribution. Additionally, create communications for: weekly team status update, steering committee pack, working group stand-ups, RAID review forum, and deliverable sign-off notifications. If the governance cadence is sparse, infer standard communications for the engagement type and flag as source: Inferred.
+3. Build an **Audience_Groups** sheet: audience_name, audience_type, stakeholder_type, engagement_strategy, key_communication_needs, preferred_channel, sensitivity_level. Include at minimum groups for: Executive Sponsors, Steering Committee, Delivery Team, Broader Stakeholders, and External/Regulatory (if applicable). Apply dropdown validation on audience_type, engagement_strategy, preferred_channel and sensitivity_level.
+4. Build a **Communications_Matrix** sheet: comm_id (COM-001…), communication_title, communication_type, purpose, primary_audience_group, engagement_strategy, frequency, channel, format (PDF, Slide, Email, Dashboard), owner_role, approver_role, next_due_date, last_sent_date, status (Planned, Prepared, Sent, Overdue, Cancelled), sensitive (Yes/No), approval_required (Yes/No), linked_governance_body, phase_or_workstream, notes. Apply dropdown validation on communication_type, frequency, channel, status, sensitive and approval_required. Apply conditional formatting: status=Overdue highlighted red; sensitive=Yes rows with bold left border; next_due_date in past highlighted amber.
+5. Build a **Message_Library** sheet: template_id (TPL-001…), template_name, communication_type, audience_group, purpose, key_messages (concise bullets), tone (Formal, Semi-formal, Informal, Urgent, Sensitive), status (Draft, Approved, Deprecated), approved_by, last_updated, notes. Populate templates for the key communications identified in the matrix (e.g., Status Report Template, Steering Committee Pack Template, Escalation Notice Template). Apply dropdown validation on communication_type, tone and status.
+6. Apply consistent formatting to all sheets: freeze header rows; enable auto-filters; set column widths to fit content (minimum 14 characters); set tab colours (orange for Communications_Matrix, grey for Message_Library). Use the table style from <context>.
+7. Use a single code interpreter call with pandas and openpyxl to generate \`P2_5_Communications_Plan.xlsx\` with these sheets.
+8. Output \`P2_5_CANONICAL_HANDOFF\` JSON summarising audience groups, communications count by type and frequency, and a link to the workbook.
 </instructions>`
   },
 
@@ -8481,40 +8443,20 @@ const INLINED_PROMPTS = {
     prompt_name: "Quality Plan",
     artifact: "P2_6_QUALITY_PLAN",
     instruction:
-      `**Role & purpose** – Define the quality assurance and control plan, including review schedules, quality gates, checklists and a non conformance log, and produce a workbook and canonical handoff.
+      `**Role & purpose** – Define the quality assurance and control plan, including review schedules and quality gates, and produce a workbook and canonical handoff.
 
 <context>
-  Enumerations: deliverable_type ∈ {Charter, Governance_Framework, WBS_Schedule, Resource_Plan, Budget_Baseline, Risk_Register, Communications_Plan, Quality_Plan, Change_Control_Plan, PMO_Playbook, Other}; review_status ∈ {Not_Yet_Due, Pending_Review, Passed, Failed, Blocked, Waived}; criteria_met ∈ {All_Met, Partially_Met, Not_Met}; non_conformance_status ∈ {Open, In_Rework, Resolved, Closed, Accepted_as_Risk}; severity ∈ {High, Medium, Low}; yes_no ∈ {Yes, No}. Unknown fields default to "TBC".
+  Enumerations: deliverable_type ∈ {Charter, Governance_Framework, WBS_Schedule, Resource_Plan, Budget_Baseline, Risk_Register, Communications_Plan, Quality_Plan, PMO_Playbook, Other}; review_status ∈ {Not_Yet_Due, Pending_Review, Passed, Failed, Blocked, Waived}; criteria_met ∈ {All_Met, Partially_Met, Not_Met}; yes_no ∈ {Yes, No}. Unknown fields default to "TBC".
 </context>
 <instructions>
-1. Load previous handoffs to compile deliverables list and their expected review due dates. Determine who will author, review and approve each deliverable.
-2. Build a **Review_Schedule** sheet with columns: deliverable_id, deliverable_name, phase_or_workstream, deliverable_type, author_role, peer_reviewer_role, internal_qa_reviewer_role, client_reviewer_role, approver_role, review_due_date, client_review_due_date, approval_due_date, review_status, approved_first_pass (Yes/No), rework_cycles, actual_approval_date, days_to_approve, signoff_required (Yes/No), signoff_status, linked_gate_id, notes.
-3. Build a **Quality_Gates** sheet: gate_id, gate_name, phase_boundary, gate_description, criteria, approver_role, target_date, actual_date, gate_status, criteria_met, outstanding_criteria, waiver_reason, waiver_approved_by, notes.
-4. Build a **Checklist_Library** sheet: deliverable_type, checklist_item_number, checklist_item, category, mandatory (Yes/No), notes. Include generic items such as "Ensure style guidelines applied", "Verify confidentiality footer", "Validate all enumerated fields".
-5. Build a **Non_Conformance_Log** sheet: nc_id, deliverable_id, nc_description, category (e.g., Process, Data, Style, Requirements), severity, date_raised, raised_by, assigned_to, target_resolution_date, non_conformance_status, days_open, resolution_description, root_cause, preventive_action, closed_by, closure_date, notes.
-6. Use pandas and openpyxl to assemble `P2_6_Quality_Plan.xlsx`. Format tables accordingly.
-7. Prepare `P2_6_CANONICAL_HANDOFF` JSON summarising the review schedule and quality gates and linking to the workbook.
+1. Load \`P2_1_CANONICAL_HANDOFF\`, \`P2_2_CANONICAL_HANDOFF\` and \`P1_5_CANONICAL_HANDOFF\`. If deliverable data is missing, output \`P2_6_VALIDATION_ERRORS\` JSON and stop. Compile the list of deliverables and determine who will author, review and approve each one.
+2. Apply default review turnaround standards (use these unless upstream specifies otherwise; record as assumptions): internal peer review = 3 business days; internal QA review = 3 business days; client review = 5 business days; approval = 2 business days. Use these to calculate review_due_date and approval_due_date from the deliverable planned_end_date working backwards. To subtract business days, use a simple loop that skips Saturdays and Sundays, or use numpy.busday_offset if available.
+3. Build a **Review_Schedule** sheet with columns: deliverable_id, deliverable_name, phase_or_workstream, deliverable_type, author_role, peer_reviewer_role, internal_qa_reviewer_role, client_reviewer_role, approver_role, review_due_date, client_review_due_date, approval_due_date, review_status, signoff_required (Yes/No), signoff_status, linked_gate_id, notes. Populate reviewer roles from the resource plan where known; set to "TBC" where unknown and add an open item. Apply dropdown validation on deliverable_type, review_status, signoff_required and signoff_status. Apply conditional formatting: review_status=Failed or Blocked highlighted red; signoff_status=Overdue highlighted amber.
+4. Build a **Quality_Gates** sheet: gate_id (QG-001…), gate_name, phase_boundary, gate_description, criteria (what must be true to pass), approver_role, target_date, actual_date, gate_status, criteria_met, outstanding_criteria, waiver_reason, waiver_approved_by, notes. Create one gate per phase boundary or major milestone from the schedule. Apply dropdown validation on gate_status and criteria_met. Apply conditional formatting: gate_status=Failed highlighted red; criteria_met=Not_Met highlighted amber.
+5. Apply consistent formatting to all sheets: freeze header rows; enable auto-filters; set column widths to fit content (minimum 14 characters); set tab colours (orange for Review_Schedule, grey for Quality_Gates). Use the table style from <context>.
+6. Use a single code interpreter call with pandas and openpyxl to assemble \`P2_6_Quality_Plan.xlsx\` with the Review_Schedule and Quality_Gates sheets.
+7. Prepare \`P2_6_CANONICAL_HANDOFF\` JSON summarising review turnaround standards, deliverable count, quality gate count, and a link to the workbook.
 8. Output only the JSON and workbook link.
-</instructions>`
-  },
-
-  "change_control_plan.json": {
-    prompt_id: "P2.7",
-    prompt_name: "Change Control Plan",
-    artifact: "P2_7_CHANGE_CONTROL_PLAN",
-    instruction:
-      `**Role & purpose** – Define the change control processes and registers, including change requests, baseline change logs and freeze periods, with thresholds and authorities.
-
-<context>
-  Enumerations: change_type ∈ {Scope_Addition, Scope_Reduction, Timeline_Change, Budget_Change, Resource_Change, Technology_Change, Process_Change, Other}; classification ∈ {Minor, Major, Emergency}; change_request_status ∈ {Pending_Assessment, Under_Review, Pending_Approval, Approved, Rejected, Deferred, Withdrawn, Implemented, Cancelled}; baseline_area ∈ {Scope, Schedule, Budget, Resources, Risks, Quality}; approval_status ∈ {Pending, Approved, Rejected}; yes_no ∈ {Yes, No}. Unknown values should be "TBC".
-</context>
-<instructions>
-1. Determine change control policy from the Engagement Charter and Governance Framework. Define classification thresholds (e.g., Minor = cost or schedule impact <5%; Major = 5–20%; Emergency = >20% or high risk) and authority levels (Project Manager, Steering Committee, Executive) for approval.
-2. Build a **Change_Request_Register** sheet: cr_id, change_title, change_description, change_type, classification, requested_by, requestor_organisation_type, date_submitted, phase_or_workstream_affected, urgency_level (High, Medium, Low), impact_assessment_owner_role, assessment_due_date, assessment_completed_date, change_request_status, approver_role, decision_date, decision_rationale, conditions_of_approval, schedule_impact_days, budget_impact_amount, resource_impact_description, risk_impact_description, scope_impact_description, contractual_amendment_required (Yes/No), commercial_amendment_status (Not_Required, In_Process, Complete), baseline_updated (Yes/No), implementation_date, notes.
-3. Build a **Baseline_Change_Log** sheet: change_id, baseline_area, baseline_reference, change_type, reason, initial_value, new_value, variance_amount, variance_percent, approved_by, approval_date, effective_date, notes.
-4. Build a **Freeze_Periods** sheet: freeze_period_id, phase_or_workstream, start_date, end_date, duration_days, rationale, authorised_by, notes.
-5. Use pandas and openpyxl to produce `P2_7_Change_Control.xlsx` with these sheets; apply table formatting.
-6. Prepare `P2_7_CANONICAL_HANDOFF` JSON summarising classification thresholds, authority matrices, freeze periods and linking to the workbook. Output only the JSON and workbook link.
 </instructions>`
   },
 
@@ -8526,14 +8468,29 @@ const INLINED_PROMPTS = {
       `**Role & purpose** – Consolidate all prior handoffs and deliverables into a master PMO Playbook comprising a PowerPoint presentation and a Master Tracker workbook.
 
 <context>
-  Use the global style rules for PowerPoint: 16:9 slides; title slides with orange background and white text; content slides with white background, orange accents and Linked Arial headings; limit to five bullet points per slide; use tables formatted with orange headers and grey horizontal lines; embed charts generated in code where appropriate. Use the colours from SS 1 for RAG indicators (Green, Amber, Red, Blue, Grey). The Master Tracker workbook should follow Excel styling guidelines.
+  Use the global style rules for PowerPoint: 16:9 slides; title slides with orange background and white text; content slides with white background, orange accents and Arial headings; limit to five bullet points per slide; use tables formatted with orange headers and grey horizontal lines; embed charts generated in code where appropriate. Use the colours from SS 1 for RAG indicators (Green, Amber, Red, Blue, Grey). The Master Tracker workbook should follow Excel styling guidelines.
 </context>
 <instructions>
-1. Load all canonical handoffs and workbooks from `P1_1` through `P2_7`. Extract key summaries: engagement overview, stakeholder matrix, scope and objectives, charter highlights, governance bodies, WBS hierarchy and schedule milestones, resource summary and capacity charts, budget baseline and cost variances, risk heat map and key risks, communications plan, quality gates and review status, and change control thresholds.
-2. Use Python to create a PowerPoint presentation with up to 55 slides. Structure it logically: Title slide; Executive summary; Engagement overview; Stakeholder matrix; Scope & objectives summary; Charter highlights; Governance framework; WBS & schedule summary; Resource plan summary; Budget & cost baseline summary; Risk summary and heat map; Communications plan summary; Quality plan summary; Change control summary; Next steps and open items. Use charts and tables where relevant (e.g., Gantt chart, utilisation bar chart, cost line chart).
-3. Generate a **PMO_Master_Tracker.xlsx** with sheets: Document_Index (artifact_id, step, artifact_name, status, version, date_generated, owner_role); Readiness_Assessment (dimension, score, RAG, evidence, gaps, owner_role); RAID_and_Changes (item_id, type [Risk, Issue, Action, Decision, Change], description, owner_role, status, date_raised, target_resolution_date); Budget_Summary (phase, planned, actual, variance, status); Milestone_Summary (milestone_id, milestone_name, planned_date, forecast_date, actual_date, variance_days, status); Open_Items (item_id, description, owner_role, due_date, status).
-4. Apply table formatting to the workbook and ensure all sheets are properly named and freeze header rows.
-5. Output `P2_8_CANONICAL_HANDOFF` JSON summarising the playbook contents and including links to the PowerPoint and the master tracker. Provide only the JSON and the file links.
+1. Load all canonical handoffs from \`P1_1\` through \`P2_6\`. If any critical handoff is missing (P1_1 client/engagement identifiers or P2_1 schedule), note the gap on a "Data Gaps" slide rather than stopping entirely. Extract key summaries from each upstream handoff: engagement overview, stakeholder matrix, scope and objectives, charter highlights, governance bodies, WBS hierarchy and schedule milestones, resource summary, budget baseline, risk heat map and key risks, communications plan, and quality gates and review status.
+2. Use Python to create a PowerPoint presentation (\`P2_8_PMO_Playbook.pptx\`) using python-pptx. Apply 16:9 slide format throughout. Limit to 5 bullet points per slide and 6 table rows per slide (split across slides if more rows are needed). Add "PwC Private and Confidential" footer on every slide. Structure the slides as follows:
+   **Slide 1 — Title:** "PMO Playbook" | client name | engagement name | date | version v1.0 | Draft.
+   **Slide 2 — Executive Summary:** Key metrics table (budget, duration, team size, risk count) | overall status narrative (2–3 sentences) | top 3 priorities.
+   **Slide 3 — Engagement Overview:** Methodology | dates | budget | fee structure | primary workstreams | engagement description summary.
+   **Slide 4 — Stakeholder Matrix:** Influence–interest summary table showing stakeholder counts per quadrant | key stakeholders listed by name and role.
+   **Slide 5 — Scope & Objectives:** Boundary statement | top inclusions and exclusions table (max 6 rows) | objectives count by type.
+   **Slide 6 — Charter Highlights:** Key decisions table | commercial terms summary | delivery approach.
+   **Slide 7 — Governance Framework:** Governance bodies table (body | purpose | chair | frequency) | escalation path summary.
+   **Slide 8 — WBS & Schedule Summary:** Phase summary table | key milestones table (milestone | date | status) | critical path narrative.
+   **Slide 9 — Resource Plan:** Allocation summary table (role | seniority | org | effort | FTE) | seniority breakdown | team size by workstream.
+   **Slide 10 — Budget Baseline:** Cost breakdown table by phase/workstream | total baseline | contingency allocation | fee structure summary.
+   **Slide 11 — Risk Summary:** Risk count by rating (Critical/High/Medium/Low) | heat map table (3×3 with counts and colour fills) | top 5 risks table (risk | rating | owner | mitigation).
+   **Slide 12 — Communications Plan:** Audience groups summary | key communications table (title | audience | frequency | channel) | reporting cadence.
+   **Slide 13 — Quality Plan:** Review schedule summary (deliverables count by status) | quality gates table (gate | target date | status).
+   **Slide 14 — Next Steps & Open Items:** Consolidated open items table (item | owner | priority | due date) from all upstream handoffs | immediate next actions.
+   Add additional slides only if content warrants it (e.g., a separate slide per workstream if there are 4+ workstreams). Do not exceed 25 slides total.
+3. Style every slide consistently: title slide uses orange (#FD5108) background with white text; content slides use white background with orange accent headings; tables use orange header rows with white text and grey horizontal lines; use Arial font with PowerPoint heading styles throughout. Add presenter notes to each content slide summarising the key talking points.
+4. Use a single code interpreter call with python-pptx to create the presentation file.
+5. Output the download link for the PPTX and a brief closing message confirming the playbook has been generated.
 </instructions>`
   }
 };
@@ -8584,6 +8541,12 @@ function getVal(dropId, freeId) {
   const free = document.getElementById(freeId);
   if (!drop || !free) return "";
   return free.style.display === "block" ? free.value : drop.value;
+}
+
+function showError(msg) {
+  var de = document.getElementById("dataError");
+  if (de) de.textContent = msg;
+  if (typeof showToast === "function") showToast(msg, "error", 6000);
 }
 
 // ── LOAD ALL DATA (standalone: uses inlined data) ──
@@ -10549,8 +10512,11 @@ function showGuidanceStep(index) {
 
   guidancePanel.innerHTML = `
     <div class="guidance-panel-header">
-      <span class="guidance-panel-title">Guided Experience</span>
-      <span class="guidance-panel-counter">Step ${index + 1} of ${guidanceSteps.length}</span>
+      <span class="guidance-panel-title">Guide</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="guidance-panel-counter">${index + 1} / ${guidanceSteps.length}</span>
+        <button class="guidance-panel-close" onclick="skipGuidance()" aria-label="Close guide">&times;</button>
+      </div>
     </div>
     <div class="guidance-panel-body">
       <div class="guidance-panel-step-title">${step.title}</div>
@@ -10558,7 +10524,7 @@ function showGuidanceStep(index) {
       ${step.example ? `<div class="guidance-panel-example">${step.example}</div>` : ""}
     </div>
     <div class="guidance-panel-footer">
-      <button class="guidance-panel-skip" onclick="skipGuidance()">Skip Guidance</button>
+      <button class="guidance-panel-skip" onclick="skipGuidance()">Dismiss</button>
       <div class="guidance-panel-actions">
         ${!isFirst ? `<button class="btn-guidance-back" onclick="prevGuidanceStep()">Back</button>` : ""}
         <button class="btn-guidance-next" onclick="nextGuidanceStep()">
@@ -11798,6 +11764,28 @@ function showToast(msg, type, duration) {
   }, duration);
 }
 
+// ── Section scoring helpers for nav pills (0=empty, 1=partial, 2=complete) ──
+function scoreSectionS1() {
+  var fields = ["clientName","engagementName","engagementLead","deliveryMethodology",
+    "startDate","endDate","feeStructure","totalBudget","engagementDescription"];
+  var filled = fields.filter(function(id) {
+    var el = document.getElementById(id);
+    return el && (el.value || "").trim();
+  }).length;
+  return filled >= 4 ? 2 : filled > 0 ? 1 : 0;
+}
+function scoreSectionS2() {
+  var ind = document.getElementById("industryDrop");
+  var sec = document.getElementById("sectorDrop");
+  return sec && sec.value ? 2 : ind && ind.value ? 1 : 0;
+}
+function scoreSectionGrid(gridId) {
+  var grid = document.getElementById(gridId);
+  if (!grid) return 0;
+  var sel = grid.querySelectorAll(".check-item.selected, .fb-chip.selected, .fb-bb-item.selected, .fb-check-item.checked, .fb-pill.selected").length;
+  return sel >= 2 ? 2 : sel > 0 ? 1 : 0;
+}
+
 // ── Nav pill colour update ──
 function updateNavPills() {
   var map = {
@@ -11985,7 +11973,7 @@ function showFormPage() {
 // ── Conveyor autoplay ──
 (function () {
   var cardWidth = 212; // 200px card + 12px gap
-  var speed = 2800; // ms per step - increase to slow down
+  var speed = 4000; // ms per step - increase to slow down
 
   function init() {
     var conveyor = document.getElementById("lp-conveyor");
