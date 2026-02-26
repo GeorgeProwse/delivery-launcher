@@ -155,6 +155,7 @@
       gap: 8px;
       padding: 4px 10px;
       border-bottom: 1px solid rgba(0,0,0,0.08);
+      position: relative;
     }
     .task-row:hover { background: rgba(0,0,0,0.02); }
     .task-row.selected { outline: 2px solid rgba(253,81,8,0.25); outline-offset: -2px; background: rgba(253,81,8,0.06); }
@@ -173,7 +174,7 @@
 
     .name {
       flex: 1;
-      min-width: 0;
+      min-width: 100px;
       display:flex;
       align-items:center;
       gap: 8px;
@@ -217,8 +218,22 @@
     .dates input[type="date"]:disabled{ opacity: 0.5; }
 
     .row-actions {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
       display:flex; align-items:center; gap: 6px;
-      flex: 0 0 auto;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s;
+      background: var(--panel-2);
+      padding: 2px 4px;
+      border-radius: 4px;
+      z-index: 2;
+    }
+    .task-row:hover .row-actions {
+      opacity: 1;
+      pointer-events: auto;
     }
     .icon-btn{
       width: 30px; height: 30px;
@@ -317,6 +332,8 @@
       white-space: nowrap;
       font-size: 12px;
       color: #ffffff;
+      z-index: 1;
+      transform: translateZ(0);
     }
     .row .bar.summary {
       background: var(--bar-summary);
@@ -354,6 +371,16 @@
     .handle.left { left: -2px; }
     .handle.right { right: -2px; }
 
+    .today-line {
+      position: absolute;
+      top: 0;
+      width: 2px;
+      height: var(--timeline-height);
+      background: rgba(239,68,68,0.65);
+      z-index: 3;
+      pointer-events: none;
+    }
+
     .deps {
       position: absolute;
       left: 0;
@@ -361,6 +388,7 @@
       width: var(--timeline-width);
       height: var(--timeline-height);
       pointer-events: none;
+      z-index: 2;
     }
     .deps path {
       stroke: rgba(0,0,0,0.35);
@@ -449,18 +477,19 @@
       .month-cell, .day-cell { border-right: 1px solid #ddd !important; color: #222 !important; }
       .deps path { stroke: #444 !important; }
       .row .bar { border: 1px solid rgba(0,0,0,0.2) !important; }
+      .row-actions { display: none !important; }
     }
 
     /* Tablet */
     @media (max-width: 1200px){
       :root { --left-width: 380px; }
-      .row-actions { gap: 4px; }
+      .dates input[type="date"]{ width: 120px; }
       .icon-btn { width: 26px; height: 26px; }
     }
     /* Small tablet */
     @media (max-width: 960px){
       :root { --left-width: 320px; }
-      .dates input[type="date"]{ width: 120px; }
+      .dates { display: none; }
       .grid2 { grid-template-columns: 1fr; }
     }
     /* Mobile */
@@ -548,6 +577,7 @@
         </div>
         <div class="right-body" id="rightBody">
           <div class="timeline" id="timeline">
+            <div class="today-line" id="todayLine"></div>
             <svg class="deps" id="depsSvg"></svg>
             <div id="timelineRows"></div>
           </div>
@@ -954,6 +984,17 @@
         const t = getTask(id);
         if(!t) continue;
         timelineRows.appendChild(renderTimelineRow(t, idx));
+      }
+
+      // Today line
+      const todayLine = document.getElementById('todayLine');
+      const today = todayIso();
+      if(today >= state.chartStart && today <= state.chartEnd){
+        const todayX = diffDays(today, state.chartStart) * state.config.dayWidth;
+        todayLine.style.left = todayX + 'px';
+        todayLine.style.display = '';
+      } else {
+        todayLine.style.display = 'none';
       }
 
       // Dependencies overlay SVG
