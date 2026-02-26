@@ -2236,9 +2236,34 @@ textarea {
   background: #e57373;
 }
 
-/* ── CHUNK 1: Draft restore banner — hidden ── */
+/* ── CHUNK 1: Draft restore banner — hidden by default, shown via .visible ── */
 #draftBanner {
-  display: none !important;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 24px;
+  background: #fef3cd;
+  border-bottom: 1px solid #fde68a;
+  font-size: 13px;
+  color: #78350f;
+  position: fixed;
+  top: 41px;
+  left: 0;
+  right: 0;
+  z-index: 500;
+}
+#draftBanner.visible {
+  display: flex;
+}
+.draft-banner-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.btn-draft-restore {
+  padding: 6px 14px; font-size: 12px; font-weight: 600;
+  background: var(--orange500); color: #fff; border: none; border-radius: 2px; cursor: pointer;
+}
+.btn-draft-dismiss {
+  padding: 6px 14px; font-size: 12px; font-weight: 500;
+  background: transparent; color: #78350f; border: 1px solid #fde68a; border-radius: 2px; cursor: pointer;
 }
 
 .brief-strength-wrap {
@@ -2870,6 +2895,9 @@ textarea {
   color: #16a34a;
   font-weight: 600;
 }
+/* v11: Stepper indicators for form completeness */
+.fb-step.pill-partial .fb-step-num { background: var(--orange500); color: #fff; }
+.fb-step.pill-complete .fb-step-num { background: var(--success); color: #fff; }
 .grid-search {
   width: 100%;
   padding: 7px 10px;
@@ -9740,7 +9768,7 @@ function onRiskChange(gid, riskVal) {
   const specGrid = document.getElementById(`risk-spec-${gid}`);
   const cascade = document.getElementById(`risk-spec-cascade-${gid}`);
   if (!riskVal) {
-    cascade.classList.remove("visible");
+    if (cascade) cascade.classList.remove("visible");
     return;
   }
   const group = appData.risk.risk_profile.industry_groups.find(
@@ -9749,13 +9777,15 @@ function onRiskChange(gid, riskVal) {
   if (!group) return;
   const rt = group.risk_types.find((r) => r.risk_type === riskVal);
   if (!rt) return;
-  specGrid.innerHTML = rt.specific_risks
-    .map(
-      (r) =>
-        `<div class="check-item" onclick="toggleCheckOnly(this)">${r}</div>`,
-    )
-    .join("");
-  cascade.classList.add("visible");
+  if (specGrid) {
+    specGrid.innerHTML = rt.specific_risks
+      .map(
+        (r) =>
+          `<div class="check-item" onclick="toggleCheckOnly(this)">${r}</div>`,
+      )
+      .join("");
+  }
+  if (cascade) cascade.classList.add("visible");
 }
 
 // ── WORKFLOW ──
@@ -10346,63 +10376,63 @@ const guidanceSteps = [
     position: "below",
   },
   {
-    target: "s2",
+    target: "fb-s2",
     title: "Industry",
     text: "Select the client's industry, sector and sub-sector. This drives industry-specific content across all planning documents, regulatory requirements, risk profiles, stakeholder norms and more.",
     example:
       "e.g. Financial Services → Banking and Capital Markets → Retail Banking",
     position: "below",
-    openSection: "s2",
+    openSection: "fb-s2",
   },
   {
-    target: "s3",
+    target: "fb-s3",
     title: "Engagement Objectives",
     text: "Select all objective types that apply to this engagement then drill down to the specific objectives within each type. The more precisely you define the objectives the sharper the planning outputs will be.",
     example:
       "e.g. Business Problem → Technology & Systems → Ageing legacy technology",
     position: "below",
-    openSection: "s3",
+    openSection: "fb-s3",
   },
   {
-    target: "s4",
+    target: "fb-s4",
     title: "Service Offerings",
-    text: "Select the PwC domains and building blocks that will be delivered in this engagement. When you select a building block its description will appear, you can edit this to reflect how it applies specifically to this client.",
+    text: "Select the domains and building blocks that will be delivered in this engagement. When you select a building block its description will appear, you can edit this to reflect how it applies specifically to this client.",
     example: "e.g. Data & AI → Data Engineering & Data Modernization",
     position: "below",
-    openSection: "s4",
+    openSection: "fb-s4",
   },
   {
-    target: "s5",
+    target: "fb-s5",
     title: "Technology & Tools",
     text: "Select the technologies already in use or being implemented at the client. This gives the AI the context to tailor technical planning documents and identify technology-specific risks.",
     example: "e.g. ERP & Business Applications → Core ERP → SAP S/4HANA",
     position: "below",
-    openSection: "s5",
+    openSection: "fb-s5",
   },
   {
-    target: "s6",
+    target: "fb-s6",
     title: "Alliance Partners",
     text: "Select any alliance partners whose products are involved in this engagement. This helps the AI identify partner-specific workstreams, risks and governance considerations.",
     example: "e.g. SAP → ERP & Finance → SAP S/4HANA Cloud",
     position: "below",
-    openSection: "s6",
+    openSection: "fb-s6",
   },
   {
-    target: "s7",
+    target: "fb-s7",
     title: "Regulatory Profile",
     text: "Select the regulatory bodies and specific requirements applicable to this engagement. This drives the compliance content across the Risk Register, Scope Statement and Engagement Charter.",
     example: "e.g. Financial Services → APRA → CPS 234 Information Security",
     position: "below",
-    openSection: "s7",
+    openSection: "fb-s7",
   },
   {
-    target: "s8",
+    target: "fb-s8",
     title: "Risk Profile",
     text: "Select the risk categories and specific risks most relevant to this engagement. The more risks you identify here the more comprehensive your Risk Register will be from day one.",
     example:
       "e.g. All Industries → Technology & Cyber Risk → Legacy system risk",
     position: "below",
-    openSection: "s8",
+    openSection: "fb-s8",
   },
   {
     target: "formPage",
@@ -10440,35 +10470,29 @@ const guidanceSteps = [
     goToWorkflow: true,
   },
   {
-    target: "promptCards",
-    title: "Welcome to Your Workflow",
-    text: "Each card is a planning step in sequence. Steps are <strong>locked</strong> until their pre-cursor prompts have been completed, this is intentional. Each prompt builds directly on the outputs of the ones before it, so the order matters.",
+    target: "promptBuilderPage",
+    title: "Welcome to the Prompt Builder",
+    text: "The Prompt Builder lets you select which deliverables to include and generates a single comprehensive prompt. Toggle on the artifacts you need, then copy or export the generated prompt to paste into your AI tool.",
     example:
-      "Tip: You will see steps unlock automatically as you mark earlier ones complete.",
-    position: "side",
+      "Tip: Select all deliverables for a complete planning suite, or pick individual ones for targeted outputs.",
+    position: "center",
+    goToWorkflow: false,
   },
   {
-    target: "card-P1.1",
-    title: "Start with P1.1",
-    text: "P1.1 is already unlocked and ready to run. Click <strong>Copy Prompt</strong> to copy the full prompt text, then paste it into your AI tool. Once the AI has finished and you have reviewed the output, click <strong>Mark Complete</strong> to unlock the next step.",
-    example: null,
-    position: "side",
-  },
-  {
-    target: "card-P1.1",
+    target: "promptBuilderPage",
     title: "Enable Code Interpreter",
-    text: "Before running any prompt, make sure <strong>Code Interpreter</strong> (or the equivalent tool in your AI platform) is enabled. The prompts rely on it to process structured data correctly. Without it, outputs may be incomplete or incorrectly formatted.",
+    text: "Before running the prompt, make sure <strong>Code Interpreter</strong> (or the equivalent tool in your AI platform) is enabled. The prompt relies on it to generate Excel, Word and PowerPoint files. Without it, outputs may be incomplete.",
     example:
       'In ChatGPT: open a new chat → click the "+" or tools icon → enable Code Interpreter. In other tools, look for "Advanced Data Analysis" or a similar setting.',
-    position: "side",
+    position: "center",
   },
   {
-    target: "card-P1.1",
-    title: "Copy or Export Each Prompt",
-    text: "Use <strong>Copy Prompt</strong> to paste the prompt directly into your AI tool. Use <strong>Export Prompt</strong> to save it as a .txt file. Exporting is recommended, it ensures you do not lose your context if your browser refreshes or your session times out.",
+    target: "promptBuilderPage",
+    title: "Copy or Export the Prompt",
+    text: "Use <strong>Copy Prompt</strong> to paste the prompt directly into your AI tool. Use <strong>Export .txt</strong> to save it as a text file for backup. Exporting is recommended so you always have a local copy.",
     example:
-      "Tip: Export each prompt before you run it so you always have a local backup of your full engagement context.",
-    position: "side",
+      "Tip: Export the prompt before you run it so you always have a backup of your full engagement context.",
+    position: "center",
   },
 ];
 
@@ -10499,9 +10523,15 @@ function showGuidanceStep(index) {
   }
 
   if (step.openSection) {
-    const section = document.getElementById(step.openSection);
-    if (section && !section.classList.contains("open")) {
-      section.classList.add("open");
+    // v11: Navigate to the section panel using fbGoToSection
+    var sectionMatch = step.openSection.match(/fb-s(\d+)/);
+    if (sectionMatch) {
+      fbGoToSection(parseInt(sectionMatch[1]));
+    } else {
+      var section = document.getElementById(step.openSection);
+      if (section && !section.classList.contains("open")) {
+        section.classList.add("open");
+      }
     }
   }
 
@@ -10823,7 +10853,8 @@ function restoreDraft() {
 function dismissDraft() {
   localStorage.removeItem(DRAFT_KEY);
   localStorage.removeItem("pwc_launchpad_progress");
-  document.getElementById("draftBanner").classList.remove("visible");
+  var banner = document.getElementById("draftBanner");
+  if (banner) banner.classList.remove("visible");
 }
 
 // ── Section selection state — persists across tab switches and is included in drafts ──
@@ -11090,6 +11121,40 @@ function updateSectionDot() {
 
 function updateAllSectionDots() {
   if (typeof fbEvalDots === "function") fbEvalDots();
+}
+
+// ── Brief Strength Indicator ──
+function updateBriefStrength() {
+  var bar = document.getElementById("briefStrengthBar");
+  var label = document.getElementById("briefStrengthLabel");
+  if (!bar || !label) return;
+
+  // Score each section 0-2 using the same scorers as updateNavPills
+  var scores = [
+    scoreSectionS1(),
+    scoreSectionS2(),
+    scoreSectionPanel("fb-s3"),
+    scoreSectionPanel("fb-s4"),
+    scoreSectionPanel("fb-s5"),
+    scoreSectionPanel("fb-s6"),
+    scoreSectionPanel("fb-s7"),
+    scoreSectionPanel("fb-s8"),
+  ];
+  var total = scores.reduce(function(a, b) { return a + b; }, 0);
+  var maxScore = 16; // 8 sections x 2 max
+  var pct = Math.round((total / maxScore) * 100);
+
+  // Determine strength level
+  var strength, color;
+  if (pct >= 75)      { strength = "Excellent"; color = "#16a34a"; }
+  else if (pct >= 50) { strength = "Strong";    color = "var(--orange500)"; }
+  else if (pct >= 25) { strength = "Fair";      color = "#eab308"; }
+  else                { strength = "Weak";      color = "#dc2626"; }
+
+  bar.style.width = pct + "%";
+  bar.style.background = color;
+  label.textContent = strength;
+  label.style.color = color;
 }
 
 // ═══════════════════════════════════════════
@@ -11570,27 +11635,10 @@ function loadExampleData() {
 // v11: reopenStep removed (no longer needed — workflow cards replaced by prompt builder)
 function reopenStep() {}
 
-// Gate modal
-function checkGateReady() {
-  var allChecked = Array.from(
-    document.querySelectorAll("#gateModalChecklist input[type=checkbox]")
-  ).every(function (b) { return b.checked; });
-  var btn = document.getElementById("gateConfirmBtn");
-  if (btn) {
-    btn.classList.toggle("ready", allChecked);
-  }
-}
-function closeGateModal() {
-  document.getElementById("gateModal").classList.remove("visible");
-  _pendingGateId = null;
-}
-function confirmGateDone() {
-  document.getElementById("gateModal").classList.remove("visible");
-  if (_pendingGateId) {
-    doMarkDone(_pendingGateId);
-    _pendingGateId = null;
-  }
-}
+// v11: Gate modal functions removed (old workflow feature)
+function checkGateReady() {}
+function closeGateModal() {}
+function confirmGateDone() {}
 
 // Sparse brief warning modal (#03)
 function openSparseBriefModal(filledCount) {
@@ -11664,11 +11712,15 @@ function scoreSectionS2() {
   var sec = document.getElementById("sectorDrop");
   return sec && sec.value ? 2 : ind && ind.value ? 1 : 0;
 }
-function scoreSectionGrid(gridId) {
-  var grid = document.getElementById(gridId);
-  if (!grid) return 0;
-  var sel = grid.querySelectorAll(".check-item.selected, .fb-chip.selected, .fb-bb-item.selected, .fb-check-item.checked, .fb-pill.selected").length;
-  return sel >= 2 ? 2 : sel > 0 ? 1 : 0;
+function scoreSectionPanel(panelId) {
+  var panel = document.getElementById(panelId);
+  if (!panel) return 0;
+  var sel = panel.querySelectorAll(".fb-tab-item.has-data, .fb-pill.selected, .fb-chip.selected, .fb-bb-item.selected, .fb-check-item.checked, .check-item.selected").length;
+  var filled = panel.querySelectorAll("textarea, select");
+  var filledCount = 0;
+  filled.forEach(function(el) { if ((el.value || "").trim()) filledCount++; });
+  var total = sel + filledCount;
+  return total >= 2 ? 2 : total > 0 ? 1 : 0;
 }
 
 // ── Nav pill colour update ──
@@ -11676,32 +11728,20 @@ function updateNavPills() {
   var map = {
     s1: scoreSectionS1,
     s2: scoreSectionS2,
-    s3: function () {
-      return scoreSectionGrid("objectiveTypeGrid");
-    },
-    s4: function () {
-      return scoreSectionGrid("domainGrid");
-    },
-    s5: function () {
-      return scoreSectionGrid("techCategoryGrid");
-    },
-    s6: function () {
-      return scoreSectionGrid("partnerGrid");
-    },
-    s7: function () {
-      return scoreSectionGrid("regulatoryIndustryGrid");
-    },
-    s8: function () {
-      return scoreSectionGrid("riskIndustryGrid");
-    },
+    s3: function () { return scoreSectionPanel("fb-s3"); },
+    s4: function () { return scoreSectionPanel("fb-s4"); },
+    s5: function () { return scoreSectionPanel("fb-s5"); },
+    s6: function () { return scoreSectionPanel("fb-s6"); },
+    s7: function () { return scoreSectionPanel("fb-s7"); },
+    s8: function () { return scoreSectionPanel("fb-s8"); },
   };
   Object.keys(map).forEach(function (sid) {
-    var pill = document.getElementById("pill-" + sid);
-    if (!pill) return;
+    var step = document.getElementById("step-" + sid);
+    if (!step) return;
     var score = map[sid]();
-    pill.classList.remove("pill-partial", "pill-complete");
-    if (score === 2) pill.classList.add("pill-complete");
-    else if (score === 1) pill.classList.add("pill-partial");
+    step.classList.remove("pill-partial", "pill-complete");
+    if (score === 2) step.classList.add("pill-complete");
+    else if (score === 1) step.classList.add("pill-partial");
   });
 }
 
@@ -11900,27 +11940,7 @@ function showFormPage() {
   </div>
 
 
-  <!-- CHUNK 3: Stage Gate Modal -->
-  <div id="gateModal">
-    <div id="gateModalBox">
-      <div class="gate-modal-header">
-        <span class="gate-modal-icon">&#9888;</span>
-        <span class="gate-modal-title" id="gateModalTitle">Stage Gate Sign-Off</span>
-      </div>
-      <div class="gate-modal-body">
-        <p>This is a <strong>stage gate</strong>. Before marking this step complete, confirm the artifact has been reviewed and approved by the appropriate stakeholders.</p>
-        <ul class="gate-modal-checklist" id="gateModalChecklist">
-          <li><input type="checkbox" onchange="checkGateReady()"> The artifact has been reviewed by the engagement lead</li>
-          <li><input type="checkbox" onchange="checkGateReady()"> The client or internal approver has signed off</li>
-          <li><input type="checkbox" onchange="checkGateReady()"> Any open issues have been logged in the Issues &amp; Dependency Log</li>
-        </ul>
-      </div>
-      <div class="gate-modal-footer">
-        <button class="btn-gate-cancel" onclick="closeGateModal()">Cancel</button>
-        <button class="btn-gate-confirm" id="gateConfirmBtn" onclick="confirmGateDone()">Confirm Sign-Off &amp; Complete</button>
-      </div>
-    </div>
-  </div>
+  <!-- v11: Stage Gate Modal removed (old workflow feature, not used in prompt builder) -->
 
   <!-- CHUNK 3: Resume/Restart Modal -->
   <div id="resumeModal">
