@@ -2058,6 +2058,29 @@ textarea {
     border-bottom: 1px solid var(--borderColor);
     max-height: 45vh;
   }
+  .pb-preview-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .pb-selector-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+@media (max-width: 480px) {
+  .pb-preview-actions {
+    width: 100%;
+  }
+  .pb-copy-btn, .pb-export-btn {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+  .pb-toggle-name {
+    font-size: 12px;
+  }
+  .pb-toggle-desc {
+    font-size: 10px;
+  }
 }
 
 .guidance-panel {
