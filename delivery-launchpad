@@ -8509,6 +8509,11 @@ function getVal(dropId, freeId) {
   return free.style.display === "block" ? free.value : drop.value;
 }
 
+// ── Slug helper (used throughout for consistent DOM id generation) ──
+function slugify(str) {
+  return String(str).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
 // ── LOAD ALL DATA (standalone: uses inlined data) ──
 var _dataLoadError = false;
 function loadAllData() {
@@ -10684,7 +10689,9 @@ function debounceAutoSave() {
       const state = collectFormState();
       localStorage.setItem(DRAFT_KEY, JSON.stringify(state));
     } catch (e) {
-      showToast("Draft could not be saved \u2014 storage full.", "error");
+      if (e && (e.name === "QuotaExceededError" || e.code === 22)) {
+        showToast("Draft could not be saved \u2014 storage full.", "error");
+      }
     }
     updateAllSectionDots();
     if (typeof updateBriefStrength === "function") updateBriefStrength();
