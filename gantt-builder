@@ -1298,7 +1298,8 @@
         mode,
         startX: e.clientX,
         origStart: t.start,
-        origEnd: t.end
+        origEnd: t.end,
+        hasMoved: false
       };
 
       // visual cue
@@ -1317,6 +1318,7 @@
 
       const dx = e.clientX - drag.startX;
       const dd = Math.round(dx / state.config.dayWidth);
+      if(dd !== 0) drag.hasMoved = true;
 
       let newStart = drag.origStart;
       let newEnd = drag.origEnd;
@@ -1350,10 +1352,11 @@
       if(!drag) return;
       if(e.pointerId !== drag.pointerId) return;
 
+      const moved = drag.hasMoved;
       drag = null;
 
-      // full re-render to re-compute range/padding and rollups
-      render();
+      // only re-render if actually dragged (allows dblclick to fire on bars)
+      if(moved) render();
     });
 
     function updateBarDom(task){
@@ -1979,7 +1982,7 @@
           // diamond
           parts.push(`<polygon class="barMs barStroke" points="${cx},${cy-size} ${cx+size},${cy} ${cx},${cy+size} ${cx-size},${cy}"/>`);
         } else {
-          const y = c.rowY + 7;
+          const y = c.rowY + 8;
           const h = 20;
           const w = Math.max(6, c.xEnd - c.xStart);
           const cls = isSummaryType(t.type) ? 'barSum' : 'barTask';
