@@ -385,6 +385,154 @@ body {
 }
 .strength-chip svg { flex-shrink: 0; }
 
+/* ── WELCOME PAGE ── */
+.welcome-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 56px - 48px);
+  padding: 40px 24px;
+}
+.welcome-card {
+  max-width: 640px;
+  width: 100%;
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+.welcome-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--o100) 0%, var(--o300) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+.welcome-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--black);
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+.welcome-desc {
+  font-size: 15px;
+  color: var(--g500);
+  line-height: 1.7;
+  max-width: 520px;
+  margin: 0 auto 12px;
+}
+.welcome-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 28px 0 32px;
+}
+.welcome-feature {
+  padding: 16px 12px;
+  background: var(--white);
+  border: 1px solid var(--g200);
+  border-radius: var(--radius);
+  text-align: center;
+}
+.welcome-feature-num {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--o500);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.welcome-feature-label {
+  font-size: 12px;
+  color: var(--g500);
+  font-weight: 500;
+}
+.welcome-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.btn-lg {
+  padding: 14px 36px;
+  font-size: 15px;
+  border-radius: var(--radius);
+}
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--g500);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.15s;
+  text-decoration: none;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.btn-link:hover { color: var(--black); }
+
+/* ── DOMAIN TABLE ── */
+.domain-table-wrap {
+  overflow-x: auto;
+}
+.domain-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.domain-table th {
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--g500);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 2px solid var(--g200);
+  background: var(--g100);
+  white-space: nowrap;
+}
+.domain-table th:last-child {
+  text-align: center;
+  width: 100px;
+}
+.domain-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--g200);
+  vertical-align: middle;
+}
+.domain-table tr:last-child td { border-bottom: none; }
+.domain-table tr:hover td { background: #fefaf8; }
+.domain-table td:last-child { text-align: center; }
+.domain-table .domain-table-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--o100);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--o500);
+  margin-right: 10px;
+  vertical-align: middle;
+}
+.domain-table .domain-table-name {
+  font-weight: 600;
+  color: var(--black);
+}
+.domain-table .domain-table-caps {
+  font-size: 11px;
+  color: var(--g400);
+  margin-left: 4px;
+}
+
 /* ── ANIMATIONS ── */
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -405,6 +553,9 @@ body {
   .strengths-grid { grid-template-columns: 1fr; }
   .capability-header { flex-direction: column; align-items: flex-start; gap: 4px; }
   .capability-meta { margin-left: 0; }
+  .welcome-features { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .welcome-title { font-size: 22px; }
+  .welcome-desc { font-size: 14px; }
 }
 @media print {
   .topbar, .step-card-footer, .progress-section { display: none; }
@@ -442,8 +593,50 @@ body {
 <!-- ── MAIN ── -->
 <main class="page">
 
+  <!-- WELCOME PAGE -->
+  <div id="welcome-step" class="welcome-page">
+    <div class="welcome-card">
+      <div class="welcome-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FD5108" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20V10"/>
+          <path d="M18 20V4"/>
+          <path d="M6 20v-4"/>
+        </svg>
+      </div>
+      <h1 class="welcome-title">PMO Maturity Assessment</h1>
+      <p class="welcome-desc">Evaluate your PMO's maturity across nine key domains. Rate each capability, and receive a tailored maturity profile with prioritised recommendations.</p>
+      <div class="welcome-features">
+        <div class="welcome-feature">
+          <div class="welcome-feature-num">9</div>
+          <div class="welcome-feature-label">Domains</div>
+        </div>
+        <div class="welcome-feature">
+          <div class="welcome-feature-num">36</div>
+          <div class="welcome-feature-label">Capabilities</div>
+        </div>
+        <div class="welcome-feature">
+          <div class="welcome-feature-num">5</div>
+          <div class="welcome-feature-label">Maturity Levels</div>
+        </div>
+      </div>
+      <div class="welcome-actions">
+        <button id="welcome-start-btn" class="btn btn-primary btn-lg">
+          Start Assessment
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button id="welcome-config-btn" class="btn-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          Configure domain weightings
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- PROGRESS BAR -->
-  <div class="progress-section">
+  <div class="progress-section hidden" id="progress-section">
     <div class="progress-header">
       <span class="step-label" id="step-label">Domain Weighting</span>
       <span class="step-count" id="step-count"></span>
@@ -454,16 +647,21 @@ body {
   </div>
 
   <!-- STEP 0: DOMAIN WEIGHTING -->
-  <div id="domain-step" class="step-card">
+  <div id="domain-step" class="step-card hidden">
     <div class="step-card-header">
       <div class="step-card-title">Domain Weighting</div>
       <div class="step-card-desc">Assign relative importance to each domain. Values are normalised automatically — higher numbers indicate greater priority.</div>
     </div>
     <div class="step-card-body">
-      <div class="domain-grid" id="domain-grid"></div>
+      <div class="domain-table-wrap">
+        <table class="domain-table" id="domain-table"></table>
+      </div>
     </div>
     <div class="step-card-footer">
-      <span></span>
+      <button id="domain-back" class="btn btn-secondary">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Back
+      </button>
       <button id="domain-next" class="btn btn-primary">
         Begin Assessment
         <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -543,47 +741,49 @@ domainNames.forEach(d => {
 const totalSteps = capabilities.length + 1; // domain step + N capabilities + results
 const domainWeightInputs = {};
 const selections = capabilities.map(() => ({ level: 1 }));
-let currentStep = 0;
+let currentStep = -1;
 let autoAdvanceTimer = null;
 
 // ── DOM REFERENCES ────────────────────────────────────────
-const stepLabelEl   = document.getElementById('step-label');
-const stepCountEl   = document.getElementById('step-count');
-const progressBarEl = document.getElementById('progress-bar');
-const domainStepDiv = document.getElementById('domain-step');
-const capStepDiv    = document.getElementById('capability-step');
-const resultsStepDiv= document.getElementById('results-step');
-const domainNextBtn = document.getElementById('domain-next');
-const prevBtn       = document.getElementById('prev-btn');
-const nextBtn       = document.getElementById('next-btn');
-const resultsPrevBtn= document.getElementById('results-prev-btn');
-const saveBtn       = document.getElementById('save-btn');
-const resetBtn      = document.getElementById('reset-btn');
+const stepLabelEl    = document.getElementById('step-label');
+const stepCountEl    = document.getElementById('step-count');
+const progressBarEl  = document.getElementById('progress-bar');
+const progressSection= document.getElementById('progress-section');
+const welcomeStepDiv = document.getElementById('welcome-step');
+const domainStepDiv  = document.getElementById('domain-step');
+const capStepDiv     = document.getElementById('capability-step');
+const resultsStepDiv = document.getElementById('results-step');
+const welcomeStartBtn= document.getElementById('welcome-start-btn');
+const welcomeConfigBtn=document.getElementById('welcome-config-btn');
+const domainBackBtn  = document.getElementById('domain-back');
+const domainNextBtn  = document.getElementById('domain-next');
+const prevBtn        = document.getElementById('prev-btn');
+const nextBtn        = document.getElementById('next-btn');
+const resultsPrevBtn = document.getElementById('results-prev-btn');
+const saveBtn        = document.getElementById('save-btn');
+const resetBtn       = document.getElementById('reset-btn');
 
-// ── BUILD DOMAIN GRID ─────────────────────────────────────
+// ── BUILD DOMAIN TABLE ────────────────────────────────────
 function buildDomainGrid() {
-  const grid = document.getElementById('domain-grid');
-  grid.innerHTML = '';
+  const table = document.getElementById('domain-table');
+  table.innerHTML = '';
+
+  const thead = document.createElement('thead');
+  thead.innerHTML = '<tr><th>Domain</th><th>Capabilities</th><th>Weight</th></tr>';
+  table.appendChild(thead);
+
+  const tbody = document.createElement('tbody');
   domainNames.forEach((domain, idx) => {
     const caps = domainsData[domain];
-    const item = document.createElement('div');
-    item.className = 'domain-item';
+    const tr = document.createElement('tr');
 
-    const icon = document.createElement('div');
-    icon.className = 'domain-item-icon';
-    icon.textContent = String.fromCharCode(65 + idx);
+    const tdDomain = document.createElement('td');
+    tdDomain.innerHTML = `<span class="domain-table-icon">${String.fromCharCode(65 + idx)}</span><span class="domain-table-name">${domain}</span>`;
 
-    const nameEl = document.createElement('div');
-    nameEl.className = 'domain-item-name';
-    nameEl.textContent = domain;
+    const tdCaps = document.createElement('td');
+    tdCaps.innerHTML = `<span class="domain-table-caps">${caps.length}</span>`;
 
-    const countEl = document.createElement('div');
-    countEl.className = 'domain-item-count';
-    countEl.textContent = `${caps.length} capabilities`;
-
-    const wrapEl = document.createElement('div');
-    wrapEl.style.cssText = 'display:flex;align-items:center;gap:6px;flex-shrink:0';
-
+    const tdWeight = document.createElement('td');
     const input = document.createElement('input');
     input.type = 'number';
     input.min = '0';
@@ -591,19 +791,14 @@ function buildDomainGrid() {
     input.value = (1 / domainNames.length).toFixed(3);
     input.className = 'domain-weight-input';
     domainWeightInputs[domain] = input;
+    tdWeight.appendChild(input);
 
-    const unit = document.createElement('span');
-    unit.className = 'weight-unit';
-    unit.textContent = 'wt';
-
-    wrapEl.appendChild(input);
-    wrapEl.appendChild(unit);
-    item.appendChild(icon);
-    item.appendChild(nameEl);
-    item.appendChild(countEl);
-    item.appendChild(wrapEl);
-    grid.appendChild(item);
+    tr.appendChild(tdDomain);
+    tr.appendChild(tdCaps);
+    tr.appendChild(tdWeight);
+    tbody.appendChild(tr);
   });
+  table.appendChild(tbody);
 }
 
 // ── PERSISTENCE ───────────────────────────────────────────
@@ -655,13 +850,29 @@ function resetProgress() {
     domainWeightInputs[d].value = (1 / domainNames.length).toFixed(3);
   });
   selections.forEach(sel => { sel.level = 1; });
-  currentStep = 0;
+  currentStep = -1;
   showStep();
 }
 
 // ── EVENT LISTENERS ───────────────────────────────────────
 saveBtn.addEventListener('click', () => saveProgress(false));
 resetBtn.addEventListener('click', resetProgress);
+
+welcomeStartBtn.addEventListener('click', () => {
+  currentStep = 1;
+  saveProgress();
+  showStep();
+});
+
+welcomeConfigBtn.addEventListener('click', () => {
+  currentStep = 0;
+  showStep();
+});
+
+domainBackBtn.addEventListener('click', () => {
+  currentStep = -1;
+  showStep();
+});
 
 domainNextBtn.addEventListener('click', () => {
   currentStep = 1;
@@ -671,7 +882,8 @@ domainNextBtn.addEventListener('click', () => {
 
 prevBtn.addEventListener('click', () => {
   clearTimeout(autoAdvanceTimer);
-  if (currentStep > 0) { currentStep--; saveProgress(); showStep(); }
+  if (currentStep > 1) { currentStep--; saveProgress(); showStep(); }
+  else if (currentStep === 1) { currentStep = -1; saveProgress(); showStep(); }
 });
 
 nextBtn.addEventListener('click', () => {
@@ -708,8 +920,8 @@ document.addEventListener('keydown', (e) => {
 
 // ── PROGRESS UI ───────────────────────────────────────────
 function updateProgressUI() {
-  if (currentStep === 0) {
-    stepLabelEl.textContent = 'Domain Weighting';
+  if (currentStep <= 0) {
+    stepLabelEl.textContent = currentStep === 0 ? 'Domain Weighting' : '';
     stepCountEl.textContent = '';
   } else if (currentStep >= 1 && currentStep <= capabilities.length) {
     const cap = capabilities[currentStep - 1];
@@ -719,7 +931,7 @@ function updateProgressUI() {
     stepLabelEl.textContent = 'Results';
     stepCountEl.textContent = '';
   }
-  const percent = (currentStep / totalSteps) * 100;
+  const percent = Math.max(0, (currentStep / totalSteps) * 100);
   progressBarEl.style.width = `${Math.min(percent, 100)}%`;
 }
 
@@ -727,13 +939,19 @@ function updateProgressUI() {
 function showStep() {
   clearTimeout(autoAdvanceTimer);
   updateProgressUI();
+  welcomeStepDiv.classList.add('hidden');
   domainStepDiv.classList.add('hidden');
   capStepDiv.classList.add('hidden');
   resultsStepDiv.classList.add('hidden');
 
-  if (currentStep === 0) {
+  if (currentStep <= -1) {
+    welcomeStepDiv.classList.remove('hidden');
+    progressSection.classList.add('hidden');
+  } else if (currentStep === 0) {
     domainStepDiv.classList.remove('hidden');
+    progressSection.classList.add('hidden');
   } else if (currentStep >= 1 && currentStep <= capabilities.length) {
+    progressSection.classList.remove('hidden');
     capStepDiv.classList.remove('hidden');
     const isLast = currentStep === capabilities.length;
     nextBtn.innerHTML = isLast
@@ -741,6 +959,7 @@ function showStep() {
       : 'Next <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     showCapability();
   } else {
+    progressSection.classList.remove('hidden');
     resultsStepDiv.classList.remove('hidden');
     calculateResults();
   }
