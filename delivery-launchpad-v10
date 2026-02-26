@@ -11973,7 +11973,7 @@ function showFormPage() {
 // ── Conveyor autoplay ──
 (function () {
   var cardWidth = 212; // 200px card + 12px gap
-  var speed = 2800; // ms per step - increase to slow down
+  var speed = 4000; // ms per step - increase to slow down
 
   function init() {
     var conveyor = document.getElementById("lp-conveyor");
