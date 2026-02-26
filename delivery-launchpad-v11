@@ -9548,7 +9548,8 @@ function fbSelectPartner(el, partnerName) {
     '" style="width:100%;padding:8px;border:1px solid var(--borderColor);border-radius:3px;font-size:13px;font-family:system-ui;min-height:60px;" placeholder="Additional context for ' +
     partnerName +
     '..." onchange="fbFieldChange(\'s6\')"></textarea>' +
-    "</div>";
+    "</div>" +
+    '<div id="partner-selections-' + pid + '" class="fb-selected-summary"></div>';
   _fssApplyPartners(pid);
 }
 
@@ -9559,6 +9560,11 @@ function fbTogglePartnerFam(el, pid, famName) {
   });
   var prodsDiv = document.getElementById("partner-prods-" + pid);
   if (prodsDiv && partner) {
+    // Save currently selected products before rebuild
+    var prevSelected = Array.from(
+      document.querySelectorAll("#partner-prod-chips-" + pid + " .fb-chip.selected")
+    ).map(function (c) { return c.textContent.trim(); });
+
     var selFams = Array.from(
       document.querySelectorAll("#partner-fams-" + pid + " .fb-chip.selected"),
     ).map(function (c) {
@@ -9566,24 +9572,29 @@ function fbTogglePartnerFam(el, pid, famName) {
     });
     if (selFams.length === 0) {
       prodsDiv.innerHTML = "";
-    } else {
-      var html =
-        '<div class="fb-detail-label">Products</div><div class="fb-chip-grid">';
-      selFams.forEach(function (fn) {
-        var fam = partner.product_families.find(function (f) {
-          return f.product_family === fn;
-        });
-        if (fam && fam.products)
-          fam.products.forEach(function (p) {
-            html +=
-              '<span class="fb-chip" onclick="this.classList.toggle(\'selected\');fbEvalDots();">' +
-              p +
-              "</span>";
-          });
-      });
-      html += "</div>";
-      prodsDiv.innerHTML = html;
+      updatePartnerSelectionSummary(pid);
+      fbEvalDots();
+      var tab0 = document.querySelector("#partnerTabList .fb-tab-item.active");
+      if (tab0) updateTabDot(tab0, false);
+      return;
     }
+    var html =
+      '<div class="fb-detail-label">Products</div><div class="fb-chip-grid" id="partner-prod-chips-' + pid + '">';
+    selFams.forEach(function (fn) {
+      var fam = partner.product_families.find(function (f) {
+        return f.product_family === fn;
+      });
+      if (fam && fam.products)
+        fam.products.forEach(function (p) {
+          var sel = prevSelected.indexOf(p) >= 0 ? " selected" : "";
+          html +=
+            '<span class="fb-chip' + sel + '" onclick="this.classList.toggle(\'selected\');fbEvalDots();updatePartnerSelectionSummary(\'' + pid + '\');">' +
+            p +
+            "</span>";
+        });
+    });
+    html += "</div>";
+    prodsDiv.innerHTML = html;
   }
   var tab = document.querySelector("#partnerTabList .fb-tab-item.active");
   if (tab) {
@@ -9593,6 +9604,58 @@ function fbTogglePartnerFam(el, pid, famName) {
     updateTabDot(tab, hasSel);
   }
   fbEvalDots();
+  updatePartnerSelectionSummary(pid);
+}
+
+function updatePartnerSelectionSummary(pid) {
+  var container = document.getElementById("partner-selections-" + pid);
+  if (!container) return;
+  var selFams = Array.from(
+    document.querySelectorAll("#partner-fams-" + pid + " .fb-chip.selected")
+  ).map(function(c) { return c.textContent.trim(); });
+  var selProds = Array.from(
+    document.querySelectorAll("#partner-prod-chips-" + pid + " .fb-chip.selected")
+  ).map(function(c) { return c.textContent.trim(); });
+  if (selFams.length === 0 && selProds.length === 0) {
+    container.innerHTML = "";
+    return;
+  }
+  var html = "";
+  if (selFams.length > 0) {
+    html += '<div class="fb-detail-label">Selected Product Families</div><div>';
+    selFams.forEach(function(name) {
+      html += '<span class="fb-sel-chip">' + name +
+        '<button class="fb-sel-chip-x" onclick="removePartnerFam(\'' + pid + '\',\'' + name.replace(/'/g, "\\'") + '\')" title="Remove">&times;</button></span>';
+    });
+    html += '</div>';
+  }
+  if (selProds.length > 0) {
+    html += '<div class="fb-detail-label">Selected Products</div><div>';
+    selProds.forEach(function(name) {
+      html += '<span class="fb-sel-chip">' + name +
+        '<button class="fb-sel-chip-x" onclick="removePartnerProd(\'' + pid + '\',\'' + name.replace(/'/g, "\\'") + '\')" title="Remove">&times;</button></span>';
+    });
+    html += '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function removePartnerFam(pid, famName) {
+  document.querySelectorAll("#partner-fams-" + pid + " .fb-chip.selected").forEach(function(c) {
+    if (c.textContent.trim() === famName) {
+      fbTogglePartnerFam(c, pid, famName);
+    }
+  });
+}
+
+function removePartnerProd(pid, prodName) {
+  document.querySelectorAll("#partner-prod-chips-" + pid + " .fb-chip.selected").forEach(function(c) {
+    if (c.textContent.trim() === prodName) {
+      c.classList.remove("selected");
+    }
+  });
+  fbEvalDots();
+  updatePartnerSelectionSummary(pid);
 }
 
 // ════ S7: REGULATORY ════
@@ -10085,7 +10148,7 @@ function compilePartners() {
       return c.textContent.trim();
     });
     var prodChips = document.querySelectorAll(
-      "#partner-prods-" + pid + " .fb-chip.selected",
+      "#partner-prod-chips-" + pid + " .fb-chip.selected",
     );
     var products = Array.from(prodChips).map(function (c) {
       return c.textContent.trim();
@@ -10961,14 +11024,14 @@ function _fssApplyTech(catId) {
 function _fssSavePartners() {
   _fssSaveSection("partnerTabList", "partners", function(pid) {
     var families = Array.from(document.querySelectorAll("#partner-fams-" + pid + " .fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
-    var prods = Array.from(document.querySelectorAll("#partner-prods-" + pid + " .fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
+    var prods = Array.from(document.querySelectorAll("#partner-prod-chips-" + pid + " .fb-chip.selected")).map(function(c) { return c.textContent.trim(); });
     var notes = document.getElementById("partner-notes-" + pid);
     return { families: families, prods: prods, notes: notes ? notes.value : "" };
   });
 }
 function _fssApplyPartners(pid) {
   var saved = _formSelState.partners && _formSelState.partners[pid];
-  if (!saved || !(saved.families || []).length) return;
+  if (!saved || !(saved.families || []).length) { updatePartnerSelectionSummary(pid); return; }
   (saved.families || []).forEach(function(famText) {
     document.querySelectorAll("#partner-fams-" + pid + " .fb-chip").forEach(function(c) {
       if (c.textContent.trim() === famText && !c.classList.contains("selected")) c.classList.add("selected");
@@ -10977,12 +11040,12 @@ function _fssApplyPartners(pid) {
   var partner = appData.partners && appData.partners.alliance_partners.partners.find(function(p) { return slugify(p.partner) === pid; });
   var prodsDiv = document.getElementById("partner-prods-" + pid);
   if (partner && prodsDiv) {
-    var html = '<div class="fb-detail-label">Products</div><div class="fb-chip-grid">';
+    var html = '<div class="fb-detail-label">Products</div><div class="fb-chip-grid" id="partner-prod-chips-' + pid + '">';
     (saved.families || []).forEach(function(fn) {
       var fam = partner.product_families.find(function(f) { return f.product_family === fn; });
       if (fam && fam.products) fam.products.forEach(function(p) {
         var sel = (saved.prods || []).indexOf(p) >= 0 ? " selected" : "";
-        html += '<span class="fb-chip' + sel + '" onclick="this.classList.toggle(\'selected\');fbEvalDots();">' + p + "</span>";
+        html += '<span class="fb-chip' + sel + '" onclick="this.classList.toggle(\'selected\');fbEvalDots();updatePartnerSelectionSummary(\'' + pid + '\');">' + p + "</span>";
       });
     });
     html += "</div>";
@@ -10992,6 +11055,7 @@ function _fssApplyPartners(pid) {
   if (notes && saved.notes) notes.value = saved.notes;
   var tab = document.querySelector("#partnerTabList .fb-tab-item.active");
   if (tab) { tab.classList.add("has-data"); tab.querySelector(".fb-tab-dot").style.background = "#22c55e"; }
+  updatePartnerSelectionSummary(pid);
 }
 
 function _fssSaveReg() {
