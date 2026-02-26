@@ -2067,7 +2067,7 @@
       }
 
       parts.push(`</svg>`);
-      return parts.join('\\n');
+      return parts.join('\n');
     }
 
     function escapeXml(s){
