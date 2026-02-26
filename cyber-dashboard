@@ -300,7 +300,7 @@ button { cursor: pointer; border: none; background: none; font: inherit; color: 
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
   align-items: start;
-  grid-auto-flow: dense;
+  grid-auto-flow: row dense;
 }
 .widget--span2 { grid-column: span 2; }
 .widget--full  { grid-column: 1 / -1; }
@@ -323,52 +323,77 @@ button { cursor: pointer; border: none; background: none; font: inherit; color: 
   position: absolute;
   z-index: 5;
   opacity: 0;
-  transition: opacity 0.15s;
+  transition: opacity 0.18s ease;
 }
 .widget:hover .resize-handle { opacity: 1; }
 .resize-handle:hover { opacity: 1 !important; }
-.resize-n  { top: -3px; left: 14px; right: 14px; height: 7px; cursor: n-resize; }
-.resize-s  { bottom: -3px; left: 14px; right: 14px; height: 7px; cursor: s-resize; }
-.resize-e  { right: -3px; top: 14px; bottom: 14px; width: 7px; cursor: e-resize; }
-.resize-w  { left: -3px; top: 14px; bottom: 14px; width: 7px; cursor: w-resize; }
-.resize-ne { top: -4px; right: -4px; width: 14px; height: 14px; cursor: ne-resize; }
-.resize-se { bottom: -4px; right: -4px; width: 14px; height: 14px; cursor: se-resize; }
-.resize-sw { bottom: -4px; left: -4px; width: 14px; height: 14px; cursor: sw-resize; }
-.resize-nw { top: -4px; left: -4px; width: 14px; height: 14px; cursor: nw-resize; }
+
+/* Edge handles — generous 12px hit area */
+.resize-n  { top: -6px; left: 12px; right: 12px; height: 12px; cursor: n-resize; }
+.resize-s  { bottom: -6px; left: 12px; right: 12px; height: 12px; cursor: s-resize; }
+.resize-e  { right: -6px; top: 12px; bottom: 12px; width: 12px; cursor: e-resize; }
+.resize-w  { left: -6px; top: 12px; bottom: 12px; width: 12px; cursor: w-resize; }
+
+/* Corner handles — 18px square hit area */
+.resize-ne { top: -6px; right: -6px; width: 18px; height: 18px; cursor: ne-resize; }
+.resize-se { bottom: -6px; right: -6px; width: 18px; height: 18px; cursor: se-resize; }
+.resize-sw { bottom: -6px; left: -6px; width: 18px; height: 18px; cursor: sw-resize; }
+.resize-nw { top: -6px; left: -6px; width: 18px; height: 18px; cursor: nw-resize; }
+
+/* Orange visual indicator (::after) */
 .resize-handle::after {
   content: '';
   position: absolute;
   background: var(--o500);
   border-radius: 2px;
   opacity: 0;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
 }
-.resize-handle:hover::after { opacity: 0.6; }
+.resize-handle:hover::after { opacity: 0.7; }
+
+/* Horizontal edge indicators — centered bar */
 .resize-n::after, .resize-s::after {
   left: 50%; transform: translateX(-50%);
-  width: 48px; height: 3px;
+  width: 56px; height: 4px;
 }
-.resize-n::after { bottom: 1px; }
-.resize-s::after { top: 1px; }
+.resize-n::after { bottom: 2px; }
+.resize-s::after { top: 2px; }
+
+/* Vertical edge indicators — centered bar */
 .resize-e::after, .resize-w::after {
   top: 50%; transform: translateY(-50%);
-  width: 3px; height: 48px;
+  width: 4px; height: 56px;
 }
-.resize-e::after { left: 1px; }
-.resize-w::after { right: 1px; }
+.resize-e::after { left: 2px; }
+.resize-w::after { right: 2px; }
+
+/* Corner indicators — dot */
 .resize-ne::after, .resize-se::after, .resize-sw::after, .resize-nw::after {
-  width: 8px; height: 8px; border-radius: 50%;
+  width: 10px; height: 10px; border-radius: 50%;
 }
-.resize-ne::after { bottom: 3px; left: 3px; }
-.resize-se::after { top: 3px; left: 3px; }
-.resize-sw::after { top: 3px; right: 3px; }
-.resize-nw::after { bottom: 3px; right: 3px; }
-body.resizing { user-select: none !important; }
+.resize-ne::after { bottom: 4px; left: 4px; }
+.resize-se::after { top: 4px; left: 4px; }
+.resize-sw::after { top: 4px; right: 4px; }
+.resize-nw::after { bottom: 4px; right: 4px; }
+
+/* Resizing states */
+body.resizing { user-select: none !important; cursor: inherit; }
 body.resizing * { user-select: none !important; }
-.widget.resizing { z-index: 20; box-shadow: var(--shadow-md) !important; }
+body.resizing .resize-handle { opacity: 1 !important; }
+body.resizing .resize-handle:hover::after { opacity: 1 !important; }
+.widget.resizing { z-index: 20; box-shadow: var(--shadow-md) !important; outline: 2px solid var(--o300); outline-offset: -1px; }
+
+/* Resize span overrides (attribute-based, highest specificity) */
 .widget[data-col-span="1"] { grid-column: span 1; }
 .widget[data-col-span="2"] { grid-column: span 2; }
 .widget[data-col-span="3"] { grid-column: 1 / -1; }
+
+/* Resize overlay hint shown during resize */
+.resize-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 15; cursor: inherit;
+}
 
 /* SortableJS states */
 .widget--ghost { opacity: .3; border: 2px dashed var(--o300) !important; background: var(--o100) !important; }
@@ -587,9 +612,8 @@ body.resizing * { user-select: none !important; }
 @media (max-width: 1100px) {
   :root { --sidebar-w: 200px; }
   .widget-grid { grid-template-columns: repeat(2, 1fr); }
-  .widget--span2 { grid-column: span 1; }
-  .widget[data-col-span="3"] { grid-column: 1 / -1; }
-  .widget[data-col-span="2"] { grid-column: span 2; }
+  .widget--span2, .widget[data-col-span="2"] { grid-column: span 2; }
+  .widget--full, .widget[data-col-span="3"] { grid-column: 1 / -1; }
 }
 @media (max-width: 768px) {
   .hamburger { display: flex; }
@@ -603,7 +627,8 @@ body.resizing * { user-select: none !important; }
   .sidebar.open { transform: translateX(0); }
   .sidebar-overlay { display: block; }
   .widget-grid { grid-template-columns: 1fr; }
-  .widget--span2, .widget--full { grid-column: 1; }
+  .widget--span2, .widget--full,
+  .widget[data-col-span="2"], .widget[data-col-span="3"] { grid-column: 1; }
   .view-toggle { display: none; }
   .main { padding: 10px; gap: 10px; }
 }
@@ -1447,18 +1472,27 @@ function updateSpiCard(d) {
 
 /* ─── Render all ────────────────────────── */
 function refreshAll() {
-  const d = DATA[activePeriod];
-  // Only init charts if their container is visible
-  const grid = document.getElementById('widget-grid');
-  if (isWidgetVisible(grid, 'project-status')) initDonut(d);
-  if (isWidgetVisible(grid, 'budget-actuals')) initBar(d);
-  if (isWidgetVisible(grid, 'resource-util')) initHBar(d);
-  if (isWidgetVisible(grid, 'kpi-schedule')) { initSpark(d); updateSpiCard(d); }
+  var d = DATA[activePeriod];
+  var grid = document.getElementById('widget-grid');
+
+  // Only init charts whose container is visible (display !== 'none')
+  if (isWidgetVisible(grid, 'project-status')) {
+    try { initDonut(d); } catch(e) { console.warn('Donut init error:', e); }
+  }
+  if (isWidgetVisible(grid, 'budget-actuals')) {
+    try { initBar(d); } catch(e) { console.warn('Bar init error:', e); }
+  }
+  if (isWidgetVisible(grid, 'resource-util')) {
+    try { initHBar(d); } catch(e) { console.warn('HBar init error:', e); }
+  }
+  if (isWidgetVisible(grid, 'kpi-schedule')) {
+    try { initSpark(d); updateSpiCard(d); } catch(e) { console.warn('Spark init error:', e); }
+  }
   updateRagCounts();
 }
 
 function isWidgetVisible(grid, id) {
-  const w = grid.querySelector(`[data-widget-id="${id}"]`);
+  var w = grid.querySelector('[data-widget-id="' + id + '"]');
   return w && w.style.display !== 'none';
 }
 
@@ -1533,39 +1567,52 @@ function setView(btn) {
   btn.classList.add('active');
   document.getElementById('breadcrumb-current').textContent = viewLabels[btn.dataset.view];
 }
+function destroyAllCharts() {
+  Object.keys(charts).forEach(function(key) {
+    if (charts[key]) {
+      try { charts[key].destroy(); } catch(e) {}
+      charts[key] = null;
+    }
+  });
+}
+
 function setNav(el) {
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
   el.classList.add('active');
 
-  const tab = el.dataset.nav;
+  var tab = el.dataset.nav;
   if (!tab || !NAV_TABS[tab]) return;
   activeNav = tab;
 
-  const config = NAV_TABS[tab];
-  const grid = document.getElementById('widget-grid');
-  const allWidgetIds = ['kpi-health','kpi-schedule','kpi-budget','project-status','budget-actuals','resource-util','risk-register','milestones','programme-table','project-table','resource-table','risk-heatmap','report-summary'];
+  var config = NAV_TABS[tab];
+  var grid = document.getElementById('widget-grid');
+  var allWidgetIds = ['kpi-health','kpi-schedule','kpi-budget','project-status','budget-actuals','resource-util','risk-register','milestones','programme-table','project-table','resource-table','risk-heatmap','report-summary'];
+
+  // Destroy all Chart.js instances before hiding canvases (prevents stale canvas issues)
+  destroyAllCharts();
 
   // Hide all widgets
-  allWidgetIds.forEach(id => {
-    const w = grid.querySelector(`[data-widget-id="${id}"]`);
+  allWidgetIds.forEach(function(id) {
+    var w = grid.querySelector('[data-widget-id="' + id + '"]');
     if (w) w.style.display = 'none';
   });
 
   // Show and reorder widgets for this tab
-  config.widgets.forEach(wid => {
-    const w = grid.querySelector(`[data-widget-id="${wid}"]`);
+  config.widgets.forEach(function(wid) {
+    var w = grid.querySelector('[data-widget-id="' + wid + '"]');
     if (w) {
       w.style.display = '';
       // Apply column span from config
-      const span = config.spans[wid] || 1;
+      var span = config.spans[wid] || 1;
       w.classList.remove('widget--span2', 'widget--full');
       w.removeAttribute('data-col-span');
-      if (span === 2) w.classList.add('widget--span2');
-      else if (span >= 3) w.classList.add('widget--full');
-      // Re-append to reorder
+      if (span === 2) { w.classList.add('widget--span2'); w.setAttribute('data-col-span', '2'); }
+      else if (span >= 3) { w.classList.add('widget--full'); w.setAttribute('data-col-span', '3'); }
+      else { w.setAttribute('data-col-span', '1'); }
+      // Re-append to reorder in the grid
       grid.appendChild(w);
-      // Ensure widget body is visible
-      const body = w.querySelector('.widget-body');
+      // Ensure widget body is visible (undo any minimise)
+      var body = w.querySelector('.widget-body');
       if (body) body.style.display = '';
     }
   });
@@ -1580,23 +1627,27 @@ function setNav(el) {
   // Update breadcrumb
   document.getElementById('breadcrumb-current').textContent = config.title;
 
-  // Refresh charts after DOM settles
-  setTimeout(() => {
+  // Refresh charts and data after DOM has settled (needs time for grid layout to recalculate)
+  setTimeout(function() {
     refreshAll();
     renderRisks(activeRag);
     renderMilestones(activeRag);
     addResizeHandles();
-    lucide.createIcons();
-  }, 60);
+    try { lucide.createIcons(); } catch(e) {}
+  }, 80);
 }
 function setPeriod(btn) {
-  document.querySelectorAll('.filter-btn[data-period]').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-btn[data-period]').forEach(function(b) { b.classList.remove('active'); });
   btn.classList.add('active');
   activePeriod = btn.dataset.period;
+  // Destroy and recreate all charts for the new period
+  destroyAllCharts();
   refreshAll();
+  // If reports tab is active, re-render with new period data
+  if (activeNav === 'reports') renderReportSummary();
 }
 function setRag(btn) {
-  document.querySelectorAll('.filter-btn[data-rag]').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-btn[data-rag]').forEach(function(b) { b.classList.remove('active'); });
   btn.classList.add('active');
   activeRag = btn.dataset.rag;
   renderRisks(activeRag);
@@ -1605,15 +1656,23 @@ function setRag(btn) {
 }
 
 function updateRagCounts() {
-  const d = DATA[activePeriod];
-  const ps = d.projectStatus;
-  const total = ps.values.reduce((a,b)=>a+b,0);
-  const counts = { all: total, green: ps.values[0], amber: ps.values[1], red: ps.values[2] };
-  document.querySelectorAll('.filter-btn[data-rag]').forEach(btn => {
-    const rag = btn.dataset.rag;
-    const countEl = btn.querySelector('.filter-count');
-    if (countEl && counts[rag] !== undefined) countEl.textContent = counts[rag];
+  var d = DATA[activePeriod];
+  var ps = d.projectStatus;
+  var total = ps.values.reduce(function(a,b){ return a+b; }, 0);
+  var counts = { all: total, green: ps.values[0], amber: ps.values[1], red: ps.values[2] };
+  document.querySelectorAll('.filter-btn[data-rag]').forEach(function(btn) {
+    var rag = btn.dataset.rag;
+    var countEl = btn.querySelector('.filter-count');
+    if (countEl && counts[rag] !== undefined) {
+      countEl.textContent = counts[rag];
+    }
   });
+  // Also update the "All Projects" label text
+  var allBtn = document.querySelector('.filter-btn[data-rag="all"]');
+  if (allBtn) {
+    var countEl = allBtn.querySelector('.filter-count');
+    if (countEl) countEl.textContent = total;
+  }
 }
 
 /* Widget menu toggle */
@@ -1963,11 +2022,10 @@ const SIZE_KEY = 'pmo-widget-sizes-v1';
 
 function addResizeHandles() {
   document.querySelectorAll('#widget-grid .widget').forEach(widget => {
-    // Skip if already has handles
     if (widget.querySelector('.resize-handle')) return;
     RESIZE_DIRS.forEach(dir => {
       const handle = document.createElement('div');
-      handle.className = `resize-handle resize-${dir}`;
+      handle.className = 'resize-handle resize-' + dir;
       handle.dataset.direction = dir;
       widget.appendChild(handle);
     });
@@ -1978,14 +2036,15 @@ function getGridMetrics() {
   const grid = document.getElementById('widget-grid');
   const gridRect = grid.getBoundingClientRect();
   const style = getComputedStyle(grid);
-  const gap = parseInt(style.gap) || 14;
-  const cols = style.gridTemplateColumns.split(' ').length;
+  const gap = parseFloat(style.columnGap) || parseFloat(style.gap) || 14;
+  const colTracks = style.gridTemplateColumns.split(/\s+/).filter(Boolean);
+  const cols = colTracks.length || 3;
   const colWidth = (gridRect.width - gap * (cols - 1)) / cols;
   return { grid, gridRect, gap, cols, colWidth };
 }
 
 function getWidgetSpan(widget) {
-  if (widget.dataset.colSpan) return parseInt(widget.dataset.colSpan);
+  if (widget.dataset.colSpan) return parseInt(widget.dataset.colSpan, 10);
   if (widget.classList.contains('widget--full')) return 3;
   if (widget.classList.contains('widget--span2')) return 2;
   return 1;
@@ -1994,50 +2053,66 @@ function getWidgetSpan(widget) {
 function applyWidgetSpan(widget, span) {
   span = Math.max(1, Math.min(3, span));
   widget.classList.remove('widget--span2', 'widget--full');
-  widget.dataset.colSpan = span;
-  if (span === 2) widget.classList.add('widget--span2');
-  else if (span >= 3) widget.classList.add('widget--full');
+  widget.removeAttribute('data-col-span');
+  if (span === 1) {
+    widget.setAttribute('data-col-span', '1');
+  } else if (span === 2) {
+    widget.classList.add('widget--span2');
+    widget.setAttribute('data-col-span', '2');
+  } else {
+    widget.classList.add('widget--full');
+    widget.setAttribute('data-col-span', '3');
+  }
 }
 
 function saveWidgetSizes() {
   const sizes = {};
   document.querySelectorAll('#widget-grid .widget').forEach(w => {
     const id = w.dataset.widgetId;
+    if (!id) return;
     const span = getWidgetSpan(w);
-    const minH = w.style.minHeight || null;
-    if (span !== 1 || minH) sizes[id] = { span, minHeight: minH };
+    const minH = w.style.minHeight || '';
+    sizes[id] = { span: span, minHeight: minH };
   });
-  localStorage.setItem(SIZE_KEY, JSON.stringify(sizes));
+  try { localStorage.setItem(SIZE_KEY, JSON.stringify(sizes)); } catch(e) {}
 }
 
 function loadWidgetSizes() {
   try {
-    const sizes = JSON.parse(localStorage.getItem(SIZE_KEY) || '{}');
-    Object.entries(sizes).forEach(([id, cfg]) => {
-      const w = document.querySelector(`[data-widget-id="${id}"]`);
+    const raw = localStorage.getItem(SIZE_KEY);
+    if (!raw) return;
+    const sizes = JSON.parse(raw);
+    Object.entries(sizes).forEach(function(entry) {
+      const id = entry[0], cfg = entry[1];
+      const w = document.querySelector('[data-widget-id="' + id + '"]');
       if (!w) return;
-      if (cfg.span) applyWidgetSpan(w, cfg.span);
+      if (cfg.span && cfg.span >= 1 && cfg.span <= 3) applyWidgetSpan(w, cfg.span);
       if (cfg.minHeight) w.style.minHeight = cfg.minHeight;
     });
-  } catch(e) { /* ignore */ }
+  } catch(e) { /* ignore corrupt storage */ }
 }
 
 let resizeState = null;
+let resizeOverlay = null;
 
 function initResizeListeners() {
-  document.addEventListener('mousedown', e => {
+  // Mousedown on a resize handle starts the resize
+  document.addEventListener('mousedown', function(e) {
     const handle = e.target.closest('.resize-handle');
     if (!handle) return;
     e.preventDefault();
     e.stopPropagation();
 
     const widget = handle.closest('.widget');
+    if (!widget) return;
+    const dir = handle.dataset.direction;
     const metrics = getGridMetrics();
     const widgetRect = widget.getBoundingClientRect();
+    const currentSpan = getWidgetSpan(widget);
 
     resizeState = {
-      widget,
-      dir: handle.dataset.direction,
+      widget: widget,
+      dir: dir,
       startX: e.clientX,
       startY: e.clientY,
       startWidth: widgetRect.width,
@@ -2045,43 +2120,77 @@ function initResizeListeners() {
       colWidth: metrics.colWidth,
       gap: metrics.gap,
       maxCols: metrics.cols,
-      origSpan: getWidgetSpan(widget),
-      origMinHeight: widget.style.minHeight || null
+      origSpan: currentSpan,
+      origMinHeight: widget.style.minHeight || ''
     };
 
+    // Set cursor on body for consistent feedback
+    const cursorMap = { n:'n-resize', s:'s-resize', e:'e-resize', w:'w-resize', ne:'ne-resize', se:'se-resize', sw:'sw-resize', nw:'nw-resize' };
+    document.body.style.cursor = cursorMap[dir] || 'default';
     document.body.classList.add('resizing');
     widget.classList.add('resizing');
+
+    // Add a transparent overlay to catch mouse events reliably
+    resizeOverlay = document.createElement('div');
+    resizeOverlay.className = 'resize-overlay';
+    resizeOverlay.style.cursor = cursorMap[dir] || 'default';
+    document.body.appendChild(resizeOverlay);
   });
 
-  document.addEventListener('mousemove', e => {
+  // Mousemove updates the widget size live
+  document.addEventListener('mousemove', function(e) {
     if (!resizeState) return;
-    const { widget, dir, startX, startY, startWidth, startHeight, colWidth, gap } = resizeState;
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
+    e.preventDefault();
+    var widget = resizeState.widget;
+    var dir = resizeState.dir;
+    var dx = e.clientX - resizeState.startX;
+    var dy = e.clientY - resizeState.startY;
+    var colWidth = resizeState.colWidth;
+    var gap = resizeState.gap;
 
-    // Horizontal resize (column span)
-    if (dir.includes('e') || dir.includes('w')) {
-      const delta = dir.includes('e') ? dx : -dx;
-      const newWidth = startWidth + delta;
-      const newSpan = Math.max(1, Math.min(3, Math.round(newWidth / (colWidth + gap))));
+    // Horizontal resize: change column span
+    var hasHoriz = dir.indexOf('e') !== -1 || dir.indexOf('w') !== -1;
+    if (hasHoriz) {
+      var hDelta = (dir.indexOf('e') !== -1) ? dx : -dx;
+      var newWidth = resizeState.startWidth + hDelta;
+      // Calculate span based on how many columns the new width covers
+      // A span-N widget = N*colWidth + (N-1)*gap
+      // So we solve: newWidth = N*colWidth + (N-1)*gap → N = (newWidth + gap) / (colWidth + gap)
+      var rawSpan = (newWidth + gap) / (colWidth + gap);
+      var newSpan = Math.max(1, Math.min(resizeState.maxCols, Math.round(rawSpan)));
       applyWidgetSpan(widget, newSpan);
     }
 
-    // Vertical resize (height)
-    if (dir.includes('s') || dir.includes('n')) {
-      const delta = dir.includes('s') ? dy : -dy;
-      const newHeight = Math.max(80, startHeight + delta);
-      widget.style.minHeight = newHeight + 'px';
+    // Vertical resize: change minimum height
+    var hasVert = dir.indexOf('s') !== -1 || dir.indexOf('n') !== -1;
+    if (hasVert) {
+      var vDelta = (dir.indexOf('s') !== -1) ? dy : -dy;
+      var newHeight = Math.max(100, resizeState.startHeight + vDelta);
+      widget.style.minHeight = Math.round(newHeight) + 'px';
     }
   });
 
-  document.addEventListener('mouseup', () => {
+  // Mouseup finishes the resize
+  document.addEventListener('mouseup', function() {
     if (!resizeState) return;
-    const widget = resizeState.widget;
+    var widget = resizeState.widget;
+
     document.body.classList.remove('resizing');
+    document.body.style.cursor = '';
     widget.classList.remove('resizing');
+
+    // Remove the overlay
+    if (resizeOverlay && resizeOverlay.parentNode) {
+      resizeOverlay.parentNode.removeChild(resizeOverlay);
+    }
+    resizeOverlay = null;
+
+    // Save the new sizes to localStorage
     saveWidgetSizes();
-    setTimeout(refreshAll, 80);
+
+    // Refresh charts to fit new container sizes
+    setTimeout(refreshAll, 100);
+
     resizeState = null;
   });
 }
@@ -2108,56 +2217,78 @@ function loadLayout() {
   } catch(e) { /* ignore corrupt storage */ }
 }
 
-document.getElementById('reset-layout-btn').addEventListener('click', () => {
+document.getElementById('reset-layout-btn').addEventListener('click', function() {
   localStorage.removeItem(LAYOUT_KEY);
   localStorage.removeItem(SIZE_KEY);
+  // Also remove any inline min-height and data-col-span from widgets before reload
+  document.querySelectorAll('#widget-grid .widget').forEach(function(w) {
+    w.style.minHeight = '';
+    w.removeAttribute('data-col-span');
+    w.classList.remove('widget--span2', 'widget--full');
+  });
   location.reload();
 });
 
 /* ═══════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', () => {
-  lucide.createIcons();
+document.addEventListener('DOMContentLoaded', function() {
+  // 1. Render icons
+  try { lucide.createIcons(); } catch(e) { console.warn('Lucide icons failed:', e); }
+
+  // 2. Restore saved layout order and widget sizes from localStorage
   loadLayout();
   loadWidgetSizes();
 
-  // Build scenario dropdown cards from SCENARIOS object
-  document.getElementById('scenario-cards').innerHTML =
-    Object.entries(SCENARIOS).map(([id, s]) => `
-      <div class="scenario-card" onclick="loadScenario('${id}')">
-        <div class="scenario-card-badge">${s.badge}</div>
-        <div class="scenario-card-name">${s.name}</div>
-        <div class="scenario-card-desc">${s.description}</div>
-      </div>`).join('');
+  // 3. Build scenario dropdown cards
+  var scenarioCardsHtml = '';
+  Object.keys(SCENARIOS).forEach(function(id) {
+    var s = SCENARIOS[id];
+    scenarioCardsHtml += '<div class="scenario-card" onclick="loadScenario(\'' + id + '\')">' +
+      '<div class="scenario-card-badge">' + s.badge + '</div>' +
+      '<div class="scenario-card-name">' + s.name + '</div>' +
+      '<div class="scenario-card-desc">' + s.description + '</div>' +
+    '</div>';
+  });
+  document.getElementById('scenario-cards').innerHTML = scenarioCardsHtml;
 
+  // 4. Render static data (risks, milestones)
   renderRisks('all');
   renderMilestones('all');
+
+  // 5. Initialise all charts
   refreshAll();
 
-  // Add resize handles to all widgets
+  // 6. Add resize handles to all widgets
   addResizeHandles();
+
+  // 7. Wire up resize mouse listeners
   initResizeListeners();
 
-  // Animate progress bars after a short delay
-  setTimeout(() => {
-    document.getElementById('spi-bar').style.width = Math.round(DATA.quarter.spi * 100) + '%';
-    document.getElementById('budget-bar').style.width = '67%';
-  }, 150);
+  // 8. Animate progress bars after layout settles
+  setTimeout(function() {
+    var spiBar = document.getElementById('spi-bar');
+    var budgetBar = document.getElementById('budget-bar');
+    if (spiBar) spiBar.style.width = Math.round(DATA.quarter.spi * 100) + '%';
+    if (budgetBar) budgetBar.style.width = '67%';
+  }, 200);
 
-  // Initialise SortableJS
-  Sortable.create(document.getElementById('widget-grid'), {
-    animation: 160,
-    handle: '.drag-handle',
-    ghostClass: 'widget--ghost',
-    chosenClass: 'widget--chosen',
-    dragClass: 'widget--drag',
-    onEnd: () => {
-      saveLayout();
-      // Allow DOM to settle then refresh Chart.js canvas sizing
-      setTimeout(refreshAll, 80);
-    }
-  });
+  // 9. Initialise SortableJS for drag-and-drop reordering
+  try {
+    Sortable.create(document.getElementById('widget-grid'), {
+      animation: 160,
+      handle: '.drag-handle',
+      ghostClass: 'widget--ghost',
+      chosenClass: 'widget--chosen',
+      dragClass: 'widget--drag',
+      filter: '.resize-handle',
+      preventOnFilter: false,
+      onEnd: function() {
+        saveLayout();
+        setTimeout(refreshAll, 100);
+      }
+    });
+  } catch(e) { console.warn('SortableJS init failed:', e); }
 });
 </script>
 </body>
