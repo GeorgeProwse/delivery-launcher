@@ -1668,6 +1668,40 @@ textarea {
   background-color: var(--success);
 }
 
+/* Copy-prompt tooltip */
+.btn-copy-wrap {
+  position: relative;
+  display: inline-block;
+}
+.btn-copy-wrap .copy-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 200;
+}
+.btn-copy-wrap .copy-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #1a1a1a;
+}
+.btn-copy-wrap:hover .copy-tooltip {
+  opacity: 1;
+}
+
 /* Secondary/ghost utility actions — CHANGE 11 */
 .btn-secondary-action {
   background: transparent;
@@ -3464,6 +3498,35 @@ textarea {
   font-weight: 600;
 }
 
+/* ── Selected-chips summary (Tech Landscape) ── */
+.fb-selected-summary { margin-top: 14px; }
+.fb-selected-summary .fb-detail-label { margin-top: 10px; margin-bottom: 4px; }
+.fb-sel-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px 4px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--orange100);
+  border: 1px solid var(--orange300);
+  color: var(--textColor);
+  margin: 2px 3px;
+}
+.fb-sel-chip-x {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--grey500);
+  line-height: 1;
+  margin-left: 2px;
+  border: none;
+  background: none;
+  padding: 0 2px;
+}
+.fb-sel-chip-x:hover { color: #c00; }
+
 /* ── Reg / Risk checklist (S7 / S8) ── */
 .fb-check-group {
   display: flex;
@@ -3993,7 +4056,7 @@ textarea {
         <div class="brief-strength-bar-bg"><div class="brief-strength-bar" id="briefStrengthBar"></div></div>
         <span class="brief-strength-value" id="briefStrengthLabel">—</span>
       </div>
-      <button class="fb-btn-ghost" onclick="clearAllFormData()" style="color:#c00;border-color:#f5c0c0;" title="Clear all data and start a new engagement">New Engagement</button>
+      <button class="fb-btn-ghost" onclick="confirmClearAllFormData()" style="color:#c00;border-color:#f5c0c0;" title="Clear all form data">Clear Form</button>
       <button class="fb-btn-ghost" onclick="loadExampleData()">Load Example</button>
       <button class="fb-btn-primary" onclick="startWorkflow()">Launch Workflow →</button>
     </div>
@@ -9043,7 +9106,8 @@ function fbSelectTechCat(el, catName) {
     '<textarea id="tech-notes-' +
     catId +
     '" style="width:100%;padding:8px;border:1px solid var(--borderColor);border-radius:3px;font-size:13px;font-family:system-ui;min-height:60px;" placeholder="Additional context..." onchange="fbFieldChange(\'s5\')"></textarea>' +
-    "</div>";
+    "</div>" +
+    '<div id="tech-selections-' + catId + '" class="fb-selected-summary"></div>';
   _fssApplyTech(slugify(catName));
 }
 
@@ -9060,8 +9124,13 @@ function fbToggleTechSub(el, catId, subName) {
       return s.sub_category === subName;
     });
   var prodsDiv = document.getElementById("tech-prods-" + catId);
-  // Rebuild all products for all selected subs
+  // Rebuild all products for all selected subs, preserving previous product selections
   if (prodsDiv && cat) {
+    // Save currently selected products before rebuild
+    var prevSelected = Array.from(
+      document.querySelectorAll("#tech-prod-chips-" + catId + " .fb-chip.selected"),
+    ).map(function (c) { return c.textContent.trim(); });
+
     var selectedSubs = Array.from(
       document.querySelectorAll("#tech-subs-" + catId + " .fb-chip.selected"),
     ).map(function (c) {
@@ -9069,6 +9138,11 @@ function fbToggleTechSub(el, catId, subName) {
     });
     if (selectedSubs.length === 0) {
       prodsDiv.innerHTML = "";
+      updateTechSelectionSummary(catId);
+      fbEvalDots();
+      // Update tab dot
+      var tab0 = document.querySelector("#techCatList .fb-tab-item.active");
+      if (tab0) updateTabDot(tab0, false);
       return;
     }
     var html =
@@ -9081,8 +9155,9 @@ function fbToggleTechSub(el, catId, subName) {
       });
       if (s && (s.products || s.options))
         (s.products || s.options).forEach(function (p) {
+          var sel = prevSelected.indexOf(p) >= 0 ? " selected" : "";
           html +=
-            '<span class="fb-chip" onclick="this.classList.toggle(\'selected\');fbEvalDots();">' +
+            '<span class="fb-chip' + sel + '" onclick="this.classList.toggle(\'selected\');fbEvalDots();updateTechSelectionSummary(\'' + catId + '\');">' +
             p +
             "</span>";
         });
@@ -9099,6 +9174,61 @@ function fbToggleTechSub(el, catId, subName) {
     updateTabDot(tab, hasSel);
   }
   fbEvalDots();
+  updateTechSelectionSummary(catId);
+}
+
+function updateTechSelectionSummary(catId) {
+  var container = document.getElementById("tech-selections-" + catId);
+  if (!container) return;
+  var selSubs = Array.from(
+    document.querySelectorAll("#tech-subs-" + catId + " .fb-chip.selected")
+  ).map(function(c) { return c.textContent.trim(); });
+  var selProds = Array.from(
+    document.querySelectorAll("#tech-prod-chips-" + catId + " .fb-chip.selected")
+  ).map(function(c) { return c.textContent.trim(); });
+  if (selSubs.length === 0 && selProds.length === 0) {
+    container.innerHTML = "";
+    return;
+  }
+  var html = "";
+  if (selSubs.length > 0) {
+    html += '<div class="fb-detail-label">Selected Subcategories</div><div>';
+    selSubs.forEach(function(name) {
+      html += '<span class="fb-sel-chip">' + name +
+        '<button class="fb-sel-chip-x" onclick="removeTechSub(\'' + catId + '\',\'' + name.replace(/'/g, "\\'") + '\')" title="Remove">&times;</button></span>';
+    });
+    html += '</div>';
+  }
+  if (selProds.length > 0) {
+    html += '<div class="fb-detail-label">Selected Products</div><div>';
+    selProds.forEach(function(name) {
+      html += '<span class="fb-sel-chip">' + name +
+        '<button class="fb-sel-chip-x" onclick="removeTechProd(\'' + catId + '\',\'' + name.replace(/'/g, "\\'") + '\')" title="Remove">&times;</button></span>';
+    });
+    html += '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function removeTechSub(catId, subName) {
+  // Deselect the subcategory chip in the grid
+  document.querySelectorAll("#tech-subs-" + catId + " .fb-chip.selected").forEach(function(c) {
+    if (c.textContent.trim() === subName) {
+      // Trigger the toggle which also rebuilds products
+      fbToggleTechSub(c, catId, subName);
+    }
+  });
+}
+
+function removeTechProd(catId, prodName) {
+  // Deselect the product chip in the grid
+  document.querySelectorAll("#tech-prod-chips-" + catId + " .fb-chip.selected").forEach(function(c) {
+    if (c.textContent.trim() === prodName) {
+      c.classList.remove("selected");
+    }
+  });
+  fbEvalDots();
+  updateTechSelectionSummary(catId);
 }
 
 // ════ S6: PARTNERS ════
@@ -9643,7 +9773,7 @@ function renderWorkflow() {
               <div class="prompt-text-box" id="prompt-text-${prompt.prompt_id}"></div>
               <div class="prompt-actions">
                 <div class="prompt-actions-left">
-                  <button class="btn-copy" id="copy-btn-${prompt.prompt_id}" onclick="copyPrompt('${prompt.prompt_id}')" aria-label="Copy prompt to clipboard">Copy Prompt</button>
+                  <span class="btn-copy-wrap"><span class="copy-tooltip">${prompt.prompt_id === 'P1.1' ? 'Code interpreter not needed for prompt 1.1' : 'Run with code interpreter'}</span><button class="btn-copy" id="copy-btn-${prompt.prompt_id}" onclick="copyPrompt('${prompt.prompt_id}')" aria-label="Copy prompt to clipboard">Copy Prompt</button></span>
                   <button class="btn-export btn-secondary-action" id="export-btn-${prompt.prompt_id}" onclick="exportPrompt('${prompt.prompt_id}')" aria-label="Export prompt as text file">Export</button>
                   <button class="btn-edit-prompt" id="edit-btn-${prompt.prompt_id}" onclick="togglePromptEdit('${prompt.prompt_id}')">Edit</button>
                 </div>
@@ -10893,7 +11023,7 @@ function _fssSaveTech() {
 }
 function _fssApplyTech(catId) {
   var saved = _formSelState.tech && _formSelState.tech[catId];
-  if (!saved || !(saved.subs || []).length) return;
+  if (!saved || !(saved.subs || []).length) { updateTechSelectionSummary(catId); return; }
   (saved.subs || []).forEach(function(subText) {
     document.querySelectorAll("#tech-subs-" + catId + " .fb-chip").forEach(function(c) {
       if (c.textContent.trim() === subText && !c.classList.contains("selected")) c.classList.add("selected");
@@ -10907,7 +11037,7 @@ function _fssApplyTech(catId) {
       var s = cat.sub_categories.find(function(x) { return x.sub_category === sn; });
       if (s && (s.products || s.options)) (s.products || s.options).forEach(function(p) {
         var sel = (saved.prods || []).indexOf(p) >= 0 ? " selected" : "";
-        html += '<span class="fb-chip' + sel + '" onclick="this.classList.toggle(\'selected\');fbEvalDots();">' + p + "</span>";
+        html += '<span class="fb-chip' + sel + '" onclick="this.classList.toggle(\'selected\');fbEvalDots();updateTechSelectionSummary(\'' + catId + '\');">' + p + "</span>";
       });
     });
     html += "</div>";
@@ -10917,6 +11047,7 @@ function _fssApplyTech(catId) {
   if (notes && saved.notes) notes.value = saved.notes;
   var tab = document.querySelector("#techCatList .fb-tab-item.active");
   if (tab) { tab.classList.add("has-data"); tab.querySelector(".fb-tab-dot").style.background = "#22c55e"; }
+  updateTechSelectionSummary(catId);
 }
 
 function _fssSavePartners() {
@@ -11018,31 +11149,8 @@ function _fssApplyRisk(gid) {
 }
 
 function clearAllFormData() {
-  // Show confirmation modal instead of native confirm()
-  var modal = document.getElementById("clearFormModal");
-  if (modal) {
-    modal.classList.add("visible");
-    return;
-  }
-  // Fallback: build and show modal dynamically using gateModal pattern
-  modal = document.createElement("div");
-  modal.id = "clearFormModal";
-  modal.innerHTML =
-    '<div id="clearFormModalBox">' +
-      '<div class="gate-modal-header">' +
-        '<span class="gate-modal-icon">&#9888;</span>' +
-        '<span class="gate-modal-title">New Engagement</span>' +
-      '</div>' +
-      '<div class="gate-modal-body">' +
-        '<p>Start a new engagement? This will clear all current data and cannot be undone.</p>' +
-      '</div>' +
-      '<div class="gate-modal-footer">' +
-        '<button class="btn-gate-cancel" onclick="closeClearFormModal()">Cancel</button>' +
-        '<button class="btn-gate-confirm" onclick="confirmClearAllFormData()">Clear &amp; Start New</button>' +
-      '</div>' +
-    '</div>';
-  document.body.appendChild(modal);
-  modal.classList.add("visible");
+  // Directly clear form — no confirmation modal
+  confirmClearAllFormData();
 }
 function closeClearFormModal() {
   var modal = document.getElementById("clearFormModal");
@@ -11973,7 +12081,7 @@ function showFormPage() {
 // ── Conveyor autoplay ──
 (function () {
   var cardWidth = 212; // 200px card + 12px gap
-  var speed = 4000; // ms per step - increase to slow down
+  var speed = 1200; // ms per step - increase to slow down
 
   function init() {
     var conveyor = document.getElementById("lp-conveyor");
