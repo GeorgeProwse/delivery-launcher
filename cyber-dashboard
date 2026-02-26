@@ -300,6 +300,7 @@ button { cursor: pointer; border: none; background: none; font: inherit; color: 
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
   align-items: start;
+  grid-auto-flow: dense;
 }
 .widget--span2 { grid-column: span 2; }
 .widget--full  { grid-column: 1 / -1; }
@@ -310,10 +311,64 @@ button { cursor: pointer; border: none; background: none; font: inherit; color: 
   border: 1px solid var(--g200);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  overflow: hidden;
+  overflow: visible;
+  position: relative;
   transition: box-shadow var(--t);
 }
 .widget:hover { box-shadow: var(--shadow-md); }
+.widget-body, .widget-header { overflow: hidden; }
+
+/* ─── Resize Handles ───────────────────────────────────────────────────── */
+.resize-handle {
+  position: absolute;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.widget:hover .resize-handle { opacity: 1; }
+.resize-handle:hover { opacity: 1 !important; }
+.resize-n  { top: -3px; left: 14px; right: 14px; height: 7px; cursor: n-resize; }
+.resize-s  { bottom: -3px; left: 14px; right: 14px; height: 7px; cursor: s-resize; }
+.resize-e  { right: -3px; top: 14px; bottom: 14px; width: 7px; cursor: e-resize; }
+.resize-w  { left: -3px; top: 14px; bottom: 14px; width: 7px; cursor: w-resize; }
+.resize-ne { top: -4px; right: -4px; width: 14px; height: 14px; cursor: ne-resize; }
+.resize-se { bottom: -4px; right: -4px; width: 14px; height: 14px; cursor: se-resize; }
+.resize-sw { bottom: -4px; left: -4px; width: 14px; height: 14px; cursor: sw-resize; }
+.resize-nw { top: -4px; left: -4px; width: 14px; height: 14px; cursor: nw-resize; }
+.resize-handle::after {
+  content: '';
+  position: absolute;
+  background: var(--o500);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.resize-handle:hover::after { opacity: 0.6; }
+.resize-n::after, .resize-s::after {
+  left: 50%; transform: translateX(-50%);
+  width: 48px; height: 3px;
+}
+.resize-n::after { bottom: 1px; }
+.resize-s::after { top: 1px; }
+.resize-e::after, .resize-w::after {
+  top: 50%; transform: translateY(-50%);
+  width: 3px; height: 48px;
+}
+.resize-e::after { left: 1px; }
+.resize-w::after { right: 1px; }
+.resize-ne::after, .resize-se::after, .resize-sw::after, .resize-nw::after {
+  width: 8px; height: 8px; border-radius: 50%;
+}
+.resize-ne::after { bottom: 3px; left: 3px; }
+.resize-se::after { top: 3px; left: 3px; }
+.resize-sw::after { top: 3px; right: 3px; }
+.resize-nw::after { bottom: 3px; right: 3px; }
+body.resizing { user-select: none !important; }
+body.resizing * { user-select: none !important; }
+.widget.resizing { z-index: 20; box-shadow: var(--shadow-md) !important; }
+.widget[data-col-span="1"] { grid-column: span 1; }
+.widget[data-col-span="2"] { grid-column: span 2; }
+.widget[data-col-span="3"] { grid-column: 1 / -1; }
 
 /* SortableJS states */
 .widget--ghost { opacity: .3; border: 2px dashed var(--o300) !important; background: var(--o100) !important; }
@@ -462,6 +517,62 @@ button { cursor: pointer; border: none; background: none; font: inherit; color: 
 .milestone-project { font-size: 11px; color: var(--o500); font-weight: 600; margin-bottom: 2px; }
 .milestone-name { font-size: 13px; font-weight: 500; }
 
+/* ─── Programme / Project table ─────────────────────────────────────────── */
+.progress-bar-cell { display: flex; align-items: center; gap: 8px; }
+.progress-bar-mini { flex: 1; height: 6px; background: var(--g200); border-radius: 3px; overflow: hidden; min-width: 60px; }
+.progress-bar-mini-fill { height: 100%; border-radius: 3px; background: var(--o500); transition: width 0.4s ease; }
+.progress-bar-mini-fill.success { background: var(--success); }
+.progress-bar-mini-fill.warning { background: var(--warning); }
+.progress-bar-mini-fill.error { background: var(--error); }
+.pct-label { font-size: 11px; font-weight: 600; min-width: 32px; text-align: right; }
+.status-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; white-space: nowrap;
+}
+.status-chip.on-track { background: var(--successBg); color: var(--successText); }
+.status-chip.at-risk  { background: var(--warningBg); color: var(--warningText); }
+.status-chip.off-track { background: var(--errorBg); color: var(--errorText); }
+.status-chip.completed { background: var(--infoBg); color: var(--infoText); }
+
+/* ─── Risk Heatmap ──────────────────────────────────────────────────────── */
+.heatmap-grid {
+  display: grid; grid-template-columns: auto repeat(3, 1fr);
+  gap: 2px; font-size: 11px;
+}
+.heatmap-header { font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--g500); padding: 8px; text-align: center; }
+.heatmap-row-label { font-weight: 600; color: var(--g500); padding: 8px; display: flex; align-items: center; }
+.heatmap-cell {
+  padding: 12px 8px; text-align: center; border-radius: 4px;
+  font-weight: 700; font-size: 18px; min-height: 52px;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.15s;
+}
+.heatmap-cell:hover { transform: scale(1.05); }
+.heatmap-cell.severity-low    { background: var(--successBg); color: var(--successText); }
+.heatmap-cell.severity-medium { background: var(--warningBg); color: var(--warningText); }
+.heatmap-cell.severity-high   { background: var(--errorBg); color: var(--errorText); }
+.heatmap-cell.severity-none   { background: var(--g100); color: var(--g400); }
+
+/* ─── Report summary cards ──────────────────────────────────────────────── */
+.report-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.report-card {
+  background: var(--g100); border-radius: var(--radius); padding: 14px;
+  border: 1px solid var(--g200);
+}
+.report-card-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--g500); margin-bottom: 6px; }
+.report-card-value { font-size: 22px; font-weight: 800; }
+.report-card-delta { font-size: 11px; color: var(--g500); margin-top: 4px; }
+.report-export-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.report-period-comparison { margin-top: 16px; }
+.comparison-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--g200); }
+.comparison-row:last-child { border-bottom: none; }
+.comparison-label { font-size: 12px; font-weight: 500; min-width: 140px; }
+.comparison-bars { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.comparison-bar-row { display: flex; align-items: center; gap: 8px; }
+.comparison-bar-track { flex: 1; height: 8px; background: var(--g100); border-radius: 4px; overflow: hidden; }
+.comparison-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+.comparison-bar-val { font-size: 11px; font-weight: 600; min-width: 40px; }
+
 /* ─── Budget stats ───────────────────────────────────────────────────────── */
 .budget-stats { display: flex; gap: 16px; margin-top: 12px; }
 .budget-stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--g500); font-weight: 700; }
@@ -477,6 +588,8 @@ button { cursor: pointer; border: none; background: none; font: inherit; color: 
   :root { --sidebar-w: 200px; }
   .widget-grid { grid-template-columns: repeat(2, 1fr); }
   .widget--span2 { grid-column: span 1; }
+  .widget[data-col-span="3"] { grid-column: 1 / -1; }
+  .widget[data-col-span="2"] { grid-column: span 2; }
 }
 @media (max-width: 768px) {
   .hamburger { display: flex; }
@@ -563,13 +676,13 @@ button { cursor: pointer; border: none; background: none; font: inherit; color: 
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-section">
         <div class="sidebar-label">Navigation</div>
-        <div class="nav-item active" onclick="setNav(this)"><i data-lucide="layout-dashboard"></i> Overview</div>
-        <div class="nav-item" onclick="setNav(this)"><i data-lucide="briefcase"></i> Portfolio</div>
-        <div class="nav-item" onclick="setNav(this)"><i data-lucide="folder-kanban"></i> Programmes</div>
-        <div class="nav-item" onclick="setNav(this)"><i data-lucide="clipboard-list"></i> Projects</div>
-        <div class="nav-item" onclick="setNav(this)"><i data-lucide="users"></i> Resources</div>
-        <div class="nav-item" onclick="setNav(this)"><i data-lucide="shield-alert"></i> Risks &amp; Issues</div>
-        <div class="nav-item" onclick="setNav(this)"><i data-lucide="bar-chart-2"></i> Reports</div>
+        <div class="nav-item active" data-nav="overview" onclick="setNav(this)"><i data-lucide="layout-dashboard"></i> Overview</div>
+        <div class="nav-item" data-nav="portfolio" onclick="setNav(this)"><i data-lucide="briefcase"></i> Portfolio</div>
+        <div class="nav-item" data-nav="programmes" onclick="setNav(this)"><i data-lucide="folder-kanban"></i> Programmes</div>
+        <div class="nav-item" data-nav="projects" onclick="setNav(this)"><i data-lucide="clipboard-list"></i> Projects</div>
+        <div class="nav-item" data-nav="resources" onclick="setNav(this)"><i data-lucide="users"></i> Resources</div>
+        <div class="nav-item" data-nav="risks" onclick="setNav(this)"><i data-lucide="shield-alert"></i> Risks &amp; Issues</div>
+        <div class="nav-item" data-nav="reports" onclick="setNav(this)"><i data-lucide="bar-chart-2"></i> Reports</div>
       </div>
 
       <div class="sidebar-divider"></div>
@@ -628,7 +741,7 @@ button { cursor: pointer; border: none; background: none; font: inherit; color: 
       <!-- Drag hint -->
       <div class="drag-hint" id="drag-hint">
         <i data-lucide="move"></i>
-        <span>Drag the <strong style="color:var(--black)">⠿</strong> grip on any card to reorder the layout. Your arrangement is saved automatically.</span>
+        <span>Drag the <strong style="color:var(--black)">⠿</strong> grip to reorder cards. Drag any <strong style="color:var(--black)">edge or corner</strong> to resize. Your arrangement is saved automatically.</span>
         <button class="btn btn-ghost" style="margin-left:auto;padding:3px 8px;font-size:11px;flex-shrink:0" onclick="document.getElementById('drag-hint').remove()">Dismiss</button>
       </div>
 
@@ -855,6 +968,106 @@ button { cursor: pointer; border: none; background: none; font: inherit; color: 
           </div>
         </div>
 
+        <!-- Programme Table (hidden by default, shown on Programmes tab) -->
+        <div class="widget widget--full" data-widget-id="programme-table" style="display:none">
+          <div class="widget-header">
+            <div class="drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical"></i></div>
+            <div class="widget-title">Programme Overview</div>
+            <div class="widget-subtitle" id="programme-count-label">4 active programmes</div>
+            <div class="widget-menu" style="margin-left:auto">
+              <button class="widget-menu-btn" onclick="toggleMenu(this)"><i data-lucide="more-horizontal"></i></button>
+              <div class="widget-dropdown">
+                <button onclick="minimise(this)"><i data-lucide="minimize-2"></i> Minimise</button>
+                <button onclick="hideWidget(this,'programme-table','Programme Overview')"><i data-lucide="eye-off"></i> Hide</button>
+              </div>
+            </div>
+          </div>
+          <div class="widget-body" style="padding:0">
+            <table class="data-table">
+              <thead><tr><th>Programme</th><th>Lead</th><th>Projects</th><th>RAG Split</th><th>Budget</th><th>Progress</th></tr></thead>
+              <tbody id="programme-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Project Table (hidden by default, shown on Projects tab) -->
+        <div class="widget widget--full" data-widget-id="project-table" style="display:none">
+          <div class="widget-header">
+            <div class="drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical"></i></div>
+            <div class="widget-title">Project Tracker</div>
+            <div class="widget-subtitle" id="project-count-label">12 projects</div>
+            <div class="widget-menu" style="margin-left:auto">
+              <button class="widget-menu-btn" onclick="toggleMenu(this)"><i data-lucide="more-horizontal"></i></button>
+              <div class="widget-dropdown">
+                <button onclick="minimise(this)"><i data-lucide="minimize-2"></i> Minimise</button>
+                <button onclick="hideWidget(this,'project-table','Project Tracker')"><i data-lucide="eye-off"></i> Hide</button>
+              </div>
+            </div>
+          </div>
+          <div class="widget-body" style="padding:0">
+            <table class="data-table">
+              <thead><tr><th>ID</th><th>Project</th><th>Programme</th><th>Status</th><th>Phase</th><th>Lead</th><th>SPI</th><th>Completion</th></tr></thead>
+              <tbody id="project-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Resource Allocation Table (hidden by default, shown on Resources tab) -->
+        <div class="widget widget--full" data-widget-id="resource-table" style="display:none">
+          <div class="widget-header">
+            <div class="drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical"></i></div>
+            <div class="widget-title">Resource Allocation</div>
+            <div class="widget-subtitle" id="resource-count-label">12 team members</div>
+            <div class="widget-menu" style="margin-left:auto">
+              <button class="widget-menu-btn" onclick="toggleMenu(this)"><i data-lucide="more-horizontal"></i></button>
+              <div class="widget-dropdown">
+                <button onclick="minimise(this)"><i data-lucide="minimize-2"></i> Minimise</button>
+                <button onclick="hideWidget(this,'resource-table','Resource Allocation')"><i data-lucide="eye-off"></i> Hide</button>
+              </div>
+            </div>
+          </div>
+          <div class="widget-body" style="padding:0">
+            <table class="data-table">
+              <thead><tr><th>Name</th><th>Role</th><th>Allocation</th><th>Projects</th><th>Availability</th></tr></thead>
+              <tbody id="resource-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Risk Heatmap (hidden by default, shown on Risks tab) -->
+        <div class="widget widget--span2" data-widget-id="risk-heatmap" style="display:none">
+          <div class="widget-header">
+            <div class="drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical"></i></div>
+            <div class="widget-title">Risk Heatmap</div>
+            <div class="widget-subtitle">Impact vs Likelihood</div>
+            <div class="widget-menu" style="margin-left:auto">
+              <button class="widget-menu-btn" onclick="toggleMenu(this)"><i data-lucide="more-horizontal"></i></button>
+              <div class="widget-dropdown">
+                <button onclick="minimise(this)"><i data-lucide="minimize-2"></i> Minimise</button>
+                <button onclick="hideWidget(this,'risk-heatmap','Risk Heatmap')"><i data-lucide="eye-off"></i> Hide</button>
+              </div>
+            </div>
+          </div>
+          <div class="widget-body" id="risk-heatmap-body"></div>
+        </div>
+
+        <!-- Report Summary (hidden by default, shown on Reports tab) -->
+        <div class="widget widget--full" data-widget-id="report-summary" style="display:none">
+          <div class="widget-header">
+            <div class="drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical"></i></div>
+            <div class="widget-title">Report Summary</div>
+            <div class="widget-subtitle">Q1 2026 Executive Report</div>
+            <div class="widget-menu" style="margin-left:auto">
+              <button class="widget-menu-btn" onclick="toggleMenu(this)"><i data-lucide="more-horizontal"></i></button>
+              <div class="widget-dropdown">
+                <button onclick="minimise(this)"><i data-lucide="minimize-2"></i> Minimise</button>
+                <button onclick="hideWidget(this,'report-summary','Report Summary')"><i data-lucide="eye-off"></i> Hide</button>
+              </div>
+            </div>
+          </div>
+          <div class="widget-body" id="report-summary-body"></div>
+        </div>
+
       </div><!-- /widget-grid -->
     </main>
   </div><!-- /body-wrap -->
@@ -1029,6 +1242,87 @@ const SCENARIOS = {
   }
 };
 
+/* ═══════════════════════════════════════════
+   NEW DATA: PROGRAMMES, PROJECTS, RESOURCES
+═══════════════════════════════════════════ */
+const PROGRAMMES = [
+  { name:'Digital Transformation', lead:'J. Smith', projects:5, onTrack:3, atRisk:1, offTrack:1, budget:'£1.2m', spent:'£780k', progress:65, rag:'amber' },
+  { name:'Infrastructure Modernisation', lead:'L. Patel', projects:3, onTrack:2, atRisk:1, offTrack:0, budget:'£800k', spent:'£520k', progress:72, rag:'green' },
+  { name:'Customer Experience', lead:'M. Chen', projects:2, onTrack:2, atRisk:0, offTrack:0, budget:'£450k', spent:'£280k', progress:58, rag:'green' },
+  { name:'Regulatory Compliance', lead:'S. Okafor', projects:2, onTrack:1, atRisk:1, offTrack:0, budget:'£350k', spent:'£195k', progress:45, rag:'amber' }
+];
+
+const PROJECTS_LIST = [
+  { id:'PRJ-001', name:'Alpha',   programme:'Digital Transformation',       status:'on-track',  phase:'Execution',  lead:'A. Johnson',  spi:1.02, budget:'£500k', spent:'£335k', completion:67 },
+  { id:'PRJ-002', name:'Beta',    programme:'Digital Transformation',       status:'at-risk',   phase:'UAT',        lead:'B. Williams', spi:0.88, budget:'£320k', spent:'£290k', completion:82 },
+  { id:'PRJ-003', name:'Gamma',   programme:'Digital Transformation',       status:'on-track',  phase:'Build',      lead:'C. Davies',   spi:1.05, budget:'£780k', spent:'£468k', completion:60 },
+  { id:'PRJ-004', name:'Delta',   programme:'Infrastructure Modernisation', status:'on-track',  phase:'Planning',   lead:'D. Kumar',    spi:1.00, budget:'£210k', spent:'£63k',  completion:30 },
+  { id:'PRJ-005', name:'Epsilon', programme:'Infrastructure Modernisation', status:'off-track', phase:'Execution',  lead:'E. O\'Brien', spi:0.76, budget:'£440k', spent:'£380k', completion:72 },
+  { id:'PRJ-006', name:'Zeta',    programme:'Digital Transformation',       status:'on-track',  phase:'Closure',    lead:'F. Tanaka',   spi:1.01, budget:'£180k', spent:'£165k', completion:92 },
+  { id:'PRJ-007', name:'Eta',     programme:'Customer Experience',          status:'on-track',  phase:'Execution',  lead:'G. Petrov',   spi:0.97, budget:'£250k', spent:'£150k', completion:55 },
+  { id:'PRJ-008', name:'Theta',   programme:'Customer Experience',          status:'on-track',  phase:'Build',      lead:'H. Nakamura', spi:1.08, budget:'£200k', spent:'£120k', completion:62 },
+  { id:'PRJ-009', name:'Iota',    programme:'Infrastructure Modernisation', status:'at-risk',   phase:'Testing',    lead:'I. Fernandez',spi:0.91, budget:'£150k', spent:'£128k', completion:78 },
+  { id:'PRJ-010', name:'Kappa',   programme:'Regulatory Compliance',        status:'on-track',  phase:'Execution',  lead:'K. Adeyemi',  spi:0.98, budget:'£200k', spent:'£110k', completion:48 },
+  { id:'PRJ-011', name:'Lambda',  programme:'Regulatory Compliance',        status:'at-risk',   phase:'Review',     lead:'L. Nguyen',   spi:0.85, budget:'£150k', spent:'£105k', completion:55 },
+  { id:'PRJ-012', name:'Digital Transformation', programme:'Digital Transformation', status:'off-track', phase:'Build', lead:'M. Hassan', spi:0.72, budget:'£350k', spent:'£310k', completion:68 }
+];
+
+const RESOURCE_ALLOC = [
+  { name:'J. Smith',     role:'Programme Director',  allocation:100, projects:['Alpha','Beta'],          availability:'fully-allocated' },
+  { name:'L. Patel',     role:'Senior PM',           allocation:90,  projects:['Delta','Epsilon','Iota'],availability:'near-capacity' },
+  { name:'M. Chen',      role:'Technical Lead',      allocation:85,  projects:['Gamma','Theta'],         availability:'near-capacity' },
+  { name:'S. Okafor',    role:'Business Analyst',    allocation:70,  projects:['Kappa','Lambda'],        availability:'available' },
+  { name:'A. Johnson',   role:'Delivery Manager',    allocation:100, projects:['Alpha'],                 availability:'fully-allocated' },
+  { name:'B. Williams',  role:'QA Lead',             allocation:95,  projects:['Beta','Gamma','Eta'],    availability:'near-capacity' },
+  { name:'C. Davies',    role:'Solution Architect',  allocation:60,  projects:['Gamma'],                 availability:'available' },
+  { name:'D. Kumar',     role:'Infrastructure Lead', allocation:75,  projects:['Delta','Epsilon'],       availability:'available' },
+  { name:'E. O\'Brien',  role:'DevOps Engineer',     allocation:100, projects:['Epsilon','Iota'],        availability:'fully-allocated' },
+  { name:'F. Tanaka',    role:'Scrum Master',        allocation:40,  projects:['Zeta'],                  availability:'available' },
+  { name:'G. Petrov',    role:'UX Designer',         allocation:80,  projects:['Eta','Theta'],           availability:'available' },
+  { name:'H. Nakamura',  role:'Frontend Developer',  allocation:90,  projects:['Theta','Kappa'],         availability:'near-capacity' }
+];
+
+/* ─── Navigation tab configurations ────────── */
+let activeNav = 'overview';
+
+const NAV_TABS = {
+  overview: {
+    title: 'Strategic Delivery Portfolio',
+    widgets: ['kpi-health','kpi-schedule','kpi-budget','project-status','budget-actuals','resource-util','risk-register','milestones'],
+    spans: { 'kpi-health':1, 'kpi-schedule':1, 'kpi-budget':1, 'project-status':2, 'budget-actuals':2, 'resource-util':2, 'risk-register':2, 'milestones':3 }
+  },
+  portfolio: {
+    title: 'Portfolio Summary',
+    widgets: ['kpi-health','kpi-budget','kpi-schedule','project-status','budget-actuals','milestones'],
+    spans: { 'kpi-health':1, 'kpi-budget':1, 'kpi-schedule':1, 'project-status':2, 'budget-actuals':2, 'milestones':3 }
+  },
+  programmes: {
+    title: 'Programme Management',
+    widgets: ['programme-table','resource-util','budget-actuals','kpi-schedule','kpi-budget'],
+    spans: { 'programme-table':3, 'resource-util':2, 'budget-actuals':2, 'kpi-schedule':1, 'kpi-budget':1 }
+  },
+  projects: {
+    title: 'Project Tracker',
+    widgets: ['project-table','kpi-health','kpi-schedule','milestones','risk-register'],
+    spans: { 'project-table':3, 'kpi-health':1, 'kpi-schedule':1, 'milestones':2, 'risk-register':2 }
+  },
+  resources: {
+    title: 'Resource Management',
+    widgets: ['resource-util','resource-table','kpi-schedule','kpi-budget','budget-actuals'],
+    spans: { 'resource-util':3, 'resource-table':3, 'kpi-schedule':1, 'kpi-budget':1, 'budget-actuals':2 }
+  },
+  risks: {
+    title: 'Risks & Issues',
+    widgets: ['risk-register','risk-heatmap','kpi-health','milestones','kpi-schedule'],
+    spans: { 'risk-register':3, 'risk-heatmap':2, 'kpi-health':1, 'milestones':2, 'kpi-schedule':1 }
+  },
+  reports: {
+    title: 'Reports & Analytics',
+    widgets: ['report-summary','kpi-health','kpi-schedule','kpi-budget','project-status','budget-actuals'],
+    spans: { 'report-summary':3, 'kpi-health':1, 'kpi-schedule':1, 'kpi-budget':1, 'project-status':2, 'budget-actuals':2 }
+  }
+};
+
 let activePeriod = 'quarter';
 let activeRag    = 'all';
 const charts = {};
@@ -1154,11 +1448,18 @@ function updateSpiCard(d) {
 /* ─── Render all ────────────────────────── */
 function refreshAll() {
   const d = DATA[activePeriod];
-  initDonut(d);
-  initBar(d);
-  initHBar(d);
-  initSpark(d);
-  updateSpiCard(d);
+  // Only init charts if their container is visible
+  const grid = document.getElementById('widget-grid');
+  if (isWidgetVisible(grid, 'project-status')) initDonut(d);
+  if (isWidgetVisible(grid, 'budget-actuals')) initBar(d);
+  if (isWidgetVisible(grid, 'resource-util')) initHBar(d);
+  if (isWidgetVisible(grid, 'kpi-schedule')) { initSpark(d); updateSpiCard(d); }
+  updateRagCounts();
+}
+
+function isWidgetVisible(grid, id) {
+  const w = grid.querySelector(`[data-widget-id="${id}"]`);
+  return w && w.style.display !== 'none';
 }
 
 /* ═══════════════════════════════════════════
@@ -1235,6 +1536,58 @@ function setView(btn) {
 function setNav(el) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   el.classList.add('active');
+
+  const tab = el.dataset.nav;
+  if (!tab || !NAV_TABS[tab]) return;
+  activeNav = tab;
+
+  const config = NAV_TABS[tab];
+  const grid = document.getElementById('widget-grid');
+  const allWidgetIds = ['kpi-health','kpi-schedule','kpi-budget','project-status','budget-actuals','resource-util','risk-register','milestones','programme-table','project-table','resource-table','risk-heatmap','report-summary'];
+
+  // Hide all widgets
+  allWidgetIds.forEach(id => {
+    const w = grid.querySelector(`[data-widget-id="${id}"]`);
+    if (w) w.style.display = 'none';
+  });
+
+  // Show and reorder widgets for this tab
+  config.widgets.forEach(wid => {
+    const w = grid.querySelector(`[data-widget-id="${wid}"]`);
+    if (w) {
+      w.style.display = '';
+      // Apply column span from config
+      const span = config.spans[wid] || 1;
+      w.classList.remove('widget--span2', 'widget--full');
+      w.removeAttribute('data-col-span');
+      if (span === 2) w.classList.add('widget--span2');
+      else if (span >= 3) w.classList.add('widget--full');
+      // Re-append to reorder
+      grid.appendChild(w);
+      // Ensure widget body is visible
+      const body = w.querySelector('.widget-body');
+      if (body) body.style.display = '';
+    }
+  });
+
+  // Render tab-specific content
+  if (tab === 'programmes') renderProgrammeTable();
+  if (tab === 'projects') renderProjectTable();
+  if (tab === 'resources') renderResourceTable();
+  if (tab === 'risks') renderRiskHeatmap();
+  if (tab === 'reports') renderReportSummary();
+
+  // Update breadcrumb
+  document.getElementById('breadcrumb-current').textContent = config.title;
+
+  // Refresh charts after DOM settles
+  setTimeout(() => {
+    refreshAll();
+    renderRisks(activeRag);
+    renderMilestones(activeRag);
+    addResizeHandles();
+    lucide.createIcons();
+  }, 60);
 }
 function setPeriod(btn) {
   document.querySelectorAll('.filter-btn[data-period]').forEach(b => b.classList.remove('active'));
@@ -1248,6 +1601,19 @@ function setRag(btn) {
   activeRag = btn.dataset.rag;
   renderRisks(activeRag);
   renderMilestones(activeRag);
+  updateRagCounts();
+}
+
+function updateRagCounts() {
+  const d = DATA[activePeriod];
+  const ps = d.projectStatus;
+  const total = ps.values.reduce((a,b)=>a+b,0);
+  const counts = { all: total, green: ps.values[0], amber: ps.values[1], red: ps.values[2] };
+  document.querySelectorAll('.filter-btn[data-rag]').forEach(btn => {
+    const rag = btn.dataset.rag;
+    const countEl = btn.querySelector('.filter-count');
+    if (countEl && counts[rag] !== undefined) countEl.textContent = counts[rag];
+  });
 }
 
 /* Widget menu toggle */
@@ -1380,6 +1746,202 @@ function loadScenario(id) {
   closeScenarioDropdown();
 }
 
+/* ═══════════════════════════════════════════
+   RENDER: PROGRAMME TABLE
+═══════════════════════════════════════════ */
+function renderProgrammeTable() {
+  const tbody = document.getElementById('programme-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  PROGRAMMES.forEach(p => {
+    const pctClass = p.progress >= 70 ? 'success' : p.progress >= 40 ? 'warning' : 'error';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-weight:600">${p.name}</td>
+      <td style="color:var(--g500)">${p.lead}</td>
+      <td style="text-align:center">${p.projects}</td>
+      <td>
+        <div style="display:flex;gap:4px;align-items:center">
+          <span class="badge badge-green" style="font-size:10px">${p.onTrack}</span>
+          <span class="badge badge-amber" style="font-size:10px">${p.atRisk}</span>
+          <span class="badge badge-red" style="font-size:10px">${p.offTrack}</span>
+        </div>
+      </td>
+      <td>
+        <div style="font-size:11px;color:var(--g500)">${p.spent} / ${p.budget}</div>
+      </td>
+      <td>
+        <div class="progress-bar-cell">
+          <div class="progress-bar-mini"><div class="progress-bar-mini-fill ${pctClass}" style="width:${p.progress}%"></div></div>
+          <span class="pct-label">${p.progress}%</span>
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('programme-count-label').textContent = `${PROGRAMMES.length} active programmes`;
+}
+
+/* ═══════════════════════════════════════════
+   RENDER: PROJECT TABLE
+═══════════════════════════════════════════ */
+function renderProjectTable() {
+  const tbody = document.getElementById('project-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  const statusLabels = { 'on-track':'On Track', 'at-risk':'At Risk', 'off-track':'Off Track' };
+  PROJECTS_LIST.forEach(p => {
+    const spiClass = p.spi >= 1.0 ? 'color:var(--success)' : p.spi >= 0.9 ? 'color:var(--warning)' : 'color:var(--error)';
+    const pctClass = p.completion >= 70 ? 'success' : p.completion >= 40 ? 'warning' : 'error';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-family:monospace;font-size:10px;color:var(--g500)">${p.id}</td>
+      <td style="font-weight:600">${p.name}</td>
+      <td style="font-size:11px;color:var(--g500)">${p.programme}</td>
+      <td><span class="status-chip ${p.status}">${statusLabels[p.status]}</span></td>
+      <td style="font-size:12px">${p.phase}</td>
+      <td style="color:var(--g500)">${p.lead}</td>
+      <td style="font-weight:700;${spiClass}">${p.spi.toFixed(2)}</td>
+      <td>
+        <div class="progress-bar-cell">
+          <div class="progress-bar-mini"><div class="progress-bar-mini-fill ${pctClass}" style="width:${p.completion}%"></div></div>
+          <span class="pct-label">${p.completion}%</span>
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('project-count-label').textContent = `${PROJECTS_LIST.length} projects`;
+}
+
+/* ═══════════════════════════════════════════
+   RENDER: RESOURCE ALLOCATION TABLE
+═══════════════════════════════════════════ */
+function renderResourceTable() {
+  const tbody = document.getElementById('resource-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  const availCfg = {
+    'fully-allocated': { badge:'badge-red',   label:'Fully Allocated' },
+    'near-capacity':   { badge:'badge-amber', label:'Near Capacity' },
+    'available':       { badge:'badge-green', label:'Available' }
+  };
+  RESOURCE_ALLOC.forEach(r => {
+    const cfg = availCfg[r.availability] || availCfg['available'];
+    const pctClass = r.allocation >= 95 ? 'error' : r.allocation >= 80 ? 'warning' : 'success';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-weight:600">${r.name}</td>
+      <td style="color:var(--g500);font-size:12px">${r.role}</td>
+      <td>
+        <div class="progress-bar-cell">
+          <div class="progress-bar-mini"><div class="progress-bar-mini-fill ${pctClass}" style="width:${r.allocation}%"></div></div>
+          <span class="pct-label">${r.allocation}%</span>
+        </div>
+      </td>
+      <td style="font-size:11px">${r.projects.join(', ')}</td>
+      <td><span class="badge ${cfg.badge}">${cfg.label}</span></td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('resource-count-label').textContent = `${RESOURCE_ALLOC.length} team members`;
+}
+
+/* ═══════════════════════════════════════════
+   RENDER: RISK HEATMAP
+═══════════════════════════════════════════ */
+function renderRiskHeatmap() {
+  const body = document.getElementById('risk-heatmap-body');
+  if (!body) return;
+
+  // Count risks by impact x likelihood
+  const matrix = { High:{High:0,Medium:0,Low:0}, Medium:{High:0,Medium:0,Low:0}, Low:{High:0,Medium:0,Low:0} };
+  RISKS.forEach(r => {
+    if (matrix[r.impact] && matrix[r.impact][r.likelihood] !== undefined) {
+      matrix[r.impact][r.likelihood]++;
+    }
+  });
+
+  const severity = {
+    'High-High':'high', 'High-Medium':'high', 'High-Low':'medium',
+    'Medium-High':'high', 'Medium-Medium':'medium', 'Medium-Low':'low',
+    'Low-High':'medium', 'Low-Medium':'low', 'Low-Low':'low'
+  };
+
+  const impacts = ['High','Medium','Low'];
+  const likelihoods = ['Low','Medium','High'];
+
+  let html = '<div class="heatmap-grid">';
+  html += '<div class="heatmap-header" style="font-size:10px;color:var(--g400)">Impact \\ Likelihood</div>';
+  likelihoods.forEach(l => { html += `<div class="heatmap-header">${l}</div>`; });
+
+  impacts.forEach(imp => {
+    html += `<div class="heatmap-row-label">${imp}</div>`;
+    likelihoods.forEach(lik => {
+      const count = matrix[imp][lik];
+      const sev = count > 0 ? severity[`${imp}-${lik}`] : 'none';
+      html += `<div class="heatmap-cell severity-${sev}" title="${imp} impact, ${lik} likelihood: ${count} risk(s)">${count}</div>`;
+    });
+  });
+  html += '</div>';
+  html += '<div style="margin-top:12px;font-size:11px;color:var(--g500);display:flex;gap:14px;flex-wrap:wrap">';
+  html += '<span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--errorBg);border:1px solid var(--error)"></span> High Severity</span>';
+  html += '<span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--warningBg);border:1px solid var(--warning)"></span> Medium Severity</span>';
+  html += '<span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--successBg);border:1px solid var(--success)"></span> Low Severity</span>';
+  html += '</div>';
+  body.innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════
+   RENDER: REPORT SUMMARY
+═══════════════════════════════════════════ */
+function renderReportSummary() {
+  const body = document.getElementById('report-summary-body');
+  if (!body) return;
+  const d = DATA[activePeriod];
+  const ps = d.projectStatus;
+  const total = ps.values.reduce((a,b)=>a+b,0);
+  const totalBudget = d.budgetActuals.budget.reduce((a,b)=>a+b,0);
+  const totalActuals = d.budgetActuals.actuals.reduce((a,b)=>a+b,0);
+  const variance = totalActuals - totalBudget;
+  const variancePct = ((variance / totalBudget) * 100).toFixed(1);
+  const avgUtil = Math.round(d.resources.util.reduce((a,b)=>a+b,0) / d.resources.util.length);
+
+  let html = '<div class="report-cards">';
+  html += `<div class="report-card"><div class="report-card-label">Total Projects</div><div class="report-card-value">${total}</div><div class="report-card-delta">${ps.values[0]} on track · ${ps.values[1]} at risk · ${ps.values[2]} off track</div></div>`;
+  html += `<div class="report-card"><div class="report-card-label">Schedule Performance</div><div class="report-card-value" style="color:${d.spi>=1?'var(--success)':d.spi>=0.9?'var(--warning)':'var(--error)'}">${d.spi.toFixed(2)}</div><div class="report-card-delta">SPI target ≥ 1.0 · ${d.spiDelta} vs prev</div></div>`;
+  html += `<div class="report-card"><div class="report-card-label">Budget Variance</div><div class="report-card-value" style="color:${variance<=0?'var(--success)':'var(--error)'}">£${Math.abs(variance)}k</div><div class="report-card-delta">${variance<=0?'Under':'Over'} budget by ${Math.abs(variancePct)}%</div></div>`;
+  html += `<div class="report-card"><div class="report-card-label">Avg Resource Utilisation</div><div class="report-card-value">${avgUtil}%</div><div class="report-card-delta">${avgUtil>=90?'Critical — over capacity':avgUtil>=80?'Near capacity':'Healthy utilisation'}</div></div>`;
+  html += `<div class="report-card"><div class="report-card-label">Open Risks</div><div class="report-card-value">${RISKS.length}</div><div class="report-card-delta">${RISKS.filter(r=>r.rag==='red').length} high · ${RISKS.filter(r=>r.rag==='amber').length} medium · ${RISKS.filter(r=>r.rag==='green').length} low</div></div>`;
+  html += `<div class="report-card"><div class="report-card-label">Upcoming Milestones</div><div class="report-card-value">${MILESTONES.length}</div><div class="report-card-delta">${MILESTONES.filter(m=>m.status==='at-risk'||m.status==='off-track').length} at risk or off track</div></div>`;
+  html += '</div>';
+
+  // Period comparison
+  html += '<div class="report-period-comparison">';
+  html += '<div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--g500);margin-bottom:10px">Budget by Workstream — Budget vs Actuals</div>';
+  const maxVal = Math.max(...d.budgetActuals.budget, ...d.budgetActuals.actuals);
+  d.budgetActuals.labels.forEach((label, i) => {
+    const budgetPct = (d.budgetActuals.budget[i] / maxVal * 100).toFixed(0);
+    const actualPct = (d.budgetActuals.actuals[i] / maxVal * 100).toFixed(0);
+    const over = d.budgetActuals.actuals[i] > d.budgetActuals.budget[i];
+    html += `<div class="comparison-row">
+      <div class="comparison-label">${label}</div>
+      <div class="comparison-bars">
+        <div class="comparison-bar-row"><div class="comparison-bar-track"><div class="comparison-bar-fill" style="width:${budgetPct}%;background:var(--o300)"></div></div><span class="comparison-bar-val">£${d.budgetActuals.budget[i]}k</span></div>
+        <div class="comparison-bar-row"><div class="comparison-bar-track"><div class="comparison-bar-fill" style="width:${actualPct}%;background:${over?'var(--error)':'var(--o500)'}"></div></div><span class="comparison-bar-val" style="color:${over?'var(--error)':'inherit'}">£${d.budgetActuals.actuals[i]}k</span></div>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+
+  // Export actions
+  html += '<div class="report-export-row">';
+  html += '<button class="btn btn-primary" onclick="exportReport()"><i data-lucide="download"></i> Export PDF Report</button>';
+  html += '<button class="btn btn-outline" onclick="exportReport()"><i data-lucide="file-spreadsheet"></i> Export XLSX Data</button>';
+  html += '<button class="btn btn-outline" onclick="exportReport()"><i data-lucide="printer"></i> Print Summary</button>';
+  html += '</div>';
+
+  body.innerHTML = html;
+  lucide.createIcons();
+}
+
 /* Export stub */
 function exportReport() {
   const period = activePeriod.charAt(0).toUpperCase() + activePeriod.slice(1);
@@ -1392,6 +1954,137 @@ const sidebar   = document.getElementById('sidebar');
 const overlay   = document.getElementById('sidebar-overlay');
 hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
 overlay.addEventListener('click',   () => sidebar.classList.remove('open'));
+
+/* ═══════════════════════════════════════════
+   WIDGET RESIZE SYSTEM
+═══════════════════════════════════════════ */
+const RESIZE_DIRS = ['n','ne','e','se','s','sw','w','nw'];
+const SIZE_KEY = 'pmo-widget-sizes-v1';
+
+function addResizeHandles() {
+  document.querySelectorAll('#widget-grid .widget').forEach(widget => {
+    // Skip if already has handles
+    if (widget.querySelector('.resize-handle')) return;
+    RESIZE_DIRS.forEach(dir => {
+      const handle = document.createElement('div');
+      handle.className = `resize-handle resize-${dir}`;
+      handle.dataset.direction = dir;
+      widget.appendChild(handle);
+    });
+  });
+}
+
+function getGridMetrics() {
+  const grid = document.getElementById('widget-grid');
+  const gridRect = grid.getBoundingClientRect();
+  const style = getComputedStyle(grid);
+  const gap = parseInt(style.gap) || 14;
+  const cols = style.gridTemplateColumns.split(' ').length;
+  const colWidth = (gridRect.width - gap * (cols - 1)) / cols;
+  return { grid, gridRect, gap, cols, colWidth };
+}
+
+function getWidgetSpan(widget) {
+  if (widget.dataset.colSpan) return parseInt(widget.dataset.colSpan);
+  if (widget.classList.contains('widget--full')) return 3;
+  if (widget.classList.contains('widget--span2')) return 2;
+  return 1;
+}
+
+function applyWidgetSpan(widget, span) {
+  span = Math.max(1, Math.min(3, span));
+  widget.classList.remove('widget--span2', 'widget--full');
+  widget.dataset.colSpan = span;
+  if (span === 2) widget.classList.add('widget--span2');
+  else if (span >= 3) widget.classList.add('widget--full');
+}
+
+function saveWidgetSizes() {
+  const sizes = {};
+  document.querySelectorAll('#widget-grid .widget').forEach(w => {
+    const id = w.dataset.widgetId;
+    const span = getWidgetSpan(w);
+    const minH = w.style.minHeight || null;
+    if (span !== 1 || minH) sizes[id] = { span, minHeight: minH };
+  });
+  localStorage.setItem(SIZE_KEY, JSON.stringify(sizes));
+}
+
+function loadWidgetSizes() {
+  try {
+    const sizes = JSON.parse(localStorage.getItem(SIZE_KEY) || '{}');
+    Object.entries(sizes).forEach(([id, cfg]) => {
+      const w = document.querySelector(`[data-widget-id="${id}"]`);
+      if (!w) return;
+      if (cfg.span) applyWidgetSpan(w, cfg.span);
+      if (cfg.minHeight) w.style.minHeight = cfg.minHeight;
+    });
+  } catch(e) { /* ignore */ }
+}
+
+let resizeState = null;
+
+function initResizeListeners() {
+  document.addEventListener('mousedown', e => {
+    const handle = e.target.closest('.resize-handle');
+    if (!handle) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    const widget = handle.closest('.widget');
+    const metrics = getGridMetrics();
+    const widgetRect = widget.getBoundingClientRect();
+
+    resizeState = {
+      widget,
+      dir: handle.dataset.direction,
+      startX: e.clientX,
+      startY: e.clientY,
+      startWidth: widgetRect.width,
+      startHeight: widgetRect.height,
+      colWidth: metrics.colWidth,
+      gap: metrics.gap,
+      maxCols: metrics.cols,
+      origSpan: getWidgetSpan(widget),
+      origMinHeight: widget.style.minHeight || null
+    };
+
+    document.body.classList.add('resizing');
+    widget.classList.add('resizing');
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!resizeState) return;
+    const { widget, dir, startX, startY, startWidth, startHeight, colWidth, gap } = resizeState;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    // Horizontal resize (column span)
+    if (dir.includes('e') || dir.includes('w')) {
+      const delta = dir.includes('e') ? dx : -dx;
+      const newWidth = startWidth + delta;
+      const newSpan = Math.max(1, Math.min(3, Math.round(newWidth / (colWidth + gap))));
+      applyWidgetSpan(widget, newSpan);
+    }
+
+    // Vertical resize (height)
+    if (dir.includes('s') || dir.includes('n')) {
+      const delta = dir.includes('s') ? dy : -dy;
+      const newHeight = Math.max(80, startHeight + delta);
+      widget.style.minHeight = newHeight + 'px';
+    }
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (!resizeState) return;
+    const widget = resizeState.widget;
+    document.body.classList.remove('resizing');
+    widget.classList.remove('resizing');
+    saveWidgetSizes();
+    setTimeout(refreshAll, 80);
+    resizeState = null;
+  });
+}
 
 /* ═══════════════════════════════════════════
    DRAG & DROP (SortableJS)
@@ -1417,6 +2110,7 @@ function loadLayout() {
 
 document.getElementById('reset-layout-btn').addEventListener('click', () => {
   localStorage.removeItem(LAYOUT_KEY);
+  localStorage.removeItem(SIZE_KEY);
   location.reload();
 });
 
@@ -1426,6 +2120,7 @@ document.getElementById('reset-layout-btn').addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', () => {
   lucide.createIcons();
   loadLayout();
+  loadWidgetSizes();
 
   // Build scenario dropdown cards from SCENARIOS object
   document.getElementById('scenario-cards').innerHTML =
@@ -1439,6 +2134,10 @@ document.addEventListener('DOMContentLoaded', () => {
   renderRisks('all');
   renderMilestones('all');
   refreshAll();
+
+  // Add resize handles to all widgets
+  addResizeHandles();
+  initResizeListeners();
 
   // Animate progress bars after a short delay
   setTimeout(() => {
