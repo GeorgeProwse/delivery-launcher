@@ -3,9 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cashless Gaming — Interactive Flow</title>
+    <title>Cashless Gaming · Onboarding Flow · PwC</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <!-- Tailwind Play CDN — prototype only, not for production deployment -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -39,38 +40,57 @@
       }
     </script>
     <style>
+      /* ── CSS custom properties ─────────────────────────────────── */
+      :root { --phone-scale: 0.8; }
+
+      /* ── Utilities ──────────────────────────────────────────────── */
+      .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }
       .scrollbar-hide::-webkit-scrollbar { display: none; }
       .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-      .screen { 
+
+      /* ── Screen transitions ─────────────────────────────────────── */
+      .screen {
         transition: opacity 0.5s ease, transform 0.5s ease;
         position: absolute;
         inset: 0;
       }
-      .screen.hidden { 
-        opacity: 0; 
-        pointer-events: none; 
-        transform: translateX(30px); 
+      .screen.hidden {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(30px);
       }
-      .screen.active { 
-        opacity: 1; 
-        pointer-events: auto; 
-        transform: translateX(0); 
+      /* Pause all animations on hidden screens to save CPU/battery */
+      .screen.hidden * { animation-play-state: paused; }
+      .screen.active {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(0);
       }
       .description-panel {
         transition: opacity 0.5s ease, transform 0.5s ease;
       }
+
+      /* ── Step indicators ────────────────────────────────────────── */
+      /* Width and height are controlled by CSS state, not Tailwind classes */
       .step-indicator {
         transition: all 0.3s ease;
+        height: 8px;
+        width: 8px;
+        border-radius: 9999px;
       }
       .step-indicator.active {
         background: #FD5108;
+        width: 3rem;
       }
+      /* Completed: lighter weight so state is communicated by both colour and size */
       .step-indicator.completed {
-        background: #FE7C39;
+        background: #FD5108;
+        width: 1.5rem;
+        opacity: 0.45;
       }
-      .fade-in {
-        animation: fadeIn 0.5s ease forwards;
-      }
+
+      /* ── Animations ─────────────────────────────────────────────── */
+      .fade-in { animation: fadeIn 0.5s ease forwards; }
       @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
@@ -84,19 +104,23 @@
         0% { background-position: -200% 0; }
         100% { background-position: 200% 0; }
       }
-      .progress-fill {
-        transition: width 0.5s ease;
-      }
+      .progress-fill { transition: width 0.5s ease; }
+
+      /* ── Interactive buttons ────────────────────────────────────── */
       .interactive-btn {
         cursor: pointer;
         transition: all 0.2s ease;
       }
-      .interactive-btn:hover {
-        opacity: 0.9;
+      .interactive-btn:hover { opacity: 0.9; }
+      .interactive-btn:active { transform: scale(0.98); }
+      /* Visible focus rings for keyboard users (not shown on mouse click) */
+      .interactive-btn:focus-visible,
+      button:focus-visible {
+        outline: 2px solid #FD5108;
+        outline-offset: 2px;
       }
-      .interactive-btn:active {
-        transform: scale(0.98);
-      }
+
+      /* ── Range sliders ──────────────────────────────────────────── */
       input[type="range"] {
         -webkit-appearance: none;
         appearance: none;
@@ -124,17 +148,32 @@
         border: 2px solid white;
         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
       }
+
+      /* ── Responsiveness ─────────────────────────────────────────── */
+      @media (max-width: 1100px) {
+        .phone-wrapper { transform: scale(0.65); transform-origin: center top; }
+        .layout-row { gap: 2rem; }
+        .description-panel-wrapper { max-width: 320px; }
+      }
+      @media (max-width: 800px) {
+        .layout-row { flex-direction: column; align-items: center; }
+        .phone-wrapper { transform: scale(0.55); transform-origin: center top; }
+      }
     </style>
   </head>
 
 <body class="antialiased bg-pwc-grey-100 min-h-screen flex items-center justify-center p-4 overflow-auto font-helvetica">
-<div class="relative flex items-center justify-center gap-16 max-w-6xl w-full" style="margin-top: -40px;">      
+
+<!-- Screen reader live region: announces screen transitions to assistive technology -->
+<div id="sr-announcer" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+
+<div class="layout-row relative flex items-center justify-center gap-16 max-w-6xl w-full -mt-10">      
       <!-- Left: Description Panel -->
-      <div class="flex-1 max-w-md">
+      <div class="description-panel-wrapper flex-1 max-w-md">
         
         <!-- Play Controls -->
         <div class="flex items-center gap-3 mb-6">
-          <button id="play-button" onclick="togglePlayback()" class="h-10 w-10 rounded-full bg-white border border-pwc-grey-200 flex items-center justify-center hover:bg-pwc-grey-50 transition-all shadow-sm">
+          <button id="play-button" data-action="togglePlayback" aria-label="Start tour" class="h-10 w-10 rounded-full bg-white border border-pwc-grey-200 flex items-center justify-center hover:bg-pwc-grey-50 transition-all shadow-sm">
             <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none" class="text-pwc-grey-600 ml-0.5">
               <polygon points="5 3 19 12 5 21 5 3"></polygon>
             </svg>
@@ -144,17 +183,17 @@
             </svg>
           </button>
           <span id="playback-status" class="text-sm text-pwc-grey-600">Click to start tour</span>
-          <button onclick="resetPlayback()" class="text-sm text-pwc-grey-500 hover:text-pwc-grey-600 transition-colors ml-auto underline">Reset</button>
+          <button data-action="resetPlayback" aria-label="Reset tour to beginning" class="text-sm text-pwc-grey-500 hover:text-pwc-grey-600 transition-colors ml-auto underline">Reset</button>
         </div>
         
         <!-- Step Indicators -->
-        <div class="flex items-center gap-2 mb-8">
-          <button onclick="jumpToScreen(1)" id="step-1" class="step-indicator active h-2 w-12 rounded-full bg-pwc-grey-300 cursor-pointer hover:opacity-80 transition-opacity"></button>
-          <button onclick="jumpToScreen(2)" id="step-2" class="step-indicator h-2 w-12 rounded-full bg-pwc-grey-300 cursor-pointer hover:opacity-80 transition-opacity"></button>
-          <button onclick="jumpToScreen(3)" id="step-3" class="step-indicator h-2 w-12 rounded-full bg-pwc-grey-300 cursor-pointer hover:opacity-80 transition-opacity"></button>
-          <button onclick="jumpToScreen(4)" id="step-4" class="step-indicator h-2 w-12 rounded-full bg-pwc-grey-300 cursor-pointer hover:opacity-80 transition-opacity"></button>
-          <button onclick="jumpToScreen(5)" id="step-5" class="step-indicator h-2 w-12 rounded-full bg-pwc-grey-300 cursor-pointer hover:opacity-80 transition-opacity"></button>
-          <button onclick="jumpToScreen(6)" id="step-6" class="step-indicator h-2 w-12 rounded-full bg-pwc-grey-300 cursor-pointer hover:opacity-80 transition-opacity"></button>
+        <div role="tablist" class="flex items-center gap-2 mb-8">
+          <button data-action="jumpToScreen" data-screen="1" id="step-1" role="tab" aria-label="Go to step 1: Become a member through the app" aria-current="step" class="step-indicator active bg-pwc-grey-300 cursor-pointer hover:opacity-80"></button>
+          <button data-action="jumpToScreen" data-screen="2" id="step-2" role="tab" aria-label="Go to step 2: Complete the ID verification" class="step-indicator bg-pwc-grey-300 cursor-pointer hover:opacity-80"></button>
+          <button data-action="jumpToScreen" data-screen="3" id="step-3" role="tab" aria-label="Go to step 3: Link your bank account" class="step-indicator bg-pwc-grey-300 cursor-pointer hover:opacity-80"></button>
+          <button data-action="jumpToScreen" data-screen="4" id="step-4" role="tab" aria-label="Go to step 4: Set limits on time and spend" class="step-indicator bg-pwc-grey-300 cursor-pointer hover:opacity-80"></button>
+          <button data-action="jumpToScreen" data-screen="5" id="step-5" role="tab" aria-label="Go to step 5: Load funds to your gaming wallet" class="step-indicator bg-pwc-grey-300 cursor-pointer hover:opacity-80"></button>
+          <button data-action="jumpToScreen" data-screen="6" id="step-6" role="tab" aria-label="Go to step 6: Connect to a machine and play safely" class="step-indicator bg-pwc-grey-300 cursor-pointer hover:opacity-80"></button>
         </div>
 
         <!-- Description Content -->
@@ -196,7 +235,7 @@
               Set limits on time and spend
             </h1>
             <p class="text-xl text-pwc-grey-600 leading-relaxed font-helvetica">
-              Choose your daily deposit limit, session time cap, and weekly loss limit before you start playing.
+              Choose your daily deposit limit, session time, and weekly loss limit before you start playing.
             </p>
           </div>
 
@@ -223,11 +262,12 @@
         </div>
       </div>
 
-      <!-- Glow behind phone -->
-<div class="absolute right-0 w-[420px] h-[870px] rounded-[80px] bg-pwc-orange-500/10 blur-3xl animate-pulse" style="transform: translateX(-50px);"></div>
-
-<!-- Right: iPhone 15 Pro Frame -->
-<div class="relative shrink-0" style="transform: scale(0.8); transform-origin: center center;">
+<!-- Right: iPhone 15 Pro Frame with glow wrapper -->
+<div class="phone-wrapper relative shrink-0">
+  <!-- Glow — positioned relative to the phone wrapper, no magic offsets needed -->
+  <div class="absolute -inset-6 rounded-[80px] bg-pwc-orange-500/10 blur-3xl animate-pulse pointer-events-none"></div>
+  <!-- Phone frame scaled via CSS custom property (adjustable in :root) -->
+  <div style="transform: scale(var(--phone-scale)); transform-origin: center center;">
   <!-- Outer titanium frame -->
   <div class="relative w-[390px] h-[844px] rounded-[60px] p-[2px] bg-gradient-to-br from-[#E3E3E8] via-[#B8B8BD] to-[#9D9DA3]" style="box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5), 0 30px 60px -30px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1);">
     
@@ -277,7 +317,7 @@
       </div>
       
       <!-- Screen container -->
-      <div class="relative w-full h-full bg-white rounded-[48px] overflow-hidden">
+      <div id="screen-container" class="relative w-full h-full bg-white rounded-[48px] overflow-hidden">
         
         <!-- Dynamic Island -->
         <div class="absolute top-[12px] left-1/2 -translate-x-1/2 w-[126px] h-[37px] rounded-full z-10 flex items-center justify-center" style="background: linear-gradient(145deg, #1a1a1a 0%, #0a0a0a 100%); box-shadow: inset 0 1px 2px rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.3);">
@@ -304,10 +344,11 @@
               </div>
 
               <div class="space-y-4">
+                <label for="s1-email" class="sr-only">Email address</label>
                 <input id="s1-email" type="email" placeholder="Enter your email" class="w-full h-14 rounded-xl bg-pwc-grey-50 border border-pwc-grey-200 px-4 text-base text-black placeholder-pwc-grey-400 focus:outline-none focus:ring-2 focus:ring-pwc-orange-500/30 focus:border-pwc-orange-500 transition-all">
-                <button id="s1-cta" onclick="handleManualAction(1, 'submit')" class="interactive-btn w-full h-14 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold flex items-center justify-center gap-2 hover:bg-pwc-orange-400 transition-all">
+                <button id="s1-cta" data-action="submit" data-screen="1" aria-label="Get started with sign up" class="interactive-btn w-full h-14 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold flex items-center justify-center gap-2 hover:bg-pwc-orange-400 transition-all">
                   <span id="s1-cta-text">Get started</span>
-                  <svg id="s1-cta-arrow" xmlns="http://www.w3 .org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                  <svg id="s1-cta-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
                   <svg id="s1-cta-spinner" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hidden animate-spin"><circle cx="12" cy="12" r="10" stroke-opacity="0.3"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>
                 </button>
               </div>
@@ -346,7 +387,7 @@
                     <p class="text-sm text-pwc-grey-600">Let's verify your identity</p>
                   </div>
                 </div>
-                <button onclick="handleManualAction(1, 'next')" class="interactive-btn w-full h-12 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold hover:bg-pwc-orange-400 transition-all">
+                <button data-action="next" data-screen="1" class="interactive-btn w-full h-12 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold hover:bg-pwc-orange-400 transition-all">
                   Continue
                 </button>
               </div>
@@ -356,7 +397,7 @@
           <!-- Screen 2: ID Verification -->
           <div id="screen-2" class="screen hidden overflow-y-auto scrollbar-hide bg-white text-black p-6 font-helvetica">
             <div class="flex items-center justify-between mb-6 pt-10">
-              <button onclick="handleManualAction(2, 'back')" class="interactive-btn h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center">
+              <button data-action="back" data-screen="2" aria-label="Go back to step 1" class="interactive-btn h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><path d="m15 18-6-6 6-6"></path></svg>
               </button>
               <span class="text-sm font-medium text-pwc-grey-600">Step 2 of 6</span>
@@ -370,7 +411,7 @@
               </div>
 
               <div id="s2-id-selection" class="space-y-3">
-                <button id="s2-licence-btn" onclick="handleManualAction(2, 'selectId')" class="interactive-btn w-full flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200 transition-all text-left">
+                <button id="s2-licence-btn" data-action="selectId" data-screen="2" class="interactive-btn w-full flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200 transition-all text-left">
                   <div class="flex items-center gap-4">
                     <div class="h-12 w-12 rounded-xl bg-white border border-pwc-grey-200 flex items-center justify-center shrink-0">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M7 8h4"></path><path d="M7 12h2"></path><circle cx="15" cy="10" r="2"></circle></svg>
@@ -383,27 +424,27 @@
                   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-400 shrink-0"><path d="m9 18 6-6-6-6"></path></svg>
                 </button>
 
-                <div class="flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200 opacity-50">
+                <div aria-disabled="true" title="Available in the full product" class="flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200 opacity-50 cursor-not-allowed">
                   <div class="flex items-center gap-4">
                     <div class="h-12 w-12 rounded-xl bg-white border border-pwc-grey-200 flex items-center justify-center shrink-0">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M9 10h6"></path><path d="M9 14h4"></path></svg>
                     </div>
                     <div>
                       <p class="text-base font-semibold text-black">Passport</p>
-                      <p class="text-sm text-pwc-grey-600">Australian passport</p>
+                      <p class="text-sm text-pwc-grey-600">Australian passport <span class="text-xs text-pwc-grey-400">(coming soon)</span></p>
                     </div>
                   </div>
                   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-400 shrink-0"><path d="m9 18 6-6-6-6"></path></svg>
                 </div>
 
-                <div class="flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200 opacity-50">
+                <div aria-disabled="true" title="Available in the full product" class="flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200 opacity-50 cursor-not-allowed">
                   <div class="flex items-center gap-4">
                     <div class="h-12 w-12 rounded-xl bg-white border border-pwc-grey-200 flex items-center justify-center shrink-0">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M7 8h10"></path><path d="M7 12h6"></path></svg>
                     </div>
                     <div>
                       <p class="text-base font-semibold text-black">Medicare Card</p>
-                      <p class="text-sm text-pwc-grey-600">With other ID</p>
+                      <p class="text-sm text-pwc-grey-600">With other ID <span class="text-xs text-pwc-grey-400">(coming soon)</span></p>
                     </div>
                   </div>
                   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-400 shrink-0"><path d="m9 18 6-6-6-6"></path></svg>
@@ -428,9 +469,7 @@
                     </div>
                   </div>
                 </div>
-                <button onclick="handleManualAction(2, 'scanned')" class="interactive-btn w-full h-12 rounded-xl bg-pwc-grey-100 text-pwc-grey-600 text-base font-medium hover:bg-pwc-grey-200 transition-all">
-                  Skip (demo)
-                </button>
+                <div class="flex justify-end mt-1"><button data-action="scanned" data-screen="2" class="text-xs text-pwc-grey-400 hover:text-pwc-grey-600 underline cursor-pointer">Skip</button></div>
               </div>
 
               <div id="s2-verifying" class="hidden space-y-4">
@@ -454,14 +493,12 @@
                       <span class="text-base text-pwc-grey-600">Age verified (18+)</span>
                     </div>
                     <div id="s2-exclusion-check" class="flex items-center gap-3">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-grey-400 animate-spin shrink-0"><circle cx="12" cy="12" r="10" stroke-opacity="0.3"></circle><path d="M12 2a 10 10 0 0 1 10 10"></path></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-grey-400 animate-spin shrink-0"><circle cx="12" cy="12" r="10" stroke-opacity="0.3"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>
                       <span class="text-base text-pwc-grey-500">Checking exclusion registers...</span>
                     </div>
                   </div>
                 </div>
-                <button onclick="handleManualAction(2, 'verified')" class="interactive-btn w-full h-12 rounded-xl bg-pwc-grey-100 text-pwc-grey-600 text-base font-medium hover:bg-pwc-grey-200 transition-all">
-                  Skip (demo)
-                </button>
+                <div class="flex justify-end mt-1"><button data-action="verified" data-screen="2" class="text-xs text-pwc-grey-400 hover:text-pwc-grey-600 underline cursor-pointer">Skip</button></div>
               </div>
 
               <div id="s2-verified" class="hidden space-y-4">
@@ -490,7 +527,7 @@
                     <span class="text-base text-pwc-grey-600">No exclusions found</span>
                   </div>
                 </div>
-                <button onclick="handleManualAction(2, 'next')" class="interactive-btn w-full h-14 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold hover:bg-pwc-orange-400 transition-all">
+                <button data-action="next" data-screen="2" class="interactive-btn w-full h-14 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold hover:bg-pwc-orange-400 transition-all">
                   Continue
                 </button>
               </div>
@@ -500,7 +537,7 @@
           <!-- Screen 3: Bank Linking -->
           <div id="screen-3" class="screen hidden overflow-y-auto scrollbar-hide bg-white text-black p-6 font-helvetica">
             <div class="flex items-center justify-between mb-6 pt-10">
-              <button onclick="handleManualAction(3, 'back')" class="interactive-btn h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center">
+              <button data-action="back" data-screen="3" aria-label="Go back to step 2" class="interactive-btn h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><path d="m15 18-6-6 6-6"></path></svg>
               </button>
               <span class="text-sm font-medium text-pwc-grey-600">Step 3 of 6</span>
@@ -514,7 +551,7 @@
               </div>
 
               <div id="s3-bank-selection" class="space-y-3">
-                <button id="s3-bank-1" onclick="handleManualAction(3, 'selectBank')" class="interactive-btn w-full flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200 transition-all text-left">
+                <button id="s3-bank-1" data-action="selectBank" data-screen="3" class="interactive-btn w-full flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200 transition-all text-left">
                   <div class="flex items-center gap-4">
                     <div class="h-12 w-12 rounded-xl bg-pwc-orange-100 flex items-center justify-center shrink-0">
                       <span class="text-lg font-bold text-pwc-orange-500">G</span>
@@ -567,14 +604,12 @@
                     </div>
                   </div>
                 </div>
-                <button onclick="handleManualAction(3, 'showAccounts')" class="interactive-btn w-full h-12 rounded-xl bg-pwc-grey-100 text-pwc-grey-600 text-base font-medium hover:bg-pwc-grey-200 transition-all">
-                  Skip (demo)
-                </button>
+                <div class="flex justify-end mt-1"><button data-action="showAccounts" data-screen="3" class="text-xs text-pwc-grey-400 hover:text-pwc-grey-600 underline cursor-pointer">Skip</button></div>
               </div>
 
               <div id="s3-accounts" class="hidden space-y-4">
                 <p class="text-base font-medium text-pwc-grey-600">Select an account</p>
-                <button id="s3-account-1" onclick="handleManualAction(3, 'selectAccount')" class="interactive-btn w-full flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200 transition-all text-left">
+                <button id="s3-account-1" data-action="selectAccount" data-screen="3" class="interactive-btn w-full flex items-center justify-between rounded-xl bg-pwc-grey-50 p-4 border border-pwc-grey-200 transition-all text-left">
                   <div>
                     <p class="text-base font-semibold text-black">Everyday Account</p>
                     <p class="text-sm text-pwc-grey-600">••••4892</p>
@@ -602,7 +637,7 @@
                     </div>
                   </div>
                 </div>
-                <button onclick="handleManualAction(3, 'next')" class="interactive-btn w-full h-14 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold hover:bg-pwc-orange-400 transition-all">
+                <button data-action="next" data-screen="3" class="interactive-btn w-full h-14 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold hover:bg-pwc-orange-400 transition-all">
                   Continue
                 </button>
               </div>
@@ -624,8 +659,8 @@
           <!-- Screen 4: Set Limits -->
           <div id="screen-4" class="screen hidden overflow-y-auto scrollbar-hide bg-white text-black p-6 font-helvetica">
             <div class="flex items-center justify-between mb-6 pt-10">
-              <button onclick="handleManualAction(4, 'back')" class="interactive-btn h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke=" currentColor" stroke-width="1.5" class="text-pwc-grey-600"><path d="m15 18-6-6 6-6"></path></svg>
+              <button data-action="back" data-screen="4" aria-label="Go back to step 3" class="interactive-btn h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><path d="m15 18-6-6 6-6"></path></svg>
               </button>
               <span class="text-sm font-medium text-pwc-grey-600">Step 4 of 6</span>
               <div class="w-10"></div>
@@ -689,7 +724,7 @@
                 </div>
               </div>
 
-              <button id="s4-complete-btn" onclick="handleManualAction(4, 'confirm')" class="interactive-btn w-full h-14 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold hover:bg-pwc-orange-400 transition-all">
+              <button id="s4-complete-btn" data-action="confirm" data-screen="4" class="interactive-btn w-full h-14 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold hover:bg-pwc-orange-400 transition-all">
                 Confirm limits
               </button>
 
@@ -710,7 +745,7 @@
           <!-- Screen 5: Wallet -->
           <div id="screen-5" class="screen hidden overflow-y-auto scrollbar-hide bg-white text-black p-6 font-helvetica">
             <div class="flex items-center justify-between mb-6 pt-10">
-              <button onclick="handleManualAction(5, 'back')" class="interactive-btn h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center">
+              <button data-action="back" data-screen="5" aria-label="Go back to step 4" class="interactive-btn h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><path d="m15 18-6-6 6-6"></path></svg>
               </button>
               <span class="text-sm font-medium text-pwc-grey-600">Step 5 of 6</span>
@@ -735,11 +770,11 @@
               </div>
 
               <div class="flex gap-3">
-                <button id="s5-add-funds-btn" onclick="handleManualAction(5, 'addFunds')" class="interactive-btn flex-1 h-12 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold flex items-center justify-center gap-2 hover:bg-pwc-orange-400 transition-all">
+                <button id="s5-add-funds-btn" data-action="addFunds" data-screen="5" aria-label="Add funds to wallet" class="interactive-btn flex-1 h-12 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold flex items-center justify-center gap-2 hover:bg-pwc-orange-400 transition-all">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
                   Add funds
                 </button>
-                <button class="flex-1 h-12 rounded-xl bg-pwc-grey-100 text-pwc-grey-400 text-base font-semibold flex items-center justify-center gap-2">
+                <button disabled title="Withdraw available after your first session" aria-disabled="true" class="flex-1 h-12 rounded-xl bg-pwc-grey-100 text-pwc-grey-400 text-base font-semibold flex items-center justify-center gap-2 cursor-not-allowed">
                   Withdraw
                 </button>
               </div>
@@ -748,9 +783,9 @@
                 <div class="rounded-xl bg-pwc-grey-50 border border-pwc-grey-200 p-5">
                   <p class="text-base font-medium text-pwc-grey-600 mb-4">Select amount</p>
                   <div class="grid grid-cols-3 gap-3">
-                    <button onclick="handleManualAction(5, 'select20')" class="interactive-btn h-12 rounded-xl bg-white border border-pwc-grey-200 flex items-center justify-center text-base font-semibold text-black hover:border-pwc-orange-300">$20</button>
-                    <button onclick="handleManualAction(5, 'select50')" class="interactive-btn h-12 rounded-xl bg-white border border-pwc-grey-200 flex items-center justify-center text-base font-semibold text-black hover:border-pwc-orange-300">$50</button>
-                    <button id="s5-100-btn" onclick="handleManualAction(5, 'select100')" class="interactive-btn h-12 rounded-xl bg-pwc-orange-50 border-2 border-pwc-orange-300 flex items-center justify-center text-base font-semibold text-pwc-orange-500">$100</button>
+                    <button data-action="select20" data-screen="5" class="interactive-btn h-12 rounded-xl bg-white border border-pwc-grey-200 flex items-center justify-center text-base font-semibold text-black hover:border-pwc-orange-300">$20</button>
+                    <button data-action="select50" data-screen="5" class="interactive-btn h-12 rounded-xl bg-white border border-pwc-grey-200 flex items-center justify-center text-base font-semibold text-black hover:border-pwc-orange-300">$50</button>
+                    <button id="s5-100-btn" data-action="select100" data-screen="5" class="interactive-btn h-12 rounded-xl bg-pwc-orange-50 border-2 border-pwc-orange-300 flex items-center justify-center text-base font-semibold text-pwc-orange-500">$100</button>
                   </div>
                 </div>
               </div>
@@ -767,9 +802,7 @@
                     </div>
                   </div>
                 </div>
-                <button onclick="handleManualAction(5, 'deposited')" class="interactive-btn w-full h-12 mt-4 rounded-xl bg-pwc-grey-100 text-pwc-grey-600 text-base font-medium hover:bg-pwc-grey-200 transition-all">
-                  Skip (demo)
-                </button>
+                <div class="flex justify-end mt-2"><button data-action="deposited" data-screen="5" class="text-xs text-pwc-grey-400 hover:text-pwc-grey-600 underline cursor-pointer">Skip</button></div>
               </div>
 
               <div id="s5-deposit-complete" class="hidden">
@@ -786,7 +819,7 @@
                 </div>
               </div>
 
-              <button id="s5-scan-btn" onclick="handleManualAction(5, 'next')" class="interactive-btn w-full h-14 rounded-xl bg-pwc-grey-100 text-pwc-grey-400 text-base font-semibold flex items-center justify-center gap-2 transition-all" disabled>
+              <button id="s5-scan-btn" data-action="next" data-screen="5" aria-label="Scan QR code to connect to a machine" class="interactive-btn w-full h-14 rounded-xl bg-pwc-grey-100 text-pwc-grey-400 text-base font-semibold flex items-center justify-center gap-2 transition-all" disabled>
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
                 <span id="s5-scan-text">Add funds to continue</span>
               </button>
@@ -819,7 +852,7 @@
           <!-- Screen 6: Active Session -->
           <div id="screen-6" class="screen hidden overflow-y-auto scrollbar-hide bg-white text-black p-6 font-helvetica">
             <div class="flex items-center justify-between mb-6 pt-10">
-              <button onclick="handleManualAction(6, 'back')" class="interactive-btn h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center">
+              <button data-action="back" data-screen="6" aria-label="Go back to step 5" class="interactive-btn h-10 w-10 rounded-xl bg-pwc-grey-100 flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-pwc-grey-600"><path d="m15 18-6-6 6-6"></path></svg>
               </button>
               <span class="text-sm font-medium text-pwc-grey-600">Step 6 of 6</span>
@@ -847,9 +880,7 @@
                     </div>
                   </div>
                 </div>
-                <button onclick="handleManualAction(6, 'scanned')" class="interactive-btn w-full h-12 mt-4 rounded-xl bg-pwc-grey-100 text-pwc-grey-600 text-base font-medium hover:bg-pwc-grey-200 transition-all">
-                  Simulate scan (demo)
-                </button>
+                <div class="flex justify-end mt-2"><button data-action="scanned" data-screen="6" class="text-xs text-pwc-grey-400 hover:text-pwc-grey-600 underline cursor-pointer">Simulate scan</button></div>
               </div>
 
               <div id="s6-connecting" class="hidden space-y-4">
@@ -874,9 +905,7 @@
                     </div>
                   </div>
                 </div>
-                <button onclick="handleManualAction(6, 'connected')" class="interactive-btn w-full h-12 rounded-xl bg-pwc-grey-100 text-pwc-grey-600 text-base font-medium hover:bg-pwc-grey-200 transition-all">
-                  Skip (demo)
-                </button>
+                <div class="flex justify-end mt-1"><button data-action="connected" data-screen="6" class="text-xs text-pwc-grey-400 hover:text-pwc-grey-600 underline cursor-pointer">Skip</button></div>
               </div>
 
               <div id="s6-active" class="hidden space-y-5">
@@ -897,14 +926,14 @@
                   </div>
                 </div>
 
-                <div class="rounded-xl bg-pwc-grey-50 border border-pwc-grey-200 p-5">
+                <div class="rounded-xl bg-pwc-grey-50 border border-pwc-grey-200 p-6">
                   <div class="flex items-center justify-between mb-4">
                     <div>
                       <p class="text-base font-semibold text-black">Harbour View Hotel</p>
                       <p class="text-sm text-pwc-grey-600">Machine 12 · Ocean Jackpots</p>
                     </div>
                   </div>
-                  <div class="mb-4">
+                  <div>
                     <div class="flex justify-between text-sm mb-2">
                       <span class="text-pwc-grey-600">Time remaining</span>
                       <span id="s6-remaining" class="text-black font-semibold">2 hr</span>
@@ -913,10 +942,10 @@
                       <div id="s6-time-bar" class="h-2 rounded-full bg-pwc-orange-500 progress-fill" style="width: 0%"></div>
                     </div>
                   </div>
-                  <div class="flex gap-3">
-                    <button class="interactive-btn flex-1 h-12 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold hover:bg-pwc-orange-400 transition-all">Add credits</button>
-                    <button onclick="handleManualAction(6, 'cashout')" class="interactive-btn flex-1 h-12 rounded-xl bg-pwc-grey-100 text-pwc-grey-600 text-base font-semibold hover:bg-pwc-grey-200 transition-all">Cash out</button>
-                  </div>
+                </div>
+                <div class="flex gap-3">
+                  <button class="interactive-btn flex-1 h-12 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold hover:bg-pwc-orange-400 transition-all">Add credits</button>
+                  <button data-action="cashout" data-screen="6" class="interactive-btn flex-1 h-12 rounded-xl bg-pwc-grey-100 text-pwc-grey-600 text-base font-semibold hover:bg-pwc-grey-200 transition-all">Cash out</button>
                 </div>
 
                 <div id="s6-win" class="hidden">
@@ -945,6 +974,34 @@
                   </div>
                 </div>
               </div>
+
+              <!-- Cash-out confirmation (shown when user ends session) -->
+              <div id="s6-cashout" class="hidden space-y-4">
+                <div class="rounded-xl bg-pwc-orange-50 border border-pwc-orange-100 p-5">
+                  <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 rounded-xl bg-pwc-orange-100 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500"><path d="M20 6 9 17l-5-5"></path></svg>
+                    </div>
+                    <div>
+                      <p class="text-base font-semibold text-black">Session ended</p>
+                      <p class="text-sm text-pwc-grey-600">$185.20 returned to your wallet</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="rounded-xl bg-pwc-grey-50 border border-pwc-grey-200 p-5 space-y-3">
+                  <div class="flex justify-between text-sm">
+                    <span class="text-pwc-grey-600">Session duration</span>
+                    <span class="text-black font-semibold">5 min</span>
+                  </div>
+                  <div class="flex justify-between text-sm">
+                    <span class="text-pwc-grey-600">Credits returned</span>
+                    <span class="text-pwc-orange-500 font-semibold">$185.20</span>
+                  </div>
+                </div>
+                <button data-action="returnToWallet" data-screen="6" class="interactive-btn w-full h-14 rounded-xl bg-pwc-orange-500 text-white text-base font-semibold hover:bg-pwc-orange-400 transition-all">
+                  Return to wallet
+                </button>
+              </div>
             </div>
           </div>
 
@@ -968,46 +1025,209 @@
     <div class="absolute -top-[200px] -left-[100px] w-[80px] h-[400px] bg-gradient-to-b from-transparent via-white/40 to-transparent rotate-[25deg]"></div>
   </div>
 </div>
+</div><!-- end phone-wrapper -->
 
     </div>
 
     <script>
-      var currentScreen = 1;
-      var isPlaying = false;
-      var playbackTimeout = null;
-      var stageTimeouts = [];
-      var depositAmount = 100;
-      
-      var screenDurations = {
-        1: 12000,
-        2: 14000,
-        3: 12000,
-        4: 10000,
-        5: 12000,
-        6: 14000
+      // ── CONFIG ────────────────────────────────────────────────────────────────
+      // Centralised constants — adjust PHONE_SCALE here (or via :root in CSS)
+      // and SCREEN_DURATIONS to change how long each step shows in autoplay.
+      const CONFIG = {
+        SCREEN_DURATIONS: { 1: 12000, 2: 14000, 3: 12000, 4: 10000, 5: 12000, 6: 14000 },
+        SWIPE_THRESHOLD: 50
       };
+
+      const screenTitles = {
+        1: 'Become a member through the app',
+        2: 'Complete the ID verification',
+        3: 'Link your bank account',
+        4: 'Set limits on time and spend',
+        5: 'Load funds to your gaming wallet',
+        6: 'Connect to a machine and play safely'
+      };
+
+      // ── SVG HELPERS ───────────────────────────────────────────────────────────
+      // Centralised SVG strings — fixes path bugs in one place, not six.
+      function spinnerSVG(label) {
+        return '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-grey-400 animate-spin shrink-0"><circle cx="12" cy="12" r="10" stroke-opacity="0.3"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg><span class="text-base text-pwc-grey-500">' + label + '</span>';
+      }
+      function checkSVG(label) {
+        return '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500 shrink-0"><path d="M20 6 9 17l-5-5"></path></svg><span class="text-base text-pwc-grey-600">' + label + '</span>';
+      }
+
+      // ── STATE ─────────────────────────────────────────────────────────────────
+      let currentScreen = 1;
+      let isPlaying = false;
+      let playbackTimeout = null;
+      let stageTimeouts = [];
+      let depositAmount = 100;
+
+      // ── SCREEN NAVIGATION ─────────────────────────────────────────────────────
+      function updateStepIndicators(num) {
+        for (let i = 1; i <= 6; i++) {
+          const step = document.getElementById('step-' + i);
+          step.classList.remove('active', 'completed');
+          step.removeAttribute('aria-current');
+          if (i < num) step.classList.add('completed');
+          else if (i === num) { step.classList.add('active'); step.setAttribute('aria-current', 'step'); }
+        }
+      }
+
+      function updateDescriptionPanel(num) {
+        for (let i = 1; i <= 6; i++) {
+          const panel = document.getElementById('desc-' + i);
+          panel.style.opacity = i === num ? '1' : '0';
+          panel.style.pointerEvents = i === num ? 'auto' : 'none';
+        }
+      }
+
+      function goToScreen(num) {
+        document.getElementById('screen-' + currentScreen).classList.remove('active');
+        document.getElementById('screen-' + currentScreen).classList.add('hidden');
+        document.getElementById('screen-' + num).classList.remove('hidden');
+        document.getElementById('screen-' + num).classList.add('active');
+
+        updateDescriptionPanel(num);
+        updateStepIndicators(num);
+
+        currentScreen = num;
+        document.getElementById('playback-status').textContent = 'Step ' + num + ' of 6';
+        // Announce transition to screen readers
+        document.getElementById('sr-announcer').textContent = 'Now showing step ' + num + ' of 6: ' + screenTitles[num];
+      }
+
+      function jumpToScreen(num) {
+        pauseAndHandle();
+        resetScreenState(currentScreen);
+        goToScreen(num);
+        resetScreenState(num);
+      }
+
+      // ── PLAYBACK CONTROL ──────────────────────────────────────────────────────
+      // isPlaying drives all timeout scheduling.
+      // Always call clearStageTimeouts() before setting new timeouts.
 
       function clearStageTimeouts() {
         stageTimeouts.forEach(function(t) { clearTimeout(t); });
         stageTimeouts = [];
-        if (playbackTimeout) {
-          clearTimeout(playbackTimeout);
-          playbackTimeout = null;
-        }
+        if (playbackTimeout) { clearTimeout(playbackTimeout); playbackTimeout = null; }
       }
 
+      // Pause if currently playing — called on any manual interaction.
       function pauseAndHandle() {
-        if (isPlaying) {
-          pausePlayback();
+        if (isPlaying) pausePlayback();
+      }
+
+      function togglePlayback() {
+        if (isPlaying) pausePlayback();
+        else startPlayback();
+      }
+
+      function startPlayback() {
+        isPlaying = true;
+        document.getElementById('play-button').setAttribute('aria-label', 'Pause tour');
+        document.getElementById('play-icon').classList.add('hidden');
+        document.getElementById('pause-icon').classList.remove('hidden');
+        playScreen(currentScreen);
+      }
+
+      function pausePlayback() {
+        isPlaying = false;
+        document.getElementById('play-button').setAttribute('aria-label', 'Start tour');
+        document.getElementById('play-icon').classList.remove('hidden');
+        document.getElementById('pause-icon').classList.add('hidden');
+        clearStageTimeouts();
+        document.getElementById('playback-status').textContent = 'Paused — Step ' + currentScreen + ' of 6';
+      }
+
+      function resetPlayback() {
+        pausePlayback();
+        resetAllScreens();
+        goToScreen(1);
+        document.getElementById('playback-status').textContent = 'Click to start tour';
+      }
+
+      // ── SCREEN STATE MANAGEMENT ───────────────────────────────────────────────
+      // resetScreenState(n) returns screen n to its initial HTML state.
+      // Called by jumpToScreen, back actions, and scheduleNext.
+
+      function resetScreenState(num) {
+        if (num === 1) {
+          document.getElementById('s1-email').value = '';
+          document.getElementById('s1-cta-text').textContent = 'Get started';
+          document.getElementById('s1-cta-arrow').classList.remove('hidden');
+          document.getElementById('s1-cta-spinner').classList.add('hidden');
+          document.getElementById('s1-confirmation').classList.add('hidden');
+        } else if (num === 2) {
+          document.getElementById('s2-id-selection').classList.remove('hidden');
+          document.getElementById('s2-scanning').classList.add('hidden');
+          document.getElementById('s2-verifying').classList.add('hidden');
+          document.getElementById('s2-verified').classList.add('hidden');
+          document.getElementById('s2-licence-btn').classList.remove('bg-pwc-orange-50', 'border-pwc-orange-200');
+          document.getElementById('s2-exclusion-check').innerHTML = spinnerSVG('Checking exclusion registers...');
+        } else if (num === 3) {
+          document.getElementById('s3-bank-selection').classList.remove('hidden');
+          document.getElementById('s3-connecting').classList.add('hidden');
+          document.getElementById('s3-accounts').classList.add('hidden');
+          document.getElementById('s3-connected').classList.add('hidden');
+          document.getElementById('s3-bank-1').classList.remove('bg-pwc-orange-50', 'border-pwc-orange-200');
+          document.getElementById('s3-account-1').classList.remove('bg-pwc-orange-50', 'border-pwc-orange-200');
+        } else if (num === 4) {
+          document.getElementById('s4-daily-slider').value = 50;
+          document.getElementById('s4-daily-value').textContent = '$50';
+          document.getElementById('s4-time-slider').value = 30;
+          document.getElementById('s4-time-value').textContent = '30 min';
+          document.getElementById('s4-weekly-slider').value = 100;
+          document.getElementById('s4-weekly-value').textContent = '$100';
+          document.getElementById('s4-confirmed').classList.add('hidden');
+          const btn4 = document.getElementById('s4-complete-btn');
+          btn4.textContent = 'Confirm limits';
+          btn4.dataset.action = 'confirm';
+        } else if (num === 5) {
+          depositAmount = 100;
+          document.getElementById('s5-balance').textContent = '$0.00';
+          document.getElementById('s5-remaining').textContent = '$200.00';
+          document.getElementById('s5-add-funds-modal').classList.add('hidden');
+          document.getElementById('s5-processing').classList.add('hidden');
+          document.getElementById('s5-deposit-complete').classList.add('hidden');
+          document.getElementById('s5-transaction').classList.add('hidden');
+          document.getElementById('s5-activity').classList.remove('hidden');
+          const scanBtn = document.getElementById('s5-scan-btn');
+          scanBtn.disabled = true;
+          scanBtn.classList.add('bg-pwc-grey-100', 'text-pwc-grey-400');
+          scanBtn.classList.remove('bg-pwc-orange-500', 'text-white', 'hover:bg-pwc-orange-400');
+          document.getElementById('s5-scan-text').textContent = 'Add funds to continue';
+        } else if (num === 6) {
+          document.getElementById('s6-scanning').classList.remove('hidden');
+          document.getElementById('s6-connecting').classList.add('hidden');
+          document.getElementById('s6-active').classList.add('hidden');
+          document.getElementById('s6-win').classList.add('hidden');
+          document.getElementById('s6-cashout').classList.add('hidden');
+          document.getElementById('s6-credits').textContent = '$100.00';
+          document.getElementById('s6-time').textContent = '0 min';
+          document.getElementById('s6-time-bar').style.width = '0%';
+          document.getElementById('s6-remaining').textContent = '2 hr';
+          document.getElementById('s6-reminder').textContent = 'Take breaks when you need them';
+          document.getElementById('s6-auth-check').innerHTML = spinnerSVG('Authenticating...');
         }
       }
 
+      function resetAllScreens() {
+        for (let i = 1; i <= 6; i++) resetScreenState(i);
+      }
+
+      // ── ACTION HANDLER ────────────────────────────────────────────────────────
       function handleManualAction(screen, action) {
         pauseAndHandle();
-        
+
         if (screen === 1) {
           if (action === 'submit') {
-            document.getElementById('s1-email').value = 'j.smith@email.com';
+            // Focus field first so the orange ring animates before text appears
+            document.getElementById('s1-email').focus();
+            setTimeout(function() {
+              document.getElementById('s1-email').value = 'j.smith@email.com';
+            }, 300);
             document.getElementById('s1-cta-text').textContent = 'Creating...';
             document.getElementById('s1-cta-arrow').classList.add('hidden');
             document.getElementById('s1-cta-spinner').classList.remove('hidden');
@@ -1020,8 +1240,10 @@
           } else if (action === 'next') {
             goToScreen(2);
           }
+
         } else if (screen === 2) {
           if (action === 'back') {
+            resetScreenState(2); // Bug fix 1.4: reset sub-states before going back
             goToScreen(1);
           } else if (action === 'selectId') {
             document.getElementById('s2-licence-btn').classList.add('bg-pwc-orange-50', 'border-pwc-orange-200');
@@ -1031,21 +1253,24 @@
             document.getElementById('s2-scanning').classList.add('hidden');
             document.getElementById('s2-verifying').classList.remove('hidden');
           } else if (action === 'verified') {
-            document.getElementById('s2-exclusion-check').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500 shrink-0"><path d="M20 6 9 17l-5-5"></path></svg><span class="text-base text-pwc-grey-600">No exclusions found</span>';
+            document.getElementById('s2-exclusion-check').innerHTML = checkSVG('No exclusions found');
             document.getElementById('s2-verifying').classList.add('hidden');
             document.getElementById('s2-verified').classList.remove('hidden');
           } else if (action === 'next') {
             goToScreen(3);
           }
+
         } else if (screen === 3) {
           if (action === 'back') {
+            resetScreenState(3);
             goToScreen(2);
           } else if (action === 'selectBank') {
             document.getElementById('s3-bank-1').classList.add('bg-pwc-orange-50', 'border-pwc-orange-200');
             document.getElementById('s3-bank-selection').classList.add('hidden');
             document.getElementById('s3-connecting').classList.remove('hidden');
           } else if (action === 'showAccounts') {
-            document.getElementById('s3-connecting').classList.add('hidden'); document.getElementById('s3-accounts').classList.remove('hidden');
+            document.getElementById('s3-connecting').classList.add('hidden');
+            document.getElementById('s3-accounts').classList.remove('hidden');
           } else if (action === 'selectAccount') {
             document.getElementById('s3-account-1').classList.add('bg-pwc-orange-50', 'border-pwc-orange-200');
             document.getElementById('s3-accounts').classList.add('hidden');
@@ -1053,19 +1278,24 @@
           } else if (action === 'next') {
             goToScreen(4);
           }
+
         } else if (screen === 4) {
           if (action === 'back') {
+            resetScreenState(4);
             goToScreen(3);
           } else if (action === 'confirm') {
             document.getElementById('s4-confirmed').classList.remove('hidden');
             document.getElementById('s4-confirmed').classList.add('fade-in');
-            document.getElementById('s4-complete-btn').textContent = 'Continue';
-            document.getElementById('s4-complete-btn').onclick = function() { handleManualAction(4, 'next'); };
+            const btn4 = document.getElementById('s4-complete-btn');
+            btn4.textContent = 'Continue';
+            btn4.dataset.action = 'next'; // delegation picks this up on next click
           } else if (action === 'next') {
             goToScreen(5);
           }
+
         } else if (screen === 5) {
           if (action === 'back') {
+            resetScreenState(5);
             goToScreen(4);
           } else if (action === 'addFunds') {
             document.getElementById('s5-add-funds-modal').classList.remove('hidden');
@@ -1085,28 +1315,34 @@
             document.getElementById('s5-activity').classList.add('hidden');
             document.getElementById('s5-transaction').classList.remove('hidden');
             document.getElementById('s5-transaction-amount').textContent = '+$' + depositAmount + '.00';
-            document.getElementById('s5-scan-btn').disabled = false;
-            document.getElementById('s5-scan-btn').classList.remove('bg-pwc-grey-100', 'text-pwc-grey-400');
-            document.getElementById('s5-scan-btn').classList.add('bg-pwc-orange-500', 'text-white', 'hover:bg-pwc-orange-400');
+            const scanBtn = document.getElementById('s5-scan-btn');
+            scanBtn.disabled = false;
+            scanBtn.classList.remove('bg-pwc-grey-100', 'text-pwc-grey-400');
+            scanBtn.classList.add('bg-pwc-orange-500', 'text-white', 'hover:bg-pwc-orange-400');
             document.getElementById('s5-scan-text').textContent = 'Scan to connect';
           } else if (action === 'next') {
             goToScreen(6);
           }
+
         } else if (screen === 6) {
           if (action === 'back') {
+            resetScreenState(6);
             goToScreen(5);
           } else if (action === 'scanned') {
             document.getElementById('s6-scanning').classList.add('hidden');
             document.getElementById('s6-connecting').classList.remove('hidden');
           } else if (action === 'connected') {
-            document.getElementById('s6-auth-check').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500 shrink-0"><path d="M20 6 9 17l-5-5"></path></svg><span class="text-base text-pwc-grey-600">Authenticated</span>';
+            document.getElementById('s6-auth-check').innerHTML = checkSVG('Authenticated');
             document.getElementById('s6-connecting').classList.add('hidden');
             document.getElementById('s6-active').classList.remove('hidden');
             document.getElementById('s6-active').classList.add('fade-in');
           } else if (action === 'cashout') {
-            document.getElementById('s6-win').classList.remove('hidden');
-            document.getElementById('s6-win').classList.add('fade-in');
-            document.getElementById('s6-credits').textContent = '$185.20';
+            // Bug fix 1.6: show proper session-ended panel, not just win
+            document.getElementById('s6-active').classList.add('hidden');
+            document.getElementById('s6-cashout').classList.remove('hidden');
+            document.getElementById('s6-cashout').classList.add('fade-in');
+          } else if (action === 'returnToWallet') {
+            goToScreen(5);
           }
         }
       }
@@ -1114,142 +1350,29 @@
       function updateSlider(type) {
         pauseAndHandle();
         if (type === 'daily') {
-          var val = document.getElementById('s4-daily-slider').value;
+          const val = document.getElementById('s4-daily-slider').value;
           document.getElementById('s4-daily-value').textContent = '$' + val;
         } else if (type === 'time') {
-          var val = parseInt(document.getElementById('s4-time-slider').value);
-          var hours = Math.floor(val / 60);
-          var mins = val % 60;
-          var display = hours > 0 ? (hours + ' hr' + (mins > 0 ? ' ' + mins + ' min' : '')) : (mins + ' min');
+          const val = parseInt(document.getElementById('s4-time-slider').value);
+          const hours = Math.floor(val / 60);
+          const mins = val % 60;
+          const display = hours > 0 ? (hours + ' hr' + (mins > 0 ? ' ' + mins + ' min' : '')) : (mins + ' min');
           document.getElementById('s4-time-value').textContent = display;
         } else if (type === 'weekly') {
-          var val = document.getElementById('s4-weekly-slider').value;
+          const val = document.getElementById('s4-weekly-slider').value;
           document.getElementById('s4-weekly-value').textContent = '$' + val;
         }
       }
 
-      function goToScreen(num) {
-        document.getElementById('screen-' + currentScreen).classList.remove('active');
-        document.getElementById('screen-' + currentScreen).classList.add('hidden');
-        document.getElementById('desc-' + currentScreen).style.opacity = '0';
-        document.getElementById('desc-' + currentScreen).style.pointerEvents = 'none';
-
-        document.getElementById('screen-' + num).classList.remove('hidden');
-        document.getElementById('screen-' + num).classList.add('active');
-        document.getElementById('desc-' + num).style.opacity = '1';
-        document.getElementById('desc-' + num).style.pointerEvents = 'auto';
-
-        for (var i = 1; i <= 6; i++) {
-          var step = document.getElementById('step-' + i);
-          step.classList.remove('active', 'completed');
-          if (i < num) step.classList.add('completed');
-          else if (i === num) step.classList.add('active');
-        }
-
-        currentScreen = num;
-        document.getElementById('playback-status').textContent = 'Step ' + num + ' of 6';
-      }
-
-      function jumpToScreen(num) {
-        pauseAndHandle();
-        resetScreenState(currentScreen);
-        goToScreen(num);
-        resetScreenState(num);
-      }
-
-      function togglePlayback() {
-        if (isPlaying) pausePlayback();
-        else startPlayback();
-      }
-      
-      function startPlayback() {
-        isPlaying = true;
-        document.getElementById('play-icon').classList.add('hidden');
-        document.getElementById('pause-icon').classList.remove('hidden');
-        playScreen(currentScreen);
-      }
-      
-      function pausePlayback() {
-        isPlaying = false;
-        document.getElementById('play-icon').classList.remove('hidden');
-        document.getElementById('pause-icon').classList.add('hidden');
-        clearStageTimeouts();
-        document.getElementById('playback-status').textContent = 'Paused — Step ' + currentScreen + ' of 6';
-      }
-      
-      function resetPlayback() {
-        pausePlayback();
-        resetAllScreens();
-        goToScreen(1);
-        document.getElementById('playback-status').textContent = 'Click to start tour';
-      }
-
-      function resetScreenState(num) {
-        if (num === 1) {
-          document.getElementById('s1-email').value = '';
-          document.getElementById('s1-cta-text').textContent = 'Get started';
-          document.getElementById('s1-cta-arrow').classList.remove('hidden');
-          document.getElementById('s1-cta-spinner').classList.add('hidden');
-          document.getElementById('s1-confirmation').classList.add('hidden');
-        } else if (num === 2) {
-          document.getElementById('s2-id-selection').classList.remove('hidden');
-          document.getElementById('s2-scanning').classList.add('hidden');
-          document.getElementById('s2-verifying').classList.add('hidden');
-          document.getElementById('s2-verified').classList.add('hidden');
-          document.getElementById('s2-licence-btn').classList.remove('bg-pwc-orange-50', 'border-pwc-orange-200');
-          document.getElementById('s2-exclusion-check').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-grey-400 animate-spin shrink-0"><circle cx="12" cy="12" r="10" stroke-opacity="0.3"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg><span class="text-base text-pwc-grey-500">Checking exclusion registers...</span>';
-        } else if (num === 3) {
-          document.getElementById('s3-bank-selection').classList.remove('hidden');
-          document.getElementById('s3-connecting').classList.add('hidden');
-          document.getElementById('s3-accounts').classList.add('hidden');
-          document.getElementById('s3-connected').classList.add('hidden');
-          document.getElementById('s3-bank-1').classList.remove('bg-pwc-orange-50', 'border-pwc-orange-200');
-          document.getElementById('s3-account-1').classList.remove('bg-pwc-orange-50', 'border-pwc-orange-200');
-        } else if (num === 4) {
-          document.getElementById('s4-daily-slider').value = 50;
-          document.getElementById('s4-daily-value').textContent = '$50';
-          document.getElementById('s4-time-slider').value = 30;
-          document.getElementById('s4-time-value').textContent = '30 min';
-          document.getElementById('s4-weekly-slider').value = 100;
-          document.getElementById('s4-weekly-value').textContent = '$100';
-          document.getElementById('s4-confirmed').classList.add('hidden');
-          document.getElementById('s4-complete-btn').textContent = 'Confirm limits';
-          document.getElementById('s4-complete-btn').onclick = function() { handleManualAction(4, 'confirm'); };
-        } else if (num === 5) {
-          depositAmount = 100;
-          document.getElementById('s5-balance').textContent = '$0.00';
-          document.getElementById('s5-remaining').textContent = '$200.00';
-          document.getElementById('s5-add-funds-modal').classList.add('hidden');
-          document.getElementById('s5-processing').classList.add('hidden');
-          document.getElementById('s5-deposit-complete').classList.add('hidden');
-          document.getElementById('s5-transaction').classList.add('hidden');
-          document.getElementById('s5-activity').classList.remove('hidden');
-          document.getElementById('s5-scan-btn').disabled = true;
-          document.getElementById('s5-scan-btn').classList.add('bg-pwc-grey-100', 'text-pwc-grey-400');
-          document.getElementById('s5-scan-btn').classList.remove('bg-pwc-orange-500', 'text-white', 'hover:bg-pwc-orange-400');
-          document.getElementById('s5-scan-text').textContent = 'Add funds to continue';
-        } else if (num === 6) {
-          document.getElementById('s6-scanning').classList.remove('hidden');
-          document.getElementById('s6-connecting').classList.add('hidden');
-          document.getElementById('s6-active').classList.add('hidden');
-          document.getElementById('s6-win').classList.add('hidden');
-          document.getElementById('s6-credits').textContent = '$100.00';
-          document.getElementById('s6-time').textContent = '0 min';
-          document.getElementById('s6-time-bar').style.width = '0%';
-          document.getElementById('s6-remaining').textContent = '2 hr';
-          document.getElementById('s6-auth-check').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-grey-400 animate-spin shrink-0"><circle cx="12" cy="12" r="10" stroke-opacity="0.3"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg><span class="text-base text-pwc-grey-500">Authenticating...</span>';
-        }
-      }
-
-      function resetAllScreens() {
-        for (var i = 1; i <= 6; i++) resetScreenState(i);
-      }
+      // ── AUTOPLAY SEQUENCES ────────────────────────────────────────────────────
+      // Each playScreen* function schedules timed DOM transitions for the tour.
+      // State is NOT reset here — it was reset by scheduleNext (or is clean from
+      // page load / jumpToScreen), so the user's manual progress is preserved
+      // if they pressed pause mid-screen and then resume.
 
       function playScreen(num) {
         if (!isPlaying) return;
-        resetScreenState(num);
         document.getElementById('playback-status').textContent = 'Playing — Step ' + num + ' of 6';
-        
         if (num === 1) playScreen1();
         else if (num === 2) playScreen2();
         else if (num === 3) playScreen3();
@@ -1262,16 +1385,22 @@
         playbackTimeout = setTimeout(function() {
           if (!isPlaying) return;
           if (num < 6) {
+            resetScreenState(num + 1); // reset the next screen before showing it
             goToScreen(num + 1);
             playScreen(num + 1);
           } else {
             pausePlayback();
             document.getElementById('playback-status').textContent = 'Tour complete';
           }
-        }, screenDurations[num]);
+        }, CONFIG.SCREEN_DURATIONS[num]);
       }
 
       function playScreen1() {
+        // Focus email first so the orange ring animates before text appears
+        stageTimeouts.push(setTimeout(function() {
+          if (!isPlaying) return;
+          document.getElementById('s1-email').focus();
+        }, 1300));
         stageTimeouts.push(setTimeout(function() {
           if (!isPlaying) return;
           document.getElementById('s1-email').value = 'j.smith';
@@ -1304,7 +1433,7 @@
         stageTimeouts.push(setTimeout(function() {
           if (!isPlaying) return;
           document.getElementById('s2-id-selection').classList.add('hidden');
-          document.getElementById('s2-scanning').classList .remove('hidden');
+          document.getElementById('s2-scanning').classList.remove('hidden');
         }, 2500));
         stageTimeouts.push(setTimeout(function() {
           if (!isPlaying) return;
@@ -1313,7 +1442,7 @@
         }, 5500));
         stageTimeouts.push(setTimeout(function() {
           if (!isPlaying) return;
-          document.getElementById('s2-exclusion-check').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500 shrink-0"><path d="M20 6 9 17l-5-5"></path></svg><span class="text-base text-pwc-grey-600">No exclusions found</span>';
+          document.getElementById('s2-exclusion-check').innerHTML = checkSVG('No exclusions found');
         }, 9000));
         stageTimeouts.push(setTimeout(function() {
           if (!isPlaying) return;
@@ -1370,8 +1499,9 @@
           if (!isPlaying) return;
           document.getElementById('s4-confirmed').classList.remove('hidden');
           document.getElementById('s4-confirmed').classList.add('fade-in');
-          document.getElementById('s4-complete-btn').textContent = 'Continue';
-          document.getElementById('s4-complete-btn').onclick = function() { handleManualAction(4, 'next'); };
+          const btn4 = document.getElementById('s4-complete-btn');
+          btn4.textContent = 'Continue';
+          btn4.dataset.action = 'next';
         }, 7000));
         scheduleNext(4);
       }
@@ -1399,9 +1529,10 @@
         }, 6500));
         stageTimeouts.push(setTimeout(function() {
           if (!isPlaying) return;
-          document.getElementById('s5-scan-btn').disabled = false;
-          document.getElementById('s5-scan-btn').classList.remove('bg-pwc-grey-100', 'text-pwc-grey-400');
-          document.getElementById('s5-scan-btn').classList.add('bg-pwc-orange-500', 'text-white');
+          const scanBtn = document.getElementById('s5-scan-btn');
+          scanBtn.disabled = false;
+          scanBtn.classList.remove('bg-pwc-grey-100', 'text-pwc-grey-400');
+          scanBtn.classList.add('bg-pwc-orange-500', 'text-white');
           document.getElementById('s5-scan-text').textContent = 'Scan to connect';
         }, 8500));
         scheduleNext(5);
@@ -1415,7 +1546,7 @@
         }, 2000));
         stageTimeouts.push(setTimeout(function() {
           if (!isPlaying) return;
-          document.getElementById('s6-auth-check').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pwc-orange-500 shrink-0"><path d="M20 6 9 17l-5-5"></path></svg><span class="text-base text-pwc-grey-600">Authenticated</span>';
+          document.getElementById('s6-auth-check').innerHTML = checkSVG('Authenticated');
         }, 4000));
         stageTimeouts.push(setTimeout(function() {
           if (!isPlaying) return;
@@ -1428,18 +1559,60 @@
           document.getElementById('s6-time').textContent = '5 min';
           document.getElementById('s6-time-bar').style.width = '4%';
           document.getElementById('s6-remaining').textContent = '1 hr 55 min';
+          // Context-aware responsible gambling message (V.5)
+          document.getElementById('s6-reminder').textContent = "You've been playing for 5 minutes";
         }, 9000));
         stageTimeouts.push(setTimeout(function() {
           if (!isPlaying) return;
           document.getElementById('s6-win').classList.remove('hidden');
           document.getElementById('s6-win').classList.add('fade-in');
           document.getElementById('s6-credits').textContent = '$185.20';
+          document.getElementById('s6-reminder').textContent = "It's easy to keep playing after a win — your limit is 2 hr";
         }, 11500));
         scheduleNext(6);
       }
+
+      // ── EVENT DELEGATION ──────────────────────────────────────────────────────
+      // All button/link interactions are handled here via data-action / data-screen.
+      // This replaces all 36 inline onclick="..." attributes.
+      document.addEventListener('click', function(e) {
+        const btn = e.target.closest('[data-action]');
+        if (!btn) return;
+        const action = btn.dataset.action;
+        const screen = btn.dataset.screen ? parseInt(btn.dataset.screen) : 0;
+
+        if (action === 'togglePlayback') { togglePlayback(); return; }
+        if (action === 'resetPlayback')  { resetPlayback();  return; }
+        if (action === 'jumpToScreen')   { jumpToScreen(screen); return; }
+        handleManualAction(screen, action);
+      });
+
+      // ── KEYBOARD NAVIGATION ───────────────────────────────────────────────────
+      document.addEventListener('keydown', function(e) {
+        if (e.target.tagName === 'INPUT') return; // don't fire inside text fields
+        if (e.key === ' ' || e.key === 'k') { e.preventDefault(); togglePlayback(); }
+        if (e.key === 'ArrowRight' && currentScreen < 6) jumpToScreen(currentScreen + 1);
+        if (e.key === 'ArrowLeft'  && currentScreen > 1) jumpToScreen(currentScreen - 1);
+        if (e.key === 'r' || e.key === 'R') resetPlayback();
+      });
+
+      // ── TOUCH / SWIPE ─────────────────────────────────────────────────────────
+      (function() {
+        let touchStartX = 0;
+        const container = document.getElementById('screen-container');
+        if (!container) return;
+        container.addEventListener('touchstart', function(e) {
+          touchStartX = e.touches[0].clientX;
+        }, { passive: true });
+        container.addEventListener('touchend', function(e) {
+          const deltaX = e.changedTouches[0].clientX - touchStartX;
+          if (deltaX < -CONFIG.SWIPE_THRESHOLD && currentScreen < 6) jumpToScreen(currentScreen + 1);
+          if (deltaX >  CONFIG.SWIPE_THRESHOLD && currentScreen > 1) jumpToScreen(currentScreen - 1);
+        }, { passive: true });
+      })();
     </script>
- <div class="fixed bottom-0 left-0 right-0 bg-pwc-grey-200 text-pwc-grey-600 text-center py-2 px-4">
-  <p class="text-xs font-helvetica">Prototype for demonstration purposes only — not a real application. Contact george.prowse@au.pwc.com to recreate or edit this file. </p>
+<div role="contentinfo" class="fixed bottom-0 left-0 right-0 bg-white border-t border-pwc-grey-200 text-pwc-grey-600 text-center py-2 px-4 z-30">
+  <p class="text-xs font-helvetica">Prototype for demonstration purposes only — not a real application. Contact <a href="mailto:george.prowse@au.pwc.com" class="text-pwc-orange-500 underline">george.prowse@au.pwc.com</a> to recreate or edit this file.</p>
 </div>
  </body>
 </html>
