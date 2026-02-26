@@ -4828,7 +4828,7 @@ const INLINED_DATA = {
           {
             prompt_id: "P1.3",
             prompt_name: "Scope, Objectives & Success Criteria",
-            file: "scope_statement.json",
+            file: "scope_objectives.json",
             artifact: "Scope & Objectives Workbook",
             depends_on: ["P1.1"],
             sign_off_gate: false,
@@ -4874,7 +4874,7 @@ const INLINED_DATA = {
           {
             prompt_id: "P2.3",
             prompt_name: "Budget & Cost Baseline",
-            file: "budget_cost_baseline.json",
+            file: "budget_baseline.json",
             artifact: "Budget Baseline & Cost Tracker",
             depends_on: ["P2.2", "P1.4"],
             sign_off_gate: false,
