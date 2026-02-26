@@ -4281,11 +4281,6 @@ textarea {
             <div class="lp-cv-desc">Review gates, quality standards and acceptance criteria for every key deliverable.</div>
           </div>
 
-          <div class="lp-cv-card" data-phase="Planning">
-            <div class="lp-cv-name">Change Control Log</div>
-            <div class="lp-cv-desc">The log for requesting, assessing, approving and tracking scope changes throughout delivery.</div>
-          </div>
-
           <div class="lp-cv-card lp-cv-gate" data-phase="Planning">
             <div class="lp-cv-name">PMO Playbook</div>
             <div class="lp-cv-desc">The complete operating manual for the engagement — every plan, process and change control policy in one document.</div>
@@ -8651,9 +8646,9 @@ const V11_ARTIFACTS = {
     name: "Engagement Intake",
     phase: 1,
     order: 1,
-    fileType: "JSON handoff (no code interpreter needed)",
+    fileType: "JSON output (direct response, no file needed)",
     instruction: `**Deliverable: Engagement Intake Summary**
-Parse the engagement data provided above. Normalise all fields to canonical keys (snake_case). Set optional fields to null if absent; mark unknown required fields as "TBC". Build a canonical JSON object capturing: client identifiers, engagement name and code, engagement lead, industry and sector, delivery methodology, fee structure, dates, total budget, engagement description, scope summary, objectives, roles, commercial terms and any open items. Output this as \`CANONICAL_HANDOFF\` — this object will be referenced by all subsequent deliverables.`
+Parse the engagement data provided above. Normalise all fields to canonical keys (snake_case). Set optional fields to null if absent; mark unknown required fields as "TBC" (fields like engagement_code, scope_summary, roles and commercial_terms may not be in the intake data — infer where reasonable or mark as TBC). Build a structured canonical JSON object capturing: client identifiers, engagement name and code, engagement lead, industry and sector, delivery methodology, fee structure, dates, total budget, engagement description, scope summary, objectives, roles, commercial terms and any open items. Output this JSON directly in the response — this deliverable does not require Code Interpreter. The structured output will serve as the reference data for all subsequent deliverables.`
   },
   stakeholder_analysis: {
     id: "stakeholder_analysis",
@@ -8689,7 +8684,7 @@ Consolidate all engagement context into a formal Engagement Charter document. In
     order: 5,
     fileType: "Excel workbook (.xlsx)",
     instruction: `**Deliverable: Governance Framework Workbook**
-Define the governance framework including governance bodies, decision matrix, escalation paths, reporting cadence and meeting schedules. Determine engagement size (Small/Medium/Large) and propose appropriate governance bodies. Create an Excel workbook with sheets: Governance_Bodies (with escalation ladder), Reporting_Cadence, Meeting_Schedule, Decision_Action_Log (template), and RACI_Matrix for key governance activities. Apply data validation dropdowns and the client's branding and best practice formatting standards throughout.`
+Define the governance framework including governance bodies, decision matrix, escalation paths, reporting cadence and meeting schedules. Determine engagement size (Small: <6 months / 1-2 workstreams; Medium: 6-12 months / 2-4 workstreams; Large: 12+ months / 4+ workstreams) and propose appropriate governance bodies accordingly. Create an Excel workbook with sheets: Governance_Bodies (with escalation ladder below the main table), Reporting_Cadence, Meeting_Schedule (set day/time to "TBC" rather than fabricating), Decision_Action_Log (template with one instructional row), and RACI_Matrix for key governance activities (ensure each activity has exactly one Accountable). Apply data validation dropdowns and the client's branding and best practice formatting standards throughout.`
   },
   wbs_schedule: {
     id: "wbs_schedule",
@@ -8707,7 +8702,7 @@ Build a hierarchical Work Breakdown Structure and project schedule. Create a top
     order: 7,
     fileType: "Excel workbook (.xlsx)",
     instruction: `**Deliverable: Resource Plan & RACI Workbook**
-Build a resource plan allocating roles to work packages. For each role derive seniority level, organisation type and location. Ensure minimum resource coverage based on engagement size (small: 6-10 roles; medium: 10-18; large: 18+). Create an Excel workbook with a Resource_Register sheet including: resource ID, role, seniority, organisation, workstream, dates, effort, FTE allocation formula, availability, daily rate, and confirmation status. Apply data validation, conditional formatting for unconfirmed or over-allocated resources, and the client's branding and best practice formatting standards throughout.`
+Build a resource plan allocating roles to work packages. For each role derive seniority level, organisation type and location. Ensure minimum resource coverage based on engagement size (small: 6-10 roles; medium: 10-18; large: 18+). Create an Excel workbook with sheets: Resource_Register (resource ID, role, seniority, organisation, workstream, dates, effort, FTE allocation formula, availability, daily rate, confirmation status) and RACI_Matrix (key deliverables/activities as rows, roles as columns, with R/A/C/I assignments — ensure each activity has exactly one Accountable). Apply data validation, conditional formatting for unconfirmed or over-allocated resources, and the client's branding and best practice formatting standards throughout.`
   },
   budget_baseline: {
     id: "budget_baseline",
@@ -8716,7 +8711,7 @@ Build a resource plan allocating roles to work packages. For each role derive se
     order: 8,
     fileType: "Excel workbook (.xlsx)",
     instruction: `**Deliverable: Budget & Cost Baseline Workbook**
-Create a detailed budget baseline and cost tracking structure. For each resource compute baseline cost (effort x rate) and categorise by phase/workstream and cost type. Create an Excel workbook with sheets: Budget_Baseline (with totals row), Cost_Tracker (actuals recording template), Monthly_Profile (planned vs actual by month with cumulative tracking), Invoice_Schedule (with GST calculations), and Earned_Value_Metrics (PV, EV, AC, SV, CV, SPI, CPI, EAC, VAC, TCPI formulas). Apply conditional formatting for variances, data validation dropdowns, and the client's branding and best practice formatting standards throughout.`
+Create a detailed budget baseline and cost tracking structure. For each resource compute baseline cost (effort x rate) and categorise by phase/workstream and cost type. Create an Excel workbook with sheets: Budget_Baseline (with totals row), Cost_Tracker (actuals recording template), Monthly_Profile (planned vs actual by month with cumulative tracking), Invoice_Schedule (with GST calculations), and Earned_Value_Metrics (PV, EV, AC, SV=EV-PV, CV=EV-AC, SPI=EV/PV, CPI=EV/AC, EAC=budget/CPI, VAC=budget-EAC, TCPI=(budget-EV)/(budget-AC) — wrap all division formulas in IFERROR to handle zero denominators). Apply conditional formatting for variances (SPI/CPI <1.0 red, >1.0 green), data validation dropdowns, and the client's branding and best practice formatting standards throughout.`
   },
   risk_register: {
     id: "risk_register",
@@ -8725,7 +8720,7 @@ Create a detailed budget baseline and cost tracking structure. For each resource
     order: 9,
     fileType: "Excel workbook (.xlsx)",
     instruction: `**Deliverable: Risk Register Workbook**
-Develop a comprehensive risk register. Extract risks from upstream context (scope assumptions, regulatory obligations, schedule pressure, resource gaps, technology complexity, stakeholder sensitivities) and infer realistic additional risks based on the engagement profile. Minimum risk count: small engagements 10-15; medium 15-25; large 25+. For each risk capture: ID, title, category, description (cause-event-effect), likelihood, impact, risk score, rating, response strategy, mitigation actions, contingency plan, residual scores, status, escalation flag, and review date. Create an Excel workbook with sheets: Risk_Register (with conditional formatting by rating — Critical/High/Medium/Low colour coding) and Heat_Map (visual 3x3 matrix with COUNTIFS formulas for both inherent and residual ratings). Apply the client's branding and best practice formatting standards throughout.`
+Develop a comprehensive risk register. Extract risks from upstream context (scope assumptions, regulatory obligations, schedule pressure, resource gaps, technology complexity, stakeholder sensitivities) and infer realistic additional risks based on the engagement profile. Minimum risk count: small engagements (<6 months) 10-15; medium (6-12 months) 15-25; large (12+ months) 25+. For each risk capture: ID, title, category, description (cause-event-effect), likelihood (High=3, Medium=2, Low=1), impact (High=3, Medium=2, Low=1), risk score (likelihood x impact), risk rating (9=Critical, 6=High, 3-4=Medium, 1-2=Low), response strategy, mitigation actions, contingency plan, residual scores and rating, status, escalation flag (Yes for Critical), and review date. Create an Excel workbook with sheets: Risk_Register (with conditional formatting by rating — Critical=red, High=orange, Medium=amber, Low=green) and Heat_Map (visual 3x3 matrix with COUNTIFS formulas for both inherent and residual ratings). Apply the client's branding and best practice formatting standards throughout.`
   },
   communications_plan: {
     id: "communications_plan",
@@ -8752,7 +8747,19 @@ Define the quality assurance and control plan. Apply default review turnarounds 
     order: 12,
     fileType: "PowerPoint presentation (.pptx)",
     instruction: `**Deliverable: PMO Playbook Presentation**
-Consolidate all prior deliverables into a master PMO Playbook presentation. Create a 16:9 PowerPoint using python-pptx with slides covering: Title, Executive Summary (key metrics and status), Engagement Overview, Stakeholder Matrix, Scope & Objectives, Charter Highlights, Governance Framework, WBS & Schedule Summary, Resource Plan, Budget Baseline, Risk Summary (with heat map table), Communications Plan, Quality Plan, and Next Steps & Open Items. Limit to 5 bullet points per slide and 6 table rows per slide. Apply the client's branding and best practice presentation formatting standards throughout. Add presenter notes to each content slide.`
+Consolidate the engagement context (and any prior deliverables generated in this session) into a master PMO Playbook presentation. If some deliverables were not generated, base those slides on the raw engagement data instead. Create a 16:9 PowerPoint using python-pptx with the following slide structure:
+- Slide 1 — Title: engagement name, client name, date, version
+- Slide 2 — Executive Summary: key metrics table (budget, duration, team size, risk count), overall status, top 3 priorities
+- Slide 3 — Engagement Overview: methodology, dates, budget, fee structure, workstreams
+- Slide 4 — Stakeholder Matrix: influence-interest summary, key stakeholders by role
+- Slide 5 — Scope & Objectives: boundary statement, top inclusions/exclusions, objectives count
+- Slide 6 — Governance: governance bodies table, escalation summary
+- Slide 7 — WBS & Schedule: phase summary, key milestones, critical path
+- Slide 8 — Resource & Budget: allocation summary, cost breakdown
+- Slide 9 — Risk Summary: counts by rating, heat map table, top 5 risks
+- Slide 10 — Communications & Quality: audience groups, reporting cadence, quality gates
+- Slide 11 — Next Steps & Open Items: consolidated open items, immediate actions
+Limit to 5 bullet points per slide and 6 table rows per slide. Apply the client's branding and best practice presentation formatting standards throughout. Add presenter notes to each content slide.`
   }
 };
 
@@ -10132,6 +10139,7 @@ function startWorkflow() {
 }
 function confirmLaunchWorkflow() {
   closeReviewPanelDirect();
+  formData = compileForm(); // Re-compile to capture any review panel inline edits
   completedSteps = new Set();
   doShowWorkflow({ skipResume: true });
 }
@@ -10588,15 +10596,17 @@ function unlockNextSteps() {
   });
 }
 function updateProgress() {
+  if (!appData || !appData.workflow) return;
   const total = appData.workflow.phases.reduce(
     (sum, p) => sum + p.prompts.length,
     0,
   );
   const done = completedSteps.size;
   const pct = Math.round((done / total) * 100);
-  document.getElementById("progressFill").style.width = `${pct}%`;
-  document.getElementById("progressText").textContent =
-    `${done} of ${total} steps complete`;
+  var pf = document.getElementById("progressFill");
+  if (pf) pf.style.width = `${pct}%`;
+  var pt = document.getElementById("progressText");
+  if (pt) pt.textContent = `${done} of ${total} steps complete`;
   // Per-phase breakdown text
   const phaseBreakdown = appData.workflow.phases
     .map((p) => {
@@ -10988,9 +10998,15 @@ function pbComposePrompt() {
   var ec = data.engagement_context || {};
   var clientName = ec.client_name || "[Client Name]";
 
+  // ── SECTION 0: Role ──
+  var prompt = "# ROLE\n\n";
+  prompt += "You are an expert project management consultant with deep experience in project initiation, planning and PMO operations. ";
+  prompt += "You produce professional-grade project artifacts that are comprehensive, well-structured and immediately usable by delivery teams.\n\n";
+
   // ── SECTION 1: Engagement Context ──
-  var prompt = "# ENGAGEMENT CONTEXT\n\n";
-  prompt += "You are assisting with project initiation and planning for the following engagement.\n\n";
+  prompt += "# ENGAGEMENT CONTEXT\n\n";
+  prompt += "Generate project initiation and planning deliverables for the following engagement. ";
+  prompt += "Empty arrays in the data indicate sections the user did not complete — treat those areas as not yet defined and mark related fields as \"TBC\".\n\n";
   prompt += "<engagement_data>\n";
   prompt += JSON.stringify(data, null, 2);
   prompt += "\n</engagement_data>\n\n";
@@ -10999,21 +11015,23 @@ function pbComposePrompt() {
   prompt += "# GENERAL INSTRUCTIONS\n\n";
   prompt += "Using the engagement data above, generate the following project initiation and planning documents. ";
   prompt += "Produce each deliverable as a **separate downloadable file** within this single conversation. ";
-  prompt += "Use **Code Interpreter** (Python) to create all files programmatically.\n\n";
+  prompt += "Use **Code Interpreter** (Python) to create all file-based deliverables programmatically (the Engagement Intake is the sole exception — it outputs JSON directly in the response).\n\n";
 
   prompt += "## File Generation Rules\n";
   prompt += "- Generate each deliverable as an individual file (Excel .xlsx, Word .docx, or PowerPoint .pptx as specified)\n";
+  prompt += "- Use **openpyxl** for Excel workbooks, **python-docx** for Word documents, and **python-pptx** for PowerPoint presentations\n";
+  prompt += "- Generate one file per code interpreter call — do not attempt to create all files in a single code block\n";
   prompt += "- Wrap each code block in a top-level try/except so files are always saved — if any formatting step fails, catch the error, print a warning, and continue\n";
-  prompt += "- Each deliverable should be self-contained but internally consistent with the others\n";
-  prompt += "- Where a deliverable references data from another (e.g., the Charter references the Stakeholder Analysis), use the engagement data provided above to maintain consistency across all files\n";
+  prompt += "- Each file must be independently usable but should use the same engagement data, terminology, role names, and dates as all other files for consistency\n";
   prompt += "- Use ISO 8601 date formats, snake_case for canonical keys, and Title Case for display labels\n";
-  prompt += "- Mark any unknown or unspecified values as \"TBC\" rather than fabricating data\n\n";
+  prompt += "- Mark any unknown or unspecified values as \"TBC\" rather than fabricating data\n";
+  prompt += "- If you reach context limits before completing all deliverables, pause and list which deliverables remain so the user can continue in a follow-up message\n\n";
 
   // ── SECTION 3: Branding & Formatting ──
   prompt += "## Branding & Formatting\n\n";
   prompt += "Apply the branding and visual identity of **" + clientName + "** across all generated documents. ";
-  prompt += "Look up and use " + clientName + "'s brand colours, logo style, and typography conventions where possible. ";
-  prompt += "If " + clientName + "'s specific brand guidelines are not known, apply a clean, professional style using:\n";
+  prompt += "If you know " + clientName + "'s brand colours and typography from your training data, apply them. ";
+  prompt += "If uncertain or the brand is not well-known, apply a clean, professional style using:\n";
   prompt += "- A primary accent colour appropriate to " + clientName + "'s industry and sector\n";
   prompt += "- Professional sans-serif fonts (e.g., Calibri, Arial, Helvetica)\n";
   prompt += "- Consistent heading hierarchy and spacing\n";
@@ -11045,7 +11063,8 @@ function pbCopyPrompt() {
     if (typeof showToast === "function") showToast("No prompt to copy — select at least one deliverable.", "warning");
     return;
   }
-  navigator.clipboard.writeText(text.textContent).then(function () {
+  var content = text.textContent;
+  function onSuccess() {
     var btn = document.getElementById("pbCopyBtn");
     if (btn) {
       btn.textContent = "Copied!";
@@ -11055,7 +11074,28 @@ function pbCopyPrompt() {
         btn.classList.remove("copied");
       }, 2000);
     }
-  });
+  }
+  // Try modern clipboard API first, fall back to execCommand for HTTP contexts
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(content).then(onSuccess).catch(function () {
+      pbFallbackCopy(content);
+      onSuccess();
+    });
+  } else {
+    pbFallbackCopy(content);
+    onSuccess();
+  }
+}
+
+function pbFallbackCopy(text) {
+  var ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed";
+  ta.style.left = "-9999px";
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand("copy"); } catch (e) {}
+  document.body.removeChild(ta);
 }
 
 function pbExportPrompt() {
