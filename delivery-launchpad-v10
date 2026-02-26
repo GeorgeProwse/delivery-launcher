@@ -8262,7 +8262,7 @@ const INLINED_PROMPTS = {
 2. Parse the JSON in <engagement_data>. Trim strings, convert fields to canonical keys. Set optional fields to null if absent; mark unknown required fields as "TBC".
 3. Do not validate client_name or engagement_name; those are provided in the form.
 4. Build a canonical JSON object with: client_name, engagement_name, engagement_code, engagement_lead, industry, sector, sub_sector, delivery_methodology, fee_structure, start_date, end_date, total_budget, engagement_description, scope_summary, objectives (list), roles and decision rights, commercial_terms and open_items (empty list if none).
-5. Output the JSON as `P1_1_CANONICAL_HANDOFF`; do not call python.
+5. Output the JSON as \`P1_1_CANONICAL_HANDOFF\`; do not call python.
 </instructions>`
   },
 
@@ -8277,12 +8277,12 @@ const INLINED_PROMPTS = {
   Enumerations: stakeholder_type ∈ {Sponsor, Decision_Maker, Project_Owner, Programme_Manager, SME, End_User, Approver, Informed_Only, Other}; organisation_type ∈ {PwC, Client, Joint, Alliance_Partner, Third_Party, Regulator, Vendor, Other}; engagement_role ∈ {Sponsor, Decision_Maker, Project_Owner, Programme_Manager, SME, End_User, Approver, Informed_Only, Other}; influence_level, interest_level ∈ {High, Medium, Low}; engagement_strategy ∈ {Manage_Closely, Keep_Satisfied, Keep_Informed, Monitor}; preferred_channel ∈ {Email, Phone, Video_Conference, In_Person, Instant_Message}; communication_cadence ∈ {Daily, Weekly, Fortnightly, Monthly, Quarterly, As_Needed}; yes_no ∈ {Yes, No}. Derive influence_level: score ≥4 → High; 3 → Medium; ≤2 → Low. Derive engagement_strategy: High influence + High interest = Manage_Closely; High influence + Medium/Low interest = Keep_Satisfied; Medium/Low influence + High interest = Keep_Informed; otherwise = Monitor. Use ISO 8601 dates. Table style: header row orange with white text; grey horizontal lines; no vertical borders.
 </context>
 <instructions>
-1. Load `P1_1_CANONICAL_HANDOFF`. Identify stakeholders: include client sponsor, engagement lead, key decision makers and any additional roles specified. Deduplicate by full_name; if both PwC and client stakeholders have same name, add organisation suffix.
+1. Load \`P1_1_CANONICAL_HANDOFF\`. Identify stakeholders: include client sponsor, engagement lead, key decision makers and any additional roles specified. Deduplicate by full_name; if both PwC and client stakeholders have same name, add organisation suffix.
 2. For each stakeholder, collect: stakeholder_id, full_name, organisation_name, organisation_type, role_title, engagement_role, influence_score (1–5), interest_score (1–5), preferred_channel and communication_cadence (default Weekly Email), sensitivity (Yes/No), contact_email, contact_phone, notes and source.
 3. Compute influence_level and interest_level from scores; assign engagement_strategy using the mapping. Determine quadrant by combining levels (e.g., High/High → Quadrant_I).
 4. Build an Excel workbook with three sheets: **Stakeholder_Register** (columns: stakeholder_id, full_name, organisation_name, organisation_type, role_title, engagement_role, influence_score, interest_score, influence_level, interest_level, quadrant, engagement_strategy, workstream, preferred_channel, communication_cadence, sensitivity, contact_email, contact_phone, notes, source, last_confirmed_date); **Stakeholder_Summary** (tables showing counts by stakeholder_type and engagement_strategy and a 3×3 influence–interest matrix); **Change_Log** (record_id, field_changed, old_value, new_value, date, updated_by).
 5. Use pandas and openpyxl to create the workbook. Apply the table style from <context>; freeze header rows; add filters and appropriate column widths.
-6. Prepare `P1_2_CANONICAL_HANDOFF` JSON summarising the stakeholder register (list of stakeholder objects) and include a link to the generated workbook. Do not include any additional commentary.
+6. Prepare \`P1_2_CANONICAL_HANDOFF\` JSON summarising the stakeholder register (list of stakeholder objects) and include a link to the generated workbook. Do not include any additional commentary.
 </instructions>`
   },
 
@@ -8297,13 +8297,13 @@ const INLINED_PROMPTS = {
   Enumerations: scope_type ∈ {Inclusion, Exclusion, Assumption, Constraint}; objective_type ∈ {Business, Technical, Compliance, Regulatory, Risk, Other}; priority ∈ {Critical, High, Medium, Low}; confidence_level ∈ {High, Medium, Low, TBC}; yes_no ∈ {Yes, No}. Unknown fields should be marked "TBC". Use ISO 8601 dates. Table style as per global standards.
 </context>
 <instructions>
-1. Load `P1_1_CANONICAL_HANDOFF` and `P1_2_CANONICAL_HANDOFF`. Extract scope statements, objectives and success criteria from the brief and stakeholder analysis.
+1. Load \`P1_1_CANONICAL_HANDOFF\` and \`P1_2_CANONICAL_HANDOFF\`. Extract scope statements, objectives and success criteria from the brief and stakeholder analysis.
 2. Draft a boundary statement summarising what is in scope and out of scope, citing key inclusions and exclusions.
 3. Build a **Scope_Register** with columns: record_id, type (scope_type), title, description, category, source, confidence_level, owner_organisation_type, owner_role, status (Proposed, Confirmed, Deferred), date_confirmed, notes, linked_objective_ids and linked_stakeholder_ids.
 4. Build an **Objectives_Register** with columns: objective_id, objective_name, objective_type, priority, owner_role, owner_organisation_type, success_criteria, status, related_scope_ids.
 5. Build a **Success_Criteria** sheet mapping each objective to measurable criteria: criterion_id, objective_id, criterion_description, metric, target_value, measure_method, confidence_level, due_date, status.
-6. Use pandas and openpyxl to assemble a workbook (`P1_3_Scope_Objectives.xlsx`) with these sheets, applying the table style.
-7. Compose `P1_3_CANONICAL_HANDOFF` JSON containing: boundary_statement, inclusions[], exclusions[], assumptions[], constraints[], objectives[], success_criteria[], open_items[] and validation field.
+6. Use pandas and openpyxl to assemble a workbook (\`P1_3_Scope_Objectives.xlsx\`) with these sheets, applying the table style.
+7. Compose \`P1_3_CANONICAL_HANDOFF\` JSON containing: boundary_statement, inclusions[], exclusions[], assumptions[], constraints[], objectives[], success_criteria[], open_items[] and validation field.
 8. After running code, output the canonical JSON and a link to the workbook.
 </instructions>`
   },
@@ -8321,20 +8321,20 @@ const INLINED_PROMPTS = {
   ACME Corp | Project Phoenix | ENG 001 | Agile | Time_and_Materials | AUD 1.2M | 2026 03 01 | 2026 10 31 | Core Build, Integration, Testing
 </context>
 <instructions>
-1. Extract and normalise data from the canonical handoffs: `P1_1_CANONICAL_HANDOFF`, `P1_2_CANONICAL_HANDOFF` and `P1_3_CANONICAL_HANDOFF`. Apply canonical field names and enumerations; unknown values become "TBC".
+1. Extract and normalise data from the canonical handoffs: \`P1_1_CANONICAL_HANDOFF\`, \`P1_2_CANONICAL_HANDOFF\` and \`P1_3_CANONICAL_HANDOFF\`. Apply canonical field names and enumerations; unknown values become "TBC".
 2. Draft the charter narrative: write a concise purpose and introduction describing the engagement and the role of the charter; summarise the engagement overview in a table (see example).
 3. Derive and populate tables for objectives, success criteria and KPIs using the priority and owner role enumerations.
-4. Summarise the scope: include the boundary statement; list top inclusions and exclusions; summarise assumptions, constraints and dependencies; ensure each item is traced back to `P1_3`.
+4. Summarise the scope: include the boundary statement; list top inclusions and exclusions; summarise assumptions, constraints and dependencies; ensure each item is traced back to \`P1_3\`.
 5. Describe the delivery approach: reference the delivery methodology and identify primary workstreams; if unknown, insert 'TBC' and create an open item.
 6. Build team and role tables: list PwC and Client roles with names (or placeholders), responsibilities and owner_org.
 7. Create a decision rights table using decision_type enumerations and map Accountable, Consulted and Informed roles based on stakeholder responsibilities.
 8. Summarise commercial terms (billing frequency, invoicing contact, PO reference, payment terms, currency, GST treatment); unknown values are flagged as 'Proposed – to be confirmed'.
 9. Provide a brief risk, compliance and quality statement referencing the need for detailed registers (to be generated later).
-10. Outline the change control policy and note that formal change requests will be handled in `P2.7`.
+10. Outline the change control policy and note that formal change requests will be handled in \`P2.7\`.
 11. List all open items from upstream handoffs and any new items introduced in this step; assign each to an owner role with a priority.
 12. Create a sign off table for key roles (Client Sponsor, Project Owner, PwC Engagement Lead, Engagement Manager, Account Leader) with signature and date placeholders.
 13. Using python docx, generate a Word document with the sections above. Apply the style guidelines: Linked Arial headings (L1–4 at 18/16/14/11 pt), 11 pt body text at 1.5 spacing, orange header rows with white text for tables, grey horizontal rules and no vertical borders. Include the confidentiality footer on every page.
-14. Assemble `P1_4_CANONICAL_HANDOFF` JSON containing `engagement_identifiers`, `engagement_context`, `scope_summary`, `objectives_refs`, `roles`, `decision_rights_summary`, `commercial_terms`, `open_items[]` and `validation`, plus a link to the generated document.
+14. Assemble \`P1_4_CANONICAL_HANDOFF\` JSON containing \`engagement_identifiers\`, \`engagement_context\`, \`scope_summary\`, \`objectives_refs\`, \`roles\`, \`decision_rights_summary\`, \`commercial_terms\`, \`open_items[]\` and \`validation\`, plus a link to the generated document.
 15. After the code call, output the JSON handoff and a closing sentence indicating that the charter has been generated.
 </instructions>`
   },
@@ -8350,7 +8350,7 @@ const INLINED_PROMPTS = {
   Enumerations: governance_body_type ∈ {Steering_Committee, Project_Board, Working_Group, PMO, Stakeholder_Forum, Other}; meeting_type ∈ {Kickoff, Steering_Committee, Working_Group, Workshop, Weekly_Status, Fortnightly_Status, Monthly_Report, Quarterly_Review, Other}; frequency ∈ {Weekly, Fortnightly, Monthly, Quarterly, As_Needed}; decision_scope ∈ {Scope_Change, Budget_Change, Schedule_Change, Deliverable_Signoff, Risk_Acceptance, Issue_Escalation, Commercial_Change}; escalation_level ∈ {Project_Manager, Programme_Manager, Steering_Committee, Board, Executive}. Use the global style rules; tables follow the orange header/grey horizontal rule style. Example table: Governance Body | Purpose | Chair Role | Member Roles | Frequency | Quorum | Decision Scope; Steering Committee | Provide strategic direction and approve major changes | Client Sponsor | PwC Engagement Lead; Client Project Owner; PwC Programme Manager | Monthly | 60% of members | Scope, Budget, Schedule.
 </context>
 <instructions>
-1. Consolidate inputs from `P1_1_CANONICAL_HANDOFF`, `P1_2_CANONICAL_HANDOFF`, `P1_3_CANONICAL_HANDOFF` and `P1_4_CANONICAL_HANDOFF`. Identify required governance bodies and their purposes based on engagement size, complexity and regulatory requirements.
+1. Consolidate inputs from \`P1_1_CANONICAL_HANDOFF\`, \`P1_2_CANONICAL_HANDOFF\`, \`P1_3_CANONICAL_HANDOFF\` and \`P1_4_CANONICAL_HANDOFF\`. Identify required governance bodies and their purposes based on engagement size, complexity and regulatory requirements.
 2. For each governance body, define: body_name, purpose, chair_role, member_roles, frequency, quorum and decision_scope (one or more items from the enumeration) and any delegated authority.
 3. Create an escalation ladder: list escalation triggers (e.g., schedule variance > 10%), escalation level, responsible role and target resolution time.
 4. Define a reporting cadence: for each report type (e.g., Status Report, Risk Report, Budget Report, Milestone Report, Steering Deck), specify audience, frequency, owner_role, approval_role, delivery format and due dates.
@@ -8358,8 +8358,8 @@ const INLINED_PROMPTS = {
 6. Construct a decision/action log template: record_id, record_type (Decision/Action), date, title, description, source_body, owner_role, due_date, status, decision_outcome (if decision) and notes.
 7. Assemble a RACI matrix for key governance activities (e.g., change approval, risk review, milestone signoff): list tasks down the rows and roles across columns, with R/A/C/I assignments.
 8. Generate a Terms of Reference (TOR) sheet: for each governance body, list the decision scope, membership, quorum requirement and escalation path.
-9. Use pandas and openpyxl to create a multi sheet workbook (`P1_5_Governance_Framework.xlsx`) containing sheets for Governance_Bodies, Meeting_Schedule, Reporting_Cadence, RACI_Matrix, Decision_Action_Log and TOR. Apply the standard table formatting.
-10. Produce `P1_5_CANONICAL_HANDOFF` summarising governance bodies, escalation ladder, reporting cadence and a link to the workbook.
+9. Use pandas and openpyxl to create a multi sheet workbook (\`P1_5_Governance_Framework.xlsx\`) containing sheets for Governance_Bodies, Meeting_Schedule, Reporting_Cadence, RACI_Matrix, Decision_Action_Log and TOR. Apply the standard table formatting.
+10. Produce \`P1_5_CANONICAL_HANDOFF\` summarising governance bodies, escalation ladder, reporting cadence and a link to the workbook.
 11. After the code call, output only the JSON handoff and a sentence indicating that the governance framework has been created.
 </instructions>`
   },
@@ -8375,7 +8375,7 @@ const INLINED_PROMPTS = {
   Enumerations: element_type ∈ {Engagement, Phase, Workstream, Deliverable, Work_Package}; owner_organisation_type ∈ {PwC, Client, Joint, Third_Party}; priority ∈ {Critical, High, Medium, Low}; milestone_type ∈ {Phase_Gate, Deliverable_Signoff, Client_Approval, Regulatory_Submission, Go_Live, Review_Point, Steering_Committee, Sprint_Review, Other}; task_status ∈ {Not_Started, In_Progress, Complete, On_Hold, Cancelled, Blocked}; yes_no ∈ {Yes, No}. Working days are Monday–Friday; person days assume 8 hours/day; use ISO 8601 dates. Table style per global guidelines.
 </context>
 <instructions>
-1. Load `P1_3_CANONICAL_HANDOFF`, `P1_4_CANONICAL_HANDOFF` and `P1_5_CANONICAL_HANDOFF`. Create a top level WBS element for the engagement and define phases, workstreams, deliverables and work packages. Use the element_type enumeration and assign wbs_level accordingly (Engagement=1, Phase=2, Workstream=3, Deliverable/Work_Package=4).
+1. Load \`P1_3_CANONICAL_HANDOFF\`, \`P1_4_CANONICAL_HANDOFF\` and \`P1_5_CANONICAL_HANDOFF\`. Create a top level WBS element for the engagement and define phases, workstreams, deliverables and work packages. Use the element_type enumeration and assign wbs_level accordingly (Engagement=1, Phase=2, Workstream=3, Deliverable/Work_Package=4).
 2. For each deliverable or work package, set estimated_effort_days and estimated_duration_days based on scope items and objectives; assign owner_organisation_type and responsible_role; set priority; identify predecessor_wbs_ids where tasks are sequential.
 3. Build a **WBS_Dictionary** sheet with columns: wbs_id, element_name, parent_wbs_id, wbs_level, element_type, owner_organisation_type, responsible_role, estimated_effort_days, estimated_duration_days, predecessor_wbs_ids, priority, task_status.
 4. Create a **Deliverable_Register** sheet: deliverable_id, workstream, owner_organisation_type, responsible_role, estimated_effort_days, planned_start_date, planned_end_date, acceptance_criteria, sign_off_required (Yes/No), sign_off_authority, scope_objective_trace, status.
@@ -8383,8 +8383,8 @@ const INLINED_PROMPTS = {
 6. Create a **Schedule** sheet with task-level detail: task_id, wbs_id, task_name, wbs_level, workstream, owner_role, planned_start_date, planned_end_date, duration_days, predecessor_task_ids, task_status, percent_complete, is_milestone (Yes/No), is_critical_path (Yes/No), sprint, notes.
 7. Create a **KPI_Summary** sheet summarising planned vs. actual start and finish dates, total effort and percent complete by workstream, phase and overall.
 8. Create a **Change_Log** sheet recording any adjustments to the WBS or schedule: change_id, change_type, reason, affected_wbs_id, date, author_role, approved_by, notes.
-9. Use pandas and openpyxl to assemble `P2_1_WBS_Schedule.xlsx` with the above sheets; apply consistent table formatting.
-10. Build `P2_1_CANONICAL_HANDOFF` JSON capturing the WBS hierarchy, schedule summary and a link to the workbook. Output only the JSON and workbook link.
+9. Use pandas and openpyxl to assemble \`P2_1_WBS_Schedule.xlsx\` with the above sheets; apply consistent table formatting.
+10. Build \`P2_1_CANONICAL_HANDOFF\` JSON capturing the WBS hierarchy, schedule summary and a link to the workbook. Output only the JSON and workbook link.
 </instructions>`
   },
 
@@ -8399,15 +8399,15 @@ const INLINED_PROMPTS = {
   Enumerations: seniority_level ∈ {Partner, Director, Senior_Manager, Manager, Senior_Associate, Associate, Analyst, Specialist, Other}; organisation_type ∈ {PwC, Client, Joint, Alliance_Partner, Third_Party, Regulator, Vendor, Other}; location ∈ {Onshore, Offshore, Near_Shore, Client_Site, Remote}; confirmed_status ∈ {Confirmed, Proposed, TBC}; raci_code ∈ {R, A, C, I}; yes_no ∈ {Yes, No}. Working days Monday–Friday; person days = 8 hours; use ISO 8601 dates.
 </context>
 <instructions>
-1. Load `P2_1_CANONICAL_HANDOFF` along with `P1_4_CANONICAL_HANDOFF` and `P1_2_CANONICAL_HANDOFF`. Determine resource requirements by mapping each work package to the responsible role and estimated effort_days.
+1. Load \`P2_1_CANONICAL_HANDOFF\` along with \`P1_4_CANONICAL_HANDOFF\` and \`P1_2_CANONICAL_HANDOFF\`. Determine resource requirements by mapping each work package to the responsible role and estimated effort_days.
 2. For each role, derive seniority_level, organisation_type and location based on the engagement context and stakeholder register. When names are unknown, leave full_name blank and set confirmed_status to TBC.
 3. Build a **Resource_Register** sheet with columns: resource_id, full_name, role_title, seniority_level, organisation_type, primary_workstream, secondary_workstream, location, start_date, end_date, total_effort_days, estimated_duration_days, fte_allocation (effort/duration), availability_percent, daily_rate, confirmed_status, security_clearance_required (Yes/No), notes.
 4. Build a **Weekly_Loading** sheet with one row per resource and one column per week from project start to end; fill planned allocation days; compute utilisation_percent and highlight >100%.
 5. Build a **Capacity_Summary** sheet aggregating total capacity and demand by week and by organisation_type; compute variance_days and utilisation_percent; assign a status (Overloaded if >100%, Underutilised if <60%).
 6. Build a **Seniority_Mix** sheet summarising total effort and cost by seniority_level and organisation_type, plus percentages of total.
 7. Build a **RACI_Matrix** sheet with tasks (from WBS) down the rows and roles across columns; fill each cell with the appropriate RACI code.
-8. Use pandas and openpyxl to create `P2_2_Resource_Plan.xlsx` with these sheets, formatting tables according to the style guidelines.
-9. Prepare `P2_2_CANONICAL_HANDOFF` JSON summarising resource requirements, capacity utilisation and a link to the workbook. Output only the JSON and the workbook link.
+8. Use pandas and openpyxl to create \`P2_2_Resource_Plan.xlsx\` with these sheets, formatting tables according to the style guidelines.
+9. Prepare \`P2_2_CANONICAL_HANDOFF\` JSON summarising resource requirements, capacity utilisation and a link to the workbook. Output only the JSON and the workbook link.
 </instructions>`
   },
 
@@ -8422,14 +8422,14 @@ const INLINED_PROMPTS = {
   Enumerations: cost_type ∈ {Labour_PwC, Labour_Client, Labour_Alliance_Partner, Labour_Third_Party, Travel_and_Accommodation, Technology_and_Software, Training, Printing_and_Production, Contingency, Other}; confidence_level ∈ {High, Medium, Low, TBC}; reimbursable ∈ {Yes, No}; fixed_or_variable ∈ {Fixed, Variable}; invoice_status ∈ {Draft, Sent, Paid, Cancelled, Overdue}; yes_no ∈ {Yes, No}. Use AUD currency; ISO 8601 dates; person_days as defined earlier.
 </context>
 <instructions>
-1. Load `P2_1_CANONICAL_HANDOFF` and `P2_2_CANONICAL_HANDOFF`. For each resource, compute baseline cost = total_effort_days × daily_rate. Categorise costs by phase_or_workstream and cost_type.
+1. Load \`P2_1_CANONICAL_HANDOFF\` and \`P2_2_CANONICAL_HANDOFF\`. For each resource, compute baseline cost = total_effort_days × daily_rate. Categorise costs by phase_or_workstream and cost_type.
 2. Build a **Budget_Baseline** sheet: budget_line_id, cost_item_description, phase_or_workstream, cost_type, resource_role, seniority_level, effort_days, daily_rate, baseline_amount, confidence_level, reimbursable, fixed_or_variable, notes.
 3. Build a **Cost_Tracker** sheet to record actual costs by period: record_id, date, description, resource_role, cost_type, planned_amount, actual_amount, variance_amount, variance_percent, status.
 4. Build a **Monthly_Profile** sheet summarising planned and actual costs per month: month, planned_labour_cost, planned_non_labour_cost, actual_labour_cost, actual_non_labour_cost, cumulative_planned, cumulative_actual, cost_variance, variance_percent, status.
 5. Build an **Invoice_Schedule** sheet: invoice_id, description, billing_period_or_milestone, invoice_type (Progress, Milestone, Retainer, Final), planned_invoice_date, amount_excl_gst, gst_amount, total_amount, invoice_status, invoice_number, date_sent, date_paid, outstanding_days, notes.
 6. Build an **Earned_Value_Metrics** sheet: period_start, period_end, planned_value (PV), earned_value (EV), actual_cost (AC), schedule_variance (SV = EV - PV), cost_variance (CV = EV - AC), SPI (EV/PV), CPI (EV/AC), EAC (total_budget / CPI), VAC (total_budget - EAC), TCPI ((total_budget - EV)/(total_budget - AC)).
-7. Use pandas and openpyxl to assemble `P2_3_Budget_Baseline.xlsx` with these sheets; apply table formatting and freeze header rows.
-8. Create `P2_3_CANONICAL_HANDOFF` JSON summarising baseline totals, cost categories, invoice summary and a link to the workbook. Output only the JSON and workbook link.
+7. Use pandas and openpyxl to assemble \`P2_3_Budget_Baseline.xlsx\` with these sheets; apply table formatting and freeze header rows.
+8. Create \`P2_3_CANONICAL_HANDOFF\` JSON summarising baseline totals, cost categories, invoice summary and a link to the workbook. Output only the JSON and workbook link.
 </instructions>`
   },
 
@@ -8444,14 +8444,14 @@ const INLINED_PROMPTS = {
   Enumerations: risk_category ∈ {Strategic, Financial, Operational, Schedule, Resource, Technology, Regulatory_and_Compliance, Stakeholder, Scope, Quality, Third_Party, Cyber_and_Security, People, Environmental_and_ESG, Other}; likelihood_level ∈ {High=3, Medium=2, Low=1}; impact_level ∈ {High=3, Medium=2, Low=1}; risk_rating mapping: 9=Critical, 6=High, 3–4=Medium, 1–2=Low; risk_response_strategy ∈ {Avoid, Mitigate, Transfer, Accept}; risk_status ∈ {Open, Mitigated, Accepted, Closed, Transferred, Eventuated}; yes_no ∈ {Yes, No}. Unknown values become "TBC".
 </context>
 <instructions>
-1. Load `P1_3_CANONICAL_HANDOFF` and `P1_4_CANONICAL_HANDOFF` to identify potential risks and constraints. Augment with risks raised during stakeholder analysis.
+1. Load \`P1_3_CANONICAL_HANDOFF\` and \`P1_4_CANONICAL_HANDOFF\` to identify potential risks and constraints. Augment with risks raised during stakeholder analysis.
 2. For each risk, collect: risk_id, title, risk_category, description (cause → event → effect), source, owner_role, owner_organisation_type, likelihood_level, impact_level, risk_score (likelihood × impact), risk_rating (using mapping), risk_response_strategy, mitigation_actions, contingency_plan, residual_likelihood_level, residual_impact_level, residual_score, residual_rating, risk_status, escalation_required (Yes/No), next_review_date, restricted_distribution (Yes/No), date_raised, raised_by, notes.
 3. Build a **Risk_Register** sheet with the above columns; compute risk_score and risk_rating automatically.
 4. Build a **Heat_Map** sheet summarising count of risks for each combination of likelihood_level and impact_level; apply conditional formatting using risk_rating colours (Critical, High, Medium, Low).
 5. Build a **Response_Plan** sheet with columns: risk_id, risk_rating, action_id, specific_action, action_type (Mitigation, Contingency, Transfer), action_owner, due_date, status.
 6. Build a **Trend_Dashboard** sheet tracking risk ratings over time: risk_id, review_date, baseline_rating, current_rating, change, notes.
-7. Use pandas and openpyxl to produce `P2_4_Risk_Register.xlsx` with these sheets; apply style guidelines.
-8. Prepare `P2_4_CANONICAL_HANDOFF` JSON summarising risk counts by rating and linking to the workbook. Output only the JSON and workbook link.
+7. Use pandas and openpyxl to produce \`P2_4_Risk_Register.xlsx\` with these sheets; apply style guidelines.
+8. Prepare \`P2_4_CANONICAL_HANDOFF\` JSON summarising risk counts by rating and linking to the workbook. Output only the JSON and workbook link.
 </instructions>`
   },
 
@@ -8466,13 +8466,13 @@ const INLINED_PROMPTS = {
   Enumerations: communication_type ∈ {Report, Meeting, Workshop, Training, Update, Newsletter, Ad_Hoc, Other}; frequency ∈ {Daily, Weekly, Fortnightly, Monthly, Quarterly, Annually, As_Needed}; preferred_channel ∈ {Email, Phone, Video_Conference, In_Person, Instant_Message}; audience_type ∈ {Sponsor, Steering_Committee, Team, Stakeholders, Regulators, Vendors, Clients, Public, Other}; sensitivity_level ∈ {Public, Internal, Confidential, Secret}; yes_no ∈ {Yes, No}. Table style as per global guidelines.
 </context>
 <instructions>
-1. Load stakeholder analysis and governance framework handoffs (`P1_2_CANONICAL_HANDOFF` and `P1_5_CANONICAL_HANDOFF`). Group stakeholders into audience groups based on organisation_type and engagement_role.
+1. Load stakeholder analysis and governance framework handoffs (\`P1_2_CANONICAL_HANDOFF\` and \`P1_5_CANONICAL_HANDOFF\`). Group stakeholders into audience groups based on organisation_type and engagement_role.
 2. Build an **Audience_Groups** sheet: audience_name, audience_type, stakeholder_type, engagement_strategy, key_communication_needs, preferred_channel, sensitivity_level.
 3. Build a **Communications_Matrix** sheet with columns: comm_id, communication_title, communication_type, purpose, primary_audience_group, engagement_strategy, frequency, channel, format (e.g., PDF, Slide, Email), owner_role, approver_role, next_due_date, last_sent_date, status, sensitive (Yes/No), approval_required (Yes/No), linked_governance_body, phase_or_workstream, notes.
 4. Build a **Message_Library** sheet: template_id, template_name, communication_type, audience_group, purpose, key_messages, tone (Formal, Informal, Urgent, Supportive), status (Draft, Approved, Deprecated), approved_by, last_updated, notes.
 5. Build a **Distribution_List** sheet: stakeholder_id, full_name, role_title, organisation_type, audience_group, preferred_channel, sensitive_comms_only (Yes/No).
-6. Use pandas and openpyxl to generate `P2_5_Communications_Plan.xlsx` with these sheets; apply table styling and freeze headers.
-7. Output `P2_5_CANONICAL_HANDOFF` JSON summarising the communications plan and including the workbook link.
+6. Use pandas and openpyxl to generate \`P2_5_Communications_Plan.xlsx\` with these sheets; apply table styling and freeze headers.
+7. Output \`P2_5_CANONICAL_HANDOFF\` JSON summarising the communications plan and including the workbook link.
 </instructions>`
   },
 
@@ -8492,8 +8492,8 @@ const INLINED_PROMPTS = {
 3. Build a **Quality_Gates** sheet: gate_id, gate_name, phase_boundary, gate_description, criteria, approver_role, target_date, actual_date, gate_status, criteria_met, outstanding_criteria, waiver_reason, waiver_approved_by, notes.
 4. Build a **Checklist_Library** sheet: deliverable_type, checklist_item_number, checklist_item, category, mandatory (Yes/No), notes. Include generic items such as "Ensure style guidelines applied", "Verify confidentiality footer", "Validate all enumerated fields".
 5. Build a **Non_Conformance_Log** sheet: nc_id, deliverable_id, nc_description, category (e.g., Process, Data, Style, Requirements), severity, date_raised, raised_by, assigned_to, target_resolution_date, non_conformance_status, days_open, resolution_description, root_cause, preventive_action, closed_by, closure_date, notes.
-6. Use pandas and openpyxl to assemble `P2_6_Quality_Plan.xlsx`. Format tables accordingly.
-7. Prepare `P2_6_CANONICAL_HANDOFF` JSON summarising the review schedule and quality gates and linking to the workbook.
+6. Use pandas and openpyxl to assemble \`P2_6_Quality_Plan.xlsx\`. Format tables accordingly.
+7. Prepare \`P2_6_CANONICAL_HANDOFF\` JSON summarising the review schedule and quality gates and linking to the workbook.
 8. Output only the JSON and workbook link.
 </instructions>`
   },
@@ -8513,8 +8513,8 @@ const INLINED_PROMPTS = {
 2. Build a **Change_Request_Register** sheet: cr_id, change_title, change_description, change_type, classification, requested_by, requestor_organisation_type, date_submitted, phase_or_workstream_affected, urgency_level (High, Medium, Low), impact_assessment_owner_role, assessment_due_date, assessment_completed_date, change_request_status, approver_role, decision_date, decision_rationale, conditions_of_approval, schedule_impact_days, budget_impact_amount, resource_impact_description, risk_impact_description, scope_impact_description, contractual_amendment_required (Yes/No), commercial_amendment_status (Not_Required, In_Process, Complete), baseline_updated (Yes/No), implementation_date, notes.
 3. Build a **Baseline_Change_Log** sheet: change_id, baseline_area, baseline_reference, change_type, reason, initial_value, new_value, variance_amount, variance_percent, approved_by, approval_date, effective_date, notes.
 4. Build a **Freeze_Periods** sheet: freeze_period_id, phase_or_workstream, start_date, end_date, duration_days, rationale, authorised_by, notes.
-5. Use pandas and openpyxl to produce `P2_7_Change_Control.xlsx` with these sheets; apply table formatting.
-6. Prepare `P2_7_CANONICAL_HANDOFF` JSON summarising classification thresholds, authority matrices, freeze periods and linking to the workbook. Output only the JSON and workbook link.
+5. Use pandas and openpyxl to produce \`P2_7_Change_Control.xlsx\` with these sheets; apply table formatting.
+6. Prepare \`P2_7_CANONICAL_HANDOFF\` JSON summarising classification thresholds, authority matrices, freeze periods and linking to the workbook. Output only the JSON and workbook link.
 </instructions>`
   },
 
@@ -8529,11 +8529,11 @@ const INLINED_PROMPTS = {
   Use the global style rules for PowerPoint: 16:9 slides; title slides with orange background and white text; content slides with white background, orange accents and Linked Arial headings; limit to five bullet points per slide; use tables formatted with orange headers and grey horizontal lines; embed charts generated in code where appropriate. Use the colours from SS 1 for RAG indicators (Green, Amber, Red, Blue, Grey). The Master Tracker workbook should follow Excel styling guidelines.
 </context>
 <instructions>
-1. Load all canonical handoffs and workbooks from `P1_1` through `P2_7`. Extract key summaries: engagement overview, stakeholder matrix, scope and objectives, charter highlights, governance bodies, WBS hierarchy and schedule milestones, resource summary and capacity charts, budget baseline and cost variances, risk heat map and key risks, communications plan, quality gates and review status, and change control thresholds.
+1. Load all canonical handoffs and workbooks from \`P1_1\` through \`P2_7\`. Extract key summaries: engagement overview, stakeholder matrix, scope and objectives, charter highlights, governance bodies, WBS hierarchy and schedule milestones, resource summary and capacity charts, budget baseline and cost variances, risk heat map and key risks, communications plan, quality gates and review status, and change control thresholds.
 2. Use Python to create a PowerPoint presentation with up to 55 slides. Structure it logically: Title slide; Executive summary; Engagement overview; Stakeholder matrix; Scope & objectives summary; Charter highlights; Governance framework; WBS & schedule summary; Resource plan summary; Budget & cost baseline summary; Risk summary and heat map; Communications plan summary; Quality plan summary; Change control summary; Next steps and open items. Use charts and tables where relevant (e.g., Gantt chart, utilisation bar chart, cost line chart).
 3. Generate a **PMO_Master_Tracker.xlsx** with sheets: Document_Index (artifact_id, step, artifact_name, status, version, date_generated, owner_role); Readiness_Assessment (dimension, score, RAG, evidence, gaps, owner_role); RAID_and_Changes (item_id, type [Risk, Issue, Action, Decision, Change], description, owner_role, status, date_raised, target_resolution_date); Budget_Summary (phase, planned, actual, variance, status); Milestone_Summary (milestone_id, milestone_name, planned_date, forecast_date, actual_date, variance_days, status); Open_Items (item_id, description, owner_role, due_date, status).
 4. Apply table formatting to the workbook and ensure all sheets are properly named and freeze header rows.
-5. Output `P2_8_CANONICAL_HANDOFF` JSON summarising the playbook contents and including links to the PowerPoint and the master tracker. Provide only the JSON and the file links.
+5. Output \`P2_8_CANONICAL_HANDOFF\` JSON summarising the playbook contents and including links to the PowerPoint and the master tracker. Provide only the JSON and the file links.
 </instructions>`
   }
 };
