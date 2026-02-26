@@ -20,21 +20,21 @@
   --orange100: #ffe8d4;
   --black: #000000;
   --white: #ffffff;
-  --grey100: #eeeff1;
-  --grey200: #dfe3e6;
-  --grey300: #cbd1d6;
-  --grey400: #b5bcc4;
-  --grey500: #a1a8b3;
-  --success: #22c55e;
-  --successBg: #dcfce7;
-  --warning: #eab308;
-  --warningBg: #fef3c7;
-  --bgColor: #eeeff1;
+  --grey100: #f5f6f7;
+  --grey200: #e8eaed;
+  --grey300: #d1d5db;
+  --grey400: #9ca3af;
+  --grey500: #6b7280;
+  --success: #16a34a;
+  --successBg: #f0fdf4;
+  --warning: #ca8a04;
+  --warningBg: #fefce8;
+  --bgColor: #f8f9fa;
   --cardBg: #ffffff;
-  --textColor: #000000;
-  --secondaryText: #a1a8b3;
-  --borderColor: #dfe3e6;
-  --surfaceColor: #eeeff1;
+  --textColor: #1a1a1a;
+  --secondaryText: #6b7280;
+  --borderColor: #e5e7eb;
+  --surfaceColor: #f3f4f6;
 }
 
 @keyframes fadeIn {
@@ -997,26 +997,25 @@ textarea {
   border-right: 1px solid var(--borderColor);
   display: flex;
   flex-direction: column;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
 }
 /* Sidebar overall progress summary */
 .sidebar-summary {
-  padding: 14px 14px 12px;
+  padding: 16px 16px 14px;
   border-bottom: 1px solid var(--borderColor);
   background: var(--cardBg);
   flex-shrink: 0;
 }
 .sidebar-summary-title {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   color: var(--secondaryText);
   margin-bottom: 6px;
 }
 .sidebar-summary-count {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--textColor);
   margin-bottom: 6px;
   line-height: 1.2;
@@ -1024,19 +1023,19 @@ textarea {
 .sidebar-summary-subtext {
   font-size: 11px;
   color: var(--secondaryText);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .sidebar-summary-bar-outer {
-  height: 6px;
+  height: 4px;
   background: var(--grey200);
-  border-radius: 3px;
+  border-radius: 2px;
   overflow: hidden;
 }
 .sidebar-summary-bar-inner {
   height: 100%;
   background: var(--orange500);
-  border-radius: 3px;
-  transition: width 0.3s ease;
+  border-radius: 2px;
+  transition: width 0.4s ease;
   width: 0%;
 }
 .sidebar-phase-list {
@@ -1045,25 +1044,25 @@ textarea {
   padding-top: 4px;
 }
 .sidebar-header {
-  background: var(--orange500);
-  padding: 10px 14px;
-  color: #fff;
-  font-size: 11px;
+  padding: 10px 16px;
+  font-size: 10px;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.06em;
+  color: var(--secondaryText);
+  border-bottom: 1px solid var(--borderColor);
 }
 .sidebar-phase {
   border-bottom: 1px solid var(--borderColor);
 }
 .sidebar-phase-label {
-  padding: 8px 14px 6px;
+  padding: 8px 16px 6px;
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--secondaryText);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  background: var(--surfaceColor);
+  letter-spacing: 0.05em;
+  background: var(--cardBg);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1071,9 +1070,9 @@ textarea {
 }
 .sidebar-phase-count-badge {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--grey400);
-  background: var(--grey200);
+  background: var(--surfaceColor);
   padding: 1px 7px;
   border-radius: 100px;
   white-space: nowrap;
@@ -1085,7 +1084,7 @@ textarea {
   color: var(--success);
 }
 .sidebar-item {
-  padding: 8px 14px 8px 16px;
+  padding: 7px 16px 7px 16px;
   font-size: 12px;
   font-weight: 400;
   color: var(--textColor);
@@ -1094,21 +1093,20 @@ textarea {
   align-items: center;
   gap: 9px;
   transition: all 120ms ease;
-  border-left: 3px solid transparent;
+  border-left: 2px solid transparent;
   line-height: 1.3;
 }
 .sidebar-item:hover {
-  background: var(--orange100);
-  color: var(--orange500);
+  background: var(--surfaceColor);
+  color: var(--textColor);
 }
 .sidebar-item:focus {
   outline: 2px solid var(--orange500);
   outline-offset: -2px;
-  background: var(--orange100);
-  color: var(--orange500);
+  background: var(--surfaceColor);
 }
 .sidebar-item.active {
-  background: var(--orange100);
+  background: var(--surfaceColor);
   color: var(--orange500);
   border-left-color: var(--orange500);
   font-weight: 600;
@@ -1122,18 +1120,18 @@ textarea {
 }
 
 .step-dot {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  background-color: var(--grey200);
+  background-color: var(--surfaceColor);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 9px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--grey500);
   flex-shrink: 0;
-  border: 1.5px solid var(--grey300);
+  border: 1px solid var(--grey300);
 }
 .sidebar-item.active .step-dot {
   background-color: var(--orange500);
@@ -1152,7 +1150,7 @@ textarea {
 .workflow-header {
   background: var(--cardBg);
   border-bottom: 1px solid var(--borderColor);
-  padding: 16px 24px;
+  padding: 14px 24px;
   margin-bottom: 0;
   display: flex;
   align-items: center;
@@ -1160,12 +1158,11 @@ textarea {
   position: sticky;
   top: 0;
   z-index: 150;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 .workflow-header h2 {
-  font-size: 17px;
-  font-weight: 700;
-  margin-bottom: 3px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 2px;
   letter-spacing: -0.01em;
 }
 .workflow-header p {
@@ -1211,25 +1208,25 @@ textarea {
   opacity: 0.8;
 }
 .progress-bar {
-  width: 180px;
-  height: 7px;
+  width: 160px;
+  height: 3px;
   background-color: var(--grey200);
-  border-radius: 4px;
+  border-radius: 2px;
   overflow: hidden;
 }
 .progress-fill {
   height: 100%;
   background-color: var(--orange500);
-  border-radius: 4px;
-  transition: width 0.3s ease;
+  border-radius: 2px;
+  transition: width 0.4s ease;
 }
 
 .phase-filter-bar {
   background: var(--cardBg);
   border-bottom: 1px solid var(--borderColor);
-  padding: 10px 24px;
+  padding: 8px 24px;
   position: sticky;
-  top: 65px;
+  top: 60px;
   z-index: 140;
 }
 .phase-filter-pills {
@@ -1251,7 +1248,7 @@ textarea {
   padding: 5px 14px;
   font-size: 12px;
   font-weight: 500;
-  border: 1.5px solid var(--borderColor);
+  border: 1px solid var(--borderColor);
   border-radius: 100px;
   background: var(--cardBg);
   color: var(--secondaryText);
@@ -1260,36 +1257,35 @@ textarea {
   font-family: system-ui, sans-serif;
 }
 .phase-filter-pill:hover {
-  border-color: var(--orange300);
-  color: var(--orange500);
-  background: var(--orange100);
+  border-color: var(--grey300);
+  color: var(--textColor);
+  background: var(--surfaceColor);
 }
 .phase-filter-pill:focus {
   outline: 2px solid var(--orange500);
   outline-offset: 2px;
 }
 .phase-filter-pill.active {
-  background: var(--orange500);
-  border-color: var(--orange500);
-  color: #fff;
+  background: var(--orange100);
+  border-color: var(--orange300);
+  color: var(--orange500);
   font-weight: 600;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 .workflow-tip-banner {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #eff6ff;
-  border-bottom: 1px solid #bfdbfe;
-  padding: 9px 24px;
+  background: var(--surfaceColor);
+  border-bottom: 1px solid var(--borderColor);
+  padding: 8px 24px;
   font-size: 12px;
-  color: #1e40af;
+  color: var(--secondaryText);
 }
 .workflow-tip-icon {
-  font-size: 14px;
+  font-size: 13px;
   flex-shrink: 0;
-  color: #3b82f6;
+  color: var(--grey400);
 }
 .workflow-tip-text {
   flex: 1;
@@ -1299,7 +1295,7 @@ textarea {
   background: none;
   border: none;
   cursor: pointer;
-  color: #93c5fd;
+  color: var(--grey400);
   font-size: 14px;
   padding: 2px 6px;
   border-radius: 2px;
@@ -1307,20 +1303,19 @@ textarea {
   font-family: system-ui, sans-serif;
 }
 .workflow-tip-dismiss:hover {
-  color: #1e40af;
+  color: var(--textColor);
 }
 
 .phase-divider {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 18px;
-  margin: 20px 0 10px 0;
-  background: var(--cardBg);
-  border: 1px solid var(--borderColor);
-  border-left: 4px solid var(--orange500);
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 10px 18px;
+  margin: 18px 0 8px 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--borderColor);
+  border-radius: 0;
 }
 .phase-divider:first-child {
   margin-top: 0;
@@ -1332,17 +1327,14 @@ textarea {
 }
 .phase-divider-number {
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--orange500);
-  background: var(--orange100);
-  padding: 3px 10px;
-  border-radius: 100px;
+  letter-spacing: 0.04em;
+  color: var(--secondaryText);
 }
 .phase-divider-name {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--textColor);
   letter-spacing: -0.01em;
 }
@@ -1359,57 +1351,52 @@ textarea {
   white-space: nowrap;
 }
 .phase-divider-bar-outer {
-  width: 90px;
-  height: 6px;
+  width: 80px;
+  height: 3px;
   background: var(--grey200);
-  border-radius: 3px;
+  border-radius: 2px;
   overflow: hidden;
 }
 .phase-divider-bar-inner {
   height: 100%;
   background: var(--orange500);
-  border-radius: 3px;
-  transition: width 0.3s ease;
+  border-radius: 2px;
+  transition: width 0.4s ease;
 }
 
 #promptCards {
-  padding: 16px 24px 40px;
+  padding: 12px 24px 40px;
 }
 
 .prompt-card {
   background: var(--cardBg);
   border: 1px solid var(--borderColor);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   overflow: hidden;
-  border-left: 4px solid var(--grey200);
-  border-radius: 6px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  border-left: 3px solid var(--grey200);
+  border-radius: 8px;
   transition:
     border-color 200ms ease,
     box-shadow 200ms ease;
 }
 .prompt-card:hover {
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 .prompt-card.active-card {
   border-left-color: var(--orange500);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 .prompt-card.completed-card {
   border-left-color: var(--success);
-  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.08);
 }
 .prompt-card.locked-card {
-  opacity: 0.45;
+  opacity: 0.5;
   pointer-events: none;
-  box-shadow: none;
 }
 /* When navigated to via sidebar, locked card becomes fully accessible */
 .prompt-card.locked-card.sidebar-override {
   opacity: 1;
   pointer-events: auto;
   border-left-color: var(--grey300);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 @keyframes cardPulse {
@@ -1431,13 +1418,13 @@ textarea {
 }
 
 .prompt-card-header {
-  padding: 14px 18px;
+  padding: 12px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
   user-select: none;
-  transition: background-color 200ms ease;
+  transition: background-color 150ms ease;
   gap: 12px;
 }
 .prompt-card-header:hover {
@@ -1462,19 +1449,22 @@ textarea {
 
 .prompt-id {
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
+  color: var(--secondaryText);
+  background-color: var(--surfaceColor);
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+.prompt-card.active-card .prompt-id {
   color: var(--orange500);
   background-color: var(--orange100);
-  padding: 3px 10px;
-  border-radius: 100px;
-  white-space: nowrap;
-  letter-spacing: 0.04em;
-  flex-shrink: 0;
 }
 .prompt-card.completed-card .prompt-id {
   color: var(--success);
   background-color: var(--successBg);
-  border: 1px solid rgba(34, 197, 94, 0.2);
 }
 .prompt-card.locked-card .prompt-id {
   color: var(--grey400);
@@ -1504,26 +1494,23 @@ textarea {
 
 .status-badge {
   font-size: 11px;
-  padding: 4px 12px;
-  font-weight: 600;
-  border-radius: 100px;
+  padding: 3px 10px;
+  font-weight: 500;
+  border-radius: 4px;
   white-space: nowrap;
   flex-shrink: 0;
 }
 .badge-ready {
   background-color: var(--orange100);
   color: var(--orange500);
-  border: 1px solid var(--orange300);
 }
 .badge-done {
   background-color: var(--successBg);
   color: var(--success);
-  border: 1px solid rgba(34, 197, 94, 0.2);
 }
 .badge-locked {
   background-color: var(--surfaceColor);
-  color: var(--secondaryText);
-  border: 1px solid var(--borderColor);
+  color: var(--grey400);
 }
 
 .prompt-card-body {
@@ -1561,9 +1548,9 @@ textarea {
 .artifact-tag {
   font-size: 12px;
   padding: 3px 10px;
-  background-color: #dbeafe;
-  color: #3b82f6;
-  border: 1px solid #bfdbfe;
+  background-color: var(--surfaceColor);
+  color: var(--secondaryText);
+  border: 1px solid var(--borderColor);
 }
 
 .prompt-box-header {
@@ -1600,31 +1587,31 @@ textarea {
 }
 
 .prompt-text-box {
-  background-color: #1a1b2e;
-  color: #d4d8e8;
+  background-color: var(--surfaceColor);
+  color: var(--textColor);
   border-radius: 6px;
-  padding: 10px 12px;
+  padding: 12px 14px;
   font-size: 12px;
-  font-family: "Courier New", monospace;
+  font-family: "SF Mono", "Consolas", "Monaco", monospace;
   line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
   max-height: 100px;
   overflow-y: auto;
-  border: 1px solid #2a2b3d;
+  border: 1px solid var(--borderColor);
   transition: max-height 300ms ease;
   scrollbar-width: thin;
-  scrollbar-color: #3a3b5e #1a1b2e;
+  scrollbar-color: var(--grey300) var(--surfaceColor);
 }
 .prompt-text-box::-webkit-scrollbar {
-  width: 5px;
+  width: 4px;
 }
 .prompt-text-box::-webkit-scrollbar-track {
-  background: #1a1b2e;
+  background: transparent;
 }
 .prompt-text-box::-webkit-scrollbar-thumb {
-  background: #3a3b5e;
-  border-radius: 3px;
+  background: var(--grey300);
+  border-radius: 2px;
 }
 .prompt-text-box.prompt-text-expanded {
   max-height: 480px;
@@ -1660,28 +1647,25 @@ textarea {
 
 /* Primary action */
 .btn-copy {
-  background-color: var(--orange500);
+  background-color: var(--textColor);
   color: var(--white);
-  padding: 8px 18px;
+  padding: 7px 16px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   border: none;
   border-radius: 6px;
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: background-color 200ms ease, box-shadow 200ms ease;
+  transition: background-color 150ms ease;
   font-family: system-ui, sans-serif;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 .btn-copy:hover {
-  background-color: #d94000;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+  background-color: #333;
 }
 .btn-copy.copied {
   background-color: var(--success);
-  box-shadow: 0 2px 6px rgba(34, 197, 94, 0.25);
 }
 
 /* Secondary/ghost utility actions — CHANGE 11 */
@@ -1773,47 +1757,62 @@ textarea {
   bottom: 24px;
   right: 24px;
   z-index: 1000;
-  width: 340px;
-  background: #fff;
+  width: 320px;
+  background: var(--cardBg);
   border: 1px solid var(--borderColor);
-  border-radius: 6px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.10);
   font-family: system-ui, sans-serif;
 }
 .guidance-panel.visible {
   display: block;
+  animation: slideDown 200ms ease;
 }
 .guidance-panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  background: var(--orange500);
-  border-radius: 6px 6px 0 0;
+  background: var(--cardBg);
+  border-bottom: 1px solid var(--borderColor);
+  border-radius: 10px 10px 0 0;
 }
 .guidance-panel-title {
   font-size: 11px;
-  font-weight: 700;
-  color: #fff;
+  font-weight: 600;
+  color: var(--textColor);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
 }
 .guidance-panel-counter {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--secondaryText);
+}
+.guidance-panel-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--grey400);
+  font-size: 16px;
+  padding: 0 2px;
+  line-height: 1;
+  transition: color 120ms;
+}
+.guidance-panel-close:hover {
+  color: var(--textColor);
 }
 .guidance-panel-body {
   padding: 14px;
 }
 .guidance-panel-step-title {
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--textColor);
   margin-bottom: 6px;
 }
 .guidance-panel-text {
   font-size: 13px;
-  color: #555;
+  color: var(--secondaryText);
   line-height: 1.6;
   margin: 0 0 8px;
 }
@@ -1821,9 +1820,10 @@ textarea {
   font-size: 12px;
   color: var(--secondaryText);
   background: var(--surfaceColor);
-  border-left: 2px solid var(--orange300);
+  border-left: 2px solid var(--grey300);
   padding: 8px 10px;
   line-height: 1.5;
+  border-radius: 0 4px 4px 0;
 }
 .guidance-panel-footer {
   display: flex;
@@ -1831,8 +1831,7 @@ textarea {
   justify-content: space-between;
   padding: 10px 14px;
   border-top: 1px solid var(--borderColor);
-  background: var(--surfaceColor);
-  border-radius: 0 0 6px 6px;
+  border-radius: 0 0 10px 10px;
 }
 .guidance-panel-skip {
   font-size: 11px;
@@ -1841,38 +1840,45 @@ textarea {
   border: none;
   cursor: pointer;
   padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 .guidance-panel-skip:hover {
   color: var(--textColor);
 }
 .guidance-panel-actions {
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 .btn-guidance-back {
-  padding: 6px 14px;
+  padding: 6px 12px;
   font-size: 12px;
-  font-weight: 600;
-  background: #fff;
+  font-weight: 500;
+  background: var(--cardBg);
   border: 1px solid var(--borderColor);
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 6px;
+  transition: all 120ms ease;
+}
+.btn-guidance-back:hover {
+  background: var(--surfaceColor);
 }
 .btn-guidance-next {
-  padding: 6px 14px;
+  padding: 6px 12px;
   font-size: 12px;
-  font-weight: 600;
-  background: var(--orange500);
-  color: #fff;
+  font-weight: 500;
+  background: var(--textColor);
+  color: var(--white);
   border: none;
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 6px;
+  transition: background-color 120ms ease;
 }
 .btn-guidance-next:hover {
-  background: #d44000;
+  background: #333;
 }
 .guidance-highlight {
-  outline: 2px solid var(--orange500);
+  outline: 2px solid var(--orange300);
   outline-offset: 3px;
 }
 /* ── CHUNK 1: Section completion indicators ── */
@@ -1898,57 +1904,9 @@ textarea {
   background: #e57373;
 }
 
-/* ── CHUNK 1: Draft restore banner ── */
+/* ── CHUNK 1: Draft restore banner — hidden ── */
 #draftBanner {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #1e293b;
-  color: #fff;
-  padding: 12px 24px;
-  z-index: 999;
-  display: none;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 13px;
-  gap: 16px;
-}
-#draftBanner.visible {
-  display: flex;
-}
-.draft-banner-actions {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
-}
-.btn-draft-restore {
-  padding: 6px 14px;
-  font-size: 12px;
-  font-weight: 600;
-  background: var(--orange500);
-  color: #fff;
-  border: none;
-  border-radius: 2px;
-  cursor: pointer;
-}
-.btn-draft-dismiss {
-  padding: 6px 14px;
-  font-size: 12px;
-  font-weight: 500;
-  background: transparent;
-  color: #aaa;
-  border: 1px solid #444;
-  border-radius: 2px;
-  cursor: pointer;
-}
-.btn-draft-restore:hover {
-  background: #d44000;
-}
-.btn-draft-dismiss:hover {
-  color: #fff;
-  border-color: #888;
+  display: none !important;
 }
 
 .brief-strength-wrap {
@@ -2237,20 +2195,19 @@ textarea {
 .btn-mark-done {
   background: transparent;
   color: var(--success);
-  padding: 7px 16px;
+  padding: 6px 14px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  border: 1.5px solid var(--success);
+  border: 1px solid var(--success);
   border-radius: 6px;
-  transition: all 200ms ease;
+  transition: all 150ms ease;
   font-family: system-ui, sans-serif;
   white-space: nowrap;
 }
 .btn-mark-done:hover {
-  background-color: var(--success);
-  color: var(--white);
-  box-shadow: 0 2px 6px rgba(34, 197, 94, 0.3);
+  background-color: var(--successBg);
+  color: var(--success);
 }
 .btn-edit-prompt {
   background: transparent;
@@ -2275,7 +2232,7 @@ textarea {
 }
 .prompt-text-box[contenteditable="true"] {
   outline: 2px solid var(--orange300);
-  background: #fffdf9;
+  background: var(--cardBg);
   cursor: text;
 }
 #gateModal,
@@ -10555,8 +10512,11 @@ function showGuidanceStep(index) {
 
   guidancePanel.innerHTML = `
     <div class="guidance-panel-header">
-      <span class="guidance-panel-title">Guided Experience</span>
-      <span class="guidance-panel-counter">Step ${index + 1} of ${guidanceSteps.length}</span>
+      <span class="guidance-panel-title">Guide</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="guidance-panel-counter">${index + 1} / ${guidanceSteps.length}</span>
+        <button class="guidance-panel-close" onclick="skipGuidance()" aria-label="Close guide">&times;</button>
+      </div>
     </div>
     <div class="guidance-panel-body">
       <div class="guidance-panel-step-title">${step.title}</div>
@@ -10564,7 +10524,7 @@ function showGuidanceStep(index) {
       ${step.example ? `<div class="guidance-panel-example">${step.example}</div>` : ""}
     </div>
     <div class="guidance-panel-footer">
-      <button class="guidance-panel-skip" onclick="skipGuidance()">Skip Guidance</button>
+      <button class="guidance-panel-skip" onclick="skipGuidance()">Dismiss</button>
       <div class="guidance-panel-actions">
         ${!isFirst ? `<button class="btn-guidance-back" onclick="prevGuidanceStep()">Back</button>` : ""}
         <button class="btn-guidance-next" onclick="nextGuidanceStep()">
