@@ -1,409 +1,1465 @@
-<html lang="en" class="dark"><head><meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cyber Security Dashboard</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<title>PMO Reporting Dashboard | PwC</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.3/Sortable.min.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
-<script>
-tailwind.config = {
-darkMode: 'class',
-theme: {
-extend: {
-fontFamily: {
-sans: ['Inter', 'sans-serif'],
-},
-colors: {
-gray: {
-850: '#1f2937',
-900: '#111827',
-925: '#0f1218',
-950: '#09090b',
-},
-orange: {
-450: '#f97316',
-550: '#ea580c',
-}
-}
-}
-}
-}
-</script>
 <style>
-/* Custom scrollbar for Linear/Vercel feel */
-::-webkit-scrollbar {
-width: 6px;
-height: 6px;
+/* ─── PwC Design Tokens ─────────────────────────────────────────────────── */
+:root {
+  --o500: #FD5108;
+  --o300: #FFAA72;
+  --o100: #FFE8D4;
+  --black: #000000;
+  --white: #FFFFFF;
+  --g100: #EEEFF1;
+  --g200: #DFE3E6;
+  --g300: #CBD1D6;
+  --g400: #B5BCC4;
+  --g500: #A1A8B3;
+  --success: #22C55E;
+  --successBg: #DCFCE7;
+  --successText: #166534;
+  --warning: #EAB308;
+  --warningBg: #FEF3C7;
+  --warningText: #854D0E;
+  --error: #EF4444;
+  --errorBg: #FEE2E2;
+  --errorText: #991B1B;
+  --info: #3B82F6;
+  --infoBg: #DBEAFE;
+  --infoText: #1E40AF;
+  --radius: 6px;
+  --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+  --shadow-md: 0 4px 24px rgba(0,0,0,.12);
+  --sidebar-w: 224px;
+  --header-h: 60px;
+  --t: 0.18s ease;
 }
-::-webkit-scrollbar-track {
-background: transparent;
-}
-::-webkit-scrollbar-thumb {
-background: #27272a;
-border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-background: #3f3f46;
-}
+
+/* ─── Reset & Base ──────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
 body {
-background-color: #050505; /* Deep dark background */
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  color: var(--black);
+  background: var(--g100);
+  overflow: hidden;
 }
-.glass-panel {
-background: rgba(24, 24, 27, 0.6);
-backdrop-filter: blur(12px);
-border: 1px solid rgba(255, 255, 255, 0.08);
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
+
+/* ─── Scrollbar ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--g300); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--g400); }
+
+/* ─── App Shell ─────────────────────────────────────────────────────────── */
+.app { display: flex; flex-direction: column; height: 100vh; }
+
+/* ─── Header ────────────────────────────────────────────────────────────── */
+.header {
+  height: var(--header-h);
+  background: var(--white);
+  border-bottom: 1px solid var(--g200);
+  display: flex;
+  align-items: center;
+  padding: 0 16px 0 0;
+  gap: 10px;
+  flex-shrink: 0;
+  z-index: 100;
 }
-.glow-text {
-text-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+.header-logo {
+  width: var(--sidebar-w);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px;
+  border-right: 1px solid var(--g200);
+  height: 100%;
+  flex-shrink: 0;
 }
-</style></head>
-<body class="text-zinc-400 font-sans antialiased h-screen flex overflow-hidden selection:bg-orange-500/30 selection:text-orange-200">
+.pwc-logo { flex-shrink: 0; display: block; }
+.logo-divider { width: 1px; height: 20px; background: var(--g300); flex-shrink: 0; }
+.logo-text { font-size: 14px; font-weight: 600; letter-spacing: -0.1px; color: var(--black); }
 
-    <!-- Sidebar -->
-    <aside class="w-64 flex flex-col border-r border-zinc-800/60 bg-zinc-950/50 pt-6 pb-4 hidden md:flex h-full relative z-20">
-        <div class="px-5 mb-8 flex items-center gap-2">
-            <div class="w-2 h-2 rounded-full bg-orange-500"></div>
-            <span class="text-zinc-100 font-medium tracking-tight text-base">CY • SECURE</span>
+/* ─── Scenario UI ───────────────────────────────────────────────────────── */
+.scenario-dropdown {
+  display: none; position: absolute; right: 0; top: calc(100% + 6px);
+  background: var(--white); border: 1px solid var(--g200);
+  border-radius: var(--radius); box-shadow: var(--shadow-md);
+  z-index: 200; width: 290px; overflow: hidden;
+}
+.scenario-dropdown.open { display: block; }
+.scenario-dropdown-header {
+  padding: 9px 14px 8px; font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .06em; color: var(--g500);
+  border-bottom: 1px solid var(--g200); background: var(--g100);
+}
+.scenario-card {
+  padding: 12px 14px; cursor: pointer;
+  border-bottom: 1px solid var(--g200); transition: background var(--t);
+}
+.scenario-card:last-child { border-bottom: none; }
+.scenario-card:hover { background: var(--o100); }
+.scenario-card-badge {
+  font-size: 10px; font-weight: 700; color: var(--o500);
+  text-transform: uppercase; letter-spacing: .04em; margin-bottom: 3px;
+}
+.scenario-card-name { font-size: 13px; font-weight: 600; color: var(--black); margin-bottom: 3px; }
+.scenario-card-desc { font-size: 12px; color: var(--g500); line-height: 1.4; }
+.scenario-banner {
+  align-items: center; gap: 10px;
+  padding: 10px 14px;
+  background: var(--o100); border: 1px solid var(--o300);
+  border-radius: var(--radius); font-size: 13px;
+  flex-wrap: wrap;
+}
+.scenario-banner i { width: 14px; height: 14px; color: var(--o500); flex-shrink: 0; }
+
+.hamburger {
+  display: none;
+  padding: 6px;
+  border-radius: var(--radius);
+  color: var(--g500);
+  transition: background var(--t);
+}
+.hamburger:hover { background: var(--g100); color: var(--black); }
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: var(--g500);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+.breadcrumb span {
+  color: var(--black);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.breadcrumb i { width: 13px; height: 13px; flex-shrink: 0; }
+
+.view-toggle {
+  display: flex;
+  background: var(--g100);
+  border: 1px solid var(--g200);
+  border-radius: var(--radius);
+  padding: 3px;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.view-toggle button {
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--g500);
+  transition: var(--t);
+  white-space: nowrap;
+}
+.view-toggle button.active {
+  background: var(--white);
+  color: var(--black);
+  box-shadow: 0 1px 3px rgba(0,0,0,.10);
+}
+.view-toggle button:hover:not(.active) { color: var(--black); }
+
+.header-actions { display: flex; align-items: center; gap: 6px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 12px;
+  border-radius: var(--radius);
+  font-size: 13px; font-weight: 500;
+  transition: var(--t);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.btn i { width: 14px; height: 14px; flex-shrink: 0; }
+.btn-outline { border: 1px solid var(--g200); background: var(--white); color: var(--black); }
+.btn-outline:hover { background: var(--g100); border-color: var(--g300); }
+.btn-primary { background: var(--o500); color: var(--white); border: 1px solid transparent; }
+.btn-primary:hover { background: #e04700; }
+.btn-ghost { color: var(--g500); padding: 7px 8px; }
+.btn-ghost:hover { background: var(--g100); color: var(--black); }
+
+/* ─── Body / Sidebar / Main ─────────────────────────────────────────────── */
+.body-wrap { display: flex; flex: 1; overflow: hidden; }
+
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--white);
+  border-right: 1px solid var(--g200);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow-y: auto;
+  transition: transform var(--t);
+}
+.sidebar-section { padding: 14px 10px 6px; }
+.sidebar-label {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--g400);
+  padding: 0 10px;
+  margin-bottom: 4px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  color: var(--g500);
+  font-size: 13px; font-weight: 500;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  margin: 1px 0;
+  transition: var(--t);
+  user-select: none;
+}
+.nav-item i { width: 15px; height: 15px; flex-shrink: 0; }
+.nav-item:hover { background: var(--g100); color: var(--black); }
+.nav-item.active { background: var(--o100); color: var(--o500); border-left-color: var(--o500); }
+
+.sidebar-divider { height: 1px; background: var(--g200); margin: 6px 14px; }
+
+.filter-group { padding: 0 10px 14px; }
+.filter-group-title {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--g400); margin-bottom: 6px;
+}
+.filter-btn {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 7px 10px;
+  border-radius: var(--radius);
+  font-size: 13px; font-weight: 500;
+  color: var(--g500);
+  transition: var(--t);
+  cursor: pointer; text-align: left;
+}
+.filter-btn:hover { background: var(--g100); color: var(--black); }
+.filter-btn.active { background: var(--o100); color: var(--o500); font-weight: 600; }
+.filter-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.filter-count {
+  margin-left: auto; font-size: 11px;
+  background: var(--g100); color: var(--g500);
+  padding: 1px 6px; border-radius: 10px; font-weight: 600;
+}
+.filter-btn.active .filter-count { background: var(--o100); color: var(--o500); }
+
+/* ─── Main Canvas ───────────────────────────────────────────────────────── */
+.main { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+/* ─── Drag hint bar ─────────────────────────────────────────────────────── */
+.drag-hint {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: var(--g500);
+  background: var(--white);
+  border: 1px dashed var(--g300);
+  border-radius: var(--radius);
+  padding: 9px 14px;
+}
+.drag-hint i { width: 13px; height: 13px; color: var(--o500); flex-shrink: 0; }
+
+/* ─── Restore bar ───────────────────────────────────────────────────────── */
+.restore-bar {
+  display: none;
+  align-items: center; gap: 8px;
+  padding: 9px 14px;
+  background: var(--infoBg);
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius);
+  font-size: 12px; color: var(--infoText);
+  flex-wrap: wrap;
+}
+.restore-bar.visible { display: flex; }
+.restore-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px;
+  background: var(--white);
+  border: 1px solid #93c5fd;
+  border-radius: 20px;
+  font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: var(--t); color: var(--infoText);
+}
+.restore-chip:hover { background: var(--info); color: var(--white); border-color: var(--info); }
+
+/* ─── Widget Grid ───────────────────────────────────────────────────────── */
+.widget-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+.widget--span2 { grid-column: span 2; }
+.widget--full  { grid-column: 1 / -1; }
+
+/* ─── Widget Card ───────────────────────────────────────────────────────── */
+.widget {
+  background: var(--white);
+  border: 1px solid var(--g200);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: box-shadow var(--t);
+}
+.widget:hover { box-shadow: var(--shadow-md); }
+
+/* SortableJS states */
+.widget--ghost { opacity: .3; border: 2px dashed var(--o300) !important; background: var(--o100) !important; }
+.widget--chosen { box-shadow: var(--shadow-md) !important; transform: scale(1.01); z-index: 10; }
+.widget--drag   { transform: rotate(.8deg); cursor: grabbing !important; box-shadow: 0 12px 40px rgba(0,0,0,.15) !important; z-index: 999; }
+
+.widget-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 13px 14px 11px;
+  border-bottom: 1px solid var(--g200);
+}
+.drag-handle {
+  color: var(--g300); cursor: grab;
+  display: flex; align-items: center;
+  padding: 2px; border-radius: 3px;
+  transition: var(--t); flex-shrink: 0;
+}
+.drag-handle:hover { color: var(--g500); background: var(--g100); }
+.drag-handle:active { cursor: grabbing; }
+.drag-handle i { width: 13px; height: 13px; }
+
+.widget-title { font-size: 13px; font-weight: 600; color: var(--black); flex: 1; }
+.widget-subtitle {
+  font-size: 11px; color: var(--g500);
+  margin-left: 8px; padding-left: 8px;
+  border-left: 1px solid var(--g200);
+}
+
+/* Widget menu */
+.widget-menu { position: relative; }
+.widget-menu-btn {
+  color: var(--g400); padding: 4px; border-radius: 4px;
+  display: flex; align-items: center; transition: var(--t);
+}
+.widget-menu-btn:hover { background: var(--g100); color: var(--black); }
+.widget-menu-btn i { width: 14px; height: 14px; }
+.widget-dropdown {
+  display: none; position: absolute; right: 0; top: calc(100% + 4px);
+  background: var(--white); border: 1px solid var(--g200);
+  border-radius: var(--radius); box-shadow: var(--shadow-md);
+  z-index: 50; min-width: 140px; overflow: hidden;
+}
+.widget-dropdown.open { display: block; }
+.widget-dropdown button {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 9px 12px;
+  font-size: 13px; color: var(--black);
+  transition: background var(--t); text-align: left;
+}
+.widget-dropdown button i { width: 13px; height: 13px; color: var(--g500); }
+.widget-dropdown button:hover { background: var(--g100); }
+
+.widget-body { padding: 14px; }
+
+/* ─── KPI ────────────────────────────────────────────────────────────────── */
+.kpi-value { font-size: 30px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+.kpi-label { font-size: 12px; color: var(--g500); font-weight: 500; margin-bottom: 12px; }
+.kpi-badge-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+}
+.badge i { width: 11px; height: 11px; }
+.badge-green  { background: var(--successBg); color: var(--successText); }
+.badge-amber  { background: var(--warningBg); color: var(--warningText); }
+.badge-red    { background: var(--errorBg);   color: var(--errorText); }
+.badge-blue   { background: var(--infoBg);    color: var(--infoText); }
+.badge-grey   { background: var(--g100);      color: var(--g500); }
+
+.rag-bar { display: flex; height: 5px; border-radius: 3px; overflow: hidden; margin-top: 10px; gap: 2px; }
+.rag-bar-seg { height: 100%; border-radius: 2px; }
+
+/* Metric + progress */
+.metric-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+.metric-pct { font-size: 26px; font-weight: 800; }
+.metric-delta { font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 3px; }
+.metric-delta.up { color: var(--success); }
+.metric-delta.down { color: var(--error); }
+.metric-delta i { width: 11px; height: 11px; }
+.progress-track { height: 5px; background: var(--g200); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+.progress-fill { height: 100%; border-radius: 3px; background: var(--o500); transition: width 1s cubic-bezier(.4,0,.2,1); }
+.progress-fill.success { background: var(--success); }
+.progress-fill.warning { background: var(--warning); }
+.progress-fill.error   { background: var(--error); }
+.metric-sublabel { font-size: 11px; color: var(--g500); }
+.sparkline-wrap { position: relative; height: 38px; margin-top: 8px; }
+
+/* ─── Donut ──────────────────────────────────────────────────────────────── */
+.donut-wrap { display: flex; align-items: center; gap: 20px; }
+.donut-canvas-wrap { position: relative; width: 150px; flex-shrink: 0; }
+.donut-center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+.donut-center-value { font-size: 20px; font-weight: 800; }
+.donut-center-label { font-size: 10px; color: var(--g500); font-weight: 500; }
+.donut-stats { display: flex; flex-direction: column; gap: 9px; flex: 1; }
+.donut-stat { display: flex; align-items: center; gap: 9px; }
+.donut-stat-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.donut-stat-info { flex: 1; }
+.donut-stat-label { font-size: 11px; color: var(--g500); }
+.donut-stat-value { font-size: 13px; font-weight: 700; }
+.donut-stat-value span { font-weight: 400; font-size: 11px; color: var(--g500); }
+
+/* ─── Charts ─────────────────────────────────────────────────────────────── */
+.chart-wrap { position: relative; width: 100%; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--g500); }
+.legend-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+
+/* ─── Risk Table ─────────────────────────────────────────────────────────── */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  padding: 8px 12px; text-align: left;
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--g500);
+  border-bottom: 1px solid var(--g200);
+  background: var(--g100);
+}
+.data-table td { padding: 9px 12px; font-size: 12px; border-bottom: 1px solid var(--g200); vertical-align: middle; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--g100); }
+.rag-pill { display: inline-block; width: 9px; height: 9px; border-radius: 50%; }
+.rag-pill.green { background: var(--success); }
+.rag-pill.amber { background: var(--warning); }
+.rag-pill.red   { background: var(--error); }
+.risk-title { font-weight: 500; }
+.risk-row.hidden { display: none; }
+
+/* ─── Milestones ─────────────────────────────────────────────────────────── */
+.milestone-list { display: flex; flex-direction: column; }
+.milestone-item {
+  display: grid;
+  grid-template-columns: 96px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--g200);
+}
+.milestone-item:last-child { border-bottom: none; }
+.milestone-item.hidden { display: none; }
+.milestone-date { font-size: 12px; font-weight: 600; color: var(--g500); }
+.milestone-project { font-size: 11px; color: var(--o500); font-weight: 600; margin-bottom: 2px; }
+.milestone-name { font-size: 13px; font-weight: 500; }
+
+/* ─── Budget stats ───────────────────────────────────────────────────────── */
+.budget-stats { display: flex; gap: 16px; margin-top: 12px; }
+.budget-stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--g500); font-weight: 700; }
+.budget-stat-val { font-size: 15px; font-weight: 700; }
+
+/* ─── Sidebar overlay / responsive ──────────────────────────────────────── */
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.3); z-index: 190;
+}
+
+@media (max-width: 1100px) {
+  :root { --sidebar-w: 200px; }
+  .widget-grid { grid-template-columns: repeat(2, 1fr); }
+  .widget--span2 { grid-column: span 1; }
+}
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+  .header-logo { border-right: none; }
+  .breadcrumb { display: none; }
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0;
+    z-index: 200; transform: translateX(-100%);
+    box-shadow: var(--shadow-md); width: 240px !important;
+  }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-overlay { display: block; }
+  .widget-grid { grid-template-columns: 1fr; }
+  .widget--span2, .widget--full { grid-column: 1; }
+  .view-toggle { display: none; }
+  .main { padding: 10px; gap: 10px; }
+}
+@media (max-width: 480px) {
+  .header-actions .btn span { display: none; }
+  .donut-wrap { flex-direction: column; }
+  .donut-canvas-wrap { width: 130px; }
+  .milestone-item { grid-template-columns: 80px 1fr; }
+  .milestone-item > :last-child { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ─── HEADER ──────────────────────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-logo">
+      <svg class="pwc-logo" width="80" height="38" viewBox="30 143 440 212" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="PwC" role="img">
+        <path d="M355.041 233.765C339.717 236.206 331.925 247.425 331.925 267.214C331.925 287.003 342.331 300.403 358.334 300.403C365.762 300.403 372.508 297.962 386.732 291.054V307.155C369.682 314.894 359.642 317.335 345.94 317.335C331.088 317.335 320.629 313.44 312.052 304.766C303.319 296.092 298.926 284.561 298.926 271.784C298.926 243.322 320.158 224.104 351.118 224.104C371.67 224.104 385.842 233.453 385.842 247.165C385.842 255.995 379.252 262.072 369.473 262.072C364.454 262.072 360.323 260.773 355.041 257.709V233.869V233.765ZM279.472 271.732C293.173 254.54 298.037 247.632 298.037 239.166C298.037 230.7 291.343 224 282.348 224C276.805 224 271.837 226.597 269.431 229.298V264.305L246.944 294.066V226.234H225.555L190.045 284.717V226.234H177.756L145.489 234.024V242.231L163.061 243.997V315.725H185.809L219.907 260.098V315.725H244.8L279.42 271.732H279.472ZM77.6086 244.464C82.8381 243.841 85.4532 243.529 87.9111 243.529C102.763 243.529 110.764 253.294 110.764 271.732C110.764 293.495 100.933 304.818 82.6291 304.818C81.1125 304.818 80.0143 304.818 77.6086 304.714V244.464ZM77.6086 314.894C83.518 315.569 89.2708 315.777 92.7223 315.777C123.211 315.777 142.508 296.404 142.508 267.629C142.508 242.75 128.022 224.727 108.359 224.727C99.8346 224.727 94.1867 226.441 77.6086 236.258V224.26H68.4046L33 234.959V243.581H47.6429V343.928L34.4643 347.2V355.511H92.304V347.2L77.5564 343.928V314.894H77.6086Z" fill="currentColor"/>
+        <path d="M338.568 199.173H242.029L258.45 172.112H354.99L338.568 199.173ZM468 145H371.463L355.042 172.06H451.579L468 145Z" fill="#FD5108"/>
+      </svg>
+      <div class="logo-divider"></div>
+      <span class="logo-text">PMO Hub</span>
+    </div>
+
+    <button class="hamburger btn-ghost" id="hamburger-btn" aria-label="Toggle navigation">
+      <i data-lucide="menu" style="width:19px;height:19px"></i>
+    </button>
+
+    <div class="breadcrumb">
+      <i data-lucide="home"></i>
+      <i data-lucide="chevron-right"></i>
+      <a href="#" style="color:var(--g500)">Portfolio</a>
+      <i data-lucide="chevron-right"></i>
+      <span id="breadcrumb-current">Strategic Delivery Portfolio</span>
+    </div>
+
+    <div class="view-toggle" role="group" aria-label="View level">
+      <button class="active" data-view="portfolio" onclick="setView(this)">Portfolio</button>
+      <button data-view="programme" onclick="setView(this)">Programme</button>
+      <button data-view="project" onclick="setView(this)">Project</button>
+    </div>
+
+    <div class="header-actions">
+      <div style="position:relative">
+        <button class="btn btn-outline" id="examples-btn" onclick="toggleScenarioDropdown()">
+          <i data-lucide="layout-template"></i>
+          <span>Load Example</span>
+        </button>
+        <div class="scenario-dropdown" id="scenario-dropdown">
+          <div class="scenario-dropdown-header">Best Practice Layouts</div>
+          <div id="scenario-cards"></div>
         </div>
+      </div>
+      <button class="btn btn-outline" id="reset-layout-btn" title="Reset widget layout to defaults">
+        <i data-lucide="layout-grid"></i>
+        <span>Reset Layout</span>
+      </button>
+      <button class="btn btn-primary" onclick="exportReport()">
+        <i data-lucide="download"></i>
+        <span>Export</span>
+      </button>
+    </div>
+  </header>
 
-        <div class="px-4 mb-6 flex gap-2">
-            <button class="flex-1 bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white text-sm font-medium py-2 rounded shadow-lg shadow-orange-900/20 transition-all flex items-center justify-center gap-2 border border-orange-400/20">
-                New Operation
-            </button>
-            <button class="w-9 bg-zinc-800/50 hover:bg-zinc-800 text-zinc-400 rounded border border-zinc-700/50 flex items-center justify-center transition-colors">
-                <i data-lucide="plus" class="w-4 h-4"></i>
-            </button>
+  <div class="body-wrap">
+
+    <!-- ─── SIDEBAR ──────────────────────────────────────────────────────── -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Navigation</div>
+        <div class="nav-item active" onclick="setNav(this)"><i data-lucide="layout-dashboard"></i> Overview</div>
+        <div class="nav-item" onclick="setNav(this)"><i data-lucide="briefcase"></i> Portfolio</div>
+        <div class="nav-item" onclick="setNav(this)"><i data-lucide="folder-kanban"></i> Programmes</div>
+        <div class="nav-item" onclick="setNav(this)"><i data-lucide="clipboard-list"></i> Projects</div>
+        <div class="nav-item" onclick="setNav(this)"><i data-lucide="users"></i> Resources</div>
+        <div class="nav-item" onclick="setNav(this)"><i data-lucide="shield-alert"></i> Risks &amp; Issues</div>
+        <div class="nav-item" onclick="setNav(this)"><i data-lucide="bar-chart-2"></i> Reports</div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="filter-group">
+        <div class="filter-group-title">Reporting Period</div>
+        <button class="filter-btn" data-period="month" onclick="setPeriod(this)">
+          <i data-lucide="calendar-days" style="width:13px;height:13px;flex-shrink:0"></i> This Month
+        </button>
+        <button class="filter-btn active" data-period="quarter" onclick="setPeriod(this)">
+          <i data-lucide="calendar" style="width:13px;height:13px;flex-shrink:0"></i> This Quarter
+          <span class="filter-count">Q1</span>
+        </button>
+        <button class="filter-btn" data-period="year" onclick="setPeriod(this)">
+          <i data-lucide="calendar-range" style="width:13px;height:13px;flex-shrink:0"></i> Year to Date
+        </button>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="filter-group">
+        <div class="filter-group-title">RAG Status</div>
+        <button class="filter-btn active" data-rag="all" onclick="setRag(this)">
+          <span class="filter-dot" style="background:var(--g400)"></span> All Projects
+          <span class="filter-count">12</span>
+        </button>
+        <button class="filter-btn" data-rag="green" onclick="setRag(this)">
+          <span class="filter-dot" style="background:var(--success)"></span> Green
+          <span class="filter-count">8</span>
+        </button>
+        <button class="filter-btn" data-rag="amber" onclick="setRag(this)">
+          <span class="filter-dot" style="background:var(--warning)"></span> Amber
+          <span class="filter-count">3</span>
+        </button>
+        <button class="filter-btn" data-rag="red" onclick="setRag(this)">
+          <span class="filter-dot" style="background:var(--error)"></span> Red
+          <span class="filter-count">1</span>
+        </button>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="filter-group">
+        <div class="filter-group-title">Last Updated</div>
+        <div style="font-size:12px;color:var(--g500);padding:2px">
+          <div style="font-weight:600;color:var(--black);font-size:13px">26 Feb 2026</div>
+          Q1 2026 Reporting Cycle
         </div>
-
-        <nav class="flex-1 px-3 space-y-0.5 overflow-y-auto">
-            <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900/60 rounded-md transition-colors group">
-                <i data-lucide="layout-grid" class="w-4 h-4 opacity-70 group-hover:opacity-100"></i>
-                Dashboard
-            </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900/60 rounded-md transition-colors group">
-                <i data-lucide="scan-line" class="w-4 h-4 opacity-70 group-hover:opacity-100"></i>
-                Vulnerabilities
-            </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-zinc-100 bg-zinc-900/80 rounded-md shadow-sm shadow-black/40 border border-zinc-800/50 group">
-                <i data-lucide="siren" class="w-4 h-4 text-orange-500"></i>
-                Threats
-            </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900/60 rounded-md transition-colors group">
-                <i data-lucide="shield-check" class="w-4 h-4 opacity-70 group-hover:opacity-100"></i>
-                Compliance
-            </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900/60 rounded-md transition-colors group">
-                <i data-lucide="lock" class="w-4 h-4 opacity-70 group-hover:opacity-100"></i>
-                Secure Vault
-            </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900/60 rounded-md transition-colors group">
-                <i data-lucide="workflow" class="w-4 h-4 opacity-70 group-hover:opacity-100"></i>
-                API Integrations
-            </a>
-        </nav>
-
-        <div class="mt-auto px-4 space-y-4">
-            <a href="#" class="flex items-center gap-3 text-sm text-zinc-500 hover:text-zinc-300 transition-colors">
-                <i data-lucide="life-buoy" class="w-4 h-4"></i>
-                Support &amp; Docs
-            </a>
-            <div class="pt-4 border-t border-zinc-800/60 flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-900 to-indigo-600 flex items-center justify-center text-xs text-white font-medium border border-zinc-700">
-                    SJ
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium text-zinc-200 truncate">Sarah Jenkins</p>
-                    <p class="text-xs text-zinc-500 truncate">@sjenkins_sec</p>
-                </div>
-                <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-600"></i>
-            </div>
-        </div>
+      </div>
     </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-    <!-- Main Content -->
-    <main class="flex-1 flex flex-col h-full overflow-hidden bg-zinc-950 relative">
-        <!-- Top Gradient Glow -->
-        <div class="absolute top-0 left-0 w-full h-96 bg-orange-900/10 blur-[100px] pointer-events-none z-0"></div>
+    <!-- ─── MAIN CANVAS ───────────────────────────────────────────────────── -->
+    <main class="main" id="main-canvas">
 
-        <!-- Header -->
-        <header class="h-16 flex items-center justify-between px-8 border-b border-zinc-800/40 z-10 shrink-0">
-            <div class="flex items-center gap-2 text-sm">
-                <a href="#" class="text-zinc-500 hover:text-zinc-300 transition-colors"><i data-lucide="home" class="w-4 h-4"></i></a>
-                <span class="text-zinc-700">/</span>
-                <a href="#" class="text-zinc-500 hover:text-zinc-300 transition-colors">Threats</a>
-                <span class="text-zinc-700">/</span>
-                <span class="text-zinc-200 font-medium">THR-5910</span>
-            </div>
-            <div class="flex items-center gap-3">
-                <button class="px-3 py-1.5 text-sm font-medium text-zinc-400 hover:text-zinc-100 border border-zinc-800 hover:bg-zinc-900 rounded bg-zinc-950 transition-colors flex items-center gap-2">
-                    <i data-lucide="download" class="w-4 h-4"></i>
-                    Export Report
-                </button>
-            </div>
-        </header>
+      <!-- Drag hint -->
+      <div class="drag-hint" id="drag-hint">
+        <i data-lucide="move"></i>
+        <span>Drag the <strong style="color:var(--black)">⠿</strong> grip on any card to reorder the layout. Your arrangement is saved automatically.</span>
+        <button class="btn btn-ghost" style="margin-left:auto;padding:3px 8px;font-size:11px;flex-shrink:0" onclick="document.getElementById('drag-hint').remove()">Dismiss</button>
+      </div>
 
-        <!-- Content Scroll Area -->
-        <div class="flex-1 overflow-y-auto p-8 z-10">
-            
-            <h1 class="text-2xl font-medium text-zinc-100 tracking-tight mb-6">Threat Analysis</h1>
+      <!-- Restore hidden widgets bar -->
+      <div class="restore-bar" id="restore-bar">
+        <i data-lucide="eye-off" style="width:13px;height:13px;flex-shrink:0"></i>
+        <strong>Hidden:</strong>
+        <div id="restore-chips" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+        <button class="btn btn-ghost" style="margin-left:auto;font-size:12px;flex-shrink:0" onclick="restoreAll()">Restore all</button>
+      </div>
 
-            <!-- Top Detail Card -->
-            <div class="glass-panel rounded-xl p-0 mb-6 overflow-hidden">
-                <div class="p-6 pb-8 border-b border-zinc-800/50">
-                    <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
-                        <div>
-                            <h2 class="text-xl font-medium text-zinc-100 tracking-tight mb-4 flex items-center gap-3">
-                                Threat - 5910
-                                <span class="px-2 py-0.5 rounded text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20">Critical</span>
-                            </h2>
-                            <div class="flex items-center gap-12">
-                                <div>
-                                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-1">Analyst</p>
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-5 h-5 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-[10px] text-zinc-400">?</div>
-                                        <span class="text-sm text-zinc-300">Unassigned</span>
-                                        <i data-lucide="chevron-down" class="w-3 h-3 text-zinc-600"></i>
-                                    </div>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-1">Detected</p>
-                                    <span class="text-sm text-zinc-300">2025-05-14</span>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-1">SLA Target</p>
-                                    <span class="text-sm text-zinc-300">4h remaining</span>
-                                </div>
-                                <div class="hidden lg:block">
-                                    <p class="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-1">Last Update</p>
-                                    <span class="text-sm text-zinc-300">12m ago</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <button class="px-3 py-1.5 rounded-md border border-zinc-700/50 bg-zinc-800/30 text-zinc-300 text-sm flex items-center gap-2 hover:bg-zinc-800 transition-colors">
-                                <div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div>
-                                Active
-                                <i data-lucide="chevron-down" class="w-3 h-3 opacity-50"></i>
-                            </button>
-                            <button class="px-3 py-1.5 rounded-md border border-red-900/30 bg-red-500/10 text-red-400 text-sm flex items-center gap-2 hover:bg-red-500/20 transition-colors">
-                                <div class="w-2 h-2 rounded-sm bg-red-500"></div>
-                                Critical
-                                <i data-lucide="chevron-down" class="w-3 h-3 opacity-50"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Tabs -->
-                <div class="px-6 bg-zinc-900/30 flex gap-6 items-center h-12">
-                    <button class="h-8 px-4 rounded-full bg-zinc-100 text-zinc-950 text-sm font-medium shadow-sm">Overview</button>
-                    <button class="h-8 px-2 text-zinc-400 hover:text-zinc-200 text-sm font-medium transition-colors">Vectors</button>
-                    <button class="h-8 px-2 text-zinc-400 hover:text-zinc-200 text-sm font-medium transition-colors">Timeline</button>
-                    <button class="h-8 px-2 text-zinc-400 hover:text-zinc-200 text-sm font-medium transition-colors">Logs <span class="ml-1 text-xs bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-500">24</span></button>
-                    <button class="h-8 px-2 text-zinc-400 hover:text-zinc-200 text-sm font-medium transition-colors">Mitigation</button>
-                </div>
-            </div>
-
-            <!-- Grid Layout -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
-                <!-- Info Panel -->
-                <div class="lg:col-span-4 glass-panel rounded-xl p-6 flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-base font-medium text-zinc-200 mb-6">Threat Metadata</h3>
-                        <div class="space-y-5">
-                            <div class="flex justify-between items-center border-b border-zinc-800/50 pb-3">
-                                <span class="text-sm text-zinc-500">Classification</span>
-                                <span class="text-sm text-zinc-200 font-medium">Zero-day Exploit</span>
-                            </div>
-                            <div class="flex justify-between items-center border-b border-zinc-800/50 pb-3">
-                                <span class="text-sm text-zinc-500">Status</span>
-                                <span class="text-sm text-orange-400 font-medium">Escalating</span>
-                            </div>
-                            <div class="flex justify-between items-center border-b border-zinc-800/50 pb-3">
-                                <span class="text-sm text-zinc-500">Source Origin</span>
-                                <span class="text-sm text-zinc-200 font-medium">Cluster-EU-West</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm text-zinc-500">Affected Assets</span>
-                                <span class="text-sm text-zinc-200 font-medium">7</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Radar Chart Panel -->
-                <div class="lg:col-span-8 glass-panel rounded-xl p-6 relative overflow-hidden">
-                    <div class="flex justify-between items-start mb-2 relative z-10">
-                        <h3 class="text-base font-medium text-zinc-200">Attack Surface Map</h3>
-                        <div class="flex gap-4 text-xs">
-                            <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-orange-500"></span>Current Impact</div>
-                            <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-zinc-600"></span>Projected</div>
-                            <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-red-600"></span>Risk Level</div>
-                        </div>
-                    </div>
-
-                    <!-- CSS/SVG Chart Construction -->
-                    <div class="w-full h-64 flex items-center justify-center relative">
-                        <!-- Labels -->
-                        <span class="absolute top-2 text-xs text-zinc-500 font-medium">Authentication</span>
-                        <span class="absolute bottom-2 text-xs text-zinc-500 font-medium">Data Exfiltration</span>
-                        <span class="absolute left-4 top-1/3 text-xs text-zinc-500 font-medium text-right w-20">Network<br>Access</span>
-                        <span class="absolute right-4 top-1/3 text-xs text-zinc-500 font-medium text-left w-20">Privilege<br>Escalation</span>
-                        <span class="absolute left-4 bottom-1/3 text-xs text-zinc-500 font-medium text-right w-20">Defense<br>Evasion</span>
-                        <span class="absolute right-4 bottom-1/3 text-xs text-zinc-500 font-medium text-left w-20">Asset<br>Exposure</span>
-
-                        <svg viewBox="0 0 200 200" class="w-64 h-64 overflow-visible">
-                            <!-- Background Grid Hexagons -->
-                            <polygon points="100,20 170,60 170,140 100,180 30,140 30,60" fill="none" stroke="#27272a" stroke-width="1"></polygon>
-                            <polygon points="100,40 152,70 152,130 100,160 48,130 48,70" fill="none" stroke="#27272a" stroke-width="1"></polygon>
-                            <polygon points="100,60 135,80 135,120 100,140 65,120 65,80" fill="none" stroke="#27272a" stroke-width="1"></polygon>
-                            
-                            <!-- Spokes -->
-                            <line x1="100" y1="100" x2="100" y2="20" stroke="#27272a" stroke-width="1"></line>
-                            <line x1="100" y1="100" x2="170" y2="60" stroke="#27272a" stroke-width="1"></line>
-                            <line x1="100" y1="100" x2="170" y2="140" stroke="#27272a" stroke-width="1"></line>
-                            <line x1="100" y1="100" x2="100" y2="180" stroke="#27272a" stroke-width="1"></line>
-                            <line x1="100" y1="100" x2="30" y2="140" stroke="#27272a" stroke-width="1"></line>
-                            <line x1="100" y1="100" x2="30" y2="60" stroke="#27272a" stroke-width="1"></line>
-
-                            <!-- Data Shape (Orange) -->
-                            <defs>
-                                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:rgb(249, 115, 22);stop-opacity:0.4"></stop>
-                                    <stop offset="100%" style="stop-color:rgb(234, 88, 12);stop-opacity:0.1"></stop>
-                                </linearGradient>
-                            </defs>
-                            <polygon points="100,30 160,70 135,125 100,170 40,135 60,65" fill="url(#grad1)" stroke="#f97316" stroke-width="1.5" class="drop-shadow-[0_0_10px_rgba(249,115,22,0.5)]"></polygon>
-                            
-                            <!-- Secondary Shape (Red outline) -->
-                            <polygon points="100,45 145,75 160,135 100,150 50,130 55,75" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="3,3" opacity="0.7"></polygon>
-
-                        </svg>
-                    </div>
-                </div>
-
-                <!-- Findings Panel (Sunburst) -->
-                <div class="lg:col-span-4 glass-panel rounded-xl p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-base font-medium text-zinc-200">Vulnerabilities</h3>
-                        <div class="flex gap-3 text-[10px] text-zinc-500">
-                            <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>Misconfig</span>
-                            <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>Injection</span>
-                            <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-yellow-600"></span>Malware</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-center items-center h-48 relative">
-                        <svg viewBox="0 0 100 100" class="w-48 h-48 -rotate-90">
-                            <!-- Background Circles -->
-                            <circle cx="50" cy="50" r="45" fill="none" stroke="#27272a" stroke-width="0.5"></circle>
-                            <circle cx="50" cy="50" r="30" fill="none" stroke="#27272a" stroke-width="0.5"></circle>
-                            <circle cx="50" cy="50" r="15" fill="none" stroke="#27272a" stroke-width="0.5"></circle>
-                            
-                            <!-- Spokes -->
-                            <line x1="50" y1="50" x2="50" y2="5" stroke="#27272a" stroke-width="0.5"></line>
-                            <line x1="50" y1="50" x2="95" y2="50" stroke="#27272a" stroke-width="0.5"></line>
-                            <line x1="50" y1="50" x2="50" y2="95" stroke="#27272a" stroke-width="0.5"></line>
-                            <line x1="50" y1="50" x2="5" y2="50" stroke="#27272a" stroke-width="0.5"></line>
-                            <line x1="50" y1="50" x2="82" y2="18" stroke="#27272a" stroke-width="0.5"></line> <!-- Diagonal -->
-                            <line x1="50" y1="50" x2="82" y2="82" stroke="#27272a" stroke-width="0.5"></line>
-                            <line x1="50" y1="50" x2="18" y2="82" stroke="#27272a" stroke-width="0.5"></line>
-                            <line x1="50" y1="50" x2="18" y2="18" stroke="#27272a" stroke-width="0.5"></line>
-
-                            <!-- Data Segments -->
-                            <!-- Orange Sector -->
-                            <path d="M50 50 L50 10 A40 40 0 0 1 85 30 Z" fill="rgba(249, 115, 22, 0.4)" stroke="#f97316" stroke-width="0.5"></path>
-                            <path d="M50 50 L85 30 A40 40 0 0 1 90 50 Z" fill="rgba(249, 115, 22, 0.2)" stroke="#f97316" stroke-width="0.5"></path>
-                            
-                            <!-- Red Sector -->
-                            <path d="M50 50 L50 90 A40 40 0 0 0 85 75 Z" fill="rgba(239, 68, 68, 0.4)" stroke="#ef4444" stroke-width="0.5"></path>
-                             <!-- Yellow Sector -->
-                            <path d="M50 50 L20 20 A40 40 0 0 1 50 10 Z" fill="rgba(202, 138, 4, 0.2)" stroke="#ca8a04" stroke-width="0.5"></path>
-                        </svg>
-                    </div>
-                </div>
-
-                <!-- Entities Table -->
-                <div class="lg:col-span-8 glass-panel rounded-xl p-6 flex flex-col">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-base font-medium text-zinc-200">Affected Entities</h3>
-                        <div class="flex items-center gap-2 cursor-pointer group">
-                            <span class="text-xs text-zinc-500 group-hover:text-zinc-300 transition-colors">Sort by Risk</span>
-                            <i data-lucide="chevron-down" class="w-3 h-3 text-zinc-600 group-hover:text-zinc-300"></i>
-                        </div>
-                    </div>
-
-                    <div class="w-full">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="border-b border-zinc-800/50">
-                                    <th class="py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">ID</th>
-                                    <th class="py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">Type</th>
-                                    <th class="py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">CVSS Score</th>
-                                    <th class="py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider text-right">IP / Hex</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-sm">
-                                <tr class="group hover:bg-zinc-800/20 transition-colors border-b border-zinc-800/30">
-                                    <td class="py-4 text-zinc-400 font-mono text-xs">001</td>
-                                    <td class="py-4 text-zinc-300 flex items-center gap-2">
-                                        <i data-lucide="monitor" class="w-4 h-4 text-zinc-600"></i>
-                                        Production Server
-                                    </td>
-                                    <td class="py-4">
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-red-400 font-medium">9.2</span>
-                                            <div class="w-16 h-1 bg-zinc-800 rounded-full overflow-hidden">
-                                                <div class="w-[92%] h-full bg-red-500"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 text-zinc-500 font-mono text-xs text-right group-hover:text-zinc-300">192.168.10.45</td>
-                                </tr>
-                                <tr class="group hover:bg-zinc-800/20 transition-colors border-b border-zinc-800/30">
-                                    <td class="py-4 text-zinc-400 font-mono text-xs">002</td>
-                                    <td class="py-4 text-zinc-300 flex items-center gap-2">
-                                        <i data-lucide="database" class="w-4 h-4 text-zinc-600"></i>
-                                        SQL Database
-                                    </td>
-                                    <td class="py-4">
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-orange-400 font-medium">7.4</span>
-                                            <div class="w-16 h-1 bg-zinc-800 rounded-full overflow-hidden">
-                                                <div class="w-[74%] h-full bg-orange-500"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 text-zinc-500 font-mono text-xs text-right group-hover:text-zinc-300">10.0.52.112</td>
-                                </tr>
-                                <tr class="group hover:bg-zinc-800/20 transition-colors">
-                                    <td class="py-4 text-zinc-400 font-mono text-xs">003</td>
-                                    <td class="py-4 text-zinc-300 flex items-center gap-2">
-                                        <i data-lucide="smartphone" class="w-4 h-4 text-zinc-600"></i>
-                                        Admin Endpoint
-                                    </td>
-                                    <td class="py-4">
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-yellow-500 font-medium">5.8</span>
-                                            <div class="w-16 h-1 bg-zinc-800 rounded-full overflow-hidden">
-                                                <div class="w-[58%] h-full bg-yellow-600"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 text-zinc-500 font-mono text-xs text-right group-hover:text-zinc-300">172.16.0.22</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </div>
+      <!-- Scenario banner (shown when an example is loaded) -->
+      <div class="scenario-banner" id="scenario-banner" style="display:none">
+        <i data-lucide="layout-template"></i>
+        <div style="flex:1;min-width:0">
+          <strong id="scenario-banner-name"></strong>
+          <span style="color:var(--g500);margin-left:6px" id="scenario-banner-desc"></span>
         </div>
+        <span class="badge badge-blue" id="scenario-banner-badge"></span>
+        <span style="font-size:11px;color:var(--g500);white-space:nowrap">Drag widgets to customise</span>
+        <button class="btn btn-ghost" style="font-size:11px;padding:4px 8px;flex-shrink:0" onclick="dismissScenarioBanner()">Dismiss</button>
+      </div>
+
+      <!-- ─── WIDGET GRID ─────────────────────────────────────────────────── -->
+      <div class="widget-grid" id="widget-grid">
+
+        <!-- KPI: Portfolio Health -->
+        <div class="widget" data-widget-id="kpi-health">
+          <div class="widget-header">
+            <div class="drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical"></i></div>
+            <div class="widget-title">Portfolio Health</div>
+            <div class="widget-menu" style="margin-left:auto">
+              <button class="widget-menu-btn" onclick="toggleMenu(this)"><i data-lucide="more-horizontal"></i></button>
+              <div class="widget-dropdown">
+                <button onclick="minimise(this)"><i data-lucide="minimize-2"></i> Minimise</button>
+                <button onclick="hideWidget(this,'kpi-health','Portfolio Health')"><i data-lucide="eye-off"></i> Hide</button>
+              </div>
+            </div>
+          </div>
+          <div class="widget-body">
+            <div class="kpi-value" id="health-total">12</div>
+            <div class="kpi-label">Active projects in portfolio</div>
+            <div class="kpi-badge-row" id="health-badges">
+              <span class="badge badge-green"><i data-lucide="check-circle"></i> 8 On Track</span>
+              <span class="badge badge-amber"><i data-lucide="alert-triangle"></i> 3 At Risk</span>
+              <span class="badge badge-red"><i data-lucide="x-circle"></i> 1 Off Track</span>
+            </div>
+            <div class="rag-bar" id="health-rag-bar" title="RAG split">
+              <div class="rag-bar-seg" style="width:67%;background:var(--success)"></div>
+              <div class="rag-bar-seg" style="width:25%;background:var(--warning)"></div>
+              <div class="rag-bar-seg" style="width:8%;background:var(--error)"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI: Schedule Performance Index -->
+        <div class="widget" data-widget-id="kpi-schedule">
+          <div class="widget-header">
+            <div class="drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical"></i></div>
+            <div class="widget-title">Schedule Performance</div>
+            <div class="widget-menu" style="margin-left:auto">
+              <button class="widget-menu-btn" onclick="toggleMenu(this)"><i data-lucide="more-horizontal"></i></button>
+              <div class="widget-dropdown">
+                <button onclick="minimise(this)"><i data-lucide="minimize-2"></i> Minimise</button>
+                <button onclick="hideWidget(this,'kpi-schedule','Schedule Performance')"><i data-lucide="eye-off"></i> Hide</button>
+              </div>
+            </div>
+          </div>
+          <div class="widget-body">
+            <div class="metric-row">
+              <div class="metric-pct" id="spi-value">0.94 <span style="font-size:13px;font-weight:500;color:var(--g500)">SPI</span></div>
+              <div class="metric-delta down" id="spi-delta"><i data-lucide="trending-down"></i> &minus;0.03 vs prev</div>
+            </div>
+            <div class="progress-track"><div class="progress-fill warning" id="spi-bar" style="width:0%"></div></div>
+            <div class="metric-sublabel" style="margin-bottom:8px">Target &ge; 1.0 &nbsp;·&nbsp; Q1 2026</div>
+            <div class="sparkline-wrap"><canvas id="spi-sparkline"></canvas></div>
+          </div>
+        </div>
+
+        <!-- KPI: Budget Utilisation -->
+        <div class="widget" data-widget-id="kpi-budget">
+          <div class="widget-header">
+            <div class="drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical"></i></div>
+            <div class="widget-title">Budget Utilisation</div>
+            <div class="widget-menu" style="margin-left:auto">
+              <button class="widget-menu-btn" onclick="toggleMenu(this)"><i data-lucide="more-horizontal"></i></button>
+              <div class="widget-dropdown">
+                <button onclick="minimise(this)"><i data-lucide="minimize-2"></i> Minimise</button>
+                <button onclick="hideWidget(this,'kpi-budget','Budget Utilisation')"><i data-lucide="eye-off"></i> Hide</button>
+              </div>
+            </div>
+          </div>
+          <div class="widget-body">
+            <div class="metric-row">
+              <div class="metric-pct" id="budget-pct">67%</div>
+              <div class="metric-delta up" id="budget-delta"><i data-lucide="trending-up"></i> +4% vs prev</div>
+            </div>
+            <div class="progress-track"><div class="progress-fill" id="budget-bar" style="width:0%"></div></div>
+            <div class="metric-sublabel" id="budget-sublabel">£1.34m of £2.0m total budget consumed</div>
+            <div class="budget-stats">
+              <div><div class="budget-stat-label">Spent</div><div class="budget-stat-val" id="budget-spent">£1.34m</div></div>
+              <div><div class="budget-stat-label">Remaining</div><div class="budget-stat-val" id="budget-remaining">£0.66m</div></div>
+              <div><div class="budget-stat-label">Forecast</div><div class="budget-stat-val" id="budget-forecast" style="color:var(--warning)">£2.08m</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project Status (Donut) -->
+        <div class="widget widget--span2" data-widget-id="project-status">
+          <div class="widget-header">
+            <div class="drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical"></i></div>
+            <div class="widget-title">Project Status Overview</div>
+            <div class="widget-subtitle" id="status-period-label">Q1 2026</div>
+            <div class="widget-menu" style="margin-left:auto">
+              <button class="widget-menu-btn" onclick="toggleMenu(this)"><i data-lucide="more-horizontal"></i></button>
+              <div class="widget-dropdown">
+                <button onclick="minimise(this)"><i data-lucide="minimize-2"></i> Minimise</button>
+                <button onclick="hideWidget(this,'project-status','Project Status')"><i data-lucide="eye-off"></i> Hide</button>
+              </div>
+            </div>
+          </div>
+          <div class="widget-body">
+            <div class="donut-wrap">
+              <div class="donut-canvas-wrap">
+                <canvas id="donut-chart" width="150" height="150"></canvas>
+                <div class="donut-center">
+                  <div class="donut-center-value" id="donut-total">17</div>
+                  <div class="donut-center-label">Total</div>
+                </div>
+              </div>
+              <div class="donut-stats" id="donut-stats">
+                <!-- populated by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Budget vs Actuals (Bar) -->
+        <div class="widget widget--span2" data-widget-id="budget-actuals">
+          <div class="widget-header">
+            <div class="drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical"></i></div>
+            <div class="widget-title">Budget vs Actuals</div>
+            <div class="widget-subtitle">£k per workstream</div>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+              <div class="chart-legend" style="margin:0">
+                <div class="legend-item"><div class="legend-dot" style="background:var(--o300)"></div>Budget</div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--o500)"></div>Actuals</div>
+              </div>
+              <div class="widget-menu">
+                <button class="widget-menu-btn" onclick="toggleMenu(this)"><i data-lucide="more-horizontal"></i></button>
+                <div class="widget-dropdown">
+                  <button onclick="minimise(this)"><i data-lucide="minimize-2"></i> Minimise</button>
+                  <button onclick="hideWidget(this,'budget-actuals','Budget vs Actuals')"><i data-lucide="eye-off"></i> Hide</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="widget-body">
+            <div class="chart-wrap" style="height:190px"><canvas id="bar-chart"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Resource Utilisation (H-Bar) -->
+        <div class="widget widget--span2" data-widget-id="resource-util">
+          <div class="widget-header">
+            <div class="drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical"></i></div>
+            <div class="widget-title">Resource Utilisation</div>
+            <div class="widget-subtitle">% capacity consumed</div>
+            <div class="widget-menu" style="margin-left:auto">
+              <button class="widget-menu-btn" onclick="toggleMenu(this)"><i data-lucide="more-horizontal"></i></button>
+              <div class="widget-dropdown">
+                <button onclick="minimise(this)"><i data-lucide="minimize-2"></i> Minimise</button>
+                <button onclick="hideWidget(this,'resource-util','Resource Utilisation')"><i data-lucide="eye-off"></i> Hide</button>
+              </div>
+            </div>
+          </div>
+          <div class="widget-body">
+            <div class="chart-wrap" style="height:185px"><canvas id="hbar-chart"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Risk Register (Table) -->
+        <div class="widget widget--span2" data-widget-id="risk-register">
+          <div class="widget-header">
+            <div class="drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical"></i></div>
+            <div class="widget-title">Risk Register</div>
+            <div class="widget-subtitle" id="risk-count-label">4 open risks</div>
+            <div class="widget-menu" style="margin-left:auto">
+              <button class="widget-menu-btn" onclick="toggleMenu(this)"><i data-lucide="more-horizontal"></i></button>
+              <div class="widget-dropdown">
+                <button onclick="minimise(this)"><i data-lucide="minimize-2"></i> Minimise</button>
+                <button onclick="hideWidget(this,'risk-register','Risk Register')"><i data-lucide="eye-off"></i> Hide</button>
+              </div>
+            </div>
+          </div>
+          <div class="widget-body" style="padding:0">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>RAG</th><th>ID</th><th>Risk</th><th>Impact</th><th>Likelihood</th><th>Owner</th>
+                </tr>
+              </thead>
+              <tbody id="risk-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Milestone Tracker (full width) -->
+        <div class="widget widget--full" data-widget-id="milestones">
+          <div class="widget-header">
+            <div class="drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical"></i></div>
+            <div class="widget-title">Upcoming Milestones</div>
+            <div class="widget-subtitle" id="milestone-count-label">Next 90 days</div>
+            <div class="widget-menu" style="margin-left:auto">
+              <button class="widget-menu-btn" onclick="toggleMenu(this)"><i data-lucide="more-horizontal"></i></button>
+              <div class="widget-dropdown">
+                <button onclick="minimise(this)"><i data-lucide="minimize-2"></i> Minimise</button>
+                <button onclick="hideWidget(this,'milestones','Upcoming Milestones')"><i data-lucide="eye-off"></i> Hide</button>
+              </div>
+            </div>
+          </div>
+          <div class="widget-body">
+            <div class="milestone-list" id="milestone-list"></div>
+          </div>
+        </div>
+
+      </div><!-- /widget-grid -->
     </main>
+  </div><!-- /body-wrap -->
+</div><!-- /app -->
 
-    <script>
-        lucide.createIcons();
-    </script>
+<script>
+/* ═══════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════ */
+const DATA = {
+  quarter: {
+    projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[8,3,1,5], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+    budgetActuals:  { labels:['Alpha','Beta','Gamma','Delta','Epsilon'], budget:[500,320,780,210,440], actuals:[480,310,820,195,380] },
+    resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[87,72,65,91,54] },
+    spi: 0.94, spiDelta: '−0.03', spiHistory:[0.98,0.97,0.96,0.95,0.95,0.94,0.94,0.94]
+  },
+  month: {
+    projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[7,4,1,2], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+    budgetActuals:  { labels:['Alpha','Beta','Gamma','Delta','Epsilon'], budget:[170,110,260,70,145], actuals:[160,105,275,65,130] },
+    resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[92,68,70,88,45] },
+    spi: 0.91, spiDelta: '−0.04', spiHistory:[0.96,0.94,0.93,0.92,0.91,0.91,0.91,0.91]
+  },
+  year: {
+    projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[8,3,1,5], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+    budgetActuals:  { labels:['Alpha','Beta','Gamma','Delta','Epsilon'], budget:[500,320,780,210,440], actuals:[480,310,820,195,380] },
+    resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[82,70,60,88,50] },
+    spi: 0.96, spiDelta: '+0.02', spiHistory:[0.94,0.95,0.96,0.96,0.97,0.96,0.96,0.96]
+  }
+};
+const RISKS = [
+  { id:'R-001', title:'Dependency on third-party API',    impact:'High',   likelihood:'Medium', rag:'red',   owner:'J. Smith' },
+  { id:'R-002', title:'Key resource availability Q2',      impact:'High',   likelihood:'Low',    rag:'amber', owner:'L. Patel' },
+  { id:'R-003', title:'Budget overrun on Beta stream',     impact:'Medium', likelihood:'Medium', rag:'amber', owner:'M. Chen'  },
+  { id:'R-004', title:'Scope creep in Gamma workstream',   impact:'Low',    likelihood:'High',   rag:'green', owner:'S. Okafor'}
+];
+const MILESTONES = [
+  { date:'2026-03-14', project:'Alpha',   name:'Phase 1 Sign-off',          status:'on-track'  },
+  { date:'2026-03-21', project:'Beta',    name:'UAT Completion',             status:'at-risk'   },
+  { date:'2026-04-04', project:'Gamma',   name:'Go-Live',                    status:'on-track'  },
+  { date:'2026-04-18', project:'Delta',   name:'Steering Committee Review',  status:'on-track'  },
+  { date:'2026-05-02', project:'Epsilon', name:'Infrastructure Migration',   status:'off-track' }
+];
 
-</body></html>
+/* ═══════════════════════════════════════════
+   EXAMPLE SCENARIOS
+═══════════════════════════════════════════ */
+const SCENARIOS = {
+  executive: {
+    name: 'Executive Summary',
+    badge: 'C-Suite',
+    description: 'Healthy portfolio for leadership reporting. KPIs and project status lead.',
+    widgetOrder: ['kpi-health','project-status','kpi-schedule','kpi-budget','milestones','budget-actuals','resource-util','risk-register'],
+    kpi: { total:21, onTrack:15, atRisk:5, offTrack:1, budgetPct:58, budgetSpent:'£1.86m', budgetRemaining:'£1.34m', budgetForecast:'£3.14m', budgetTotal:'£3.2m', budgetDelta:'−2% vs prev', budgetDeltaUp:false },
+    data: {
+      quarter: {
+        projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[15,5,1,8], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+        budgetActuals:  { labels:['Phoenix','Horizon','Atlas','Nexus','Vega'], budget:[600,450,900,280,510], actuals:[540,420,870,265,480] },
+        resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[78,65,58,82,48] },
+        spi:1.02, spiDelta:'+0.02', spiHistory:[0.98,0.99,1.00,1.01,1.01,1.02,1.02,1.02]
+      },
+      month: {
+        projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[14,6,1,4], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+        budgetActuals:  { labels:['Phoenix','Horizon','Atlas','Nexus','Vega'], budget:[200,150,300,95,170], actuals:[180,140,290,88,160] },
+        resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[75,62,55,78,45] },
+        spi:1.01, spiDelta:'+0.01', spiHistory:[0.99,1.00,1.00,1.01,1.01,1.01,1.01,1.01]
+      },
+      year: {
+        projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[15,5,1,8], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+        budgetActuals:  { labels:['Phoenix','Horizon','Atlas','Nexus','Vega'], budget:[600,450,900,280,510], actuals:[540,420,870,265,480] },
+        resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[76,63,56,80,47] },
+        spi:1.02, spiDelta:'+0.03', spiHistory:[0.97,0.98,0.99,1.00,1.01,1.02,1.02,1.02]
+      }
+    },
+    risks: [
+      { id:'R-001', title:'Third-party vendor SLA compliance risk',     impact:'Low',    likelihood:'Low',    rag:'green', owner:'C. Williams' },
+      { id:'R-002', title:'Regulatory change affecting Atlas scope',    impact:'Medium', likelihood:'Low',    rag:'amber', owner:'P. Nguyen'   },
+      { id:'R-003', title:'Seasonal resource constraint in Q3',         impact:'Medium', likelihood:'Medium', rag:'amber', owner:'R. Hassan'   },
+      { id:'R-004', title:'Technology refresh dependency on Nexus',     impact:'Low',    likelihood:'Low',    rag:'green', owner:'K. Osei'     }
+    ],
+    milestones: [
+      { date:'2026-03-10', project:'Phoenix', name:'Exec Sign-off — Phase 2',       status:'on-track' },
+      { date:'2026-03-28', project:'Horizon', name:'Board Presentation',             status:'on-track' },
+      { date:'2026-04-11', project:'Atlas',   name:'Regulatory Submission',          status:'on-track' },
+      { date:'2026-04-25', project:'Nexus',   name:'Pilot Launch',                  status:'at-risk'  },
+      { date:'2026-05-16', project:'Vega',    name:'Full Rollout Decision',          status:'on-track' }
+    ]
+  },
+
+  financial: {
+    name: 'Financial Deep Dive',
+    badge: 'Finance',
+    description: 'Budget pressure with three workstreams overspending. Finance metrics lead.',
+    widgetOrder: ['kpi-budget','budget-actuals','kpi-health','resource-util','kpi-schedule','risk-register','project-status','milestones'],
+    kpi: { total:16, onTrack:5, atRisk:8, offTrack:3, budgetPct:82, budgetSpent:'£2.62m', budgetRemaining:'£0.58m', budgetForecast:'£3.34m', budgetTotal:'£3.2m', budgetDelta:'+11% vs prev', budgetDeltaUp:true },
+    data: {
+      quarter: {
+        projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[5,8,3,2], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+        budgetActuals:  { labels:['Phoenix','Horizon','Atlas','Nexus','Vega'], budget:[600,450,900,280,510], actuals:[680,510,1100,295,465] },
+        resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[98,85,90,94,72] },
+        spi:0.88, spiDelta:'−0.06', spiHistory:[0.96,0.94,0.93,0.91,0.90,0.89,0.88,0.88]
+      },
+      month: {
+        projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[4,9,3,1], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+        budgetActuals:  { labels:['Phoenix','Horizon','Atlas','Nexus','Vega'], budget:[200,150,300,95,170], actuals:[240,175,390,100,160] },
+        resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[100,88,95,97,75] },
+        spi:0.86, spiDelta:'−0.04', spiHistory:[0.93,0.92,0.90,0.89,0.88,0.87,0.86,0.86]
+      },
+      year: {
+        projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[5,8,3,2], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+        budgetActuals:  { labels:['Phoenix','Horizon','Atlas','Nexus','Vega'], budget:[600,450,900,280,510], actuals:[680,510,1100,295,465] },
+        resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[96,83,88,92,70] },
+        spi:0.89, spiDelta:'−0.05', spiHistory:[0.97,0.95,0.93,0.92,0.91,0.90,0.89,0.89]
+      }
+    },
+    risks: [
+      { id:'R-001', title:'Atlas scope expansion driving cost overrun',         impact:'High',   likelihood:'High',   rag:'red',   owner:'M. Chen'    },
+      { id:'R-002', title:'Phoenix contractor rate increase unbudgeted',        impact:'High',   likelihood:'High',   rag:'red',   owner:'J. Smith'   },
+      { id:'R-003', title:'Horizon infrastructure costs above estimate',        impact:'High',   likelihood:'Medium', rag:'red',   owner:'L. Patel'   },
+      { id:'R-004', title:'PMO team overtime unsustainable beyond Q2',          impact:'Medium', likelihood:'High',   rag:'amber', owner:'S. Okafor'  },
+      { id:'R-005', title:'Change request backlog delaying re-forecasting',     impact:'Medium', likelihood:'Medium', rag:'amber', owner:'P. Nguyen'  }
+    ],
+    milestones: [
+      { date:'2026-03-07', project:'Atlas',   name:'Cost Review with CFO',           status:'at-risk'   },
+      { date:'2026-03-14', project:'Phoenix', name:'Contract Renegotiation',          status:'off-track' },
+      { date:'2026-03-28', project:'Horizon', name:'Budget Rebaseline Approval',      status:'at-risk'   },
+      { date:'2026-04-11', project:'Nexus',   name:'Spend Authority Review',          status:'on-track'  },
+      { date:'2026-04-25', project:'Vega',    name:'Q2 Forecast Submission',          status:'on-track'  }
+    ]
+  },
+
+  risk: {
+    name: 'Risk & Issues Focus',
+    badge: 'Risk',
+    description: 'Escalating risk exposure across the portfolio. Risk register and milestones lead.',
+    widgetOrder: ['risk-register','milestones','kpi-health','kpi-schedule','kpi-budget','project-status','budget-actuals','resource-util'],
+    kpi: { total:17, onTrack:4, atRisk:9, offTrack:4, budgetPct:71, budgetSpent:'£2.27m', budgetRemaining:'£0.93m', budgetForecast:'£3.41m', budgetTotal:'£3.2m', budgetDelta:'+5% vs prev', budgetDeltaUp:true },
+    data: {
+      quarter: {
+        projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[4,9,4,1], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+        budgetActuals:  { labels:['Phoenix','Horizon','Atlas','Nexus','Vega'], budget:[600,450,900,280,510], actuals:[590,480,980,310,525] },
+        resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[88,74,68,97,60] },
+        spi:0.79, spiDelta:'−0.09', spiHistory:[0.95,0.92,0.89,0.86,0.83,0.81,0.80,0.79]
+      },
+      month: {
+        projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[3,10,4,0], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+        budgetActuals:  { labels:['Phoenix','Horizon','Atlas','Nexus','Vega'], budget:[200,150,300,95,170], actuals:[210,165,335,108,182] },
+        resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[92,78,72,100,63] },
+        spi:0.77, spiDelta:'−0.04', spiHistory:[0.84,0.83,0.82,0.80,0.79,0.78,0.77,0.77]
+      },
+      year: {
+        projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[4,9,4,1], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+        budgetActuals:  { labels:['Phoenix','Horizon','Atlas','Nexus','Vega'], budget:[600,450,900,280,510], actuals:[590,480,980,310,525] },
+        resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[86,72,66,95,58] },
+        spi:0.80, spiDelta:'−0.08', spiHistory:[0.96,0.92,0.89,0.86,0.84,0.82,0.81,0.80]
+      }
+    },
+    risks: [
+      { id:'R-001', title:'Critical path delay on Atlas — 6 weeks behind',      impact:'High',   likelihood:'High',   rag:'red',   owner:'M. Chen'   },
+      { id:'R-002', title:'Key architect resigned — no succession plan',         impact:'High',   likelihood:'High',   rag:'red',   owner:'K. Osei'   },
+      { id:'R-003', title:'Regulatory deadline for Phoenix is immovable',        impact:'High',   likelihood:'Medium', rag:'red',   owner:'J. Smith'  },
+      { id:'R-004', title:'Integration testing environment instability',         impact:'High',   likelihood:'Medium', rag:'amber', owner:'L. Patel'  },
+      { id:'R-005', title:'Vendor delivery slip on Nexus dependencies',          impact:'Medium', likelihood:'High',   rag:'amber', owner:'P. Nguyen' },
+      { id:'R-006', title:'Stakeholder engagement declining on Horizon',         impact:'Medium', likelihood:'Medium', rag:'amber', owner:'R. Hassan' }
+    ],
+    milestones: [
+      { date:'2026-03-05', project:'Atlas',   name:'Critical Path Recovery Plan Due', status:'off-track' },
+      { date:'2026-03-14', project:'Phoenix', name:'Regulatory Submission',            status:'at-risk'   },
+      { date:'2026-03-21', project:'Nexus',   name:'Vendor Integration Checkpoint',   status:'at-risk'   },
+      { date:'2026-04-04', project:'Horizon', name:'Stakeholder Review Board',         status:'at-risk'   },
+      { date:'2026-04-18', project:'Vega',    name:'Architecture Sign-off',            status:'on-track'  }
+    ]
+  }
+};
+
+let activePeriod = 'quarter';
+let activeRag    = 'all';
+const charts = {};
+
+/* ═══════════════════════════════════════════
+   CHART.JS DEFAULTS
+═══════════════════════════════════════════ */
+Chart.defaults.font.family = "system-ui,-apple-system,'Segoe UI',sans-serif";
+Chart.defaults.font.size = 11;
+Chart.defaults.color = '#A1A8B3';
+const TT = { backgroundColor:'#fff', titleColor:'#000', bodyColor:'#A1A8B3', borderColor:'#DFE3E6', borderWidth:1, padding:10, cornerRadius:6, titleFont:{weight:'600',size:12}, bodyFont:{size:11} };
+const GRID = { color:'#DFE3E6', lineWidth:1 };
+
+/* ─── Donut ─────────────────────────────── */
+function initDonut(d) {
+  if (charts.donut) charts.donut.destroy();
+  const ctx = document.getElementById('donut-chart').getContext('2d');
+  const ps = d.projectStatus;
+  const total = ps.values.reduce((a,b)=>a+b,0);
+  document.getElementById('donut-total').textContent = total;
+  charts.donut = new Chart(ctx, {
+    type:'doughnut',
+    data:{ labels:ps.labels, datasets:[{ data:ps.values, backgroundColor:ps.colours, borderWidth:3, borderColor:'#fff', hoverOffset:5 }] },
+    options:{
+      responsive:false, cutout:'70%',
+      plugins:{ legend:{display:false}, tooltip:{...TT, callbacks:{label:c=>` ${c.label}: ${c.raw}`}} },
+      animation:{ animateScale:true, duration:500 }
+    }
+  });
+  // Donut stats legend
+  const el = document.getElementById('donut-stats');
+  const badges = ['badge-green','badge-amber','badge-red','badge-blue'];
+  el.innerHTML = ps.labels.map((lbl,i) => `
+    <div class="donut-stat">
+      <div class="donut-stat-dot" style="background:${ps.colours[i]}"></div>
+      <div class="donut-stat-info">
+        <div class="donut-stat-label">${lbl}</div>
+        <div class="donut-stat-value">${ps.values[i]} <span>projects</span></div>
+      </div>
+      <span class="badge ${badges[i]}">${Math.round(ps.values[i]/total*100)}%</span>
+    </div>`).join('');
+  lucide.createIcons();
+}
+
+/* ─── Bar ───────────────────────────────── */
+function initBar(d) {
+  if (charts.bar) charts.bar.destroy();
+  const ctx = document.getElementById('bar-chart').getContext('2d');
+  charts.bar = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels: d.budgetActuals.labels,
+      datasets:[
+        { label:'Budget £k', data:d.budgetActuals.budget, backgroundColor:'#FFAA72', borderRadius:4, barPercentage:.55, categoryPercentage:.7 },
+        { label:'Actuals £k', data:d.budgetActuals.actuals, backgroundColor:'#FD5108', borderRadius:4, barPercentage:.55, categoryPercentage:.7 }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:TT },
+      scales:{
+        x:{ grid:{display:false}, border:{color:'#DFE3E6'} },
+        y:{ grid:GRID, border:{display:false}, ticks:{callback:v=>`£${v}k`} }
+      },
+      animation:{duration:500}
+    }
+  });
+}
+
+/* ─── HBar ──────────────────────────────── */
+function initHBar(d) {
+  if (charts.hbar) charts.hbar.destroy();
+  const ctx = document.getElementById('hbar-chart').getContext('2d');
+  const colours = d.resources.util.map(v => v>=90?'#EF4444':v>=80?'#EAB308':'#22C55E');
+  charts.hbar = new Chart(ctx, {
+    type:'bar',
+    data:{ labels:d.resources.labels, datasets:[{ data:d.resources.util, backgroundColor:colours, borderRadius:4, barPercentage:.6 }] },
+    options:{
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{...TT, callbacks:{label:c=>` ${c.raw}% utilised`}} },
+      scales:{
+        x:{ grid:GRID, border:{display:false}, max:100, ticks:{callback:v=>v+'%'} },
+        y:{ grid:{display:false}, border:{color:'#DFE3E6'} }
+      },
+      animation:{duration:500}
+    }
+  });
+}
+
+/* ─── Sparkline ─────────────────────────── */
+function initSpark(d) {
+  if (charts.spark) charts.spark.destroy();
+  const ctx = document.getElementById('spi-sparkline').getContext('2d');
+  charts.spark = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels: d.spiHistory.map((_,i)=>i),
+      datasets:[{ data:d.spiHistory, borderColor:'#FD5108', borderWidth:2, pointRadius:0, tension:.4, fill:{target:'origin', above:'rgba(253,81,8,.08)'} }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{enabled:false} },
+      scales:{ x:{display:false}, y:{display:false} },
+      animation:{duration:500}
+    }
+  });
+}
+
+/* ─── SPI KPI card update ───────────────── */
+function updateSpiCard(d) {
+  document.getElementById('spi-value').innerHTML = `${d.spi.toFixed(2)} <span style="font-size:13px;font-weight:500;color:var(--g500)">SPI</span>`;
+  const delta = document.getElementById('spi-delta');
+  const isUp = parseFloat(d.spiDelta) > 0;
+  delta.className = 'metric-delta ' + (isUp ? 'up' : 'down');
+  delta.innerHTML = `<i data-lucide="${isUp?'trending-up':'trending-down'}"></i> ${d.spiDelta} vs prev`;
+  lucide.createIcons();
+  const pct = Math.round(d.spi * 100);
+  setTimeout(() => { document.getElementById('spi-bar').style.width = pct + '%'; }, 100);
+  const bar = document.getElementById('spi-bar');
+  bar.className = 'progress-fill ' + (d.spi >= 1 ? 'success' : d.spi >= 0.9 ? 'warning' : 'error');
+}
+
+/* ─── Render all ────────────────────────── */
+function refreshAll() {
+  const d = DATA[activePeriod];
+  initDonut(d);
+  initBar(d);
+  initHBar(d);
+  initSpark(d);
+  updateSpiCard(d);
+}
+
+/* ═══════════════════════════════════════════
+   RENDER: RISKS
+═══════════════════════════════════════════ */
+function renderRisks(ragFilter) {
+  const tbody = document.getElementById('risk-tbody');
+  tbody.innerHTML = '';
+  let shown = 0;
+  const impactBadge = { High:'badge-red', Medium:'badge-amber', Low:'badge-grey' };
+  const likelihoodBadge = { High:'badge-red', Medium:'badge-amber', Low:'badge-grey' };
+  RISKS.forEach(r => {
+    const visible = ragFilter === 'all' || r.rag === ragFilter;
+    if (visible) shown++;
+    const tr = document.createElement('tr');
+    tr.className = 'risk-row' + (visible ? '' : ' hidden');
+    tr.dataset.rag = r.rag;
+    tr.innerHTML = `
+      <td><span class="rag-pill ${r.rag}"></span></td>
+      <td style="font-family:monospace;font-size:10px;color:var(--g500)">${r.id}</td>
+      <td class="risk-title">${r.title}</td>
+      <td><span class="badge ${impactBadge[r.impact]}">${r.impact}</span></td>
+      <td><span class="badge ${likelihoodBadge[r.likelihood]}">${r.likelihood}</span></td>
+      <td style="color:var(--g500)">${r.owner}</td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('risk-count-label').textContent = `${shown} risk${shown!==1?'s':''} shown`;
+}
+
+/* ═══════════════════════════════════════════
+   RENDER: MILESTONES
+═══════════════════════════════════════════ */
+function renderMilestones(ragFilter) {
+  const list = document.getElementById('milestone-list');
+  list.innerHTML = '';
+  let shown = 0;
+  const ragMap = { 'on-track':'green', 'at-risk':'amber', 'off-track':'red' };
+  const statusCfg = {
+    'on-track':  { badge:'badge-green', label:'On Track' },
+    'at-risk':   { badge:'badge-amber', label:'At Risk'  },
+    'off-track': { badge:'badge-red',   label:'Off Track' }
+  };
+  MILESTONES.forEach(m => {
+    const mRag = ragMap[m.status];
+    const visible = ragFilter === 'all' || mRag === ragFilter;
+    if (visible) shown++;
+    const d = new Date(m.date);
+    const dateStr = d.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+    const item = document.createElement('div');
+    item.className = 'milestone-item' + (visible ? '' : ' hidden');
+    item.dataset.rag = mRag;
+    item.innerHTML = `
+      <div class="milestone-date">${dateStr}</div>
+      <div><div class="milestone-project">${m.project}</div><div class="milestone-name">${m.name}</div></div>
+      <div><span class="badge ${statusCfg[m.status].badge}">${statusCfg[m.status].label}</span></div>`;
+    list.appendChild(item);
+  });
+  document.getElementById('milestone-count-label').textContent = `${shown} milestone${shown!==1?'s':''} · Next 90 days`;
+}
+
+/* ═══════════════════════════════════════════
+   INTERACTION HANDLERS
+═══════════════════════════════════════════ */
+const viewLabels = {
+  portfolio: 'Strategic Delivery Portfolio',
+  programme: 'Digital Transformation Programme',
+  project:   'Project Alpha — Phase 2'
+};
+function setView(btn) {
+  document.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('breadcrumb-current').textContent = viewLabels[btn.dataset.view];
+}
+function setNav(el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+}
+function setPeriod(btn) {
+  document.querySelectorAll('.filter-btn[data-period]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activePeriod = btn.dataset.period;
+  refreshAll();
+}
+function setRag(btn) {
+  document.querySelectorAll('.filter-btn[data-rag]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeRag = btn.dataset.rag;
+  renderRisks(activeRag);
+  renderMilestones(activeRag);
+}
+
+/* Widget menu toggle */
+function toggleMenu(btn) {
+  const dd = btn.nextElementSibling;
+  document.querySelectorAll('.widget-dropdown.open').forEach(d => { if(d!==dd) d.classList.remove('open'); });
+  dd.classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.widget-menu')) document.querySelectorAll('.widget-dropdown.open').forEach(d=>d.classList.remove('open'));
+  if (!e.target.closest('#examples-btn') && !e.target.closest('#scenario-dropdown')) closeScenarioDropdown();
+});
+
+/* Minimise widget body */
+function minimise(btn) {
+  const body = btn.closest('.widget').querySelector('.widget-body');
+  if (body) body.style.display = body.style.display === 'none' ? '' : 'none';
+  btn.closest('.widget-dropdown').classList.remove('open');
+}
+
+/* Hide / restore widgets */
+const hiddenWidgets = {};
+function hideWidget(btn, id, label) {
+  btn.closest('.widget').style.display = 'none';
+  hiddenWidgets[id] = label;
+  btn.closest('.widget-dropdown').classList.remove('open');
+  syncRestoreBar();
+}
+function syncRestoreBar() {
+  const bar = document.getElementById('restore-bar');
+  const chips = document.getElementById('restore-chips');
+  const ids = Object.keys(hiddenWidgets);
+  if (!ids.length) { bar.classList.remove('visible'); return; }
+  bar.classList.add('visible');
+  chips.innerHTML = ids.map(id => `<button class="restore-chip" onclick="restoreWidget('${id}')">${hiddenWidgets[id]}</button>`).join('');
+}
+function restoreWidget(id) {
+  const w = document.querySelector(`[data-widget-id="${id}"]`);
+  if (w) { w.style.display = ''; setTimeout(refreshAll, 60); }
+  delete hiddenWidgets[id];
+  syncRestoreBar();
+}
+function restoreAll() { Object.keys(hiddenWidgets).forEach(id => restoreWidget(id)); }
+
+/* ─── Scenario dropdown ─────────────────── */
+function toggleScenarioDropdown() {
+  document.getElementById('scenario-dropdown').classList.toggle('open');
+}
+function closeScenarioDropdown() {
+  document.getElementById('scenario-dropdown').classList.remove('open');
+}
+
+/* ─── Scenario banner ───────────────────── */
+function showScenarioBanner(s) {
+  document.getElementById('scenario-banner-name').textContent = s.name;
+  document.getElementById('scenario-banner-desc').textContent = '— ' + s.description;
+  document.getElementById('scenario-banner-badge').textContent = s.badge;
+  document.getElementById('scenario-banner').style.display = 'flex';
+  lucide.createIcons();
+}
+function dismissScenarioBanner() {
+  document.getElementById('scenario-banner').style.display = 'none';
+}
+
+/* ─── Update static KPI card text ─────── */
+function updateKpiCards(s) {
+  const k = s.kpi;
+  // Portfolio Health
+  document.getElementById('health-total').textContent = k.total;
+  document.getElementById('health-badges').innerHTML = `
+    <span class="badge badge-green"><i data-lucide="check-circle"></i> ${k.onTrack} On Track</span>
+    <span class="badge badge-amber"><i data-lucide="alert-triangle"></i> ${k.atRisk} At Risk</span>
+    <span class="badge badge-red"><i data-lucide="x-circle"></i> ${k.offTrack} Off Track</span>`;
+  const ragTotal = k.onTrack + k.atRisk + k.offTrack;
+  document.getElementById('health-rag-bar').innerHTML = `
+    <div class="rag-bar-seg" style="width:${Math.round(k.onTrack/ragTotal*100)}%;background:var(--success)"></div>
+    <div class="rag-bar-seg" style="width:${Math.round(k.atRisk/ragTotal*100)}%;background:var(--warning)"></div>
+    <div class="rag-bar-seg" style="width:${Math.round(k.offTrack/ragTotal*100)}%;background:var(--error)"></div>`;
+  // Budget
+  document.getElementById('budget-pct').textContent = k.budgetPct + '%';
+  const budgetDelta = document.getElementById('budget-delta');
+  budgetDelta.className = 'metric-delta ' + (k.budgetDeltaUp ? 'up' : 'down');
+  budgetDelta.innerHTML = `<i data-lucide="${k.budgetDeltaUp ? 'trending-up' : 'trending-down'}"></i> ${k.budgetDelta}`;
+  document.getElementById('budget-sublabel').textContent = `${k.budgetSpent} of ${k.budgetTotal} total budget consumed`;
+  document.getElementById('budget-spent').textContent = k.budgetSpent;
+  document.getElementById('budget-remaining').textContent = k.budgetRemaining;
+  const forecastEl = document.getElementById('budget-forecast');
+  forecastEl.textContent = k.budgetForecast;
+  forecastEl.style.color = k.budgetPct >= 90 ? 'var(--error)' : k.budgetPct >= 75 ? 'var(--warning)' : 'var(--black)';
+  // Budget bar colour
+  const budgetBar = document.getElementById('budget-bar');
+  budgetBar.className = 'progress-fill ' + (k.budgetPct >= 90 ? 'error' : k.budgetPct >= 75 ? 'warning' : '');
+  lucide.createIcons();
+}
+
+/* ─── Load scenario ─────────────────────── */
+function loadScenario(id) {
+  const s = SCENARIOS[id];
+  // 1. Mutate live data in place (render functions read from these globals)
+  Object.assign(DATA.quarter, s.data.quarter);
+  Object.assign(DATA.month,   s.data.month);
+  Object.assign(DATA.year,    s.data.year);
+  RISKS.splice(0, RISKS.length, ...s.risks);
+  MILESTONES.splice(0, MILESTONES.length, ...s.milestones);
+  // 2. Update static KPI card text + colours
+  updateKpiCards(s);
+  // 3. Reorder widgets (unhide any hidden ones first)
+  const grid = document.getElementById('widget-grid');
+  s.widgetOrder.forEach(wid => {
+    const el = grid.querySelector(`[data-widget-id="${wid}"]`);
+    if (el) { el.style.display = ''; grid.appendChild(el); }
+  });
+  // 4. Refresh all charts and data tables
+  refreshAll();
+  renderRisks(activeRag);
+  renderMilestones(activeRag);
+  // 5. Animate progress bars with scenario-specific values
+  setTimeout(() => {
+    document.getElementById('spi-bar').style.width = Math.round(s.data.quarter.spi * 100) + '%';
+    document.getElementById('budget-bar').style.width = s.kpi.budgetPct + '%';
+  }, 150);
+  // 6. Clear any hidden-widget state from a previous layout
+  Object.keys(hiddenWidgets).forEach(k => delete hiddenWidgets[k]);
+  syncRestoreBar();
+  // 7. Show the scenario banner
+  showScenarioBanner(s);
+  // 8. Persist the new widget order
+  saveLayout();
+  // 9. Close dropdown
+  closeScenarioDropdown();
+}
+
+/* Export stub */
+function exportReport() {
+  const period = activePeriod.charAt(0).toUpperCase() + activePeriod.slice(1);
+  alert(`Export — ${period} report\n\nIn production this would generate a formatted PDF or XLSX download with all current dashboard data.`);
+}
+
+/* Mobile hamburger */
+const hamburger = document.getElementById('hamburger-btn');
+const sidebar   = document.getElementById('sidebar');
+const overlay   = document.getElementById('sidebar-overlay');
+hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+overlay.addEventListener('click',   () => sidebar.classList.remove('open'));
+
+/* ═══════════════════════════════════════════
+   DRAG & DROP (SortableJS)
+═══════════════════════════════════════════ */
+const LAYOUT_KEY = 'pmo-layout-v1';
+
+function saveLayout() {
+  const order = [...document.querySelectorAll('#widget-grid .widget')].map(el => el.dataset.widgetId);
+  localStorage.setItem(LAYOUT_KEY, JSON.stringify(order));
+}
+
+function loadLayout() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(LAYOUT_KEY) || '[]');
+    if (!saved.length) return;
+    const grid = document.getElementById('widget-grid');
+    saved.forEach(id => {
+      const el = grid.querySelector(`[data-widget-id="${id}"]`);
+      if (el) grid.appendChild(el);
+    });
+  } catch(e) { /* ignore corrupt storage */ }
+}
+
+document.getElementById('reset-layout-btn').addEventListener('click', () => {
+  localStorage.removeItem(LAYOUT_KEY);
+  location.reload();
+});
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  lucide.createIcons();
+  loadLayout();
+
+  // Build scenario dropdown cards from SCENARIOS object
+  document.getElementById('scenario-cards').innerHTML =
+    Object.entries(SCENARIOS).map(([id, s]) => `
+      <div class="scenario-card" onclick="loadScenario('${id}')">
+        <div class="scenario-card-badge">${s.badge}</div>
+        <div class="scenario-card-name">${s.name}</div>
+        <div class="scenario-card-desc">${s.description}</div>
+      </div>`).join('');
+
+  renderRisks('all');
+  renderMilestones('all');
+  refreshAll();
+
+  // Animate progress bars after a short delay
+  setTimeout(() => {
+    document.getElementById('spi-bar').style.width = Math.round(DATA.quarter.spi * 100) + '%';
+    document.getElementById('budget-bar').style.width = '67%';
+  }, 150);
+
+  // Initialise SortableJS
+  Sortable.create(document.getElementById('widget-grid'), {
+    animation: 160,
+    handle: '.drag-handle',
+    ghostClass: 'widget--ghost',
+    chosenClass: 'widget--chosen',
+    dragClass: 'widget--drag',
+    onEnd: () => {
+      saveLayout();
+      // Allow DOM to settle then refresh Chart.js canvas sizing
+      setTimeout(refreshAll, 80);
+    }
+  });
+});
+</script>
+</body>
+</html>
