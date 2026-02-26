@@ -8586,6 +8586,12 @@ function getVal(dropId, freeId) {
   return free.style.display === "block" ? free.value : drop.value;
 }
 
+function showError(msg) {
+  var de = document.getElementById("dataError");
+  if (de) de.textContent = msg;
+  if (typeof showToast === "function") showToast(msg, "error", 6000);
+}
+
 // ── LOAD ALL DATA (standalone: uses inlined data) ──
 var _dataLoadError = false;
 function loadAllData() {
@@ -11796,6 +11802,28 @@ function showToast(msg, type, duration) {
   setTimeout(function () {
     if (t.parentElement) t.remove();
   }, duration);
+}
+
+// ── Section scoring helpers for nav pills (0=empty, 1=partial, 2=complete) ──
+function scoreSectionS1() {
+  var fields = ["clientName","engagementName","engagementLead","deliveryMethodology",
+    "startDate","endDate","feeStructure","totalBudget","engagementDescription"];
+  var filled = fields.filter(function(id) {
+    var el = document.getElementById(id);
+    return el && (el.value || "").trim();
+  }).length;
+  return filled >= 4 ? 2 : filled > 0 ? 1 : 0;
+}
+function scoreSectionS2() {
+  var ind = document.getElementById("industryDrop");
+  var sec = document.getElementById("sectorDrop");
+  return sec && sec.value ? 2 : ind && ind.value ? 1 : 0;
+}
+function scoreSectionGrid(gridId) {
+  var grid = document.getElementById(gridId);
+  if (!grid) return 0;
+  var sel = grid.querySelectorAll(".check-item.selected, .fb-chip.selected, .fb-bb-item.selected, .fb-check-item.checked, .fb-pill.selected").length;
+  return sel >= 2 ? 2 : sel > 0 ? 1 : 0;
 }
 
 // ── Nav pill colour update ──
