@@ -3,32 +3,32 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Offline Gantt Builder (Standalone)</title>
+  <title>PwC Project Planner</title>
   <style>
     :root{
-      --bg: #0b1220;
-      --panel: #0f172a;
-      --panel-2: #111c33;
-      --text: #e5e7eb;
-      --muted: #94a3b8;
-      --border: #1f2a44;
-      --accent: #60a5fa;
+      --bg: #ffffff;
+      --panel: #f8f8f9;
+      --panel-2: #f0f1f3;
+      --text: #1a1a1a;
+      --muted: #6b7280;
+      --border: #DFE3E6;
+      --accent: #FD5108;
 
-      --bar-task: #3b82f6;
-      --bar-summary: #64748b;
-      --bar-milestone: #f97316;
+      --bar-task: #FD5108;
+      --bar-summary: #6b7280;
+      --bar-milestone: #E84000;
 
       --danger: #ef4444;
       --ok: #22c55e;
 
       --day-width: 24px;
-      --row-height: 34px;
-      --left-width: 380px;
+      --row-height: 36px;
+      --left-width: 420px;
       --header-height: 56px;
-      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --font: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
 
-    html, body { height: 100%; background: var(--bg); color: var(--text); margin: 0; font-family: var(--font); }
+    html, body { height: 100%; background: #ffffff; color: var(--text); margin: 0; font-family: var(--font); }
     * { box-sizing: border-box; }
 
     .app {
@@ -46,7 +46,7 @@
       gap: 8px;
       background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 4px;
       padding: 10px;
     }
     .toolbar .group { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
@@ -59,23 +59,27 @@
 
     button {
       border: 1px solid var(--border);
-      background: #0b1326;
+      background: #ffffff;
       color: var(--text);
-      border-radius: 8px;
-      padding: 8px 10px;
+      border-radius: 2px;
+      padding: 8px 14px;
       cursor: pointer;
+      font-weight: 600;
+      transition: all 0.15s ease;
     }
-    button:hover { border-color: #2a3a62; }
-    button.primary { background: #0c2147; border-color: #1a3b7a; }
-    button.danger { background: #2a0c12; border-color: #6b1a2a; }
+    button:hover { border-color: #B5BCC4; background: #f0f1f3; }
+    button.primary { background: #FFAA72; color: #000; border-color: #FFAA72; }
+    button.primary:hover { background: #f09a5e; border-color: #f09a5e; }
+    button.danger { background: transparent; color: var(--danger); border-color: var(--danger); }
+    button.danger:hover { background: #FEE2E2; }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .pill {
       display:inline-flex; align-items:center; gap:6px;
       padding: 4px 8px; border-radius: 999px;
       border: 1px solid var(--border);
-      background: #0b1326;
-      color: var(--muted);
+      background: #f0f1f3;
+      color: #4b5563;
       font-size: 12px;
       white-space: nowrap;
     }
@@ -85,27 +89,41 @@
       display:flex; align-items:center; gap:8px;
       padding: 6px 8px;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      background: #0b1326;
+      border-radius: 4px;
+      background: #f0f1f3;
       color: var(--muted);
     }
-    .range input[type="range"] { width: 170px; }
+    .range input[type="range"] { width: 170px; accent-color: var(--accent); }
 
     .layout {
       flex: 1;
       min-height: 0;
       display: flex;
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 4px;
       overflow: hidden;
       background: var(--panel);
     }
 
+    .brand { display:flex; align-items:center; gap:12px; }
+    .brand-title { font-size:16px; font-weight:700; color:#1a1a1a; }
+    .brand-divider { width:1px; height:28px; background:#DFE3E6; margin:0 4px; }
+
+    .scenario-bar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 14px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .scenario-bar label { font-weight: 600; color: var(--text); white-space: nowrap; }
+    .scenario-bar select { flex: 1; max-width: 360px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 4px; background: #fff; font-family: var(--font); font-size: 13px; }
+
     /* Left */
     .left {
       width: var(--left-width);
-      min-width: 260px;
-      max-width: 620px;
+      min-width: 280px;
+      max-width: 700px;
       display: flex;
       flex-direction: column;
       border-right: 1px solid var(--border);
@@ -136,17 +154,17 @@
       align-items:center;
       gap: 8px;
       padding: 4px 10px;
-      border-bottom: 1px solid rgba(31,42,68,0.6);
+      border-bottom: 1px solid rgba(0,0,0,0.08);
     }
-    .task-row:hover { background: rgba(255,255,255,0.03); }
-    .task-row.selected { outline: 2px solid rgba(96,165,250,0.35); outline-offset: -2px; background: rgba(96,165,250,0.08); }
+    .task-row:hover { background: rgba(0,0,0,0.02); }
+    .task-row.selected { outline: 2px solid rgba(253,81,8,0.25); outline-offset: -2px; background: rgba(253,81,8,0.06); }
 
     .twisty {
       width: 22px; height: 22px;
       display:inline-flex; align-items:center; justify-content:center;
-      border-radius: 6px;
+      border-radius: 4px;
       border: 1px solid var(--border);
-      background: #0b1326;
+      background: #ffffff;
       color: var(--muted);
       cursor: pointer;
       user-select: none;
@@ -164,6 +182,8 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      min-width: 60px;
+      cursor: default;
     }
     .badge {
       font-size: 11px;
@@ -171,11 +191,12 @@
       border-radius: 999px;
       border: 1px solid var(--border);
       color: var(--muted);
-      background: #0b1326;
+      background: #f0f1f3;
       white-space: nowrap;
+      flex-shrink: 0;
     }
-    .badge.summary { color: #cbd5e1; border-color: #2a3a62; }
-    .badge.milestone { color: #fdba74; border-color: #6b3a1a; }
+    .badge.summary { color: #374151; border-color: #CBD1D6; }
+    .badge.milestone { color: #E84000; border-color: #FFAA72; }
 
     .dates {
       display:flex;
@@ -186,10 +207,10 @@
       white-space: nowrap;
     }
     .dates input[type="date"]{
-      background: #0b1326;
+      background: #ffffff;
       border: 1px solid var(--border);
       color: var(--text);
-      border-radius: 8px;
+      border-radius: 4px;
       padding: 5px 6px;
       width: 138px;
     }
@@ -202,16 +223,16 @@
     .icon-btn{
       width: 30px; height: 30px;
       display:inline-flex; align-items:center; justify-content:center;
-      border-radius: 8px;
+      border-radius: 4px;
       padding: 0;
       border: 1px solid var(--border);
-      background: #0b1326;
+      background: #ffffff;
       color: var(--text);
       cursor: pointer;
       user-select: none;
     }
-    .icon-btn:hover { border-color: #2a3a62; }
-    .icon-btn.danger { border-color: #6b1a2a; background: #2a0c12; }
+    .icon-btn:hover { border-color: #B5BCC4; background: #f0f1f3; }
+    .icon-btn.danger { border-color: var(--danger); background: #FEE2E2; }
 
     /* Right */
     .right {
@@ -247,13 +268,13 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      border-right: 1px solid rgba(31,42,68,0.6);
+      border-right: 1px solid rgba(0,0,0,0.08);
       color: var(--muted);
       font-size: 12px;
       padding: 0 6px;
       user-select: none;
     }
-    .month-cell { font-weight: 650; color: #cbd5e1; }
+    .month-cell { font-weight: 650; color: #1a1a1a; }
     .day-cell { font-variant-numeric: tabular-nums; }
 
     .right-body {
@@ -268,23 +289,23 @@
       width: var(--timeline-width);
       height: var(--timeline-height);
       background:
-        linear-gradient(to right, rgba(148,163,184,0.12) 1px, transparent 1px),
-        linear-gradient(to right, rgba(148,163,184,0.22) 1px, transparent 1px);
+        linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px),
+        linear-gradient(to right, rgba(0,0,0,0.12) 1px, transparent 1px);
       background-size: var(--day-width) 100%, calc(var(--day-width) * 7) 100%;
       background-position: 0 0, 0 0;
     }
     .timeline .row {
       height: var(--row-height);
-      border-bottom: 1px solid rgba(31,42,68,0.6);
+      border-bottom: 1px solid rgba(0,0,0,0.08);
       position: relative;
     }
     .row .bar {
       position: absolute;
-      top: 7px;
+      top: 8px;
       height: 20px;
-      border-radius: 6px;
+      border-radius: 4px;
       background: var(--bar-task);
-      border: 1px solid rgba(255,255,255,0.18);
+      border: 1px solid rgba(0,0,0,0.12);
       cursor: grab;
       display:flex;
       align-items:center;
@@ -295,17 +316,18 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       font-size: 12px;
-      color: rgba(255,255,255,0.92);
+      color: #ffffff;
     }
     .row .bar.summary {
       background: var(--bar-summary);
+      color: #ffffff;
       cursor: default;
       opacity: 0.9;
     }
     .row .bar.milestone {
       width: 0;
       height: 0;
-      top: 7px;
+      top: 8px;
       background: transparent;
       border: none;
       padding: 0;
@@ -319,7 +341,7 @@
       transform: rotate(45deg);
       background: var(--bar-milestone);
       border-radius: 2px;
-      border: 1px solid rgba(255,255,255,0.24);
+      border: 1px solid rgba(0,0,0,0.15);
     }
 
     .handle {
@@ -341,7 +363,7 @@
       pointer-events: none;
     }
     .deps path {
-      stroke: rgba(148,163,184,0.75);
+      stroke: rgba(0,0,0,0.35);
       stroke-width: 1.5;
       fill: none;
     }
@@ -360,9 +382,9 @@
     .modal-backdrop.open { display: flex; }
     .modal {
       width: min(720px, 100%);
-      background: var(--panel);
+      background: #ffffff;
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 4px;
       overflow: hidden;
       box-shadow: 0 15px 60px rgba(0,0,0,0.55);
     }
@@ -381,10 +403,10 @@
     .field { display:grid; gap: 6px; }
     .field label { font-size: 12px; color: var(--muted); }
     .field input[type="text"], .field select, .field input[type="date"], .field textarea {
-      background: #0b1326;
+      background: #ffffff;
       border: 1px solid var(--border);
       color: var(--text);
-      border-radius: 10px;
+      border-radius: 4px;
       padding: 9px 10px;
       width: 100%;
     }
@@ -418,6 +440,7 @@
       body { background: #ffffff !important; color: #000 !important; }
       .app { padding: 0; gap: 0; }
       .toolbar { display: none !important; }
+      .scenario-bar { display: none !important; }
       .layout { border: none; border-radius: 0; }
       .left { width: 360px; }
       .left, .right { background: #fff !important; color: #000 !important; }
@@ -428,17 +451,39 @@
       .row .bar { border: 1px solid rgba(0,0,0,0.2) !important; }
     }
 
-    /* Mobile */
+    /* Tablet */
+    @media (max-width: 1200px){
+      :root { --left-width: 380px; }
+      .row-actions { gap: 4px; }
+      .icon-btn { width: 26px; height: 26px; }
+    }
+    /* Small tablet */
     @media (max-width: 960px){
       :root { --left-width: 320px; }
-      .dates input[type="date"]{ width: 126px; }
+      .dates input[type="date"]{ width: 120px; }
       .grid2 { grid-template-columns: 1fr; }
+    }
+    /* Mobile */
+    @media (max-width: 700px){
+      :root { --left-width: 240px; }
+      .dates { display: none; }
+      .badge { display: none; }
+      .brand-title { display: none; }
+      .toolbar .group { flex-wrap: wrap; }
     }
   </style>
 </head>
 <body>
   <div class="app">
     <div class="toolbar">
+      <div class="brand">
+        <svg width="68" height="32" viewBox="30 143 440 212" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M355.041 233.765C339.717 236.206 331.925 247.425 331.925 267.214C331.925 287.003 342.331 300.403 358.334 300.403C365.762 300.403 372.508 297.962 386.732 291.054V307.155C369.682 314.894 359.642 317.335 345.94 317.335C331.088 317.335 320.629 313.44 312.052 304.766C303.319 296.092 298.926 284.561 298.926 271.784C298.926 243.322 320.158 224.104 351.118 224.104C371.67 224.104 385.842 233.453 385.842 247.165C385.842 255.995 379.252 262.072 369.473 262.072C364.454 262.072 360.323 260.773 355.041 257.709V233.869V233.765ZM279.472 271.732C293.173 254.54 298.037 247.632 298.037 239.166C298.037 230.7 291.343 224 282.348 224C276.805 224 271.837 226.597 269.431 229.298V264.305L246.944 294.066V226.234H225.555L190.045 284.717V226.234H177.756L145.489 234.024V242.231L163.061 243.997V315.725H185.809L219.907 260.098V315.725H244.8L279.42 271.732H279.472ZM77.6086 244.464C82.8381 243.841 85.4532 243.529 87.9111 243.529C102.763 243.529 110.764 253.294 110.764 271.732C110.764 293.495 100.933 304.818 82.6291 304.818C81.1125 304.818 80.0143 304.818 77.6086 304.714V244.464ZM77.6086 314.894C83.518 315.569 89.2708 315.777 92.7223 315.777C123.211 315.777 142.508 296.404 142.508 267.629C142.508 242.75 128.022 224.727 108.359 224.727C99.8346 224.727 94.1867 226.441 77.6086 236.258V224.26H68.4046L33 234.959V243.581H47.6429V343.928L34.4643 347.2V355.511H92.304V347.2L77.5564 343.928V314.894H77.6086Z" fill="currentColor"/>
+          <path d="M338.568 199.173H242.029L258.45 172.112H354.99L338.568 199.173ZM468 145H371.463L355.042 172.06H451.579L468 145Z" fill="#FD5108"/>
+        </svg>
+        <span class="brand-title">Project Planner</span>
+      </div>
+      <div class="brand-divider"></div>
       <div class="group">
         <button class="primary" id="btnAdd">Add</button>
         <button id="btnSaveLocal">Save</button>
@@ -462,18 +507,34 @@
         </div>
         <div class="range" title="Left panel width">
           <span>Left</span>
-          <input id="leftWidth" type="range" min="260" max="620" step="10" value="380">
-          <span class="pill"><strong id="leftWidthVal">380</strong> px</span>
+          <input id="leftWidth" type="range" min="280" max="700" step="10" value="420">
+          <span class="pill"><strong id="leftWidthVal">420</strong> px</span>
         </div>
         <button class="danger" id="btnClear">Clear</button>
       </div>
     </div>
 
+    <div class="scenario-bar">
+      <label>Load Scenario:</label>
+      <select id="scenarioSelect">
+        <option value="">— Select a project template —</option>
+        <option value="tech-transformation">Technology Transformation</option>
+        <option value="operating-model">Operating Model Redesign</option>
+        <option value="ma-integration">M&amp;A Integration</option>
+        <option value="finance-transformation">Finance Transformation</option>
+        <option value="cyber-assessment">Cybersecurity Assessment</option>
+        <option value="people-change">People &amp; Organisation Change</option>
+        <option value="data-analytics">Data &amp; Analytics Strategy</option>
+        <option value="regulatory-compliance">Regulatory Compliance Programme</option>
+      </select>
+      <button id="btnLoadScenario" class="primary">Load</button>
+    </div>
+
     <div class="layout">
       <div class="left">
         <div class="left-header">
-          <div class="title">Work Breakdown</div>
-          <div class="pill">Drag bars to move; drag edges to resize</div>
+          <div class="title">Project Plan</div>
+          <div class="pill">Drag bars to adjust dates · Double-click to edit names</div>
         </div>
         <div class="left-body" id="leftBody"></div>
       </div>
@@ -552,13 +613,15 @@
           </label>
         </div>
 
-        <div class="help">
-          Notes:
+        <div class=”help”>
+          Workshop Tips:
           <ul>
-            <li>Summary tasks (Phase/Activity) can optionally roll-up their date range from children.</li>
-            <li>Dependencies are visual only (no auto-scheduling enforcement in this template).</li>
-            <li>“Export Excel” produces an Excel-compatible <code>.xls</code> file (HTML table). For true <code>.xlsx</code> export you’d embed a library like SheetJS.</li>
-            <li>“Print / PDF” uses the browser’s built-in print dialog. Choose “Save as PDF”.</li>
+            <li>Use this planner in client workshops to collaboratively build and sequence project plans.</li>
+            <li>Load a scenario template as a starting point, then customise phases, activities and tasks.</li>
+            <li>Summary tasks (Phase/Activity) can auto-calculate their date range from child items.</li>
+            <li>Double-click any task name (in the left panel or on timeline bars) to edit directly.</li>
+            <li>Dependencies show visual links between tasks (no auto-scheduling enforcement).</li>
+            <li>Save frequently — Ctrl/Cmd+S saves to browser storage.</li>
           </ul>
         </div>
       </div>
@@ -620,7 +683,7 @@
     }
 
     // ======= State =======
-    const STORAGE_KEY = 'offline_gantt_builder_v1';
+    const STORAGE_KEY = 'pwc_project_planner_v1';
 
     const state = {
       tasks: [],
@@ -630,9 +693,9 @@
       visible: [],  // visible task ids in render order
       config: {
         dayWidth: 24,
-        rowHeight: 34,
+        rowHeight: 36,
         headerHeight: 56,
-        leftWidth: 380,
+        leftWidth: 420,
         paddingDays: 7
       }
     };
@@ -972,6 +1035,29 @@
       const label = document.createElement('div');
       label.className = 'label';
       label.textContent = task.name;
+      label.style.cursor = 'text';
+      label.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = task.name;
+        input.style.cssText = 'width:100%;padding:2px 4px;font:inherit;border:1px solid var(--accent);border-radius:4px;outline:none;background:#fff;color:#1a1a1a;';
+        label.replaceWith(input);
+        input.focus();
+        input.select();
+        const save = () => {
+          const val = input.value.trim();
+          if(val) task.name = val;
+          render();
+        };
+        input.addEventListener('blur', save);
+        input.addEventListener('keydown', (ev) => {
+          if(ev.key === 'Enter'){ ev.preventDefault(); save(); }
+          if(ev.key === 'Escape') render();
+          ev.stopPropagation();
+        });
+        input.addEventListener('pointerdown', (ev) => ev.stopPropagation());
+      });
 
       const [badgeText, badgeClass] = taskBadge(task);
       const badge = document.createElement('span');
@@ -1099,7 +1185,12 @@
         const width = xEndPx(task) - left;
         bar.style.left = left + 'px';
         bar.style.width = Math.max(6, width) + 'px';
-        bar.textContent = task.name;
+
+        const barLabel = document.createElement('span');
+        barLabel.className = 'bar-label';
+        barLabel.textContent = task.name;
+        barLabel.style.cssText = 'pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;';
+        bar.appendChild(barLabel);
       }
 
       // Handles (not for milestones or locked/summary rollup)
@@ -1114,6 +1205,36 @@
       }
       if(draggable){
         bar.addEventListener('pointerdown', onBarPointerDown);
+      }
+
+      // Double-click to inline-edit bar text
+      if(!isMs){
+        bar.addEventListener('dblclick', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if(bar.querySelector('.bar-edit-input')) return;
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.className = 'bar-edit-input';
+          input.value = task.name;
+          input.style.cssText = 'background:rgba(255,255,255,0.95);color:#000;border:1px solid var(--accent);border-radius:4px;padding:0 4px;font-size:12px;width:100%;height:100%;position:absolute;top:0;left:0;z-index:5;outline:none;';
+          bar.style.position = 'absolute';
+          bar.appendChild(input);
+          input.focus();
+          input.select();
+          const save = () => {
+            const val = input.value.trim();
+            if(val) task.name = val;
+            render();
+          };
+          input.addEventListener('blur', save);
+          input.addEventListener('keydown', (ev) => {
+            if(ev.key === 'Enter'){ ev.preventDefault(); save(); }
+            if(ev.key === 'Escape') render();
+            ev.stopPropagation();
+          });
+          input.addEventListener('pointerdown', (ev) => ev.stopPropagation());
+        });
       }
 
       row.appendChild(bar);
@@ -1302,7 +1423,7 @@
       marker.setAttribute('orient','auto');
       const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
       poly.setAttribute('points','0,0 8,4 0,8');
-      poly.setAttribute('fill','rgba(148,163,184,0.85)');
+      poly.setAttribute('fill','rgba(0,0,0,0.35)');
       marker.appendChild(poly);
       defs.appendChild(marker);
       depsSvg.appendChild(defs);
@@ -1593,7 +1714,7 @@
         tasks: deepCopy(state.tasks)
       };
       const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
-      downloadBlob('gantt.json', blob);
+      downloadBlob('pwc-project-plan.json', blob);
     }
 
     function importJsonFile(file){
@@ -1687,7 +1808,7 @@
       html += '</table></body></html>';
 
       const blob = new Blob([html], {type:'application/vnd.ms-excel'});
-      downloadBlob('gantt.xls', blob);
+      downloadBlob('pwc-project-plan.xls', blob);
     }
 
     // ======= Export SVG / PNG =======
@@ -1745,23 +1866,24 @@
       parts.push(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`);
       parts.push(`<defs>
         <style>
-          .bg{ fill:#0b1220; }
-          .panel{ fill:#0f172a; }
-          .left{ fill:#111c33; }
-          .grid{ stroke: rgba(148,163,184,0.25); stroke-width:1; }
-          .grid2{ stroke: rgba(148,163,184,0.45); stroke-width:1; }
-          .hline{ stroke: rgba(148,163,184,0.18); stroke-width:1; }
-          .text{ fill:#e5e7eb; font-family: ${state.config.fontFamily ?? 'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial'}; font-size: 12px; }
-          .muted{ fill:#94a3b8; font-size: 11px; }
-          .month{ fill:#cbd5e1; font-weight: 700; font-size: 12px; }
-          .barTask{ fill: ${getComputedStyle(document.documentElement).getPropertyValue('--bar-task').trim() || '#3b82f6'}; }
-          .barSum{ fill: ${getComputedStyle(document.documentElement).getPropertyValue('--bar-summary').trim() || '#64748b'}; }
-          .barMs{ fill: ${getComputedStyle(document.documentElement).getPropertyValue('--bar-milestone').trim() || '#f97316'}; }
-          .barStroke{ stroke: rgba(255,255,255,0.22); stroke-width: 1; }
-          .dep{ stroke: rgba(148,163,184,0.85); stroke-width: 1.5; fill: none; }
+          .bg{ fill:#ffffff; }
+          .panel{ fill:#f8f8f9; }
+          .left{ fill:#f0f1f3; }
+          .grid{ stroke: rgba(0,0,0,0.06); stroke-width:1; }
+          .grid2{ stroke: rgba(0,0,0,0.12); stroke-width:1; }
+          .hline{ stroke: rgba(0,0,0,0.08); stroke-width:1; }
+          .text{ fill:#1a1a1a; font-family: ${state.config.fontFamily ?? 'system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial'}; font-size: 12px; }
+          .muted{ fill:#6b7280; font-size: 11px; }
+          .month{ fill:#1a1a1a; font-weight: 700; font-size: 12px; }
+          .barTask{ fill: ${getComputedStyle(document.documentElement).getPropertyValue('--bar-task').trim() || '#FD5108'}; }
+          .barSum{ fill: ${getComputedStyle(document.documentElement).getPropertyValue('--bar-summary').trim() || '#6b7280'}; }
+          .barMs{ fill: ${getComputedStyle(document.documentElement).getPropertyValue('--bar-milestone').trim() || '#E84000'}; }
+          .barStroke{ stroke: rgba(0,0,0,0.15); stroke-width: 1; }
+          .barLabel{ fill: #ffffff; font-size: 12px; }
+          .dep{ stroke: rgba(0,0,0,0.35); stroke-width: 1.5; fill: none; }
         </style>
         <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-          <polygon points="0,0 8,4 0,8" fill="rgba(148,163,184,0.85)"/>
+          <polygon points="0,0 8,4 0,8" fill="rgba(0,0,0,0.35)"/>
         </marker>
       </defs>`);
 
@@ -1861,10 +1983,10 @@
           const h = 20;
           const w = Math.max(6, c.xEnd - c.xStart);
           const cls = isSummaryType(t.type) ? 'barSum' : 'barTask';
-          parts.push(`<rect class="${cls} barStroke" x="${c.xStart}" y="${y}" width="${w}" height="${h}" rx="6" ry="6"/>`);
+          parts.push(`<rect class="${cls} barStroke" x="${c.xStart}" y="${y}" width="${w}" height="${h}" rx="4" ry="4"/>`);
           // label (clip if too narrow)
           if(w >= 48){
-            parts.push(`<text class="text" x="${c.xStart + 8}" y="${y + 14}">${escapeXml(t.name)}</text>`);
+            parts.push(`<text class="barLabel" x="${c.xStart + 8}" y="${y + 14}">${escapeXml(t.name)}</text>`);
           }
         }
       }
@@ -1892,7 +2014,7 @@
     function exportSvg(){
       const svg = buildExportSvgString();
       const blob = new Blob([svg], {type:'image/svg+xml;charset=utf-8'});
-      downloadBlob('gantt.svg', blob);
+      downloadBlob('pwc-project-plan.svg', blob);
     }
 
     function exportPng(){
@@ -1907,11 +2029,11 @@
           canvas.height = img.height;
           const ctx = canvas.getContext('2d');
           // white background for PNG
-          ctx.fillStyle = '#0b1220';
+          ctx.fillStyle = '#ffffff';
           ctx.fillRect(0,0,canvas.width, canvas.height);
           ctx.drawImage(img, 0, 0);
           canvas.toBlob((pngBlob) => {
-            if(pngBlob) downloadBlob('gantt.png', pngBlob);
+            if(pngBlob) downloadBlob('pwc-project-plan.png', pngBlob);
             URL.revokeObjectURL(url);
           }, 'image/png');
         }catch(err){
@@ -1960,6 +2082,335 @@
       render();
     });
 
+    // ======= Scenario Templates =======
+    const SCENARIOS = {
+      'tech-transformation': function(){
+        const d = todayIso();
+        const t = (id,name,type,s,e,pid,deps,ro) => ({id,name,type,start:addDays(d,s),end:addDays(d,e),parentId:pid,dependencies:deps,rollup:!!ro,locked:false,collapsed:false});
+        return [
+          t('TT1','Phase 1 — Discovery & Assessment','phase',0,20,null,[],1),
+          t('TT1A','Stakeholder Engagement','activity',0,9,'TT1',[],1),
+          t('TT1A1','Identify key stakeholders','task',0,2,'TT1A',[]),
+          t('TT1A2','Conduct stakeholder interviews','task',3,7,'TT1A',['TT1A1']),
+          t('TT1A3','Document requirements & pain points','task',8,9,'TT1A',['TT1A2']),
+          t('TT1B','Current State Assessment','activity',5,18,'TT1',[],1),
+          t('TT1B1','Technology landscape mapping','task',5,9,'TT1B',[]),
+          t('TT1B2','Gap analysis & capability assessment','task',10,15,'TT1B',['TT1B1']),
+          t('TT1B3','Findings report','task',16,18,'TT1B',['TT1B2']),
+          t('TT1M','Discovery complete','milestone',20,20,'TT1',['TT1A3','TT1B3']),
+
+          t('TT2','Phase 2 — Solution Design','phase',21,48,null,['TT1M'],1),
+          t('TT2A','Architecture & Design','activity',21,38,'TT2',[],1),
+          t('TT2A1','Solution architecture design','task',21,28,'TT2A',[]),
+          t('TT2A2','Technical specification','task',29,35,'TT2A',['TT2A1']),
+          t('TT2A3','Design review & sign-off','task',36,38,'TT2A',['TT2A2']),
+          t('TT2B','Roadmap Planning','activity',35,46,'TT2',[],1),
+          t('TT2B1','Implementation roadmap','task',35,40,'TT2B',[]),
+          t('TT2B2','Resource & cost planning','task',41,46,'TT2B',['TT2B1']),
+          t('TT2M','Design complete','milestone',48,48,'TT2',['TT2A3','TT2B2']),
+
+          t('TT3','Phase 3 — Build & Configure','phase',49,104,null,['TT2M'],1),
+          t('TT3A','Core Build','activity',49,83,'TT3',[],1),
+          t('TT3A1','Environment setup & foundation','task',49,58,'TT3A',[]),
+          t('TT3A2','Core feature development','task',59,76,'TT3A',['TT3A1']),
+          t('TT3A3','Integration development','task',77,83,'TT3A',['TT3A2']),
+          t('TT3B','Configuration & Data','activity',77,102,'TT3',[],1),
+          t('TT3B1','System configuration','task',77,90,'TT3B',[]),
+          t('TT3B2','Data migration preparation','task',91,102,'TT3B',['TT3B1']),
+          t('TT3M','Build complete','milestone',104,104,'TT3',['TT3A3','TT3B2']),
+
+          t('TT4','Phase 4 — Testing & QA','phase',105,132,null,['TT3M'],1),
+          t('TT4A1','System integration testing','task',105,115,'TT4',[]),
+          t('TT4A2','User acceptance testing','task',116,126,'TT4',['TT4A1']),
+          t('TT4A3','Performance & security testing','task',120,130,'TT4',[]),
+          t('TT4M','Testing sign-off','milestone',132,132,'TT4',['TT4A2','TT4A3']),
+
+          t('TT5','Phase 5 — Deployment & Go-Live','phase',133,153,null,['TT4M'],1),
+          t('TT5A1','Deployment planning & rehearsal','task',133,140,'TT5',[]),
+          t('TT5A2','Go-live execution','task',141,148,'TT5',['TT5A1']),
+          t('TT5A3','Post go-live validation','task',149,153,'TT5',['TT5A2']),
+          t('TT5M','Go-live complete','milestone',153,153,'TT5',['TT5A3']),
+
+          t('TT6','Phase 6 — Hypercare & Transition','phase',154,182,null,['TT5M'],1),
+          t('TT6A1','Post go-live support','task',154,168,'TT6',[]),
+          t('TT6A2','Knowledge transfer & documentation','task',162,175,'TT6',[]),
+          t('TT6A3','Transition to BAU','task',176,182,'TT6',['TT6A1','TT6A2']),
+          t('TT6M','Project closure','milestone',182,182,'TT6',['TT6A3']),
+        ];
+      },
+
+      'operating-model': function(){
+        const d = todayIso();
+        const t = (id,name,type,s,e,pid,deps,ro) => ({id,name,type,start:addDays(d,s),end:addDays(d,e),parentId:pid,dependencies:deps,rollup:!!ro,locked:false,collapsed:false});
+        return [
+          t('OM1','Phase 1 — Diagnostic & Baselining','phase',0,27,null,[],1),
+          t('OM1A','Organisational Assessment','activity',0,13,'OM1',[],1),
+          t('OM1A1','Stakeholder interviews & surveys','task',0,6,'OM1A',[]),
+          t('OM1A2','Current operating model documentation','task',7,13,'OM1A',['OM1A1']),
+          t('OM1B','Process & Capability Mapping','activity',10,25,'OM1',[],1),
+          t('OM1B1','Process landscape mapping','task',10,17,'OM1B',[]),
+          t('OM1B2','Capability maturity assessment','task',18,25,'OM1B',['OM1B1']),
+          t('OM1M','Diagnostic complete','milestone',27,27,'OM1',['OM1A2','OM1B2']),
+
+          t('OM2','Phase 2 — Target Operating Model Design','phase',28,69,null,['OM1M'],1),
+          t('OM2A','Design Development','activity',28,55,'OM2',[],1),
+          t('OM2A1','Target operating model design','task',28,42,'OM2A',[]),
+          t('OM2A2','Process redesign & optimisation','task',43,52,'OM2A',['OM2A1']),
+          t('OM2A3','Governance framework design','task',48,55,'OM2A',[]),
+          t('OM2B','Validation','activity',56,67,'OM2',[],1),
+          t('OM2B1','Stakeholder review workshops','task',56,62,'OM2B',['OM2A2','OM2A3']),
+          t('OM2B2','Business case finalisation','task',63,67,'OM2B',['OM2B1']),
+          t('OM2M','Design approved','milestone',69,69,'OM2',['OM2B2']),
+
+          t('OM3','Phase 3 — Implementation','phase',70,111,null,['OM2M'],1),
+          t('OM3A1','Organisational restructuring','task',70,84,'OM3',[]),
+          t('OM3A2','Process implementation','task',78,97,'OM3',[]),
+          t('OM3A3','Technology enablement','task',85,104,'OM3',[]),
+          t('OM3A4','Change management & communications','task',70,111,'OM3',[]),
+          t('OM3M','Implementation complete','milestone',111,111,'OM3',['OM3A1','OM3A2','OM3A3']),
+
+          t('OM4','Phase 4 — Embed & Benefits Realisation','phase',112,139,null,['OM3M'],1),
+          t('OM4A1','Adoption monitoring & coaching','task',112,125,'OM4',[]),
+          t('OM4A2','Performance measurement','task',119,132,'OM4',[]),
+          t('OM4A3','Continuous improvement planning','task',133,139,'OM4',['OM4A1','OM4A2']),
+          t('OM4M','Transition to BAU','milestone',139,139,'OM4',['OM4A3']),
+        ];
+      },
+
+      'ma-integration': function(){
+        const d = todayIso();
+        const t = (id,name,type,s,e,pid,deps,ro) => ({id,name,type,start:addDays(d,s),end:addDays(d,e),parentId:pid,dependencies:deps,rollup:!!ro,locked:false,collapsed:false});
+        return [
+          t('MA1','Phase 1 — Due Diligence','phase',0,34,null,[],1),
+          t('MA1A','Financial & Commercial Analysis','activity',0,20,'MA1',[],1),
+          t('MA1A1','Financial model review','task',0,10,'MA1A',[]),
+          t('MA1A2','Commercial due diligence','task',7,17,'MA1A',[]),
+          t('MA1A3','Synergy identification','task',14,20,'MA1A',['MA1A1']),
+          t('MA1B','Operational Assessment','activity',10,32,'MA1',[],1),
+          t('MA1B1','Operational due diligence','task',10,22,'MA1B',[]),
+          t('MA1B2','Cultural assessment','task',20,30,'MA1B',[]),
+          t('MA1B3','Risk assessment & mitigation','task',25,32,'MA1B',['MA1B1']),
+          t('MA1M','Due diligence complete','milestone',34,34,'MA1',['MA1A3','MA1B3']),
+
+          t('MA2','Phase 2 — Day 1 Planning','phase',35,62,null,['MA1M'],1),
+          t('MA2A1','Integration strategy & governance','task',35,44,'MA2',[]),
+          t('MA2A2','Day 1 readiness planning','task',42,55,'MA2',['MA2A1']),
+          t('MA2A3','Communications & stakeholder plan','task',45,60,'MA2',[]),
+          t('MA2M','Day 1 ready','milestone',62,62,'MA2',['MA2A2','MA2A3']),
+
+          t('MA3','Phase 3 — Integration Execution','phase',63,132,null,['MA2M'],1),
+          t('MA3A','Functional Integration','activity',63,104,'MA3',[],1),
+          t('MA3A1','Finance & HR integration','task',63,83,'MA3A',[]),
+          t('MA3A2','Operations & supply chain alignment','task',70,97,'MA3A',[]),
+          t('MA3A3','IT systems integration','task',77,104,'MA3A',[]),
+          t('MA3B','People Integration','activity',63,125,'MA3',[],1),
+          t('MA3B1','Organisation design & role mapping','task',63,83,'MA3B',[]),
+          t('MA3B2','Cultural integration programme','task',77,118,'MA3B',['MA3B1']),
+          t('MA3B3','Retention & engagement initiatives','task',84,125,'MA3B',[]),
+          t('MA3M','Integration substantially complete','milestone',132,132,'MA3',['MA3A3','MA3B3']),
+
+          t('MA4','Phase 4 — Synergy Tracking & Optimisation','phase',133,167,null,['MA3M'],1),
+          t('MA4A1','Synergy tracking & reporting','task',133,153,'MA4',[]),
+          t('MA4A2','Value realisation assessment','task',147,160,'MA4',['MA4A1']),
+          t('MA4A3','Transition to BAU operations','task',155,167,'MA4',['MA4A2']),
+          t('MA4M','Integration closure','milestone',167,167,'MA4',['MA4A3']),
+        ];
+      },
+
+      'finance-transformation': function(){
+        const d = todayIso();
+        const t = (id,name,type,s,e,pid,deps,ro) => ({id,name,type,start:addDays(d,s),end:addDays(d,e),parentId:pid,dependencies:deps,rollup:!!ro,locked:false,collapsed:false});
+        return [
+          t('FT1','Phase 1 — Current State Assessment','phase',0,20,null,[],1),
+          t('FT1A1','Process documentation & analysis','task',0,10,'FT1',[]),
+          t('FT1A2','Systems & data landscape review','task',5,15,'FT1',[]),
+          t('FT1A3','Pain point identification & prioritisation','task',12,20,'FT1',['FT1A1']),
+          t('FT1M','Assessment complete','milestone',20,20,'FT1',['FT1A3','FT1A2']),
+
+          t('FT2','Phase 2 — Target State Design','phase',21,48,null,['FT1M'],1),
+          t('FT2A','Design','activity',21,42,'FT2',[],1),
+          t('FT2A1','Future state process design','task',21,32,'FT2A',[]),
+          t('FT2A2','Technology selection & architecture','task',28,38,'FT2A',[]),
+          t('FT2A3','Business case development','task',35,42,'FT2A',['FT2A1','FT2A2']),
+          t('FT2M','Design approved','milestone',48,48,'FT2',['FT2A3']),
+
+          t('FT3','Phase 3 — Process & System Implementation','phase',49,104,null,['FT2M'],1),
+          t('FT3A','Build','activity',49,90,'FT3',[],1),
+          t('FT3A1','Process re-engineering','task',49,65,'FT3A',[]),
+          t('FT3A2','System configuration & customisation','task',56,83,'FT3A',[]),
+          t('FT3A3','Data cleansing & migration','task',70,90,'FT3A',['FT3A1']),
+          t('FT3B','Enablement','activity',77,102,'FT3',[],1),
+          t('FT3B1','Training material development','task',77,88,'FT3B',[]),
+          t('FT3B2','End user training delivery','task',89,102,'FT3B',['FT3B1']),
+          t('FT3M','Build complete','milestone',104,104,'FT3',['FT3A3','FT3B2']),
+
+          t('FT4','Phase 4 — UAT & Validation','phase',105,132,null,['FT3M'],1),
+          t('FT4A1','Integration testing','task',105,115,'FT4',[]),
+          t('FT4A2','User acceptance testing','task',116,126,'FT4',['FT4A1']),
+          t('FT4A3','Parallel running & reconciliation','task',120,132,'FT4',[]),
+          t('FT4M','Testing sign-off','milestone',132,132,'FT4',['FT4A2','FT4A3']),
+
+          t('FT5','Phase 5 — Go-Live & Stabilisation','phase',133,153,null,['FT4M'],1),
+          t('FT5A1','Cutover planning & execution','task',133,140,'FT5',[]),
+          t('FT5A2','Go-live support','task',141,148,'FT5',['FT5A1']),
+          t('FT5A3','Stabilisation & handover','task',149,153,'FT5',['FT5A2']),
+          t('FT5M','Project closure','milestone',153,153,'FT5',['FT5A3']),
+        ];
+      },
+
+      'cyber-assessment': function(){
+        const d = todayIso();
+        const t = (id,name,type,s,e,pid,deps,ro) => ({id,name,type,start:addDays(d,s),end:addDays(d,e),parentId:pid,dependencies:deps,rollup:!!ro,locked:false,collapsed:false});
+        return [
+          t('CY1','Phase 1 — Scoping & Planning','phase',0,13,null,[],1),
+          t('CY1A1','Scope definition & objectives','task',0,4,'CY1',[]),
+          t('CY1A2','Asset inventory & classification','task',3,9,'CY1',[]),
+          t('CY1A3','Assessment methodology & planning','task',7,13,'CY1',['CY1A1']),
+          t('CY1M','Scoping complete','milestone',13,13,'CY1',['CY1A2','CY1A3']),
+
+          t('CY2','Phase 2 — Assessment & Testing','phase',14,48,null,['CY1M'],1),
+          t('CY2A','Vulnerability Assessment','activity',14,30,'CY2',[],1),
+          t('CY2A1','Automated vulnerability scanning','task',14,20,'CY2A',[]),
+          t('CY2A2','Configuration review','task',18,25,'CY2A',[]),
+          t('CY2A3','Code review & static analysis','task',21,30,'CY2A',['CY2A1']),
+          t('CY2B','Threat Analysis','activity',25,46,'CY2',[],1),
+          t('CY2B1','Penetration testing','task',25,38,'CY2B',[]),
+          t('CY2B2','Social engineering assessment','task',32,40,'CY2B',[]),
+          t('CY2B3','Risk scoring & prioritisation','task',39,46,'CY2B',['CY2B1','CY2B2']),
+          t('CY2M','Assessment complete','milestone',48,48,'CY2',['CY2A3','CY2B3']),
+
+          t('CY3','Phase 3 — Remediation Planning','phase',49,76,null,['CY2M'],1),
+          t('CY3A1','Remediation roadmap development','task',49,58,'CY3',[]),
+          t('CY3A2','Quick wins implementation','task',55,66,'CY3',['CY3A1']),
+          t('CY3A3','Strategic remediation execution','task',60,76,'CY3',['CY3A1']),
+          t('CY3M','Remediation complete','milestone',76,76,'CY3',['CY3A2','CY3A3']),
+
+          t('CY4','Phase 4 — Validation & Assurance','phase',77,97,null,['CY3M'],1),
+          t('CY4A1','Re-testing & validation','task',77,85,'CY4',[]),
+          t('CY4A2','Compliance review','task',83,90,'CY4',['CY4A1']),
+          t('CY4A3','Final assurance report','task',88,95,'CY4',['CY4A2']),
+          t('CY4M','Assurance sign-off','milestone',97,97,'CY4',['CY4A3']),
+        ];
+      },
+
+      'people-change': function(){
+        const d = todayIso();
+        const t = (id,name,type,s,e,pid,deps,ro) => ({id,name,type,start:addDays(d,s),end:addDays(d,e),parentId:pid,dependencies:deps,rollup:!!ro,locked:false,collapsed:false});
+        return [
+          t('PC1','Phase 1 — Organisational Analysis','phase',0,27,null,[],1),
+          t('PC1A','Assessment','activity',0,20,'PC1',[],1),
+          t('PC1A1','Stakeholder analysis & mapping','task',0,7,'PC1A',[]),
+          t('PC1A2','Change impact assessment','task',5,14,'PC1A',[]),
+          t('PC1A3','Organisational readiness assessment','task',12,20,'PC1A',['PC1A1']),
+          t('PC1M','Analysis complete','milestone',27,27,'PC1',['PC1A3','PC1A2']),
+
+          t('PC2','Phase 2 — Future State Design','phase',28,55,null,['PC1M'],1),
+          t('PC2A1','Change strategy development','task',28,38,'PC2',[]),
+          t('PC2A2','Communication plan design','task',35,45,'PC2',['PC2A1']),
+          t('PC2A3','Training needs analysis & design','task',39,52,'PC2',['PC2A1']),
+          t('PC2M','Design approved','milestone',55,55,'PC2',['PC2A2','PC2A3']),
+
+          t('PC3','Phase 3 — Engagement & Communication','phase',56,97,null,['PC2M'],1),
+          t('PC3A','Rollout','activity',56,90,'PC3',[],1),
+          t('PC3A1','Leadership alignment & sponsorship','task',56,66,'PC3A',[]),
+          t('PC3A2','Communication campaign rollout','task',60,83,'PC3A',['PC3A1']),
+          t('PC3A3','Training programme delivery','task',67,90,'PC3A',['PC3A1']),
+          t('PC3M','Rollout complete','milestone',97,97,'PC3',['PC3A2','PC3A3']),
+
+          t('PC4','Phase 4 — Embed & Sustain','phase',98,125,null,['PC3M'],1),
+          t('PC4A1','Adoption monitoring & reinforcement','task',98,111,'PC4',[]),
+          t('PC4A2','Feedback loops & coaching','task',105,118,'PC4',[]),
+          t('PC4A3','Sustainability planning & handover','task',116,125,'PC4',['PC4A1','PC4A2']),
+          t('PC4M','Change embedded','milestone',125,125,'PC4',['PC4A3']),
+        ];
+      },
+
+      'data-analytics': function(){
+        const d = todayIso();
+        const t = (id,name,type,s,e,pid,deps,ro) => ({id,name,type,start:addDays(d,s),end:addDays(d,e),parentId:pid,dependencies:deps,rollup:!!ro,locked:false,collapsed:false});
+        return [
+          t('DA1','Phase 1 — Discovery & Data Landscape','phase',0,27,null,[],1),
+          t('DA1A','Data Assessment','activity',0,18,'DA1',[],1),
+          t('DA1A1','Data landscape & inventory','task',0,8,'DA1A',[]),
+          t('DA1A2','Data quality assessment','task',6,14,'DA1A',[]),
+          t('DA1A3','Use case identification & prioritisation','task',12,18,'DA1A',['DA1A1']),
+          t('DA1B','Stakeholder Alignment','activity',10,25,'DA1',[],1),
+          t('DA1B1','Business requirements gathering','task',10,17,'DA1B',[]),
+          t('DA1B2','Analytics maturity assessment','task',18,25,'DA1B',['DA1B1']),
+          t('DA1M','Discovery complete','milestone',27,27,'DA1',['DA1A3','DA1B2']),
+
+          t('DA2','Phase 2 — Architecture & Roadmap','phase',28,62,null,['DA1M'],1),
+          t('DA2A1','Data architecture design','task',28,40,'DA2',[]),
+          t('DA2A2','Technology platform selection','task',35,48,'DA2',['DA2A1']),
+          t('DA2A3','Data governance framework','task',42,55,'DA2',[]),
+          t('DA2A4','Implementation roadmap','task',50,60,'DA2',['DA2A2','DA2A3']),
+          t('DA2M','Architecture approved','milestone',62,62,'DA2',['DA2A4']),
+
+          t('DA3','Phase 3 — Platform Build & Integration','phase',63,111,null,['DA2M'],1),
+          t('DA3A','Build','activity',63,97,'DA3',[],1),
+          t('DA3A1','Data platform provisioning','task',63,73,'DA3A',[]),
+          t('DA3A2','Data pipeline development','task',74,90,'DA3A',['DA3A1']),
+          t('DA3A3','Data quality implementation','task',84,97,'DA3A',['DA3A1']),
+          t('DA3B','Analytics','activity',84,109,'DA3',[],1),
+          t('DA3B1','Dashboard & reporting development','task',84,97,'DA3B',[]),
+          t('DA3B2','Advanced analytics & ML models','task',91,109,'DA3B',['DA3B1']),
+          t('DA3M','Build complete','milestone',111,111,'DA3',['DA3A3','DA3B2']),
+
+          t('DA4','Phase 4 — Deployment & Enablement','phase',112,139,null,['DA3M'],1),
+          t('DA4A1','Platform deployment & go-live','task',112,120,'DA4',[]),
+          t('DA4A2','User onboarding & training','task',118,130,'DA4',['DA4A1']),
+          t('DA4A3','Operational handover & support model','task',128,139,'DA4',['DA4A2']),
+          t('DA4M','Project closure','milestone',139,139,'DA4',['DA4A3']),
+        ];
+      },
+
+      'regulatory-compliance': function(){
+        const d = todayIso();
+        const t = (id,name,type,s,e,pid,deps,ro) => ({id,name,type,start:addDays(d,s),end:addDays(d,e),parentId:pid,dependencies:deps,rollup:!!ro,locked:false,collapsed:false});
+        return [
+          t('RC1','Phase 1 — Gap Analysis & Scoping','phase',0,27,null,[],1),
+          t('RC1A1','Regulatory landscape review','task',0,8,'RC1',[]),
+          t('RC1A2','Current state compliance assessment','task',5,15,'RC1',[]),
+          t('RC1A3','Gap identification & prioritisation','task',13,25,'RC1',['RC1A1','RC1A2']),
+          t('RC1M','Gap analysis complete','milestone',27,27,'RC1',['RC1A3']),
+
+          t('RC2','Phase 2 — Controls Design','phase',28,55,null,['RC1M'],1),
+          t('RC2A1','Compliance framework design','task',28,38,'RC2',[]),
+          t('RC2A2','Control design & specification','task',35,48,'RC2',['RC2A1']),
+          t('RC2A3','Policy & procedure development','task',42,55,'RC2',['RC2A1']),
+          t('RC2M','Design complete','milestone',55,55,'RC2',['RC2A2','RC2A3']),
+
+          t('RC3','Phase 3 — Implementation & Remediation','phase',56,111,null,['RC2M'],1),
+          t('RC3A','Implementation','activity',56,97,'RC3',[],1),
+          t('RC3A1','Control implementation','task',56,76,'RC3A',[]),
+          t('RC3A2','Process & system changes','task',63,90,'RC3A',[]),
+          t('RC3A3','Training & awareness programme','task',77,97,'RC3A',['RC3A1']),
+          t('RC3M','Implementation complete','milestone',111,111,'RC3',['RC3A1','RC3A2','RC3A3']),
+
+          t('RC4','Phase 4 — Testing & Evidence','phase',112,139,null,['RC3M'],1),
+          t('RC4A1','Control testing & effectiveness review','task',112,125,'RC4',[]),
+          t('RC4A2','Evidence collection & documentation','task',118,132,'RC4',['RC4A1']),
+          t('RC4A3','Compliance validation','task',130,139,'RC4',['RC4A2']),
+          t('RC4M','Testing complete','milestone',139,139,'RC4',['RC4A3']),
+
+          t('RC5','Phase 5 — Assurance & Reporting','phase',140,153,null,['RC4M'],1),
+          t('RC5A1','Independent assurance review','task',140,148,'RC5',[]),
+          t('RC5A2','Final compliance report','task',146,153,'RC5',['RC5A1']),
+          t('RC5M','Programme closure','milestone',153,153,'RC5',['RC5A2']),
+        ];
+      }
+    };
+
+    // ======= Scenario loader =======
+    document.getElementById('btnLoadScenario').addEventListener('click', () => {
+      const key = document.getElementById('scenarioSelect').value;
+      if(!key || !SCENARIOS[key]) return;
+      if(state.tasks.length > 0 && !confirm('This will replace your current project plan. Continue?')) return;
+      state.tasks = SCENARIOS[key]();
+      state.selectedId = null;
+      render();
+    });
+
     // ======= Seed data =======
     function seed(){
       const d = todayIso();
@@ -1981,6 +2432,13 @@
     }
 
     // ======= Boot =======
+    function syncSliders(){
+      zoom.value = String(state.config.dayWidth);
+      zoomVal.textContent = zoom.value;
+      leftWidth.value = String(state.config.leftWidth);
+      leftWidthVal.textContent = leftWidth.value;
+    }
+
     (function init(){
       // initial config from sliders
       state.config.dayWidth = Number(zoom.value);
@@ -1988,20 +2446,19 @@
       zoomVal.textContent = zoom.value;
       leftWidthVal.textContent = leftWidth.value;
 
-      // load saved if present; else seed
+      // load saved if present; try migration from old key; else seed
       const raw = localStorage.getItem(STORAGE_KEY);
-      if(raw){
+      const oldRaw = !raw ? localStorage.getItem('offline_gantt_builder_v1') : null;
+      const data = raw || oldRaw;
+      if(data){
         try{
-          const obj = JSON.parse(raw);
+          const obj = JSON.parse(data);
           if(obj && Array.isArray(obj.tasks)){
             state.tasks = obj.tasks;
             if(obj.config && typeof obj.config === 'object'){
               state.config = {...state.config, ...obj.config};
             }
-            zoom.value = String(state.config.dayWidth);
-            zoomVal.textContent = zoom.value;
-            leftWidth.value = String(state.config.leftWidth);
-            leftWidthVal.textContent = leftWidth.value;
+            syncSliders();
           } else {
             seed();
           }
