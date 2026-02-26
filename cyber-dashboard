@@ -84,16 +84,43 @@ button { cursor: pointer; border: none; background: none; font: inherit; color: 
   height: 100%;
   flex-shrink: 0;
 }
-.logo-mark {
-  width: 30px; height: 30px;
-  background: var(--o500);
-  border-radius: 4px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
+.pwc-logo { flex-shrink: 0; display: block; }
+.logo-divider { width: 1px; height: 20px; background: var(--g300); flex-shrink: 0; }
+.logo-text { font-size: 14px; font-weight: 600; letter-spacing: -0.1px; color: var(--black); }
+
+/* ─── Scenario UI ───────────────────────────────────────────────────────── */
+.scenario-dropdown {
+  display: none; position: absolute; right: 0; top: calc(100% + 6px);
+  background: var(--white); border: 1px solid var(--g200);
+  border-radius: var(--radius); box-shadow: var(--shadow-md);
+  z-index: 200; width: 290px; overflow: hidden;
 }
-.logo-mark svg { width: 22px; height: 16px; }
-.logo-text { font-size: 15px; font-weight: 700; letter-spacing: -0.2px; color: var(--black); }
-.logo-text span { color: var(--o500); }
+.scenario-dropdown.open { display: block; }
+.scenario-dropdown-header {
+  padding: 9px 14px 8px; font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .06em; color: var(--g500);
+  border-bottom: 1px solid var(--g200); background: var(--g100);
+}
+.scenario-card {
+  padding: 12px 14px; cursor: pointer;
+  border-bottom: 1px solid var(--g200); transition: background var(--t);
+}
+.scenario-card:last-child { border-bottom: none; }
+.scenario-card:hover { background: var(--o100); }
+.scenario-card-badge {
+  font-size: 10px; font-weight: 700; color: var(--o500);
+  text-transform: uppercase; letter-spacing: .04em; margin-bottom: 3px;
+}
+.scenario-card-name { font-size: 13px; font-weight: 600; color: var(--black); margin-bottom: 3px; }
+.scenario-card-desc { font-size: 12px; color: var(--g500); line-height: 1.4; }
+.scenario-banner {
+  align-items: center; gap: 10px;
+  padding: 10px 14px;
+  background: var(--o100); border: 1px solid var(--o300);
+  border-radius: var(--radius); font-size: 13px;
+  flex-wrap: wrap;
+}
+.scenario-banner i { width: 14px; height: 14px; color: var(--o500); flex-shrink: 0; }
 
 .hamburger {
   display: none;
@@ -482,13 +509,12 @@ button { cursor: pointer; border: none; background: none; font: inherit; color: 
   <!-- ─── HEADER ──────────────────────────────────────────────────────────── -->
   <header class="header">
     <div class="header-logo">
-      <!-- PwC wordmark -->
-      <div class="logo-mark">
-        <svg viewBox="0 0 44 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <text x="0" y="22" font-family="system-ui,-apple-system,sans-serif" font-weight="800" font-size="20" fill="white">PwC</text>
-        </svg>
-      </div>
-      <span class="logo-text">PMO <span>Hub</span></span>
+      <svg class="pwc-logo" width="80" height="38" viewBox="30 143 440 212" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="PwC" role="img">
+        <path d="M355.041 233.765C339.717 236.206 331.925 247.425 331.925 267.214C331.925 287.003 342.331 300.403 358.334 300.403C365.762 300.403 372.508 297.962 386.732 291.054V307.155C369.682 314.894 359.642 317.335 345.94 317.335C331.088 317.335 320.629 313.44 312.052 304.766C303.319 296.092 298.926 284.561 298.926 271.784C298.926 243.322 320.158 224.104 351.118 224.104C371.67 224.104 385.842 233.453 385.842 247.165C385.842 255.995 379.252 262.072 369.473 262.072C364.454 262.072 360.323 260.773 355.041 257.709V233.869V233.765ZM279.472 271.732C293.173 254.54 298.037 247.632 298.037 239.166C298.037 230.7 291.343 224 282.348 224C276.805 224 271.837 226.597 269.431 229.298V264.305L246.944 294.066V226.234H225.555L190.045 284.717V226.234H177.756L145.489 234.024V242.231L163.061 243.997V315.725H185.809L219.907 260.098V315.725H244.8L279.42 271.732H279.472ZM77.6086 244.464C82.8381 243.841 85.4532 243.529 87.9111 243.529C102.763 243.529 110.764 253.294 110.764 271.732C110.764 293.495 100.933 304.818 82.6291 304.818C81.1125 304.818 80.0143 304.818 77.6086 304.714V244.464ZM77.6086 314.894C83.518 315.569 89.2708 315.777 92.7223 315.777C123.211 315.777 142.508 296.404 142.508 267.629C142.508 242.75 128.022 224.727 108.359 224.727C99.8346 224.727 94.1867 226.441 77.6086 236.258V224.26H68.4046L33 234.959V243.581H47.6429V343.928L34.4643 347.2V355.511H92.304V347.2L77.5564 343.928V314.894H77.6086Z" fill="currentColor"/>
+        <path d="M338.568 199.173H242.029L258.45 172.112H354.99L338.568 199.173ZM468 145H371.463L355.042 172.06H451.579L468 145Z" fill="#FD5108"/>
+      </svg>
+      <div class="logo-divider"></div>
+      <span class="logo-text">PMO Hub</span>
     </div>
 
     <button class="hamburger btn-ghost" id="hamburger-btn" aria-label="Toggle navigation">
@@ -510,6 +536,16 @@ button { cursor: pointer; border: none; background: none; font: inherit; color: 
     </div>
 
     <div class="header-actions">
+      <div style="position:relative">
+        <button class="btn btn-outline" id="examples-btn" onclick="toggleScenarioDropdown()">
+          <i data-lucide="layout-template"></i>
+          <span>Load Example</span>
+        </button>
+        <div class="scenario-dropdown" id="scenario-dropdown">
+          <div class="scenario-dropdown-header">Best Practice Layouts</div>
+          <div id="scenario-cards"></div>
+        </div>
+      </div>
       <button class="btn btn-outline" id="reset-layout-btn" title="Reset widget layout to defaults">
         <i data-lucide="layout-grid"></i>
         <span>Reset Layout</span>
@@ -604,6 +640,18 @@ button { cursor: pointer; border: none; background: none; font: inherit; color: 
         <button class="btn btn-ghost" style="margin-left:auto;font-size:12px;flex-shrink:0" onclick="restoreAll()">Restore all</button>
       </div>
 
+      <!-- Scenario banner (shown when an example is loaded) -->
+      <div class="scenario-banner" id="scenario-banner" style="display:none">
+        <i data-lucide="layout-template"></i>
+        <div style="flex:1;min-width:0">
+          <strong id="scenario-banner-name"></strong>
+          <span style="color:var(--g500);margin-left:6px" id="scenario-banner-desc"></span>
+        </div>
+        <span class="badge badge-blue" id="scenario-banner-badge"></span>
+        <span style="font-size:11px;color:var(--g500);white-space:nowrap">Drag widgets to customise</span>
+        <button class="btn btn-ghost" style="font-size:11px;padding:4px 8px;flex-shrink:0" onclick="dismissScenarioBanner()">Dismiss</button>
+      </div>
+
       <!-- ─── WIDGET GRID ─────────────────────────────────────────────────── -->
       <div class="widget-grid" id="widget-grid">
 
@@ -621,14 +669,14 @@ button { cursor: pointer; border: none; background: none; font: inherit; color: 
             </div>
           </div>
           <div class="widget-body">
-            <div class="kpi-value">12</div>
+            <div class="kpi-value" id="health-total">12</div>
             <div class="kpi-label">Active projects in portfolio</div>
-            <div class="kpi-badge-row">
+            <div class="kpi-badge-row" id="health-badges">
               <span class="badge badge-green"><i data-lucide="check-circle"></i> 8 On Track</span>
               <span class="badge badge-amber"><i data-lucide="alert-triangle"></i> 3 At Risk</span>
               <span class="badge badge-red"><i data-lucide="x-circle"></i> 1 Off Track</span>
             </div>
-            <div class="rag-bar" title="RAG split: 67% Green · 25% Amber · 8% Red">
+            <div class="rag-bar" id="health-rag-bar" title="RAG split">
               <div class="rag-bar-seg" style="width:67%;background:var(--success)"></div>
               <div class="rag-bar-seg" style="width:25%;background:var(--warning)"></div>
               <div class="rag-bar-seg" style="width:8%;background:var(--error)"></div>
@@ -676,14 +724,14 @@ button { cursor: pointer; border: none; background: none; font: inherit; color: 
           <div class="widget-body">
             <div class="metric-row">
               <div class="metric-pct" id="budget-pct">67%</div>
-              <div class="metric-delta up"><i data-lucide="trending-up"></i> +4% vs prev</div>
+              <div class="metric-delta up" id="budget-delta"><i data-lucide="trending-up"></i> +4% vs prev</div>
             </div>
             <div class="progress-track"><div class="progress-fill" id="budget-bar" style="width:0%"></div></div>
-            <div class="metric-sublabel">£1.34m of £2.0m total budget consumed</div>
+            <div class="metric-sublabel" id="budget-sublabel">£1.34m of £2.0m total budget consumed</div>
             <div class="budget-stats">
-              <div><div class="budget-stat-label">Spent</div><div class="budget-stat-val">£1.34m</div></div>
-              <div><div class="budget-stat-label">Remaining</div><div class="budget-stat-val">£0.66m</div></div>
-              <div><div class="budget-stat-label">Forecast</div><div class="budget-stat-val" style="color:var(--warning)">£2.08m</div></div>
+              <div><div class="budget-stat-label">Spent</div><div class="budget-stat-val" id="budget-spent">£1.34m</div></div>
+              <div><div class="budget-stat-label">Remaining</div><div class="budget-stat-val" id="budget-remaining">£0.66m</div></div>
+              <div><div class="budget-stat-label">Forecast</div><div class="budget-stat-val" id="budget-forecast" style="color:var(--warning)">£2.08m</div></div>
             </div>
           </div>
         </div>
@@ -849,6 +897,137 @@ const MILESTONES = [
   { date:'2026-04-18', project:'Delta',   name:'Steering Committee Review',  status:'on-track'  },
   { date:'2026-05-02', project:'Epsilon', name:'Infrastructure Migration',   status:'off-track' }
 ];
+
+/* ═══════════════════════════════════════════
+   EXAMPLE SCENARIOS
+═══════════════════════════════════════════ */
+const SCENARIOS = {
+  executive: {
+    name: 'Executive Summary',
+    badge: 'C-Suite',
+    description: 'Healthy portfolio for leadership reporting. KPIs and project status lead.',
+    widgetOrder: ['kpi-health','project-status','kpi-schedule','kpi-budget','milestones','budget-actuals','resource-util','risk-register'],
+    kpi: { total:21, onTrack:15, atRisk:5, offTrack:1, budgetPct:58, budgetSpent:'£1.86m', budgetRemaining:'£1.34m', budgetForecast:'£3.14m', budgetTotal:'£3.2m', budgetDelta:'−2% vs prev', budgetDeltaUp:false },
+    data: {
+      quarter: {
+        projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[15,5,1,8], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+        budgetActuals:  { labels:['Phoenix','Horizon','Atlas','Nexus','Vega'], budget:[600,450,900,280,510], actuals:[540,420,870,265,480] },
+        resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[78,65,58,82,48] },
+        spi:1.02, spiDelta:'+0.02', spiHistory:[0.98,0.99,1.00,1.01,1.01,1.02,1.02,1.02]
+      },
+      month: {
+        projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[14,6,1,4], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+        budgetActuals:  { labels:['Phoenix','Horizon','Atlas','Nexus','Vega'], budget:[200,150,300,95,170], actuals:[180,140,290,88,160] },
+        resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[75,62,55,78,45] },
+        spi:1.01, spiDelta:'+0.01', spiHistory:[0.99,1.00,1.00,1.01,1.01,1.01,1.01,1.01]
+      },
+      year: {
+        projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[15,5,1,8], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+        budgetActuals:  { labels:['Phoenix','Horizon','Atlas','Nexus','Vega'], budget:[600,450,900,280,510], actuals:[540,420,870,265,480] },
+        resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[76,63,56,80,47] },
+        spi:1.02, spiDelta:'+0.03', spiHistory:[0.97,0.98,0.99,1.00,1.01,1.02,1.02,1.02]
+      }
+    },
+    risks: [
+      { id:'R-001', title:'Third-party vendor SLA compliance risk',     impact:'Low',    likelihood:'Low',    rag:'green', owner:'C. Williams' },
+      { id:'R-002', title:'Regulatory change affecting Atlas scope',    impact:'Medium', likelihood:'Low',    rag:'amber', owner:'P. Nguyen'   },
+      { id:'R-003', title:'Seasonal resource constraint in Q3',         impact:'Medium', likelihood:'Medium', rag:'amber', owner:'R. Hassan'   },
+      { id:'R-004', title:'Technology refresh dependency on Nexus',     impact:'Low',    likelihood:'Low',    rag:'green', owner:'K. Osei'     }
+    ],
+    milestones: [
+      { date:'2026-03-10', project:'Phoenix', name:'Exec Sign-off — Phase 2',       status:'on-track' },
+      { date:'2026-03-28', project:'Horizon', name:'Board Presentation',             status:'on-track' },
+      { date:'2026-04-11', project:'Atlas',   name:'Regulatory Submission',          status:'on-track' },
+      { date:'2026-04-25', project:'Nexus',   name:'Pilot Launch',                  status:'at-risk'  },
+      { date:'2026-05-16', project:'Vega',    name:'Full Rollout Decision',          status:'on-track' }
+    ]
+  },
+
+  financial: {
+    name: 'Financial Deep Dive',
+    badge: 'Finance',
+    description: 'Budget pressure with three workstreams overspending. Finance metrics lead.',
+    widgetOrder: ['kpi-budget','budget-actuals','kpi-health','resource-util','kpi-schedule','risk-register','project-status','milestones'],
+    kpi: { total:16, onTrack:5, atRisk:8, offTrack:3, budgetPct:82, budgetSpent:'£2.62m', budgetRemaining:'£0.58m', budgetForecast:'£3.34m', budgetTotal:'£3.2m', budgetDelta:'+11% vs prev', budgetDeltaUp:true },
+    data: {
+      quarter: {
+        projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[5,8,3,2], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+        budgetActuals:  { labels:['Phoenix','Horizon','Atlas','Nexus','Vega'], budget:[600,450,900,280,510], actuals:[680,510,1100,295,465] },
+        resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[98,85,90,94,72] },
+        spi:0.88, spiDelta:'−0.06', spiHistory:[0.96,0.94,0.93,0.91,0.90,0.89,0.88,0.88]
+      },
+      month: {
+        projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[4,9,3,1], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+        budgetActuals:  { labels:['Phoenix','Horizon','Atlas','Nexus','Vega'], budget:[200,150,300,95,170], actuals:[240,175,390,100,160] },
+        resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[100,88,95,97,75] },
+        spi:0.86, spiDelta:'−0.04', spiHistory:[0.93,0.92,0.90,0.89,0.88,0.87,0.86,0.86]
+      },
+      year: {
+        projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[5,8,3,2], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+        budgetActuals:  { labels:['Phoenix','Horizon','Atlas','Nexus','Vega'], budget:[600,450,900,280,510], actuals:[680,510,1100,295,465] },
+        resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[96,83,88,92,70] },
+        spi:0.89, spiDelta:'−0.05', spiHistory:[0.97,0.95,0.93,0.92,0.91,0.90,0.89,0.89]
+      }
+    },
+    risks: [
+      { id:'R-001', title:'Atlas scope expansion driving cost overrun',         impact:'High',   likelihood:'High',   rag:'red',   owner:'M. Chen'    },
+      { id:'R-002', title:'Phoenix contractor rate increase unbudgeted',        impact:'High',   likelihood:'High',   rag:'red',   owner:'J. Smith'   },
+      { id:'R-003', title:'Horizon infrastructure costs above estimate',        impact:'High',   likelihood:'Medium', rag:'red',   owner:'L. Patel'   },
+      { id:'R-004', title:'PMO team overtime unsustainable beyond Q2',          impact:'Medium', likelihood:'High',   rag:'amber', owner:'S. Okafor'  },
+      { id:'R-005', title:'Change request backlog delaying re-forecasting',     impact:'Medium', likelihood:'Medium', rag:'amber', owner:'P. Nguyen'  }
+    ],
+    milestones: [
+      { date:'2026-03-07', project:'Atlas',   name:'Cost Review with CFO',           status:'at-risk'   },
+      { date:'2026-03-14', project:'Phoenix', name:'Contract Renegotiation',          status:'off-track' },
+      { date:'2026-03-28', project:'Horizon', name:'Budget Rebaseline Approval',      status:'at-risk'   },
+      { date:'2026-04-11', project:'Nexus',   name:'Spend Authority Review',          status:'on-track'  },
+      { date:'2026-04-25', project:'Vega',    name:'Q2 Forecast Submission',          status:'on-track'  }
+    ]
+  },
+
+  risk: {
+    name: 'Risk & Issues Focus',
+    badge: 'Risk',
+    description: 'Escalating risk exposure across the portfolio. Risk register and milestones lead.',
+    widgetOrder: ['risk-register','milestones','kpi-health','kpi-schedule','kpi-budget','project-status','budget-actuals','resource-util'],
+    kpi: { total:17, onTrack:4, atRisk:9, offTrack:4, budgetPct:71, budgetSpent:'£2.27m', budgetRemaining:'£0.93m', budgetForecast:'£3.41m', budgetTotal:'£3.2m', budgetDelta:'+5% vs prev', budgetDeltaUp:true },
+    data: {
+      quarter: {
+        projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[4,9,4,1], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+        budgetActuals:  { labels:['Phoenix','Horizon','Atlas','Nexus','Vega'], budget:[600,450,900,280,510], actuals:[590,480,980,310,525] },
+        resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[88,74,68,97,60] },
+        spi:0.79, spiDelta:'−0.09', spiHistory:[0.95,0.92,0.89,0.86,0.83,0.81,0.80,0.79]
+      },
+      month: {
+        projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[3,10,4,0], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+        budgetActuals:  { labels:['Phoenix','Horizon','Atlas','Nexus','Vega'], budget:[200,150,300,95,170], actuals:[210,165,335,108,182] },
+        resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[92,78,72,100,63] },
+        spi:0.77, spiDelta:'−0.04', spiHistory:[0.84,0.83,0.82,0.80,0.79,0.78,0.77,0.77]
+      },
+      year: {
+        projectStatus: { labels:['On Track','At Risk','Off Track','Completed'], values:[4,9,4,1], colours:['#22C55E','#EAB308','#EF4444','#3B82F6'] },
+        budgetActuals:  { labels:['Phoenix','Horizon','Atlas','Nexus','Vega'], budget:[600,450,900,280,510], actuals:[590,480,980,310,525] },
+        resources:      { labels:['Dev Team','Design','QA','PMO','Architecture'], util:[86,72,66,95,58] },
+        spi:0.80, spiDelta:'−0.08', spiHistory:[0.96,0.92,0.89,0.86,0.84,0.82,0.81,0.80]
+      }
+    },
+    risks: [
+      { id:'R-001', title:'Critical path delay on Atlas — 6 weeks behind',      impact:'High',   likelihood:'High',   rag:'red',   owner:'M. Chen'   },
+      { id:'R-002', title:'Key architect resigned — no succession plan',         impact:'High',   likelihood:'High',   rag:'red',   owner:'K. Osei'   },
+      { id:'R-003', title:'Regulatory deadline for Phoenix is immovable',        impact:'High',   likelihood:'Medium', rag:'red',   owner:'J. Smith'  },
+      { id:'R-004', title:'Integration testing environment instability',         impact:'High',   likelihood:'Medium', rag:'amber', owner:'L. Patel'  },
+      { id:'R-005', title:'Vendor delivery slip on Nexus dependencies',          impact:'Medium', likelihood:'High',   rag:'amber', owner:'P. Nguyen' },
+      { id:'R-006', title:'Stakeholder engagement declining on Horizon',         impact:'Medium', likelihood:'Medium', rag:'amber', owner:'R. Hassan' }
+    ],
+    milestones: [
+      { date:'2026-03-05', project:'Atlas',   name:'Critical Path Recovery Plan Due', status:'off-track' },
+      { date:'2026-03-14', project:'Phoenix', name:'Regulatory Submission',            status:'at-risk'   },
+      { date:'2026-03-21', project:'Nexus',   name:'Vendor Integration Checkpoint',   status:'at-risk'   },
+      { date:'2026-04-04', project:'Horizon', name:'Stakeholder Review Board',         status:'at-risk'   },
+      { date:'2026-04-18', project:'Vega',    name:'Architecture Sign-off',            status:'on-track'  }
+    ]
+  }
+};
 
 let activePeriod = 'quarter';
 let activeRag    = 'all';
@@ -1079,6 +1258,7 @@ function toggleMenu(btn) {
 }
 document.addEventListener('click', e => {
   if (!e.target.closest('.widget-menu')) document.querySelectorAll('.widget-dropdown.open').forEach(d=>d.classList.remove('open'));
+  if (!e.target.closest('#examples-btn') && !e.target.closest('#scenario-dropdown')) closeScenarioDropdown();
 });
 
 /* Minimise widget body */
@@ -1111,6 +1291,94 @@ function restoreWidget(id) {
   syncRestoreBar();
 }
 function restoreAll() { Object.keys(hiddenWidgets).forEach(id => restoreWidget(id)); }
+
+/* ─── Scenario dropdown ─────────────────── */
+function toggleScenarioDropdown() {
+  document.getElementById('scenario-dropdown').classList.toggle('open');
+}
+function closeScenarioDropdown() {
+  document.getElementById('scenario-dropdown').classList.remove('open');
+}
+
+/* ─── Scenario banner ───────────────────── */
+function showScenarioBanner(s) {
+  document.getElementById('scenario-banner-name').textContent = s.name;
+  document.getElementById('scenario-banner-desc').textContent = '— ' + s.description;
+  document.getElementById('scenario-banner-badge').textContent = s.badge;
+  document.getElementById('scenario-banner').style.display = 'flex';
+  lucide.createIcons();
+}
+function dismissScenarioBanner() {
+  document.getElementById('scenario-banner').style.display = 'none';
+}
+
+/* ─── Update static KPI card text ─────── */
+function updateKpiCards(s) {
+  const k = s.kpi;
+  // Portfolio Health
+  document.getElementById('health-total').textContent = k.total;
+  document.getElementById('health-badges').innerHTML = `
+    <span class="badge badge-green"><i data-lucide="check-circle"></i> ${k.onTrack} On Track</span>
+    <span class="badge badge-amber"><i data-lucide="alert-triangle"></i> ${k.atRisk} At Risk</span>
+    <span class="badge badge-red"><i data-lucide="x-circle"></i> ${k.offTrack} Off Track</span>`;
+  const ragTotal = k.onTrack + k.atRisk + k.offTrack;
+  document.getElementById('health-rag-bar').innerHTML = `
+    <div class="rag-bar-seg" style="width:${Math.round(k.onTrack/ragTotal*100)}%;background:var(--success)"></div>
+    <div class="rag-bar-seg" style="width:${Math.round(k.atRisk/ragTotal*100)}%;background:var(--warning)"></div>
+    <div class="rag-bar-seg" style="width:${Math.round(k.offTrack/ragTotal*100)}%;background:var(--error)"></div>`;
+  // Budget
+  document.getElementById('budget-pct').textContent = k.budgetPct + '%';
+  const budgetDelta = document.getElementById('budget-delta');
+  budgetDelta.className = 'metric-delta ' + (k.budgetDeltaUp ? 'up' : 'down');
+  budgetDelta.innerHTML = `<i data-lucide="${k.budgetDeltaUp ? 'trending-up' : 'trending-down'}"></i> ${k.budgetDelta}`;
+  document.getElementById('budget-sublabel').textContent = `${k.budgetSpent} of ${k.budgetTotal} total budget consumed`;
+  document.getElementById('budget-spent').textContent = k.budgetSpent;
+  document.getElementById('budget-remaining').textContent = k.budgetRemaining;
+  const forecastEl = document.getElementById('budget-forecast');
+  forecastEl.textContent = k.budgetForecast;
+  forecastEl.style.color = k.budgetPct >= 90 ? 'var(--error)' : k.budgetPct >= 75 ? 'var(--warning)' : 'var(--black)';
+  // Budget bar colour
+  const budgetBar = document.getElementById('budget-bar');
+  budgetBar.className = 'progress-fill ' + (k.budgetPct >= 90 ? 'error' : k.budgetPct >= 75 ? 'warning' : '');
+  lucide.createIcons();
+}
+
+/* ─── Load scenario ─────────────────────── */
+function loadScenario(id) {
+  const s = SCENARIOS[id];
+  // 1. Mutate live data in place (render functions read from these globals)
+  Object.assign(DATA.quarter, s.data.quarter);
+  Object.assign(DATA.month,   s.data.month);
+  Object.assign(DATA.year,    s.data.year);
+  RISKS.splice(0, RISKS.length, ...s.risks);
+  MILESTONES.splice(0, MILESTONES.length, ...s.milestones);
+  // 2. Update static KPI card text + colours
+  updateKpiCards(s);
+  // 3. Reorder widgets (unhide any hidden ones first)
+  const grid = document.getElementById('widget-grid');
+  s.widgetOrder.forEach(wid => {
+    const el = grid.querySelector(`[data-widget-id="${wid}"]`);
+    if (el) { el.style.display = ''; grid.appendChild(el); }
+  });
+  // 4. Refresh all charts and data tables
+  refreshAll();
+  renderRisks(activeRag);
+  renderMilestones(activeRag);
+  // 5. Animate progress bars with scenario-specific values
+  setTimeout(() => {
+    document.getElementById('spi-bar').style.width = Math.round(s.data.quarter.spi * 100) + '%';
+    document.getElementById('budget-bar').style.width = s.kpi.budgetPct + '%';
+  }, 150);
+  // 6. Clear any hidden-widget state from a previous layout
+  Object.keys(hiddenWidgets).forEach(k => delete hiddenWidgets[k]);
+  syncRestoreBar();
+  // 7. Show the scenario banner
+  showScenarioBanner(s);
+  // 8. Persist the new widget order
+  saveLayout();
+  // 9. Close dropdown
+  closeScenarioDropdown();
+}
 
 /* Export stub */
 function exportReport() {
@@ -1158,6 +1426,15 @@ document.getElementById('reset-layout-btn').addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', () => {
   lucide.createIcons();
   loadLayout();
+
+  // Build scenario dropdown cards from SCENARIOS object
+  document.getElementById('scenario-cards').innerHTML =
+    Object.entries(SCENARIOS).map(([id, s]) => `
+      <div class="scenario-card" onclick="loadScenario('${id}')">
+        <div class="scenario-card-badge">${s.badge}</div>
+        <div class="scenario-card-name">${s.name}</div>
+        <div class="scenario-card-desc">${s.description}</div>
+      </div>`).join('');
 
   renderRisks('all');
   renderMilestones('all');
