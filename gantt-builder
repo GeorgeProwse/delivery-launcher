@@ -1,0 +1,2029 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Offline Gantt Builder (Standalone)</title>
+  <style>
+    :root{
+      --bg: #0b1220;
+      --panel: #0f172a;
+      --panel-2: #111c33;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --border: #1f2a44;
+      --accent: #60a5fa;
+
+      --bar-task: #3b82f6;
+      --bar-summary: #64748b;
+      --bar-milestone: #f97316;
+
+      --danger: #ef4444;
+      --ok: #22c55e;
+
+      --day-width: 24px;
+      --row-height: 34px;
+      --left-width: 380px;
+      --header-height: 56px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    html, body { height: 100%; background: var(--bg); color: var(--text); margin: 0; font-family: var(--font); }
+    * { box-sizing: border-box; }
+
+    .app {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+    }
+    .toolbar .group { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .spacer { flex: 1; }
+
+    button, input, select {
+      font-family: var(--font);
+      font-size: 14px;
+    }
+
+    button {
+      border: 1px solid var(--border);
+      background: #0b1326;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 8px 10px;
+      cursor: pointer;
+    }
+    button:hover { border-color: #2a3a62; }
+    button.primary { background: #0c2147; border-color: #1a3b7a; }
+    button.danger { background: #2a0c12; border-color: #6b1a2a; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .pill {
+      display:inline-flex; align-items:center; gap:6px;
+      padding: 4px 8px; border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #0b1326;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .pill strong { color: var(--text); font-weight: 600; }
+
+    .range {
+      display:flex; align-items:center; gap:8px;
+      padding: 6px 8px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #0b1326;
+      color: var(--muted);
+    }
+    .range input[type="range"] { width: 170px; }
+
+    .layout {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--panel);
+    }
+
+    /* Left */
+    .left {
+      width: var(--left-width);
+      min-width: 260px;
+      max-width: 620px;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+      background: var(--panel-2);
+    }
+    .left-header {
+      height: var(--header-height);
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      padding: 10px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      background: var(--panel-2);
+    }
+    .left-header .title { font-weight: 650; }
+    .left-body {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+    }
+
+    .task-row {
+      height: var(--row-height);
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      padding: 4px 10px;
+      border-bottom: 1px solid rgba(31,42,68,0.6);
+    }
+    .task-row:hover { background: rgba(255,255,255,0.03); }
+    .task-row.selected { outline: 2px solid rgba(96,165,250,0.35); outline-offset: -2px; background: rgba(96,165,250,0.08); }
+
+    .twisty {
+      width: 22px; height: 22px;
+      display:inline-flex; align-items:center; justify-content:center;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #0b1326;
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+    }
+    .twisty.hidden { visibility: hidden; }
+
+    .name {
+      flex: 1;
+      min-width: 0;
+      display:flex;
+      align-items:center;
+      gap: 8px;
+    }
+    .name .label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .badge {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: #0b1326;
+      white-space: nowrap;
+    }
+    .badge.summary { color: #cbd5e1; border-color: #2a3a62; }
+    .badge.milestone { color: #fdba74; border-color: #6b3a1a; }
+
+    .dates {
+      display:flex;
+      align-items:center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .dates input[type="date"]{
+      background: #0b1326;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 5px 6px;
+      width: 138px;
+    }
+    .dates input[type="date"]:disabled{ opacity: 0.5; }
+
+    .row-actions {
+      display:flex; align-items:center; gap: 6px;
+      flex: 0 0 auto;
+    }
+    .icon-btn{
+      width: 30px; height: 30px;
+      display:inline-flex; align-items:center; justify-content:center;
+      border-radius: 8px;
+      padding: 0;
+      border: 1px solid var(--border);
+      background: #0b1326;
+      color: var(--text);
+      cursor: pointer;
+      user-select: none;
+    }
+    .icon-btn:hover { border-color: #2a3a62; }
+    .icon-btn.danger { border-color: #6b1a2a; background: #2a0c12; }
+
+    /* Right */
+    .right {
+      flex: 1;
+      min-width: 0;
+      display:flex;
+      flex-direction: column;
+      background: var(--panel);
+    }
+    .right-header {
+      height: var(--header-height);
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      overflow: hidden;
+    }
+    .timeline-header {
+      height: 100%;
+      position: relative;
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+      align-items: stretch;
+      white-space: nowrap;
+      transform: translateZ(0);
+    }
+    .months, .days {
+      display:flex;
+      height: 100%;
+    }
+    .month-cell, .day-cell{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-right: 1px solid rgba(31,42,68,0.6);
+      color: var(--muted);
+      font-size: 12px;
+      padding: 0 6px;
+      user-select: none;
+    }
+    .month-cell { font-weight: 650; color: #cbd5e1; }
+    .day-cell { font-variant-numeric: tabular-nums; }
+
+    .right-body {
+      flex: 1;
+      min-height: 0;
+      overflow: auto; /* both axes */
+      position: relative;
+    }
+
+    .timeline {
+      position: relative;
+      width: var(--timeline-width);
+      height: var(--timeline-height);
+      background:
+        linear-gradient(to right, rgba(148,163,184,0.12) 1px, transparent 1px),
+        linear-gradient(to right, rgba(148,163,184,0.22) 1px, transparent 1px);
+      background-size: var(--day-width) 100%, calc(var(--day-width) * 7) 100%;
+      background-position: 0 0, 0 0;
+    }
+    .timeline .row {
+      height: var(--row-height);
+      border-bottom: 1px solid rgba(31,42,68,0.6);
+      position: relative;
+    }
+    .row .bar {
+      position: absolute;
+      top: 7px;
+      height: 20px;
+      border-radius: 6px;
+      background: var(--bar-task);
+      border: 1px solid rgba(255,255,255,0.18);
+      cursor: grab;
+      display:flex;
+      align-items:center;
+      padding: 0 8px;
+      min-width: 6px;
+      user-select: none;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 12px;
+      color: rgba(255,255,255,0.92);
+    }
+    .row .bar.summary {
+      background: var(--bar-summary);
+      cursor: default;
+      opacity: 0.9;
+    }
+    .row .bar.milestone {
+      width: 0;
+      height: 0;
+      top: 7px;
+      background: transparent;
+      border: none;
+      padding: 0;
+      cursor: grab;
+    }
+    .row .bar.milestone::before{
+      content:"";
+      display:block;
+      width: 14px;
+      height: 14px;
+      transform: rotate(45deg);
+      background: var(--bar-milestone);
+      border-radius: 2px;
+      border: 1px solid rgba(255,255,255,0.24);
+    }
+
+    .handle {
+      position:absolute;
+      top: 0;
+      width: 10px;
+      height: 100%;
+      cursor: ew-resize;
+    }
+    .handle.left { left: -2px; }
+    .handle.right { right: -2px; }
+
+    .deps {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: var(--timeline-width);
+      height: var(--timeline-height);
+      pointer-events: none;
+    }
+    .deps path {
+      stroke: rgba(148,163,184,0.75);
+      stroke-width: 1.5;
+      fill: none;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items:center;
+      justify-content:center;
+      padding: 14px;
+      z-index: 50;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      width: min(720px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 15px 60px rgba(0,0,0,0.55);
+    }
+    .modal header{
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      background: var(--panel-2);
+    }
+    .modal header .h { font-weight: 700; }
+    .modal .body { padding: 14px; display:grid; gap: 12px; }
+    .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field { display:grid; gap: 6px; }
+    .field label { font-size: 12px; color: var(--muted); }
+    .field input[type="text"], .field select, .field input[type="date"], .field textarea {
+      background: #0b1326;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 9px 10px;
+      width: 100%;
+    }
+    .field textarea { min-height: 70px; resize: vertical; }
+    .field select[multiple] { height: 120px; }
+
+    .rowline {
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-wrap: wrap;
+    }
+    .help {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .modal footer{
+      padding: 12px 14px;
+      border-top: 1px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      background: var(--panel-2);
+    }
+
+    /* Print */
+    @media print {
+      body { background: #ffffff !important; color: #000 !important; }
+      .app { padding: 0; gap: 0; }
+      .toolbar { display: none !important; }
+      .layout { border: none; border-radius: 0; }
+      .left { width: 360px; }
+      .left, .right { background: #fff !important; color: #000 !important; }
+      .left-header, .right-header { background: #fff !important; position: static; }
+      .task-row, .timeline .row { border-bottom: 1px solid #ddd !important; }
+      .month-cell, .day-cell { border-right: 1px solid #ddd !important; color: #222 !important; }
+      .deps path { stroke: #444 !important; }
+      .row .bar { border: 1px solid rgba(0,0,0,0.2) !important; }
+    }
+
+    /* Mobile */
+    @media (max-width: 960px){
+      :root { --left-width: 320px; }
+      .dates input[type="date"]{ width: 126px; }
+      .grid2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="toolbar">
+      <div class="group">
+        <button class="primary" id="btnAdd">Add</button>
+        <button id="btnSaveLocal">Save</button>
+        <button id="btnLoadLocal">Load</button>
+        <button id="btnExportJson">Export JSON</button>
+        <label class="pill" style="cursor:pointer;">
+          <strong>Import JSON</strong>
+          <input id="fileImport" type="file" accept=".json,application/json" style="display:none;">
+        </label>
+        <button id="btnExportPng">Export PNG</button>
+        <button id="btnExportSvg">Export SVG</button>
+        <button id="btnExportExcel">Export Excel</button>
+        <button id="btnPrint">Print / PDF</button>
+      </div>
+      <div class="spacer"></div>
+      <div class="group">
+        <div class="range" title="Timeline scale (pixels per day)">
+          <span>Zoom</span>
+          <input id="zoom" type="range" min="14" max="44" step="2" value="24">
+          <span class="pill"><strong id="zoomVal">24</strong> px/day</span>
+        </div>
+        <div class="range" title="Left panel width">
+          <span>Left</span>
+          <input id="leftWidth" type="range" min="260" max="620" step="10" value="380">
+          <span class="pill"><strong id="leftWidthVal">380</strong> px</span>
+        </div>
+        <button class="danger" id="btnClear">Clear</button>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="left">
+        <div class="left-header">
+          <div class="title">Work Breakdown</div>
+          <div class="pill">Drag bars to move; drag edges to resize</div>
+        </div>
+        <div class="left-body" id="leftBody"></div>
+      </div>
+
+      <div class="right">
+        <div class="right-header">
+          <div class="timeline-header" id="timelineHeader">
+            <div class="months" id="monthsRow"></div>
+            <div class="days" id="daysRow"></div>
+          </div>
+        </div>
+        <div class="right-body" id="rightBody">
+          <div class="timeline" id="timeline">
+            <svg class="deps" id="depsSvg"></svg>
+            <div id="timelineRows"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <header>
+        <div class="h" id="modalTitle">Task</div>
+        <button id="btnModalClose">Close</button>
+      </header>
+      <div class="body">
+        <div class="grid2">
+          <div class="field">
+            <label for="fName">Name</label>
+            <input id="fName" type="text" placeholder="e.g., Design phase" />
+          </div>
+          <div class="field">
+            <label for="fType">Type</label>
+            <select id="fType">
+              <option value="phase">Phase (summary)</option>
+              <option value="activity">Activity (summary)</option>
+              <option value="task">Task</option>
+              <option value="milestone">Milestone</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label for="fStart">Start</label>
+            <input id="fStart" type="date" />
+          </div>
+          <div class="field">
+            <label for="fEnd">End</label>
+            <input id="fEnd" type="date" />
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label for="fParent">Parent (for sub-levels)</label>
+            <select id="fParent"></select>
+          </div>
+          <div class="field">
+            <label for="fDeps">Dependencies (predecessors)</label>
+            <select id="fDeps" multiple></select>
+          </div>
+        </div>
+
+        <div class="rowline">
+          <label class="pill" style="cursor:pointer;">
+            <input id="fRollup" type="checkbox" style="accent-color: var(--accent);">
+            Roll-up dates from children (summary tasks)
+          </label>
+          <label class="pill" style="cursor:pointer;">
+            <input id="fLock" type="checkbox" style="accent-color: var(--accent);">
+            Lock (disable bar dragging)
+          </label>
+        </div>
+
+        <div class="help">
+          Notes:
+          <ul>
+            <li>Summary tasks (Phase/Activity) can optionally roll-up their date range from children.</li>
+            <li>Dependencies are visual only (no auto-scheduling enforcement in this template).</li>
+            <li>“Export Excel” produces an Excel-compatible <code>.xls</code> file (HTML table). For true <code>.xlsx</code> export you’d embed a library like SheetJS.</li>
+            <li>“Print / PDF” uses the browser’s built-in print dialog. Choose “Save as PDF”.</li>
+          </ul>
+        </div>
+      </div>
+      <footer>
+        <div class="help" id="modalHint"></div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button class="danger" id="btnModalDelete" style="display:none;">Delete</button>
+          <button class="primary" id="btnModalSave">Save</button>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    'use strict';
+
+    // ======= Date helpers (UTC midnight to avoid DST surprises) =======
+    const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+    function parseIso(iso){
+      if(!iso) return null;
+      const [y,m,d] = iso.split('-').map(Number);
+      if(!y || !m || !d) return null;
+      return new Date(Date.UTC(y, m-1, d));
+    }
+    function fmtIso(dt){
+      return dt.toISOString().slice(0,10);
+    }
+    function addDays(iso, days){
+      const d = parseIso(iso);
+      d.setUTCDate(d.getUTCDate() + days);
+      return fmtIso(d);
+    }
+    function diffDays(isoA, isoB){
+      // isoA - isoB in days
+      return Math.round((parseIso(isoA) - parseIso(isoB)) / MS_PER_DAY);
+    }
+    function clampIso(iso, minIso, maxIso){
+      const t = parseIso(iso).getTime();
+      const minT = parseIso(minIso).getTime();
+      const maxT = parseIso(maxIso).getTime();
+      return fmtIso(new Date(Math.max(minT, Math.min(maxT, t))));
+    }
+    function todayIso(){
+      const now = new Date();
+      const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+      return fmtIso(d);
+    }
+    function monthKey(iso){
+      return iso.slice(0,7); // YYYY-MM
+    }
+    function monthLabel(iso){
+      const d = parseIso(iso);
+      return d.toLocaleString(undefined, {month:'short', year:'numeric', timeZone:'UTC'});
+    }
+    function dayLabel(iso){
+      const d = parseIso(iso);
+      return d.toLocaleString(undefined, {day:'2-digit', timeZone:'UTC'});
+    }
+
+    // ======= State =======
+    const STORAGE_KEY = 'offline_gantt_builder_v1';
+
+    const state = {
+      tasks: [],
+      selectedId: null,
+      chartStart: null,
+      chartEnd: null,
+      visible: [],  // visible task ids in render order
+      config: {
+        dayWidth: 24,
+        rowHeight: 34,
+        headerHeight: 56,
+        leftWidth: 380,
+        paddingDays: 7
+      }
+    };
+
+    // ======= DOM =======
+    const leftBody = document.getElementById('leftBody');
+    const rightBody = document.getElementById('rightBody');
+    const timeline = document.getElementById('timeline');
+    const timelineRows = document.getElementById('timelineRows');
+    const monthsRow = document.getElementById('monthsRow');
+    const daysRow = document.getElementById('daysRow');
+    const depsSvg = document.getElementById('depsSvg');
+
+    const zoom = document.getElementById('zoom');
+    const zoomVal = document.getElementById('zoomVal');
+    const leftWidth = document.getElementById('leftWidth');
+    const leftWidthVal = document.getElementById('leftWidthVal');
+
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalHint = document.getElementById('modalHint');
+    const btnModalClose = document.getElementById('btnModalClose');
+    const btnModalSave = document.getElementById('btnModalSave');
+    const btnModalDelete = document.getElementById('btnModalDelete');
+
+    const fName = document.getElementById('fName');
+    const fType = document.getElementById('fType');
+    const fStart = document.getElementById('fStart');
+    const fEnd = document.getElementById('fEnd');
+    const fParent = document.getElementById('fParent');
+    const fDeps = document.getElementById('fDeps');
+    const fRollup = document.getElementById('fRollup');
+    const fLock = document.getElementById('fLock');
+
+    const fileImport = document.getElementById('fileImport');
+
+    let modalMode = { mode: 'add', id: null, defaultParent: null };
+
+    // ======= Utilities =======
+    function uid(){
+      // compact-ish unique id
+      return 'T' + Math.random().toString(16).slice(2,8) + Date.now().toString(16).slice(-4);
+    }
+
+    function deepCopy(x){
+      return JSON.parse(JSON.stringify(x));
+    }
+
+    function getTask(id){
+      return state.tasks.find(t => t.id === id) || null;
+    }
+
+    function isSummaryType(type){
+      return type === 'phase' || type === 'activity';
+    }
+    function isMilestone(type){
+      return type === 'milestone';
+    }
+
+    function childrenOf(id){
+      return state.tasks.filter(t => (t.parentId || null) === id);
+    }
+
+    function descendantsOf(id){
+      const out = new Set();
+      function walk(x){
+        for(const c of childrenOf(x)){
+          if(out.has(c.id)) continue;
+          out.add(c.id);
+          walk(c.id);
+        }
+      }
+      walk(id);
+      return out;
+    }
+
+    function buildVisibleOrder(){
+      // display in the order tasks appear in state.tasks, while nesting under parents
+      const byId = new Map(state.tasks.map(t => [t.id, t]));
+      const children = new Map();
+      for(const t of state.tasks){
+        const p = t.parentId || null;
+        if(!children.has(p)) children.set(p, []);
+        children.get(p).push(t.id);
+      }
+      // sort children lists according to tasks array order
+      const index = new Map(state.tasks.map((t,i) => [t.id, i]));
+      for(const [p, arr] of children.entries()){
+        arr.sort((a,b) => (index.get(a) ?? 0) - (index.get(b) ?? 0));
+      }
+
+      const levels = new Map();
+      function levelOf(id){
+        if(levels.has(id)) return levels.get(id);
+        const t = byId.get(id);
+        if(!t) return 0;
+        const p = t.parentId || null;
+        const lv = p ? (levelOf(p) + 1) : 0;
+        levels.set(id, lv);
+        return lv;
+      }
+
+      const visible = [];
+      function walk(parentId){
+        const arr = children.get(parentId || null) || [];
+        for(const id of arr){
+          visible.push(id);
+          const t = byId.get(id);
+          if(t && !t.collapsed){
+            walk(id);
+          }
+        }
+      }
+      walk(null);
+
+      return { visible, levelOf, children };
+    }
+
+    function computeChartRange(){
+      // use "effective" dates for rollups
+      const effective = state.tasks.map(t => effectiveDates(t));
+      const starts = effective.map(x => x.start).filter(Boolean);
+      const ends = effective.map(x => x.end).filter(Boolean);
+      if(starts.length === 0){
+        const d = todayIso();
+        state.chartStart = addDays(d, -state.config.paddingDays);
+        state.chartEnd = addDays(d, +state.config.paddingDays);
+        return;
+      }
+      let minStart = starts.reduce((a,b) => (a < b ? a : b));
+      let maxEnd = ends.reduce((a,b) => (a > b ? a : b));
+
+      state.chartStart = addDays(minStart, -state.config.paddingDays);
+      state.chartEnd = addDays(maxEnd, +state.config.paddingDays);
+    }
+
+    function effectiveDates(task){
+      // For summary tasks with rollup=true, compute start/end from children if possible.
+      if(isSummaryType(task.type) && task.rollup){
+        const kids = childrenOf(task.id);
+        if(kids.length){
+          let minS = null, maxE = null;
+          for(const k of kids){
+            const ed = effectiveDates(k);
+            if(ed.start){
+              if(minS === null || ed.start < minS) minS = ed.start;
+            }
+            if(ed.end){
+              if(maxE === null || ed.end > maxE) maxE = ed.end;
+            }
+          }
+          if(minS && maxE){
+            return { start: minS, end: maxE };
+          }
+        }
+      }
+      // milestones force end=start
+      if(isMilestone(task.type)){
+        return { start: task.start, end: task.start };
+      }
+      return { start: task.start, end: task.end };
+    }
+
+    function durationDays(task){
+      const ed = effectiveDates(task);
+      const d = diffDays(ed.end, ed.start) + 1;
+      return Math.max(1, d);
+    }
+
+    function taskBadge(task){
+      if(isMilestone(task.type)) return ['Milestone', 'milestone'];
+      if(isSummaryType(task.type)) return [task.type === 'phase' ? 'Phase' : 'Activity', 'summary'];
+      return ['Task', ''];
+    }
+
+    function validateTaskDates(t){
+      if(!t.start) t.start = todayIso();
+      if(!t.end) t.end = t.start;
+      if(parseIso(t.end) < parseIso(t.start)) t.end = t.start;
+      if(isMilestone(t.type)) t.end = t.start;
+    }
+
+    function normalize(){
+      // ensure required fields and remove invalid deps
+      const ids = new Set(state.tasks.map(t => t.id));
+      for(const t of state.tasks){
+        if(!t.id) t.id = uid();
+        if(!t.name) t.name = 'Untitled';
+        if(!t.type) t.type = 'task';
+        if(t.parentId && !ids.has(t.parentId)) t.parentId = null;
+        if(!Array.isArray(t.dependencies)) t.dependencies = [];
+        t.dependencies = t.dependencies.filter(d => ids.has(d) && d !== t.id);
+        if(typeof t.rollup !== 'boolean') t.rollup = isSummaryType(t.type);
+        if(typeof t.locked !== 'boolean') t.locked = false;
+        if(typeof t.collapsed !== 'boolean') t.collapsed = false;
+        validateTaskDates(t);
+      }
+      // break parent cycles (simple guard)
+      for(const t of state.tasks){
+        if(t.parentId){
+          const seen = new Set([t.id]);
+          let p = t.parentId;
+          while(p){
+            if(seen.has(p)){
+              t.parentId = null;
+              break;
+            }
+            seen.add(p);
+            const pt = getTask(p);
+            p = pt ? (pt.parentId || null) : null;
+          }
+        }
+      }
+    }
+
+    // ======= Rendering =======
+    function applyCssVars(){
+      document.documentElement.style.setProperty('--day-width', state.config.dayWidth + 'px');
+      document.documentElement.style.setProperty('--row-height', state.config.rowHeight + 'px');
+      document.documentElement.style.setProperty('--left-width', state.config.leftWidth + 'px');
+    }
+
+    function render(){
+      normalize();
+      applyCssVars();
+
+      const { visible, levelOf, children } = buildVisibleOrder();
+      state.visible = visible;
+
+      computeChartRange();
+
+      const totalDays = diffDays(state.chartEnd, state.chartStart) + 1;
+      const timelineWidth = totalDays * state.config.dayWidth;
+      const timelineHeight = visible.length * state.config.rowHeight;
+
+      timeline.style.setProperty('--timeline-width', timelineWidth + 'px');
+      timeline.style.setProperty('--timeline-height', timelineHeight + 'px');
+
+      // Header
+      renderHeader(totalDays);
+
+      // Left body
+      leftBody.innerHTML = '';
+      for(const id of visible){
+        const t = getTask(id);
+        if(!t) continue;
+        const lvl = levelOf(id);
+        const hasKids = (children.get(id) || []).length > 0;
+        leftBody.appendChild(renderLeftRow(t, lvl, hasKids));
+      }
+
+      // Right rows (timeline)
+      timelineRows.innerHTML = '';
+      for(let idx=0; idx<visible.length; idx++){
+        const id = visible[idx];
+        const t = getTask(id);
+        if(!t) continue;
+        timelineRows.appendChild(renderTimelineRow(t, idx));
+      }
+
+      // Dependencies overlay SVG
+      depsSvg.setAttribute('width', timelineWidth);
+      depsSvg.setAttribute('height', timelineHeight);
+      depsSvg.setAttribute('viewBox', `0 0 ${timelineWidth} ${timelineHeight}`);
+      renderDependencies();
+
+      // Sync selection highlight
+      highlightSelection();
+    }
+
+    function renderHeader(totalDays){
+      // build day array
+      const days = [];
+      for(let i=0;i<totalDays;i++){
+        days.push(addDays(state.chartStart, i));
+      }
+
+      // months row with spans
+      monthsRow.innerHTML = '';
+      let i = 0;
+      while(i < days.length){
+        const mk = monthKey(days[i]);
+        let j = i;
+        while(j < days.length && monthKey(days[j]) === mk) j++;
+        const spanDays = j - i;
+        const cell = document.createElement('div');
+        cell.className = 'month-cell';
+        cell.style.width = (spanDays * state.config.dayWidth) + 'px';
+        cell.textContent = monthLabel(days[i]);
+        monthsRow.appendChild(cell);
+        i = j;
+      }
+
+      // days row (label each day; for long ranges you can optimize to label weekly)
+      daysRow.innerHTML = '';
+      for(let k=0;k<days.length;k++){
+        const cell = document.createElement('div');
+        cell.className = 'day-cell';
+        cell.style.width = state.config.dayWidth + 'px';
+        cell.title = days[k];
+        cell.textContent = dayLabel(days[k]);
+        daysRow.appendChild(cell);
+      }
+
+      // horizontal scroll sync: rightBody scrollLeft -> header translate
+      syncHeaderScroll();
+    }
+
+    function renderLeftRow(task, level, hasKids){
+      const row = document.createElement('div');
+      row.className = 'task-row';
+      row.dataset.taskId = task.id;
+
+      row.addEventListener('click', (e) => {
+        // avoid when clicking on inputs/buttons
+        const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+        if(['button','input','select','option'].includes(tag)) return;
+        state.selectedId = task.id;
+        highlightSelection();
+      });
+
+      const twisty = document.createElement('div');
+      twisty.className = 'twisty' + (hasKids ? '' : ' hidden');
+      twisty.textContent = task.collapsed ? '▸' : '▾';
+      twisty.title = hasKids ? (task.collapsed ? 'Expand' : 'Collapse') : '';
+      twisty.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if(!hasKids) return;
+        task.collapsed = !task.collapsed;
+        render();
+      });
+
+      const name = document.createElement('div');
+      name.className = 'name';
+      name.style.paddingLeft = (level * 16) + 'px';
+
+      const label = document.createElement('div');
+      label.className = 'label';
+      label.textContent = task.name;
+
+      const [badgeText, badgeClass] = taskBadge(task);
+      const badge = document.createElement('span');
+      badge.className = 'badge' + (badgeClass ? ' ' + badgeClass : '');
+      badge.textContent = badgeText;
+
+      name.appendChild(label);
+      name.appendChild(badge);
+
+      const dates = document.createElement('div');
+      dates.className = 'dates';
+
+      const ed = effectiveDates(task);
+
+      const startInput = document.createElement('input');
+      startInput.type = 'date';
+      startInput.value = ed.start;
+      startInput.disabled = isSummaryType(task.type) && task.rollup;
+      startInput.addEventListener('change', () => {
+        task.start = startInput.value;
+        if(isMilestone(task.type)) task.end = task.start;
+        if(parseIso(task.end) < parseIso(task.start)) task.end = task.start;
+        render();
+      });
+
+      const endInput = document.createElement('input');
+      endInput.type = 'date';
+      endInput.value = ed.end;
+      endInput.disabled = isMilestone(task.type) || (isSummaryType(task.type) && task.rollup);
+      endInput.addEventListener('change', () => {
+        task.end = endInput.value;
+        if(parseIso(task.end) < parseIso(task.start)) task.start = task.end;
+        render();
+      });
+
+      dates.appendChild(startInput);
+      dates.appendChild(endInput);
+
+      const actions = document.createElement('div');
+      actions.className = 'row-actions';
+
+      const btnEdit = iconBtn('✎', 'Edit');
+      btnEdit.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openModalEdit(task.id);
+      });
+
+      const btnChild = iconBtn('+', 'Add child');
+      btnChild.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openModalAdd(task.id);
+      });
+
+      const btnUp = iconBtn('↑', 'Move up');
+      btnUp.addEventListener('click', (e) => {
+        e.stopPropagation();
+        moveTask(task.id, -1);
+      });
+
+      const btnDown = iconBtn('↓', 'Move down');
+      btnDown.addEventListener('click', (e) => {
+        e.stopPropagation();
+        moveTask(task.id, +1);
+      });
+
+      const btnDel = iconBtn('🗑', 'Delete');
+      btnDel.classList.add('danger');
+      btnDel.addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteTask(task.id);
+      });
+
+      actions.appendChild(btnEdit);
+      actions.appendChild(btnChild);
+      actions.appendChild(btnUp);
+      actions.appendChild(btnDown);
+      actions.appendChild(btnDel);
+
+      row.appendChild(twisty);
+      row.appendChild(name);
+      row.appendChild(dates);
+      row.appendChild(actions);
+      return row;
+    }
+
+    function iconBtn(text, title){
+      const b = document.createElement('button');
+      b.className = 'icon-btn';
+      b.type = 'button';
+      b.textContent = text;
+      b.title = title;
+      return b;
+    }
+
+    function xStartPx(task){
+      const ed = effectiveDates(task);
+      return diffDays(ed.start, state.chartStart) * state.config.dayWidth;
+    }
+    function xEndPx(task){
+      const ed = effectiveDates(task);
+      const daysFromStart = diffDays(ed.end, state.chartStart);
+      return (daysFromStart + 1) * state.config.dayWidth;
+    }
+
+    function renderTimelineRow(task, rowIndex){
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.dataset.taskId = task.id;
+
+      const bar = document.createElement('div');
+      bar.className = 'bar';
+      bar.dataset.taskId = task.id;
+
+      const isSummary = isSummaryType(task.type);
+      const isMs = isMilestone(task.type);
+
+      if(isSummary) bar.classList.add('summary');
+      if(isMs) bar.classList.add('milestone');
+
+      // Position
+      const left = xStartPx(task);
+      if(isMs){
+        bar.style.left = (left + Math.floor(state.config.dayWidth / 2)) + 'px';
+      } else {
+        const width = xEndPx(task) - left;
+        bar.style.left = left + 'px';
+        bar.style.width = Math.max(6, width) + 'px';
+        bar.textContent = task.name;
+      }
+
+      // Handles (not for milestones or locked/summary rollup)
+      const draggable = !(isSummary && task.rollup) && !task.locked;
+      if(!isMs && draggable){
+        const hl = document.createElement('div');
+        hl.className = 'handle left';
+        const hr = document.createElement('div');
+        hr.className = 'handle right';
+        bar.appendChild(hl);
+        bar.appendChild(hr);
+      }
+      if(draggable){
+        bar.addEventListener('pointerdown', onBarPointerDown);
+      }
+
+      row.appendChild(bar);
+      return row;
+    }
+
+    function highlightSelection(){
+      // left
+      for(const el of leftBody.querySelectorAll('.task-row')){
+        el.classList.toggle('selected', el.dataset.taskId === state.selectedId);
+      }
+    }
+
+    // ======= Scroll syncing =======
+    let syncing = false;
+
+    leftBody.addEventListener('scroll', () => {
+      if(syncing) return;
+      syncing = true;
+      rightBody.scrollTop = leftBody.scrollTop;
+      syncing = false;
+    });
+    rightBody.addEventListener('scroll', () => {
+      if(syncing) return;
+      syncing = true;
+      leftBody.scrollTop = rightBody.scrollTop;
+      syncing = false;
+      syncHeaderScroll();
+    });
+
+    function syncHeaderScroll(){
+      // translate header to match horizontal scroll
+      const x = rightBody.scrollLeft;
+      document.getElementById('timelineHeader').style.transform = `translateX(${-x}px)`;
+    }
+
+    // ======= Drag/resize =======
+    let drag = null;
+    let rafDeps = false;
+
+    function onBarPointerDown(e){
+      const id = e.currentTarget.dataset.taskId;
+      const t = getTask(id);
+      if(!t) return;
+
+      const isSummary = isSummaryType(t.type) && t.rollup;
+      if(isSummary || t.locked) return;
+
+      const target = e.target;
+      let mode = 'move';
+      if(target.classList && target.classList.contains('handle')){
+        mode = target.classList.contains('left') ? 'resize-left' : 'resize-right';
+      }
+      if(isMilestone(t.type)) mode = 'move';
+
+      e.currentTarget.setPointerCapture(e.pointerId);
+
+      drag = {
+        id,
+        pointerId: e.pointerId,
+        mode,
+        startX: e.clientX,
+        origStart: t.start,
+        origEnd: t.end
+      };
+
+      // visual cue
+      e.currentTarget.style.cursor = (mode === 'move') ? 'grabbing' : 'ew-resize';
+
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    window.addEventListener('pointermove', (e) => {
+      if(!drag) return;
+      if(e.pointerId !== drag.pointerId) return;
+
+      const t = getTask(drag.id);
+      if(!t) return;
+
+      const dx = e.clientX - drag.startX;
+      const dd = Math.round(dx / state.config.dayWidth);
+
+      let newStart = drag.origStart;
+      let newEnd = drag.origEnd;
+
+      if(isMilestone(t.type)){
+        newStart = addDays(drag.origStart, dd);
+        newEnd = newStart;
+      } else if(drag.mode === 'move'){
+        newStart = addDays(drag.origStart, dd);
+        newEnd = addDays(drag.origEnd, dd);
+      } else if(drag.mode === 'resize-left'){
+        newStart = addDays(drag.origStart, dd);
+        if(parseIso(newStart) > parseIso(newEnd)) newStart = newEnd;
+      } else if(drag.mode === 'resize-right'){
+        newEnd = addDays(drag.origEnd, dd);
+        if(parseIso(newEnd) < parseIso(newStart)) newEnd = newStart;
+      }
+
+      // update task in state (live)
+      t.start = newStart;
+      t.end = newEnd;
+      validateTaskDates(t);
+
+      // update DOM bar only for this task
+      updateBarDom(t);
+
+      scheduleDepsRender();
+    });
+
+    window.addEventListener('pointerup', (e) => {
+      if(!drag) return;
+      if(e.pointerId !== drag.pointerId) return;
+
+      drag = null;
+
+      // full re-render to re-compute range/padding and rollups
+      render();
+    });
+
+    function updateBarDom(task){
+      // left date inputs
+      const leftRow = leftBody.querySelector(`.task-row[data-task-id="${cssEscape(task.id)}"]`);
+      if(leftRow){
+        const inputs = leftRow.querySelectorAll('input[type="date"]');
+        const ed = effectiveDates(task);
+        if(inputs[0]) inputs[0].value = ed.start;
+        if(inputs[1]) inputs[1].value = ed.end;
+      }
+
+      // bar
+      const bar = timelineRows.querySelector(`.bar[data-task-id="${cssEscape(task.id)}"]`);
+      if(!bar) return;
+
+      const isMs = isMilestone(task.type);
+      const left = xStartPx(task);
+      if(isMs){
+        bar.style.left = (left + Math.floor(state.config.dayWidth / 2)) + 'px';
+      } else {
+        const width = xEndPx(task) - left;
+        bar.style.left = left + 'px';
+        bar.style.width = Math.max(6, width) + 'px';
+      }
+    }
+
+    function scheduleDepsRender(){
+      if(rafDeps) return;
+      rafDeps = true;
+      requestAnimationFrame(() => {
+        rafDeps = false;
+        renderDependencies();
+      });
+    }
+
+    // ======= Dependencies overlay =======
+    function renderDependencies(){
+      // build coordinates in timeline space
+      const coords = new Map();
+      for(let i=0; i<state.visible.length; i++){
+        const id = state.visible[i];
+        const t = getTask(id);
+        if(!t) continue;
+        const ed = effectiveDates(t);
+        const y = i * state.config.rowHeight + state.config.rowHeight / 2;
+        if(isMilestone(t.type)){
+          const x = diffDays(ed.start, state.chartStart) * state.config.dayWidth + state.config.dayWidth / 2;
+          coords.set(id, {xStart:x, xEnd:x, y});
+        } else {
+          const xs = diffDays(ed.start, state.chartStart) * state.config.dayWidth;
+          const xe = (diffDays(ed.end, state.chartStart) + 1) * state.config.dayWidth;
+          coords.set(id, {xStart: xs, xEnd: xe, y});
+        }
+      }
+
+      // clear
+      depsSvg.innerHTML = '';
+      // marker
+      const defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
+      const marker = document.createElementNS('http://www.w3.org/2000/svg','marker');
+      marker.setAttribute('id','arrow');
+      marker.setAttribute('markerWidth','8');
+      marker.setAttribute('markerHeight','8');
+      marker.setAttribute('refX','7');
+      marker.setAttribute('refY','4');
+      marker.setAttribute('orient','auto');
+      const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+      poly.setAttribute('points','0,0 8,4 0,8');
+      poly.setAttribute('fill','rgba(148,163,184,0.85)');
+      marker.appendChild(poly);
+      defs.appendChild(marker);
+      depsSvg.appendChild(defs);
+
+      // paths
+      const GAP = 6;
+      const LOOP = 28;
+      for(const succId of state.visible){
+        const succ = getTask(succId);
+        if(!succ || !succ.dependencies) continue;
+        const sc = coords.get(succId);
+        if(!sc) continue;
+
+        for(const predId of succ.dependencies){
+          const pc = coords.get(predId);
+          if(!pc) continue;
+
+          const sx = pc.xEnd;
+          const sy = pc.y;
+          const ex = sc.xStart;
+          const ey = sc.y;
+
+          // orthogonal routing
+          let pathD = '';
+          const endX = ex - 8; // leave space for arrow marker
+          if(endX >= sx + (GAP*2)){
+            const midX = sx + GAP;
+            pathD = `M ${sx} ${sy} H ${midX} V ${ey} H ${endX}`;
+          } else {
+            const loopX = sx + LOOP;
+            pathD = `M ${sx} ${sy} H ${loopX} V ${ey} H ${endX}`;
+          }
+
+          const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+          p.setAttribute('d', pathD);
+          p.setAttribute('marker-end','url(#arrow)');
+          depsSvg.appendChild(p);
+        }
+      }
+    }
+
+    // ======= Modal logic =======
+    function openModalAdd(parentId=null){
+      modalMode = { mode:'add', id:null, defaultParent: parentId };
+      modalTitle.textContent = 'Add item';
+      modalHint.textContent = parentId ? `Parent: ${getTask(parentId)?.name ?? parentId}` : 'Root level';
+      btnModalDelete.style.display = 'none';
+
+      // defaults
+      fName.value = '';
+      fType.value = parentId ? 'task' : 'phase';
+      const d = todayIso();
+      fStart.value = d;
+      fEnd.value = addDays(d, 6);
+      fRollup.checked = (fType.value === 'phase' || fType.value === 'activity');
+      fLock.checked = false;
+
+      populateParentOptions(null, parentId);
+      populateDependencyOptions(null);
+
+      syncModalFieldsForType();
+      openModal();
+    }
+
+    function openModalEdit(id){
+      const t = getTask(id);
+      if(!t) return;
+
+      modalMode = { mode:'edit', id, defaultParent: null };
+      modalTitle.textContent = 'Edit item';
+      modalHint.textContent = `ID: ${id}`;
+      btnModalDelete.style.display = 'inline-flex';
+
+      fName.value = t.name;
+      fType.value = t.type;
+      fStart.value = t.start;
+      fEnd.value = isMilestone(t.type) ? t.start : t.end;
+      fRollup.checked = !!t.rollup;
+      fLock.checked = !!t.locked;
+
+      populateParentOptions(id, t.parentId || null);
+      populateDependencyOptions(id);
+
+      // set deps selections
+      const depSet = new Set(t.dependencies || []);
+      for(const opt of Array.from(fDeps.options)){
+        opt.selected = depSet.has(opt.value);
+      }
+
+      syncModalFieldsForType();
+      openModal();
+    }
+
+    function openModal(){
+      modalBackdrop.classList.add('open');
+      // focus
+      setTimeout(() => fName.focus(), 0);
+    }
+    function closeModal(){
+      modalBackdrop.classList.remove('open');
+    }
+
+    btnModalClose.addEventListener('click', closeModal);
+    modalBackdrop.addEventListener('click', (e) => {
+      if(e.target === modalBackdrop) closeModal();
+    });
+
+    fType.addEventListener('change', () => {
+      // default rollup for summary types
+      if(isSummaryType(fType.value)) fRollup.checked = true;
+      if(isMilestone(fType.value)) fEnd.value = fStart.value;
+      syncModalFieldsForType();
+    });
+    fStart.addEventListener('change', () => {
+      if(isMilestone(fType.value)) fEnd.value = fStart.value;
+      if(parseIso(fEnd.value) < parseIso(fStart.value)) fEnd.value = fStart.value;
+    });
+    fEnd.addEventListener('change', () => {
+      if(parseIso(fEnd.value) < parseIso(fStart.value)) fStart.value = fEnd.value;
+    });
+
+    function syncModalFieldsForType(){
+      const type = fType.value;
+      const summary = isSummaryType(type);
+      const ms = isMilestone(type);
+
+      fRollup.disabled = !summary;
+      fRollup.parentElement.style.opacity = summary ? '1' : '0.5';
+
+      fEnd.disabled = ms;
+      if(ms) fEnd.value = fStart.value;
+
+      // if summary + rollup, still allow users to set base dates (kept, but rollup used for display)
+      // no change here.
+    }
+
+    function populateParentOptions(editId, selectedParentId){
+      const currentId = editId;
+      const disallowed = currentId ? descendantsOf(currentId) : new Set();
+
+      fParent.innerHTML = '';
+      const opt0 = document.createElement('option');
+      opt0.value = '';
+      opt0.textContent = '(none)';
+      fParent.appendChild(opt0);
+
+      for(const t of state.tasks){
+        if(currentId && t.id === currentId) continue;
+        if(disallowed.has(t.id)) continue;
+        const opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = `${t.name} [${t.id}]`;
+        fParent.appendChild(opt);
+      }
+
+      fParent.value = selectedParentId || '';
+    }
+
+    function populateDependencyOptions(editId){
+      const currentId = editId;
+      const disallowed = currentId ? descendantsOf(currentId) : new Set();
+      fDeps.innerHTML = '';
+
+      for(const t of state.tasks){
+        if(currentId && t.id === currentId) continue;
+        if(disallowed.has(t.id)) continue;
+        const opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = `${t.name} [${t.id}]`;
+        fDeps.appendChild(opt);
+      }
+    }
+
+    btnModalSave.addEventListener('click', () => {
+      const name = (fName.value || '').trim() || 'Untitled';
+      const type = fType.value;
+      const start = fStart.value || todayIso();
+      const end = isMilestone(type) ? start : (fEnd.value || start);
+      const parentId = fParent.value || null;
+      const deps = Array.from(fDeps.selectedOptions).map(o => o.value);
+
+      const rollup = isSummaryType(type) ? !!fRollup.checked : false;
+      const locked = !!fLock.checked;
+
+      if(modalMode.mode === 'add'){
+        const id = uid();
+        const t = {
+          id,
+          name,
+          type,
+          start,
+          end,
+          parentId,
+          dependencies: deps,
+          rollup,
+          locked,
+          collapsed: false
+        };
+        validateTaskDates(t);
+        state.tasks.push(t);
+        state.selectedId = id;
+      } else if(modalMode.mode === 'edit'){
+        const t = getTask(modalMode.id);
+        if(!t) return;
+        t.name = name;
+        t.type = type;
+        t.start = start;
+        t.end = end;
+        t.parentId = parentId;
+        t.dependencies = deps;
+        t.rollup = rollup;
+        t.locked = locked;
+        validateTaskDates(t);
+        state.selectedId = t.id;
+      }
+
+      closeModal();
+      render();
+    });
+
+    btnModalDelete.addEventListener('click', () => {
+      if(modalMode.mode !== 'edit') return;
+      const id = modalMode.id;
+      deleteTask(id);
+      closeModal();
+    });
+
+    // ======= CRUD operations =======
+    function deleteTask(id){
+      // remove task + descendants
+      const toDelete = descendantsOf(id);
+      toDelete.add(id);
+
+      state.tasks = state.tasks.filter(t => !toDelete.has(t.id));
+
+      // clean deps
+      const remaining = new Set(state.tasks.map(t => t.id));
+      for(const t of state.tasks){
+        t.dependencies = (t.dependencies || []).filter(d => remaining.has(d));
+        if(t.parentId && !remaining.has(t.parentId)) t.parentId = null;
+      }
+
+      if(state.selectedId && toDelete.has(state.selectedId)) state.selectedId = null;
+
+      render();
+    }
+
+    function moveTask(id, dir){
+      // Move within tasks array by swapping with nearest sibling in the same parent
+      const t = getTask(id);
+      if(!t) return;
+
+      const siblings = state.tasks.filter(x => (x.parentId || null) === (t.parentId || null));
+      const idxInSibs = siblings.findIndex(x => x.id === id);
+      if(idxInSibs === -1) return;
+      const targetIdx = idxInSibs + dir;
+      if(targetIdx < 0 || targetIdx >= siblings.length) return;
+      const otherId = siblings[targetIdx].id;
+
+      const idxA = state.tasks.findIndex(x => x.id === id);
+      const idxB = state.tasks.findIndex(x => x.id === otherId);
+      if(idxA === -1 || idxB === -1) return;
+
+      const tmp = state.tasks[idxA];
+      state.tasks[idxA] = state.tasks[idxB];
+      state.tasks[idxB] = tmp;
+
+      render();
+    }
+
+    // ======= Export / Import / Save =======
+    function downloadBlob(filename, blob){
+      const a = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 500);
+    }
+
+    function exportJson(){
+      const payload = {
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        config: state.config,
+        tasks: deepCopy(state.tasks)
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+      downloadBlob('gantt.json', blob);
+    }
+
+    function importJsonFile(file){
+      const reader = new FileReader();
+      reader.onload = () => {
+        try{
+          const obj = JSON.parse(reader.result);
+          if(!obj || !Array.isArray(obj.tasks)) throw new Error('Invalid JSON: expected {tasks:[...]}');
+          state.tasks = obj.tasks;
+          // config optional
+          if(obj.config && typeof obj.config === 'object'){
+            state.config = {...state.config, ...obj.config};
+          }
+          // sync sliders
+          zoom.value = String(state.config.dayWidth);
+          zoomVal.textContent = zoom.value;
+          leftWidth.value = String(state.config.leftWidth);
+          leftWidthVal.textContent = leftWidth.value;
+
+          render();
+        }catch(err){
+          alert('Import failed: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function saveLocal(){
+      const payload = {
+        version: 1,
+        savedAt: new Date().toISOString(),
+        config: state.config,
+        tasks: deepCopy(state.tasks)
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      alert('Saved to browser storage.');
+    }
+
+    function loadLocal(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw){
+        alert('Nothing saved yet.');
+        return;
+      }
+      try{
+        const obj = JSON.parse(raw);
+        if(!obj || !Array.isArray(obj.tasks)) throw new Error('Invalid saved payload');
+        state.tasks = obj.tasks;
+        if(obj.config && typeof obj.config === 'object'){
+          state.config = {...state.config, ...obj.config};
+        }
+        zoom.value = String(state.config.dayWidth);
+        zoomVal.textContent = zoom.value;
+        leftWidth.value = String(state.config.leftWidth);
+        leftWidthVal.textContent = leftWidth.value;
+
+        render();
+      }catch(err){
+        alert('Load failed: ' + err.message);
+      }
+    }
+
+    function clearAll(){
+      if(!confirm('Clear all tasks?')) return;
+      state.tasks = [];
+      state.selectedId = null;
+      render();
+    }
+
+    function exportExcelXls(){
+      // Excel-compatible HTML table saved as .xls
+      const cols = ['ID','Name','Type','Parent ID','Start','End','Dependencies'];
+      const esc = (s) => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+      let html = '';
+      html += '<html><head><meta charset="UTF-8"></head><body>';
+      html += '<table border="1" cellpadding="4" cellspacing="0">';
+      html += '<tr>' + cols.map(c => `<th>${esc(c)}</th>`).join('') + '</tr>';
+      for(const t of state.tasks){
+        const deps = (t.dependencies || []).join(',');
+        html += '<tr>' + [
+          t.id,
+          t.name,
+          t.type,
+          t.parentId || '',
+          t.start,
+          isMilestone(t.type) ? t.start : t.end,
+          deps
+        ].map(v => `<td>${esc(v)}</td>`).join('') + '</tr>';
+      }
+      html += '</table></body></html>';
+
+      const blob = new Blob([html], {type:'application/vnd.ms-excel'});
+      downloadBlob('gantt.xls', blob);
+    }
+
+    // ======= Export SVG / PNG =======
+    function buildExportSvgString(){
+      // Build a self-contained SVG of the full (visible) chart including left labels and timeline.
+      // This avoids html2canvas and works offline.
+      const leftW = state.config.leftWidth;
+      const rowH = state.config.rowHeight;
+      const headerH = 64; // for export (a bit bigger than UI)
+      const dayW = state.config.dayWidth;
+
+      const totalDays = diffDays(state.chartEnd, state.chartStart) + 1;
+      const width = leftW + totalDays * dayW;
+      const height = headerH + state.visible.length * rowH;
+
+      // Build visible order and levels again for labels
+      const { visible, levelOf, children } = buildVisibleOrder();
+
+      // Precompute coords
+      const coords = new Map();
+      for(let i=0;i<visible.length;i++){
+        const id = visible[i];
+        const t = getTask(id);
+        if(!t) continue;
+        const ed = effectiveDates(t);
+        const y = headerH + i*rowH;
+        if(isMilestone(t.type)){
+          const x = leftW + diffDays(ed.start, state.chartStart)*dayW + dayW/2;
+          coords.set(id, {xStart:x, xEnd:x, yMid: y + rowH/2, rowY:y});
+        }else{
+          const xs = leftW + diffDays(ed.start, state.chartStart)*dayW;
+          const xe = leftW + (diffDays(ed.end, state.chartStart)+1)*dayW;
+          coords.set(id, {xStart:xs, xEnd:xe, yMid: y + rowH/2, rowY:y});
+        }
+      }
+
+      // Header labels: months
+      const days = [];
+      for(let i=0;i<totalDays;i++) days.push(addDays(state.chartStart, i));
+
+      // Build month spans
+      const monthSpans = [];
+      let i = 0;
+      while(i < days.length){
+        const mk = monthKey(days[i]);
+        let j = i;
+        while(j < days.length && monthKey(days[j]) === mk) j++;
+        monthSpans.push({label: monthLabel(days[i]), start: i, len: j-i});
+        i = j;
+      }
+
+      // SVG pieces
+      const parts = [];
+      parts.push(`<?xml version="1.0" encoding="UTF-8"?>`);
+      parts.push(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`);
+      parts.push(`<defs>
+        <style>
+          .bg{ fill:#0b1220; }
+          .panel{ fill:#0f172a; }
+          .left{ fill:#111c33; }
+          .grid{ stroke: rgba(148,163,184,0.25); stroke-width:1; }
+          .grid2{ stroke: rgba(148,163,184,0.45); stroke-width:1; }
+          .hline{ stroke: rgba(148,163,184,0.18); stroke-width:1; }
+          .text{ fill:#e5e7eb; font-family: ${state.config.fontFamily ?? 'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial'}; font-size: 12px; }
+          .muted{ fill:#94a3b8; font-size: 11px; }
+          .month{ fill:#cbd5e1; font-weight: 700; font-size: 12px; }
+          .barTask{ fill: ${getComputedStyle(document.documentElement).getPropertyValue('--bar-task').trim() || '#3b82f6'}; }
+          .barSum{ fill: ${getComputedStyle(document.documentElement).getPropertyValue('--bar-summary').trim() || '#64748b'}; }
+          .barMs{ fill: ${getComputedStyle(document.documentElement).getPropertyValue('--bar-milestone').trim() || '#f97316'}; }
+          .barStroke{ stroke: rgba(255,255,255,0.22); stroke-width: 1; }
+          .dep{ stroke: rgba(148,163,184,0.85); stroke-width: 1.5; fill: none; }
+        </style>
+        <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+          <polygon points="0,0 8,4 0,8" fill="rgba(148,163,184,0.85)"/>
+        </marker>
+      </defs>`);
+
+      // Background panels
+      parts.push(`<rect class="bg" x="0" y="0" width="${width}" height="${height}"/>`);
+      parts.push(`<rect class="left" x="0" y="0" width="${leftW}" height="${height}"/>`);
+      parts.push(`<rect class="panel" x="${leftW}" y="0" width="${width-leftW}" height="${height}"/>`);
+      parts.push(`<rect class="panel" x="0" y="0" width="${width}" height="${headerH}"/>`);
+
+      // Header separators
+      parts.push(`<line class="grid2" x1="${leftW}" y1="0" x2="${leftW}" y2="${height}"/>`);
+      parts.push(`<line class="grid2" x1="0" y1="${headerH}" x2="${width}" y2="${headerH}"/>`);
+
+      // Vertical grid lines
+      for(let d=0; d<=totalDays; d++){
+        const x = leftW + d*dayW;
+        const cls = (d % 7 === 0) ? 'grid2' : 'grid';
+        parts.push(`<line class="${cls}" x1="${x}" y1="${headerH}" x2="${x}" y2="${height}"/>`);
+      }
+
+      // Month labels
+      const monthY = 18;
+      for(const ms of monthSpans){
+        const x = leftW + ms.start * dayW;
+        const w = ms.len * dayW;
+        parts.push(`<text class="month" x="${x + 6}" y="${monthY}">${escapeXml(ms.label)}</text>`);
+        // optional month boundary line already included by grid lines
+      }
+
+      // Day labels (every day; if too dense, you can change to every 2/7)
+      const dayY = 42;
+      for(let d=0; d<days.length; d++){
+        const x = leftW + d*dayW + dayW/2;
+        parts.push(`<text class="muted" text-anchor="middle" x="${x}" y="${dayY}">${escapeXml(dayLabel(days[d]))}</text>`);
+      }
+
+      // Row lines + left labels
+      for(let r=0; r<visible.length; r++){
+        const y = headerH + r*rowH;
+        parts.push(`<line class="hline" x1="0" y1="${y}" x2="${width}" y2="${y}"/>`);
+        const id = visible[r];
+        const t = getTask(id);
+        if(!t) continue;
+        const lvl = levelOf(id);
+        const xText = 10 + lvl*16;
+        const yText = y + rowH/2 + 4;
+        const badge = isMilestone(t.type) ? 'Milestone' : (isSummaryType(t.type) ? (t.type==='phase'?'Phase':'Activity') : 'Task');
+        parts.push(`<text class="text" x="${xText}" y="${yText}">${escapeXml(t.name)}</text>`);
+        parts.push(`<text class="muted" x="${Math.max(xText + 180, leftW - 90)}" y="${yText}" text-anchor="end">${escapeXml(badge)}</text>`);
+      }
+      // final bottom line
+      parts.push(`<line class="hline" x1="0" y1="${height}" x2="${width}" y2="${height}"/>`);
+
+      // Dependency paths (visible only)
+      const GAP = 6;
+      const LOOP = 28;
+      for(const succId of visible){
+        const succ = getTask(succId);
+        if(!succ || !succ.dependencies) continue;
+        const sc = coords.get(succId);
+        if(!sc) continue;
+        for(const predId of succ.dependencies){
+          const pc = coords.get(predId);
+          if(!pc) continue;
+          const sx = pc.xEnd;
+          const sy = pc.yMid;
+          const ex = sc.xStart;
+          const ey = sc.yMid;
+          const endX = ex - 8;
+
+          let dPath = '';
+          if(endX >= sx + (GAP*2)){
+            const midX = sx + GAP;
+            dPath = `M ${sx} ${sy} H ${midX} V ${ey} H ${endX}`;
+          } else {
+            const loopX = sx + LOOP;
+            dPath = `M ${sx} ${sy} H ${loopX} V ${ey} H ${endX}`;
+          }
+          parts.push(`<path class="dep" d="${dPath}" marker-end="url(#arrow)"/>`);
+        }
+      }
+
+      // Bars
+      for(const id of visible){
+        const t = getTask(id);
+        const c = coords.get(id);
+        if(!t || !c) continue;
+
+        if(isMilestone(t.type)){
+          const size = 10;
+          const cx = c.xStart;
+          const cy = c.yMid;
+          // diamond
+          parts.push(`<polygon class="barMs barStroke" points="${cx},${cy-size} ${cx+size},${cy} ${cx},${cy+size} ${cx-size},${cy}"/>`);
+        } else {
+          const y = c.rowY + 7;
+          const h = 20;
+          const w = Math.max(6, c.xEnd - c.xStart);
+          const cls = isSummaryType(t.type) ? 'barSum' : 'barTask';
+          parts.push(`<rect class="${cls} barStroke" x="${c.xStart}" y="${y}" width="${w}" height="${h}" rx="6" ry="6"/>`);
+          // label (clip if too narrow)
+          if(w >= 48){
+            parts.push(`<text class="text" x="${c.xStart + 8}" y="${y + 14}">${escapeXml(t.name)}</text>`);
+          }
+        }
+      }
+
+      // Today line (optional)
+      const today = todayIso();
+      if(today >= state.chartStart && today <= state.chartEnd){
+        const x = leftW + diffDays(today, state.chartStart)*dayW;
+        parts.push(`<line x1="${x}" y1="${headerH}" x2="${x}" y2="${height}" stroke="rgba(239,68,68,0.65)" stroke-width="2"/>`);
+      }
+
+      parts.push(`</svg>`);
+      return parts.join('\\n');
+    }
+
+    function escapeXml(s){
+      return String(s ?? '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&apos;');
+    }
+
+    function exportSvg(){
+      const svg = buildExportSvgString();
+      const blob = new Blob([svg], {type:'image/svg+xml;charset=utf-8'});
+      downloadBlob('gantt.svg', blob);
+    }
+
+    function exportPng(){
+      const svg = buildExportSvgString();
+      const blob = new Blob([svg], {type:'image/svg+xml;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = () => {
+        try{
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          // white background for PNG
+          ctx.fillStyle = '#0b1220';
+          ctx.fillRect(0,0,canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0);
+          canvas.toBlob((pngBlob) => {
+            if(pngBlob) downloadBlob('gantt.png', pngBlob);
+            URL.revokeObjectURL(url);
+          }, 'image/png');
+        }catch(err){
+          URL.revokeObjectURL(url);
+          alert('PNG export failed: ' + err.message);
+        }
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        alert('PNG export failed: could not render SVG in this browser.');
+      };
+      img.src = url;
+    }
+
+    // ======= CSS escape helper =======
+    function cssEscape(s){
+      // minimal escape for attribute selectors
+      return String(s).replace(/"/g, '\\"');
+    }
+
+    // ======= Buttons =======
+    document.getElementById('btnAdd').addEventListener('click', () => openModalAdd(null));
+    document.getElementById('btnSaveLocal').addEventListener('click', saveLocal);
+    document.getElementById('btnLoadLocal').addEventListener('click', loadLocal);
+    document.getElementById('btnExportJson').addEventListener('click', exportJson);
+    document.getElementById('btnExportPng').addEventListener('click', exportPng);
+    document.getElementById('btnExportSvg').addEventListener('click', exportSvg);
+    document.getElementById('btnExportExcel').addEventListener('click', exportExcelXls);
+    document.getElementById('btnPrint').addEventListener('click', () => window.print());
+    document.getElementById('btnClear').addEventListener('click', clearAll);
+
+    fileImport.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if(file) importJsonFile(file);
+      fileImport.value = '';
+    });
+
+    zoom.addEventListener('input', () => {
+      state.config.dayWidth = Number(zoom.value);
+      zoomVal.textContent = zoom.value;
+      render();
+    });
+    leftWidth.addEventListener('input', () => {
+      state.config.leftWidth = Number(leftWidth.value);
+      leftWidthVal.textContent = leftWidth.value;
+      render();
+    });
+
+    // ======= Seed data =======
+    function seed(){
+      const d = todayIso();
+      state.tasks = [
+        { id:'P1', name:'Phase 1 — Discovery', type:'phase', start:addDays(d,0), end:addDays(d,14), parentId:null, dependencies:[], rollup:true, locked:false, collapsed:false },
+        { id:'A11', name:'Activity — Stakeholder workshops', type:'activity', start:addDays(d,0), end:addDays(d,5), parentId:'P1', dependencies:[], rollup:true, locked:false, collapsed:false },
+        { id:'T111', name:'Workshop prep', type:'task', start:addDays(d,0), end:addDays(d,1), parentId:'A11', dependencies:[], rollup:false, locked:false, collapsed:false },
+        { id:'T112', name:'Run workshops', type:'task', start:addDays(d,2), end:addDays(d,4), parentId:'A11', dependencies:['T111'], rollup:false, locked:false, collapsed:false },
+        { id:'M113', name:'Discovery sign-off', type:'milestone', start:addDays(d,5), end:addDays(d,5), parentId:'A11', dependencies:['T112'], rollup:false, locked:false, collapsed:false },
+
+        { id:'A12', name:'Activity — Current state analysis', type:'activity', start:addDays(d,3), end:addDays(d,13), parentId:'P1', dependencies:['M113'], rollup:true, locked:false, collapsed:false },
+        { id:'T121', name:'Data gathering', type:'task', start:addDays(d,3), end:addDays(d,7), parentId:'A12', dependencies:[], rollup:false, locked:false, collapsed:false },
+        { id:'T122', name:'Analysis & findings', type:'task', start:addDays(d,8), end:addDays(d,13), parentId:'A12', dependencies:['T121'], rollup:false, locked:false, collapsed:false },
+
+        { id:'P2', name:'Phase 2 — Delivery', type:'phase', start:addDays(d,15), end:addDays(d,35), parentId:null, dependencies:['M113'], rollup:true, locked:false, collapsed:false },
+        { id:'T21', name:'Build solution', type:'task', start:addDays(d,15), end:addDays(d,30), parentId:'P2', dependencies:['T122'], rollup:false, locked:false, collapsed:false },
+        { id:'M22', name:'Go-live', type:'milestone', start:addDays(d,35), end:addDays(d,35), parentId:'P2', dependencies:['T21'], rollup:false, locked:false, collapsed:false },
+      ];
+    }
+
+    // ======= Boot =======
+    (function init(){
+      // initial config from sliders
+      state.config.dayWidth = Number(zoom.value);
+      state.config.leftWidth = Number(leftWidth.value);
+      zoomVal.textContent = zoom.value;
+      leftWidthVal.textContent = leftWidth.value;
+
+      // load saved if present; else seed
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        try{
+          const obj = JSON.parse(raw);
+          if(obj && Array.isArray(obj.tasks)){
+            state.tasks = obj.tasks;
+            if(obj.config && typeof obj.config === 'object'){
+              state.config = {...state.config, ...obj.config};
+            }
+            zoom.value = String(state.config.dayWidth);
+            zoomVal.textContent = zoom.value;
+            leftWidth.value = String(state.config.leftWidth);
+            leftWidthVal.textContent = leftWidth.value;
+          } else {
+            seed();
+          }
+        } catch {
+          seed();
+        }
+      } else {
+        seed();
+      }
+
+      // toolbar add also opens modal
+      document.addEventListener('keydown', (e) => {
+        if(e.key === 'Escape' && modalBackdrop.classList.contains('open')) closeModal();
+        if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's'){
+          e.preventDefault();
+          saveLocal();
+        }
+      });
+
+      render();
+    })();
+
+  </script>
+</body>
+</html>
