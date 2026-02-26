@@ -332,6 +332,8 @@
       white-space: nowrap;
       font-size: 12px;
       color: #ffffff;
+      z-index: 1;
+      transform: translateZ(0);
     }
     .row .bar.summary {
       background: var(--bar-summary);
@@ -369,6 +371,16 @@
     .handle.left { left: -2px; }
     .handle.right { right: -2px; }
 
+    .today-line {
+      position: absolute;
+      top: 0;
+      width: 2px;
+      height: var(--timeline-height);
+      background: rgba(239,68,68,0.65);
+      z-index: 3;
+      pointer-events: none;
+    }
+
     .deps {
       position: absolute;
       left: 0;
@@ -376,6 +388,7 @@
       width: var(--timeline-width);
       height: var(--timeline-height);
       pointer-events: none;
+      z-index: 2;
     }
     .deps path {
       stroke: rgba(0,0,0,0.35);
@@ -564,6 +577,7 @@
         </div>
         <div class="right-body" id="rightBody">
           <div class="timeline" id="timeline">
+            <div class="today-line" id="todayLine"></div>
             <svg class="deps" id="depsSvg"></svg>
             <div id="timelineRows"></div>
           </div>
@@ -970,6 +984,17 @@
         const t = getTask(id);
         if(!t) continue;
         timelineRows.appendChild(renderTimelineRow(t, idx));
+      }
+
+      // Today line
+      const todayLine = document.getElementById('todayLine');
+      const today = todayIso();
+      if(today >= state.chartStart && today <= state.chartEnd){
+        const todayX = diffDays(today, state.chartStart) * state.config.dayWidth;
+        todayLine.style.left = todayX + 'px';
+        todayLine.style.display = '';
+      } else {
+        todayLine.style.display = 'none';
       }
 
       // Dependencies overlay SVG
