@@ -865,19 +865,37 @@
     }
 
     function effectiveDates(task){
-      // For summary tasks with rollup=true, compute start/end from children if possible.
+      // For summary tasks with rollup=true, compute start/end from ALL descendants.
+      // This ensures phase/activity bars always span the full range of everything
+      // underneath them, even if intermediate summaries have rollup=false or
+      // manually-set dates that don't cover their children.
       if(isSummaryType(task.type) && task.rollup){
+        const desc = descendantsOf(task.id);
+        if(desc.size > 0){
+          let minS = null, maxE = null;
+          for(const did of desc){
+            const d = getTask(did);
+            if(!d) continue;
+            // Use each descendant's own dates (skip sub-summaries with rollup
+            // since their own dates may be stale; their leaf children are
+            // already included in the descendants set)
+            const ds = d.start;
+            const de = isMilestone(d.type) ? d.start : d.end;
+            if(ds && (minS === null || ds < minS)) minS = ds;
+            if(de && (maxE === null || de > maxE)) maxE = de;
+          }
+          if(minS && maxE){
+            return { start: minS, end: maxE };
+          }
+        }
+        // Fallback: try direct children raw dates
         const kids = childrenOf(task.id);
         if(kids.length){
           let minS = null, maxE = null;
           for(const k of kids){
-            const ed = effectiveDates(k);
-            if(ed.start){
-              if(minS === null || ed.start < minS) minS = ed.start;
-            }
-            if(ed.end){
-              if(maxE === null || ed.end > maxE) maxE = ed.end;
-            }
+            if(k.start && (minS === null || k.start < minS)) minS = k.start;
+            const ke = isMilestone(k.type) ? k.start : k.end;
+            if(ke && (maxE === null || ke > maxE)) maxE = ke;
           }
           if(minS && maxE){
             return { start: minS, end: maxE };
@@ -1464,7 +1482,7 @@
       marker.setAttribute('id','arrow');
       marker.setAttribute('markerWidth','8');
       marker.setAttribute('markerHeight','8');
-      marker.setAttribute('refX','7');
+      marker.setAttribute('refX','8');
       marker.setAttribute('refY','4');
       marker.setAttribute('orient','auto');
       const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
@@ -1475,8 +1493,10 @@
       depsSvg.appendChild(defs);
 
       // Finish-to-start dependency routing
+      // Arrow tip is at refX=8 (the polygon tip), so the path endpoint
+      // should be the exact left edge of the successor bar — the arrowhead
+      // body extends backwards (left) from that point automatically.
       const GAP = 12;
-      const ARROW = 8;
       const rowH = state.config.rowHeight;
 
       for(const succId of state.visible){
@@ -1493,20 +1513,18 @@
           const sy = pc.y;      // vertical center of predecessor row
           const ex = sc.xStart; // left edge of successor bar
           const ey = sc.y;      // vertical center of successor row
-          const targetX = ex - ARROW; // leave space for arrowhead
 
           let pathD;
 
-          if(targetX > sx + GAP * 2){
+          if(ex >= sx + GAP){
             // Simple case: enough horizontal space between bars
-            // L-route: right to midpoint, vertical to succ row, horizontal to target
+            // L-route: horizontal to midpoint, vertical to successor row, horizontal to bar
             const midX = sx + (ex - sx) / 2;
-            pathD = `M ${sx} ${sy} H ${midX} V ${ey} H ${targetX}`;
+            pathD = `M ${sx} ${sy} H ${midX} V ${ey} H ${ex}`;
           } else {
-            // Overlap case: predecessor ends near/after successor starts
-            // S-route: right, vertical to midpoint between rows, left, vertical to succ, right to target
-            const rightX = sx + GAP;
-            const leftX = ex - GAP;
+            // Overlap or adjacent: route around the bars
+            const rightX = Math.max(sx, ex) + GAP;
+            const leftX = Math.min(sx, ex) - GAP;
             let midY;
             if(Math.abs(ey - sy) < 1){
               // Same row: route below
@@ -1515,7 +1533,7 @@
               // Route through midpoint between the two rows
               midY = (sy + ey) / 2;
             }
-            pathD = `M ${sx} ${sy} H ${rightX} V ${midY} H ${leftX} V ${ey} H ${targetX}`;
+            pathD = `M ${sx} ${sy} H ${rightX} V ${midY} H ${leftX} V ${ey} H ${ex}`;
           }
 
           const p = document.createElementNS('http://www.w3.org/2000/svg','path');
@@ -1943,7 +1961,7 @@
           .barLabel{ fill: #ffffff; font-size: 12px; }
           .dep{ stroke: rgba(0,0,0,0.35); stroke-width: 1.5; fill: none; }
         </style>
-        <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+        <marker id="arrow" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto">
           <polygon points="0,0 8,4 0,8" fill="rgba(0,0,0,0.35)"/>
         </marker>
       </defs>`);
@@ -2000,7 +2018,6 @@
 
       // Dependency paths (visible only) — finish-to-start routing
       const GAP = 12;
-      const ARROW = 8;
       for(const succId of visible){
         const succ = getTask(succId);
         if(!succ || !succ.dependencies) continue;
@@ -2013,22 +2030,21 @@
           const sy = pc.yMid;
           const ex = sc.xStart;
           const ey = sc.yMid;
-          const targetX = ex - ARROW;
 
           let dPath;
-          if(targetX > sx + GAP * 2){
+          if(ex >= sx + GAP){
             const midX = sx + (ex - sx) / 2;
-            dPath = `M ${sx} ${sy} H ${midX} V ${ey} H ${targetX}`;
+            dPath = `M ${sx} ${sy} H ${midX} V ${ey} H ${ex}`;
           } else {
-            const rightX = sx + GAP;
-            const leftX = ex - GAP;
+            const rightX = Math.max(sx, ex) + GAP;
+            const leftX = Math.min(sx, ex) - GAP;
             let midY;
             if(Math.abs(ey - sy) < 1){
               midY = sy + rowH * 0.7;
             } else {
               midY = (sy + ey) / 2;
             }
-            dPath = `M ${sx} ${sy} H ${rightX} V ${midY} H ${leftX} V ${ey} H ${targetX}`;
+            dPath = `M ${sx} ${sy} H ${rightX} V ${midY} H ${leftX} V ${ey} H ${ex}`;
           }
           parts.push(`<path class="dep" d="${dPath}" marker-end="url(#arrow)"/>`);
         }
