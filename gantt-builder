@@ -341,7 +341,8 @@
       background: var(--bar-summary);
       color: #ffffff;
       cursor: default;
-      opacity: 0.9;
+      opacity: 1;
+      border: 1px solid rgba(0,0,0,0.2);
     }
     .row .bar.milestone {
       width: 0;
@@ -351,13 +352,15 @@
       border: none;
       padding: 0;
       cursor: grab;
+      overflow: visible;
     }
     .row .bar.milestone::before{
       content:"";
       display:block;
       width: 14px;
       height: 14px;
-      transform: rotate(45deg);
+      transform: translate(-7px, 0) rotate(45deg);
+      transform-origin: center center;
       background: var(--bar-milestone);
       border-radius: 2px;
       border: 1px solid rgba(0,0,0,0.15);
@@ -393,7 +396,7 @@
       z-index: 2;
     }
     .deps path {
-      stroke: rgba(0,0,0,0.35);
+      stroke: rgba(0,0,0,0.45);
       stroke-width: 1.5;
       fill: none;
     }
@@ -865,13 +868,18 @@
     }
 
     function effectiveDates(task){
-      // For summary tasks with rollup=true, compute start/end from children if possible.
+      // For summary tasks with rollup=true, compute start/end from ALL descendants.
       if(isSummaryType(task.type) && task.rollup){
-        const kids = childrenOf(task.id);
-        if(kids.length){
+        const allDesc = descendantsOf(task.id);
+        if(allDesc.size > 0){
           let minS = null, maxE = null;
-          for(const k of kids){
-            const ed = effectiveDates(k);
+          for(const descId of allDesc){
+            const dt = getTask(descId);
+            if(!dt) continue;
+            // For leaf tasks and milestones, use stored dates
+            const ed = isSummaryType(dt.type) && dt.rollup
+              ? effectiveDates(dt)
+              : (isMilestone(dt.type) ? { start: dt.start, end: dt.start } : { start: dt.start, end: dt.end });
             if(ed.start){
               if(minS === null || ed.start < minS) minS = ed.start;
             }
@@ -1223,6 +1231,7 @@
       // Position
       const left = xStartPx(task);
       if(isMs){
+        // Center diamond on day cell; ::before translates -7px to center the 14px square on bar.left
         bar.style.left = (left + Math.floor(state.config.dayWidth / 2)) + 'px';
       } else {
         const width = xEndPx(task) - left;
@@ -1440,16 +1449,18 @@
     function renderDependencies(){
       // build coordinates in timeline space
       const coords = new Map();
+      const msOffset = 10; // milestone diamond half-diagonal (~14*sqrt(2)/2)
       for(let i=0; i<state.visible.length; i++){
         const id = state.visible[i];
         const t = getTask(id);
         if(!t) continue;
         const ed = effectiveDates(t);
-        const y = i * state.config.rowHeight + state.config.rowHeight / 2;
         if(isMilestone(t.type)){
-          const x = diffDays(ed.start, state.chartStart) * state.config.dayWidth + state.config.dayWidth / 2;
-          coords.set(id, {xStart:x, xEnd:x, y});
+          const cx = diffDays(ed.start, state.chartStart) * state.config.dayWidth + state.config.dayWidth / 2;
+          const y = i * state.config.rowHeight + 8 + 7; // diamond center (top:8 + half of 14px)
+          coords.set(id, {xStart: cx - msOffset, xEnd: cx + msOffset, y});
         } else {
+          const y = i * state.config.rowHeight + state.config.rowHeight / 2;
           const xs = diffDays(ed.start, state.chartStart) * state.config.dayWidth;
           const xe = (diffDays(ed.end, state.chartStart) + 1) * state.config.dayWidth;
           coords.set(id, {xStart: xs, xEnd: xe, y});
@@ -1464,19 +1475,19 @@
       marker.setAttribute('id','arrow');
       marker.setAttribute('markerWidth','8');
       marker.setAttribute('markerHeight','8');
-      marker.setAttribute('refX','7');
+      marker.setAttribute('refX','8');
       marker.setAttribute('refY','4');
       marker.setAttribute('orient','auto');
       const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
       poly.setAttribute('points','0,0 8,4 0,8');
-      poly.setAttribute('fill','rgba(0,0,0,0.35)');
+      poly.setAttribute('fill','rgba(0,0,0,0.45)');
       marker.appendChild(poly);
       defs.appendChild(marker);
       depsSvg.appendChild(defs);
 
       // Finish-to-start dependency routing
-      const GAP = 12;
-      const ARROW = 8;
+      // With refX=8 on marker, the arrow tip is exactly at path endpoint
+      const GAP = 14;
       const rowH = state.config.rowHeight;
 
       for(const succId of state.visible){
@@ -1489,22 +1500,20 @@
           const pc = coords.get(predId);
           if(!pc) continue;
 
-          const sx = pc.xEnd;   // right edge of predecessor bar
-          const sy = pc.y;      // vertical center of predecessor row
-          const ex = sc.xStart; // left edge of successor bar
-          const ey = sc.y;      // vertical center of successor row
-          const targetX = ex - ARROW; // leave space for arrowhead
+          const sx = pc.xEnd;   // right edge of predecessor bar (or diamond)
+          const sy = pc.y;      // vertical center of predecessor
+          const ex = sc.xStart; // left edge of successor bar (or diamond)
+          const ey = sc.y;      // vertical center of successor
+          const targetX = ex;   // arrow tip lands exactly at bar edge (refX=8)
 
           let pathD;
 
-          if(targetX > sx + GAP * 2){
+          if(ex > sx + GAP * 2){
             // Simple case: enough horizontal space between bars
-            // L-route: right to midpoint, vertical to succ row, horizontal to target
             const midX = sx + (ex - sx) / 2;
             pathD = `M ${sx} ${sy} H ${midX} V ${ey} H ${targetX}`;
           } else {
             // Overlap case: predecessor ends near/after successor starts
-            // S-route: right, vertical to midpoint between rows, left, vertical to succ, right to target
             const rightX = sx + GAP;
             const leftX = ex - GAP;
             let midY;
@@ -1890,6 +1899,7 @@
 
       // Precompute coords
       const coords = new Map();
+      const msOffset = 10; // milestone diamond half-diagonal
       for(let i=0;i<visible.length;i++){
         const id = visible[i];
         const t = getTask(id);
@@ -1897,8 +1907,9 @@
         const ed = effectiveDates(t);
         const y = headerH + i*rowH;
         if(isMilestone(t.type)){
-          const x = leftW + diffDays(ed.start, state.chartStart)*dayW + dayW/2;
-          coords.set(id, {xStart:x, xEnd:x, yMid: y + rowH/2, rowY:y});
+          const cx = leftW + diffDays(ed.start, state.chartStart)*dayW + dayW/2;
+          const yMid = y + 8 + 7; // diamond center (top:8 + half of 14px)
+          coords.set(id, {xStart: cx - msOffset, xEnd: cx + msOffset, yMid: yMid, rowY:y});
         }else{
           const xs = leftW + diffDays(ed.start, state.chartStart)*dayW;
           const xe = leftW + (diffDays(ed.end, state.chartStart)+1)*dayW;
@@ -1941,10 +1952,10 @@
           .barMs{ fill: ${getComputedStyle(document.documentElement).getPropertyValue('--bar-milestone').trim() || '#E84000'}; }
           .barStroke{ stroke: rgba(0,0,0,0.15); stroke-width: 1; }
           .barLabel{ fill: #ffffff; font-size: 12px; }
-          .dep{ stroke: rgba(0,0,0,0.35); stroke-width: 1.5; fill: none; }
+          .dep{ stroke: rgba(0,0,0,0.45); stroke-width: 1.5; fill: none; }
         </style>
-        <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-          <polygon points="0,0 8,4 0,8" fill="rgba(0,0,0,0.35)"/>
+        <marker id="arrow" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto">
+          <polygon points="0,0 8,4 0,8" fill="rgba(0,0,0,0.45)"/>
         </marker>
       </defs>`);
 
@@ -1999,8 +2010,8 @@
       parts.push(`<line class="hline" x1="0" y1="${height}" x2="${width}" y2="${height}"/>`);
 
       // Dependency paths (visible only) — finish-to-start routing
-      const GAP = 12;
-      const ARROW = 8;
+      // With refX=8, the arrow tip lands exactly at the path endpoint
+      const GAP = 14;
       for(const succId of visible){
         const succ = getTask(succId);
         if(!succ || !succ.dependencies) continue;
@@ -2013,10 +2024,10 @@
           const sy = pc.yMid;
           const ex = sc.xStart;
           const ey = sc.yMid;
-          const targetX = ex - ARROW;
+          const targetX = ex; // arrow tip lands exactly at bar edge (refX=8)
 
           let dPath;
-          if(targetX > sx + GAP * 2){
+          if(ex > sx + GAP * 2){
             const midX = sx + (ex - sx) / 2;
             dPath = `M ${sx} ${sy} H ${midX} V ${ey} H ${targetX}`;
           } else {
