@@ -387,94 +387,152 @@ body {
 
 /* ── WELCOME PAGE ── */
 .welcome-page {
+  height: 100vh;
+  background: #f4f4f6;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.welcome-page .topbar-hide { display: none; }
+.welcome-nav {
+  position: relative;
+  z-index: 10;
   display: flex;
   align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 56px - 48px);
-  padding: 40px 24px;
+  justify-content: space-between;
+  padding: 20px 64px;
 }
-.welcome-card {
-  max-width: 640px;
-  width: 100%;
+.welcome-nav-brand {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.welcome-nav-badge {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #e8530e;
+  background: rgba(232, 83, 14, 0.08);
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+.welcome-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  animation: fadeIn 0.3s ease;
-}
-.welcome-icon {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--o100) 0%, var(--o300) 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 24px;
+  padding: 16px 64px 24px;
+  position: relative;
+  z-index: 1;
 }
 .welcome-title {
-  font-size: 28px;
-  font-weight: 800;
-  color: var(--black);
-  margin-bottom: 12px;
-  line-height: 1.2;
+  font-size: 56px;
+  font-weight: 600;
+  color: #111;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  font-family: Georgia, serif;
+  margin: 0 0 16px;
+}
+.welcome-title em {
+  font-style: normal;
+  color: #e8530e;
 }
 .welcome-desc {
   font-size: 15px;
-  color: var(--g500);
-  line-height: 1.7;
+  color: #666;
+  line-height: 1.75;
+  margin: 0 0 36px;
   max-width: 520px;
-  margin: 0 auto 12px;
-}
-.welcome-features {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin: 28px 0 32px;
-}
-.welcome-feature {
-  padding: 16px 12px;
-  background: var(--white);
-  border: 1px solid var(--g200);
-  border-radius: var(--radius);
   text-align: center;
 }
+.welcome-features {
+  display: flex;
+  gap: 16px;
+  margin: 0 0 40px;
+}
+.welcome-feature {
+  padding: 14px 24px;
+  background: var(--white);
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  text-align: center;
+  min-width: 110px;
+}
 .welcome-feature-num {
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--o500);
+  font-size: 28px;
+  font-weight: 700;
+  color: #e8530e;
   line-height: 1;
   margin-bottom: 4px;
+  font-family: Georgia, serif;
 }
 .welcome-feature-label {
   font-size: 12px;
-  color: var(--g500);
+  color: #888;
   font-weight: 500;
 }
 .welcome-actions {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: 12px;
 }
 .btn-lg {
-  padding: 14px 36px;
-  font-size: 15px;
-  border-radius: var(--radius);
+  padding: 10px 24px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: system-ui, sans-serif;
+  letter-spacing: -0.01em;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.btn-lg:hover {
+  background: var(--o500) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.btn-lg:focus {
+  outline: 2px solid var(--o300);
+  outline-offset: 3px;
 }
 .btn-link {
   background: none;
   border: none;
-  color: var(--g500);
+  color: #999;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   padding: 4px 8px;
   transition: color 0.15s;
   text-decoration: none;
-  font-family: inherit;
+  font-family: system-ui, sans-serif;
   display: inline-flex;
   align-items: center;
   gap: 4px;
 }
-.btn-link:hover { color: var(--black); }
+.btn-link:hover { color: #111; }
+.welcome-footer {
+  position: absolute;
+  bottom: 20px;
+  left: 64px;
+  font-size: 11px;
+  color: #bbb;
+}
+.welcome-footer a {
+  color: #aaa;
+  text-decoration: none;
+}
+.welcome-footer a:hover { color: #e8530e; }
 
 /* ── DOMAIN TABLE ── */
 .domain-table-wrap {
@@ -553,9 +611,13 @@ body {
   .strengths-grid { grid-template-columns: 1fr; }
   .capability-header { flex-direction: column; align-items: flex-start; gap: 4px; }
   .capability-meta { margin-left: 0; }
-  .welcome-features { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .welcome-title { font-size: 22px; }
+  .welcome-nav { padding: 16px 24px; }
+  .welcome-hero { padding: 16px 24px; }
+  .welcome-title { font-size: 32px; }
   .welcome-desc { font-size: 14px; }
+  .welcome-features { gap: 8px; }
+  .welcome-feature { padding: 10px 16px; min-width: 80px; }
+  .welcome-footer { left: 24px; }
 }
 @media print {
   .topbar, .step-card-footer, .progress-section { display: none; }
@@ -595,15 +657,15 @@ body {
 
   <!-- WELCOME PAGE -->
   <div id="welcome-step" class="welcome-page">
-    <div class="welcome-card">
-      <div class="welcome-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FD5108" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 20V10"/>
-          <path d="M18 20V4"/>
-          <path d="M6 20v-4"/>
-        </svg>
-      </div>
-      <h1 class="welcome-title">PMO Maturity Assessment</h1>
+    <nav class="welcome-nav">
+      <span class="welcome-nav-brand">
+        <svg style="height:24px;width:auto;vertical-align:middle;" viewBox="0 0 104 67" xmlns="http://www.w3.org/2000/svg"><defs><style>.wn1{fill:#000;}.wn2{fill:#fd5108;}</style></defs><path class="wn1" d="M69.26,30.74c-2.53.41-3.83,2.28-3.83,5.57s1.73,5.53,4.37,5.53c1.23,0,2.35-.41,4.7-1.56v2.68c-2.82,1.29-4.48,1.69-6.76,1.69-2.46,0-4.19-.65-5.61-2.09-1.45-1.45-2.17-3.36-2.17-5.5,0-4.74,3.51-7.95,8.64-7.95,3.41,0,5.75,1.56,5.75,3.84,0,1.47-1.09,2.48-2.71,2.48-.83,0-1.51-.22-2.39-.72v-3.98ZM56.76,37.06c2.27-2.86,3.07-4.02,3.07-5.42s-1.11-2.53-2.6-2.53c-.91,0-1.74.43-2.14.88v5.83l-3.72,4.96v-11.31h-3.54l-5.88,9.75v-9.75h-2.03l-5.34,1.3v1.36l2.91.3v11.96h3.76l5.64-9.27v9.27h4.12l5.74-7.34ZM23.34,32.52c.87-.11,1.29-.15,1.7-.15,2.45,0,3.78,1.63,3.78,4.7,0,3.62-1.63,5.51-4.66,5.51-.25,0-.43,0-.83-.02v-10.04ZM23.34,44.25c.98.11,1.93.15,2.5.15,5.04,0,8.24-3.23,8.24-8.03,0-4.15-2.4-7.15-5.65-7.15-1.41,0-2.35.29-5.09,1.92v-2h-1.52l-5.86,1.78v1.43h2.43v16.73l-2.18.54v1.39h9.58v-1.39s-2.44-.54-2.44-.54v-4.84Z"/><path class="wn2" d="M66.54,24.97h-15.98l2.72-4.51h15.98l-2.72,4.51ZM87.96,15.94h-15.98l-2.72,4.51h15.98l2.72-4.51Z"/></svg>
+        PMO Maturity Assessment
+      </span>
+      <span class="welcome-nav-badge">Assessment Tool</span>
+    </nav>
+    <div class="welcome-hero">
+      <h1 class="welcome-title">Maturity<em>Assessment.</em></h1>
       <p class="welcome-desc">Evaluate your PMO's maturity across nine key domains. Rate each capability, and receive a tailored maturity profile with prioritised recommendations.</p>
       <div class="welcome-features">
         <div class="welcome-feature">
@@ -620,10 +682,7 @@ body {
         </div>
       </div>
       <div class="welcome-actions">
-        <button id="welcome-start-btn" class="btn btn-primary btn-lg">
-          Start Assessment
-          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+        <button id="welcome-start-btn" class="btn-lg" style="background:#FFAA72;color:#111;">Start Assessment</button>
         <button id="welcome-config-btn" class="btn-link">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/>
@@ -632,6 +691,7 @@ body {
           Configure domain weightings
         </button>
       </div>
+      <div class="welcome-footer">PwC Delivery Excellence</div>
     </div>
   </div>
 
@@ -821,9 +881,7 @@ function loadSavedProgress() {
         }
       });
     }
-    if (typeof data.currentStep === 'number') {
-      currentStep = Math.min(data.currentStep, totalSteps);
-    }
+    // Always open to the welcome screen — do not restore currentStep
   } catch (err) {
     console.warn('Failed to load saved progress', err);
   }
@@ -944,15 +1002,27 @@ function showStep() {
   capStepDiv.classList.add('hidden');
   resultsStepDiv.classList.add('hidden');
 
+  const topbar = document.querySelector('.topbar');
+  const pageEl = document.querySelector('.page');
+
   if (currentStep <= -1) {
     welcomeStepDiv.classList.remove('hidden');
     progressSection.classList.add('hidden');
+    topbar.style.display = 'none';
+    pageEl.style.padding = '0';
+    pageEl.style.maxWidth = 'none';
   } else if (currentStep === 0) {
     domainStepDiv.classList.remove('hidden');
     progressSection.classList.add('hidden');
+    topbar.style.display = '';
+    pageEl.style.padding = '';
+    pageEl.style.maxWidth = '';
   } else if (currentStep >= 1 && currentStep <= capabilities.length) {
     progressSection.classList.remove('hidden');
     capStepDiv.classList.remove('hidden');
+    topbar.style.display = '';
+    pageEl.style.padding = '';
+    pageEl.style.maxWidth = '';
     const isLast = currentStep === capabilities.length;
     nextBtn.innerHTML = isLast
       ? 'View Results <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
@@ -961,6 +1031,9 @@ function showStep() {
   } else {
     progressSection.classList.remove('hidden');
     resultsStepDiv.classList.remove('hidden');
+    topbar.style.display = '';
+    pageEl.style.padding = '';
+    pageEl.style.maxWidth = '';
     calculateResults();
   }
   window.scrollTo({ top: 0, behavior: 'instant' });
