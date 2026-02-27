@@ -242,58 +242,66 @@ body {
 .badge-managed    { background: var(--successBg); color: #166534;        }
 .badge-optimising { background: var(--o100);      color: var(--o500);    }
 
-/* ── RESULTS: HERO ── */
-.results-hero {
-  text-align: center;
-  padding: 28px 20px;
-  margin-bottom: 24px;
+/* ── RESULTS: DASHBOARD LAYOUT (single-screen) ── */
+#results-step .step-card-header { padding: 8px 20px; }
+#results-step .step-card-title { font-size: 14px; margin-bottom: 0; }
+#results-step .step-card-desc { font-size: 11px; }
+#results-step .step-card-body { padding: 10px 16px; }
+#results-step .step-card-footer { padding: 8px 16px; }
+
+.results-dashboard { display: flex; flex-direction: column; gap: 10px; }
+
+/* ── Score row: hero merged with stats ── */
+.results-score-row {
+  display: flex; align-items: stretch; gap: 10px;
+}
+.results-score-main {
+  display: flex; align-items: center; gap: 14px;
+  padding: 10px 20px;
   background: linear-gradient(135deg, var(--white) 0%, var(--o100) 100%);
-  border: 1px solid var(--g200);
-  border-radius: var(--radius);
+  border: 1px solid var(--g200); border-radius: var(--radius);
+  white-space: nowrap; flex-shrink: 0;
 }
-.results-hero-score {
-  font-size: 56px;
-  font-weight: 800;
-  color: var(--black);
-  line-height: 1;
-  margin-bottom: 4px;
-}
-.results-hero-max { font-size: 18px; color: var(--g400); font-weight: 400; }
-.results-hero-label { margin-top: 12px; }
-.results-hero-sub { font-size: 13px; color: var(--g500); margin-top: 8px; }
-
-/* ── RESULTS: STAT CARDS ── */
-.results-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+.results-score-num { font-size: 32px; font-weight: 800; color: var(--black); line-height: 1; }
+.results-score-max { font-size: 13px; color: var(--g400); font-weight: 400; }
+.results-score-stats { display: flex; gap: 10px; flex: 1; }
 .stat-card {
-  padding: 16px; border: 1px solid var(--g200);
-  border-radius: var(--radius); background: var(--white);
-  text-align: center;
+  flex: 1; padding: 8px 12px; text-align: center;
+  border: 1px solid var(--g200); border-radius: var(--radius); background: var(--white);
 }
-.stat-label { font-size: 11px; font-weight: 700; color: var(--g500); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
-.stat-value { font-size: 22px; font-weight: 700; color: var(--black); line-height: 1.2; }
-.stat-sub { font-size: 11px; color: var(--g400); margin-top: 2px; }
+.stat-label { font-size: 10px; font-weight: 700; color: var(--g500); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+.stat-value { font-size: 13px; font-weight: 700; color: var(--black); line-height: 1.3; }
+.stat-sub { font-size: 10px; color: var(--g400); margin-top: 1px; }
 
-/* ── RESULTS: DOMAIN SCORE CARDS ── */
-.domain-scores-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 24px;
+/* ── Mid row: domains + chart side by side ── */
+.results-mid { display: grid; grid-template-columns: 1fr 240px; gap: 10px; align-items: start; }
+.results-col-left { display: flex; flex-direction: column; gap: 4px; }
+
+/* Section headers (compact) */
+.section-header {
+  font-size: 12px; font-weight: 700; color: var(--black);
+  margin-bottom: 4px; padding-bottom: 3px;
+  border-bottom: 2px solid var(--o500); display: inline-block;
 }
+
+/* Domain score cards (compact) */
+.domain-scores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
 .domain-score-card {
-  padding: 16px;
-  border: 1px solid var(--g200);
-  border-radius: var(--radius);
-  background: var(--white);
-  border-left: 4px solid var(--g300);
-  transition: border-color 0.15s;
+  padding: 5px 8px;
+  border: 1px solid var(--g200); border-radius: var(--radius);
+  background: var(--white); border-left: 3px solid var(--g300);
 }
-.domain-score-card-name { font-size: 12px; font-weight: 600; color: var(--black); margin-bottom: 8px; line-height: 1.3; }
-.domain-score-card-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-.domain-score-card-num { font-size: 22px; font-weight: 700; color: var(--black); min-width: 48px; }
+.domain-score-card-name {
+  font-size: 10px; font-weight: 600; color: var(--black);
+  margin-bottom: 2px; line-height: 1.2;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.domain-score-card-row { display: flex; align-items: center; gap: 5px; }
+.domain-score-card-num { font-size: 15px; font-weight: 700; color: var(--black); min-width: 28px; }
 .score-bar-wrap { flex: 1; }
-.score-bar { height: 6px; background: var(--g200); border-radius: 3px; overflow: hidden; }
-.score-bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+.score-bar { height: 4px; background: var(--g200); border-radius: 2px; overflow: hidden; }
+.score-bar-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+.domain-score-card .badge { font-size: 9px; padding: 1px 6px; }
 
 /* Domain card border colours */
 .domain-score-card[data-maturity="initial"]    { border-left-color: var(--error); }
@@ -302,88 +310,59 @@ body {
 .domain-score-card[data-maturity="managed"]    { border-left-color: var(--success); }
 .domain-score-card[data-maturity="optimising"] { border-left-color: var(--o500); }
 
-/* Score bar fill colours by maturity */
+/* Score bar fill colours */
 .score-fill-initial    { background: var(--error); }
 .score-fill-developing { background: var(--warning); }
 .score-fill-defined    { background: var(--info); }
 .score-fill-managed    { background: var(--success); }
 .score-fill-optimising { background: var(--o500); }
 
-/* ── RESULTS: CHART ── */
+/* ── Chart (compact) ── */
 .chart-wrap {
   background: var(--white); border: 1px solid var(--g200);
-  border-radius: var(--radius); padding: 20px; margin-bottom: 24px;
+  border-radius: var(--radius); padding: 8px 10px;
 }
-.chart-heading { font-size: 12px; font-weight: 700; color: var(--g500); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
+.chart-heading { font-size: 10px; font-weight: 700; color: var(--g500); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
 
-/* ── RESULTS: SECTION HEADERS ── */
-.section-header {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--black);
-  margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid var(--o500);
-  display: inline-block;
-}
-
-/* ── RECOMMENDATIONS ── */
-.rec-priority-group { margin-bottom: 24px; }
+/* ── Recommendations (compact) ── */
+.results-recs { display: flex; flex-direction: column; gap: 4px; }
+.rec-priority-group { margin-bottom: 2px; }
 .rec-priority-label {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 12px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.06em; margin-bottom: 10px; color: var(--g500);
+  display: flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; margin-bottom: 3px; color: var(--g500);
 }
-.rec-priority-dot {
-  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-}
-.rec-cards { display: flex; flex-direction: column; gap: 8px; }
+.rec-priority-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.rec-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; }
 .rec-card {
-  padding: 14px 18px;
-  background: var(--white);
-  border: 1px solid var(--g200);
-  border-radius: var(--radius);
-  border-left: 4px solid var(--g300);
+  padding: 4px 8px;
+  background: var(--white); border: 1px solid var(--g200);
+  border-radius: var(--radius); border-left: 3px solid var(--g300);
+  cursor: default;
 }
 .rec-card-critical { border-left-color: var(--error); }
 .rec-card-improvement { border-left-color: var(--info); }
 .rec-card-finetune { border-left-color: var(--success); }
 .rec-card-top {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 8px; margin-bottom: 6px; flex-wrap: wrap;
+  display: flex; align-items: center; justify-content: space-between; gap: 4px;
 }
-.rec-card-cap { font-size: 13px; font-weight: 700; color: var(--black); }
-.rec-card-levels {
-  display: flex; align-items: center; gap: 4px;
-  font-size: 11px; font-weight: 600;
-}
-.rec-card-level-badge {
-  padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700;
-}
-.rec-card-arrow { color: var(--g400); font-size: 10px; }
-.rec-card-domain { font-size: 11px; color: var(--g500); margin-bottom: 4px; }
-.rec-card-text { font-size: 13px; color: #333; line-height: 1.55; }
+.rec-card-cap { font-size: 11px; font-weight: 600; color: var(--black); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rec-card-levels { display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
+.rec-card-level-badge { padding: 0 5px; border-radius: 8px; font-size: 9px; font-weight: 700; }
+.rec-card-arrow { color: var(--g400); font-size: 8px; }
+.rec-card-domain { font-size: 9px; color: var(--g500); }
+.rec-card-text { display: none; }
+.rec-card[title] { position: relative; }
 
-/* ── STRENGTHS ── */
-.strengths-section { margin-top: 8px; }
-.strengths-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
+/* ── Strengths (compact inline) ── */
+.strengths-section { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
 .strength-chip {
-  padding: 10px 14px;
-  background: var(--successBg);
-  border: 1px solid #bbf7d0;
-  border-radius: var(--radius);
-  font-size: 12px;
-  font-weight: 500;
-  color: #166534;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  padding: 2px 8px;
+  background: var(--successBg); border: 1px solid #bbf7d0;
+  border-radius: var(--radius); font-size: 10px; font-weight: 500;
+  color: #166534; display: inline-flex; align-items: center; gap: 4px;
 }
-.strength-chip svg { flex-shrink: 0; }
+.strength-chip svg { flex-shrink: 0; width: 10px; height: 10px; }
 
 /* ── WELCOME PAGE ── */
 .welcome-page {
@@ -597,8 +576,13 @@ body {
 /* ── RESPONSIVE ── */
 @media (max-width: 1024px) {
   .maturity-grid { grid-template-columns: repeat(3, 1fr); }
-  .domain-scores-grid { grid-template-columns: repeat(2, 1fr); }
-  .strengths-grid { grid-template-columns: repeat(2, 1fr); }
+  .results-mid { grid-template-columns: 1fr 200px; }
+  .domain-scores-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  .results-score-row { flex-direction: column; gap: 6px; }
+  .results-mid { grid-template-columns: 1fr; }
+  .rec-cards { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
   .topbar { padding: 0 16px; }
@@ -606,9 +590,8 @@ body {
   .page { padding: 12px 12px 32px; }
   .step-card-header, .step-card-body, .step-card-footer { padding-left: 16px; padding-right: 16px; }
   .maturity-grid { grid-template-columns: repeat(2, 1fr); }
-  .domain-scores-grid { grid-template-columns: 1fr; }
-  .results-stats { grid-template-columns: 1fr; }
-  .strengths-grid { grid-template-columns: 1fr; }
+  .domain-scores-grid { grid-template-columns: repeat(2, 1fr); }
+  .results-score-stats { flex-direction: column; }
   .capability-header { flex-direction: column; align-items: flex-start; gap: 4px; }
   .capability-meta { margin-left: 0; }
   .welcome-nav { padding: 16px 24px; }
@@ -1029,10 +1012,10 @@ function showStep() {
       : 'Next <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     showCapability();
   } else {
-    progressSection.classList.remove('hidden');
+    progressSection.classList.add('hidden');
     resultsStepDiv.classList.remove('hidden');
     topbar.style.display = '';
-    pageEl.style.padding = '';
+    pageEl.style.padding = '10px 24px 10px';
     pageEl.style.maxWidth = '';
     calculateResults();
   }
@@ -1162,37 +1145,40 @@ function calculateResults() {
   const body = document.getElementById('results-body');
   let html = '';
 
-  // Hero
+  html += '<div class="results-dashboard">';
+
+  // ── Score row: hero merged with stats ──
   html += `
-    <div class="results-hero">
-      <div class="results-hero-score">${overallWeighted.toFixed(1)}<span class="results-hero-max"> / 5</span></div>
-      <div class="results-hero-label"><span class="badge ${overallLabel.cls}" style="font-size:13px;padding:5px 16px;">${overallLabel.label}</span></div>
-      <div class="results-hero-sub">Weighted maturity score across ${domainNames.length} domains and ${capabilities.length} capabilities</div>
+    <div class="results-score-row">
+      <div class="results-score-main">
+        <div><span class="results-score-num">${overallWeighted.toFixed(1)}</span><span class="results-score-max"> / 5</span></div>
+        <span class="badge ${overallLabel.cls}" style="font-size:11px;padding:3px 10px;">${overallLabel.label}</span>
+      </div>
+      <div class="results-score-stats">
+        <div class="stat-card">
+          <div class="stat-label">Strongest</div>
+          <div class="stat-value">${strongest}</div>
+          <div class="stat-sub">${domainScores[strongest].toFixed(2)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Weakest</div>
+          <div class="stat-value">${weakest}</div>
+          <div class="stat-sub">${domainScores[weakest].toFixed(2)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Simple Avg</div>
+          <div class="stat-value">${overallSimple.toFixed(2)}</div>
+          <div class="stat-sub">unweighted</div>
+        </div>
+      </div>
     </div>
   `;
 
-  // Stat cards
-  html += `
-    <div class="results-stats">
-      <div class="stat-card">
-        <div class="stat-label">Strongest Domain</div>
-        <div class="stat-value" style="font-size:14px;line-height:1.4">${strongest}</div>
-        <div class="stat-sub">${domainScores[strongest].toFixed(2)} / 5.00</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Weakest Domain</div>
-        <div class="stat-value" style="font-size:14px;line-height:1.4">${weakest}</div>
-        <div class="stat-sub">${domainScores[weakest].toFixed(2)} / 5.00</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Simple Average</div>
-        <div class="stat-value">${overallSimple.toFixed(2)}</div>
-        <div class="stat-sub">unweighted mean</div>
-      </div>
-    </div>
-  `;
+  // ── Mid row: domain scores (left) + radar chart (right) ──
+  html += '<div class="results-mid">';
 
-  // Domain score cards
+  // Left column: domain scores
+  html += '<div class="results-col-left">';
   html += '<div class="section-header">Domain Scores</div>';
   html += '<div class="domain-scores-grid">';
   domainNames.forEach(d => {
@@ -1212,15 +1198,18 @@ function calculateResults() {
       </div>
     `;
   });
-  html += '</div>';
+  html += '</div></div>';
 
-  // Radar chart
+  // Right column: radar chart
   html += `
-    <div class="chart-wrap">
-      <div class="chart-heading">Maturity Profile</div>
-      <canvas id="scoreChart" height="300"></canvas>
+    <div class="results-col-right">
+      <div class="chart-wrap">
+        <div class="chart-heading">Maturity Profile</div>
+        <canvas id="scoreChart" height="200"></canvas>
+      </div>
     </div>
   `;
+  html += '</div>';
 
   // Build recommendations
   const allRecs = [];
@@ -1247,6 +1236,8 @@ function calculateResults() {
   // Sort by level ascending (most critical first)
   allRecs.sort((a, b) => a.level - b.level);
 
+  // ── Recommendations (compact) ──
+  html += '<div class="results-recs">';
   html += '<div class="section-header">Recommendations</div>';
 
   const criticalRecs = allRecs.filter(r => r.priority === 'critical');
@@ -1258,13 +1249,11 @@ function calculateResults() {
       <div class="rec-priority-group">
         <div class="rec-priority-label">
           <div class="rec-priority-dot" style="background:var(--error)"></div>
-          Critical — Foundational gaps (${criticalRecs.length})
+          Critical (${criticalRecs.length})
         </div>
         <div class="rec-cards">
     `;
-    criticalRecs.forEach(r => {
-      html += buildRecCard(r, 'critical');
-    });
+    criticalRecs.forEach(r => { html += buildRecCard(r, 'critical'); });
     html += '</div></div>';
   }
 
@@ -1273,13 +1262,11 @@ function calculateResults() {
       <div class="rec-priority-group">
         <div class="rec-priority-label">
           <div class="rec-priority-dot" style="background:var(--info)"></div>
-          Improvement — Room for growth (${improvementRecs.length})
+          Improvement (${improvementRecs.length})
         </div>
         <div class="rec-cards">
     `;
-    improvementRecs.forEach(r => {
-      html += buildRecCard(r, 'improvement');
-    });
+    improvementRecs.forEach(r => { html += buildRecCard(r, 'improvement'); });
     html += '</div></div>';
   }
 
@@ -1288,30 +1275,29 @@ function calculateResults() {
       <div class="rec-priority-group">
         <div class="rec-priority-label">
           <div class="rec-priority-dot" style="background:var(--success)"></div>
-          Fine-tuning — Polish and optimise (${finetuneRecs.length})
+          Fine-tuning (${finetuneRecs.length})
         </div>
         <div class="rec-cards">
     `;
-    finetuneRecs.forEach(r => {
-      html += buildRecCard(r, 'finetune');
+    finetuneRecs.forEach(r => { html += buildRecCard(r, 'finetune'); });
+    html += '</div></div>';
+  }
+
+  html += '</div>';
+
+  // ── Strengths (compact inline chips) ──
+  const lvl5Strengths = strengths.filter(s => s.level >= 5);
+  if (lvl5Strengths.length > 0) {
+    html += '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">';
+    html += '<div class="section-header" style="margin-bottom:0;padding-bottom:2px;">Strengths</div>';
+    html += '<div class="strengths-section">';
+    lvl5Strengths.forEach(s => {
+      html += `<div class="strength-chip"><svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M2 8l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>${s.cap}</div>`;
     });
     html += '</div></div>';
   }
 
-  // Strengths section
-  if (strengths.filter(s => s.level >= 5).length > 0) {
-    html += '<div class="section-header" style="margin-top:24px">Strengths</div>';
-    html += '<div class="strengths-section"><div class="strengths-grid">';
-    strengths.filter(s => s.level >= 5).forEach(s => {
-      html += `
-        <div class="strength-chip">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 8l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          ${s.cap}
-        </div>
-      `;
-    });
-    html += '</div></div>';
-  }
+  html += '</div>'; // close .results-dashboard
 
   body.innerHTML = html;
 
@@ -1319,10 +1305,10 @@ function calculateResults() {
   const ctx = document.getElementById('scoreChart').getContext('2d');
   if (window._scoreChart) window._scoreChart.destroy();
 
-  // Shorten labels for radar
+  // Shorten labels for compact radar
   const radarLabels = domainNames.map(d => {
     const words = d.split(/[,&]| /g).filter(Boolean);
-    return words.length > 3 ? words.slice(0, 3).join(' ') : d;
+    return words.length > 2 ? words.slice(0, 2).join(' ') : d;
   });
 
   window._scoreChart = new Chart(ctx, {
@@ -1334,23 +1320,25 @@ function calculateResults() {
         data: domainNames.map(d => parseFloat(domainScores[d].toFixed(2))),
         backgroundColor: 'rgba(253, 81, 8, 0.15)',
         borderColor: '#FD5108',
-        borderWidth: 2,
+        borderWidth: 1.5,
         pointBackgroundColor: '#FD5108',
         pointBorderColor: '#fff',
-        pointBorderWidth: 2,
-        pointRadius: 5
+        pointBorderWidth: 1,
+        pointRadius: 3
       }]
     },
     options: {
+      responsive: true,
+      maintainAspectRatio: true,
       scales: {
         r: {
           beginAtZero: true,
           max: 5,
           min: 0,
-          ticks: { stepSize: 1, font: { size: 10 }, backdropColor: 'transparent' },
+          ticks: { stepSize: 1, font: { size: 8 }, backdropColor: 'transparent' },
           grid: { color: '#DFE3E6' },
           angleLines: { color: '#DFE3E6' },
-          pointLabels: { font: { size: 11, weight: '500' }, color: '#000' }
+          pointLabels: { font: { size: 9, weight: '500' }, color: '#000' }
         }
       },
       plugins: {
@@ -1371,20 +1359,18 @@ function buildRecCard(r, priority) {
   const nextLevel = r.level + 1;
   const currLabel = getMaturityLabel(r.level);
   const nextLabel = getMaturityLabel(nextLevel);
+  const tooltip = r.rec ? r.rec.replace(/"/g, '&quot;') : '';
   return `
-    <div class="rec-card rec-card-${priority}">
+    <div class="rec-card rec-card-${priority}" title="${tooltip}">
+      <div class="rec-card-domain">${r.domain}</div>
       <div class="rec-card-top">
-        <div>
-          <div class="rec-card-domain">${r.domain}</div>
-          <div class="rec-card-cap">${r.cap}</div>
-        </div>
+        <div class="rec-card-cap">${r.cap}</div>
         <div class="rec-card-levels">
           <span class="rec-card-level-badge badge ${currLabel.cls}">${r.level}</span>
           <span class="rec-card-arrow">→</span>
           <span class="rec-card-level-badge badge ${nextLabel.cls}">${nextLevel}</span>
         </div>
       </div>
-      <div class="rec-card-text">${r.rec}</div>
     </div>
   `;
 }
