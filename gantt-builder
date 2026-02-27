@@ -23,7 +23,7 @@
 
       --day-width: 24px;
       --row-height: 36px;
-      --left-width: 420px;
+      --left-width: 580px;
       --header-height: 56px;
       --font: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
@@ -123,7 +123,7 @@
     .left {
       width: var(--left-width);
       min-width: 280px;
-      max-width: 700px;
+      max-width: 900px;
       display: flex;
       flex-direction: column;
       border-right: 1px solid var(--border);
@@ -174,10 +174,11 @@
 
     .name {
       flex: 1;
-      min-width: 100px;
+      min-width: 0;
       display:flex;
       align-items:center;
-      gap: 8px;
+      gap: 6px;
+      overflow: hidden;
     }
     .name .label {
       overflow: hidden;
@@ -212,8 +213,9 @@
       border: 1px solid var(--border);
       color: var(--text);
       border-radius: 4px;
-      padding: 5px 6px;
-      width: 138px;
+      padding: 4px 4px;
+      width: 110px;
+      font-size: 11px;
     }
     .dates input[type="date"]:disabled{ opacity: 0.5; }
 
@@ -470,7 +472,7 @@
       .toolbar { display: none !important; }
       .scenario-bar { display: none !important; }
       .layout { border: none; border-radius: 0; }
-      .left { width: 360px; }
+      .left { width: 420px; }
       .left, .right { background: #fff !important; color: #000 !important; }
       .left-header, .right-header { background: #fff !important; position: static; }
       .task-row, .timeline .row { border-bottom: 1px solid #ddd !important; }
@@ -482,19 +484,19 @@
 
     /* Tablet */
     @media (max-width: 1200px){
-      :root { --left-width: 380px; }
-      .dates input[type="date"]{ width: 120px; }
+      :root { --left-width: 480px; }
+      .dates input[type="date"]{ width: 100px; }
       .icon-btn { width: 26px; height: 26px; }
     }
     /* Small tablet */
     @media (max-width: 960px){
-      :root { --left-width: 320px; }
+      :root { --left-width: 380px; }
       .dates { display: none; }
       .grid2 { grid-template-columns: 1fr; }
     }
     /* Mobile */
     @media (max-width: 700px){
-      :root { --left-width: 240px; }
+      :root { --left-width: 260px; }
       .dates { display: none; }
       .badge { display: none; }
       .brand-title { display: none; }
@@ -536,8 +538,8 @@
         </div>
         <div class="range" title="Left panel width">
           <span>Left</span>
-          <input id="leftWidth" type="range" min="280" max="700" step="10" value="420">
-          <span class="pill"><strong id="leftWidthVal">420</strong> px</span>
+          <input id="leftWidth" type="range" min="280" max="900" step="10" value="580">
+          <span class="pill"><strong id="leftWidthVal">580</strong> px</span>
         </div>
         <button class="danger" id="btnClear">Clear</button>
       </div>
@@ -725,7 +727,7 @@
         dayWidth: 24,
         rowHeight: 36,
         headerHeight: 56,
-        leftWidth: 420,
+        leftWidth: 580,
         paddingDays: 7
       }
     };
@@ -1472,9 +1474,11 @@
       defs.appendChild(marker);
       depsSvg.appendChild(defs);
 
-      // paths
-      const GAP = 6;
-      const LOOP = 28;
+      // Finish-to-start dependency routing
+      const GAP = 12;
+      const ARROW = 8;
+      const rowH = state.config.rowHeight;
+
       for(const succId of state.visible){
         const succ = getTask(succId);
         if(!succ || !succ.dependencies) continue;
@@ -1485,20 +1489,33 @@
           const pc = coords.get(predId);
           if(!pc) continue;
 
-          const sx = pc.xEnd;
-          const sy = pc.y;
-          const ex = sc.xStart;
-          const ey = sc.y;
+          const sx = pc.xEnd;   // right edge of predecessor bar
+          const sy = pc.y;      // vertical center of predecessor row
+          const ex = sc.xStart; // left edge of successor bar
+          const ey = sc.y;      // vertical center of successor row
+          const targetX = ex - ARROW; // leave space for arrowhead
 
-          // orthogonal routing
-          let pathD = '';
-          const endX = ex - 8; // leave space for arrow marker
-          if(endX >= sx + (GAP*2)){
-            const midX = sx + GAP;
-            pathD = `M ${sx} ${sy} H ${midX} V ${ey} H ${endX}`;
+          let pathD;
+
+          if(targetX > sx + GAP * 2){
+            // Simple case: enough horizontal space between bars
+            // L-route: right to midpoint, vertical to succ row, horizontal to target
+            const midX = sx + (ex - sx) / 2;
+            pathD = `M ${sx} ${sy} H ${midX} V ${ey} H ${targetX}`;
           } else {
-            const loopX = sx + LOOP;
-            pathD = `M ${sx} ${sy} H ${loopX} V ${ey} H ${endX}`;
+            // Overlap case: predecessor ends near/after successor starts
+            // S-route: right, vertical to midpoint between rows, left, vertical to succ, right to target
+            const rightX = sx + GAP;
+            const leftX = ex - GAP;
+            let midY;
+            if(Math.abs(ey - sy) < 1){
+              // Same row: route below
+              midY = sy + rowH * 0.7;
+            } else {
+              // Route through midpoint between the two rows
+              midY = (sy + ey) / 2;
+            }
+            pathD = `M ${sx} ${sy} H ${rightX} V ${midY} H ${leftX} V ${ey} H ${targetX}`;
           }
 
           const p = document.createElementNS('http://www.w3.org/2000/svg','path');
@@ -1981,9 +1998,9 @@
       // final bottom line
       parts.push(`<line class="hline" x1="0" y1="${height}" x2="${width}" y2="${height}"/>`);
 
-      // Dependency paths (visible only)
-      const GAP = 6;
-      const LOOP = 28;
+      // Dependency paths (visible only) — finish-to-start routing
+      const GAP = 12;
+      const ARROW = 8;
       for(const succId of visible){
         const succ = getTask(succId);
         if(!succ || !succ.dependencies) continue;
@@ -1996,15 +2013,22 @@
           const sy = pc.yMid;
           const ex = sc.xStart;
           const ey = sc.yMid;
-          const endX = ex - 8;
+          const targetX = ex - ARROW;
 
-          let dPath = '';
-          if(endX >= sx + (GAP*2)){
-            const midX = sx + GAP;
-            dPath = `M ${sx} ${sy} H ${midX} V ${ey} H ${endX}`;
+          let dPath;
+          if(targetX > sx + GAP * 2){
+            const midX = sx + (ex - sx) / 2;
+            dPath = `M ${sx} ${sy} H ${midX} V ${ey} H ${targetX}`;
           } else {
-            const loopX = sx + LOOP;
-            dPath = `M ${sx} ${sy} H ${loopX} V ${ey} H ${endX}`;
+            const rightX = sx + GAP;
+            const leftX = ex - GAP;
+            let midY;
+            if(Math.abs(ey - sy) < 1){
+              midY = sy + rowH * 0.7;
+            } else {
+              midY = (sy + ey) / 2;
+            }
+            dPath = `M ${sx} ${sy} H ${rightX} V ${midY} H ${leftX} V ${ey} H ${targetX}`;
           }
           parts.push(`<path class="dep" d="${dPath}" marker-end="url(#arrow)"/>`);
         }
@@ -2043,7 +2067,7 @@
       }
 
       parts.push(`</svg>`);
-      return parts.join('\\n');
+      return parts.join('\n');
     }
 
     function escapeXml(s){
